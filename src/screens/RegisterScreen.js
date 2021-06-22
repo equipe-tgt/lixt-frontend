@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, StyleSheet, Image } from "react-native";
 import {
   Button,
   Link,
@@ -9,6 +8,7 @@ import {
   Center,
   ScrollView,
   Box,
+  Image,
 } from "native-base";
 
 import AuthService from "../services/AuthService";
@@ -37,7 +37,9 @@ export default function RegisterScreen(props) {
         register();
       },
     });
-
+  /**
+   * @todo lidar com erros
+   */
   const register = async () => {
     try {
       setLoading(true);

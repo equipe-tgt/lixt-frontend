@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, ActivityIndicator } from "react-native";
+import SplashScreen from "../screens/SplashScreen";
 
 import { AuthContext } from "../context/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,6 +11,9 @@ export default function Routes() {
   const { user, login } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
 
+  /**
+   * @todo tratar erros de login
+   */
   useEffect(() => {
     const doLogin = async () => {
       try {
@@ -29,11 +32,7 @@ export default function Routes() {
   }, []);
 
   if (loading) {
-    return (
-      <View>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <SplashScreen />;
   }
 
   // Se o usuário está autenticado retorne a parte interna da aplicação

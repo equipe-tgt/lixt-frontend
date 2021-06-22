@@ -23,7 +23,6 @@ export default function LoginScreen(props) {
     initialValues: { username: "", password: "" },
     validationSchema: LoginSchema,
     onSubmit: (values) => {
-      console.log(values);
       tryLogin(values);
     },
     validateOnBlur: false,
@@ -42,7 +41,7 @@ export default function LoginScreen(props) {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <Center width="90%">
         <Image
           source={require("../../assets/logo_lixt.png")}
@@ -108,3 +107,6 @@ export default function LoginScreen(props) {
     </SafeAreaView>
   );
 }
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", alignItems: "center" }
+});

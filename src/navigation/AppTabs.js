@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import HomeScreen from "../screens/HomeScreen";
 import CartScreen from "../screens/CartScreen";
-import ProfileScreen from "../screens/ProfileScreen";
+import ProfileStack from "./ProfileStack";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -42,7 +42,7 @@ export default function AppTabs() {
 
       <Tabs.Screen
         name="Perfil"
-        component={ProfileScreen}
+        component={ProfileStack}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             return <Ionicons name="person" size={size} color={color} />;
