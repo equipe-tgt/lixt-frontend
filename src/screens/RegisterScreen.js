@@ -1,136 +1,195 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, StyleSheet, Image } from "react-native";
-import { TextInput, Button, Text, HelperText } from "react-native-paper";
+import {
+  Button,
+  Link,
+  Text,
+  Input,
+  FormControl,
+  Center,
+  ScrollView,
+  Box,
+} from "native-base";
+
+import AuthService from "../services/AuthService";
+
+// Validação do formulário
+import { useFormik } from "formik";
+import { RegisterSchema } from "../validationSchemas";
 
 export default function RegisterScreen(props) {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  /**
-   * @todo colocar mensagens reais
-   */
-  const validarForm = () => {
+  // Instanciando formik para controlar as validações do formulário
+  const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
+    useFormik({
+      initialValues: {
+        username: "",
+        password: "",
+        confirmPassword: "",
+        name: "",
+        email: "",
+      },
+      validateOnChange: false,
+      validateOnBlur: false,
+      validationSchema: RegisterSchema,
+      onSubmit: () => {
+        register();
+      },
+    });
 
-    let errorLocal = {};
-    if (!name) {
-      errorLocal.name = "";
-    }
-    if (!password || !confirmPassword || password != confirmPassword) {
-      errorLocal.password = "";
-    }
+  const register = async () => {
+    try {
+      setLoading(true);
 
-    setErrors(errorLocal);
+      const user = {
+        username: values.username,
+        password: values.password,
+        name: values.name,
+        email: values.email,
+      };
+
+      await AuthService.doRegister(user);
+      props.navigation.navigate("Login");
+    } catch (error) {}
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image
-        style={styles.logo}
-        source={require("../../assets/logo_lixt.png")}
-        resizeMode="cover"
-      />
+    <ScrollView
+      flex={1}
+      _contentContainerStyle={{
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        marginTop: "20%",
+        w: "100%",
+      }}
+    >
+      <Center width="90%">
+        <Image
+          source={require("../../assets/logo_lixt.png")}
+          resizeMode="cover"
+        />
 
-      <View style={styles.form}>
-        <TextInput
-          style={styles.textInput}
-          mode="outlined"
-          label="Nome"
-          value={name}
-          onChangeText={setName}
-        ></TextInput>
-        <HelperText padding="none" type="error" visible={!!errors.name}>
-          {errors.name}
-        </HelperText>
+        <FormControl>
+          <FormControl.Label>Nome</FormControl.Label>
+          <Input
+            disabled={loading}
+            onChangeText={handleChange("name")}
+            onBlur={handleBlur("name")}
+            error={!!errors.name}
+          ></Input>
+          <FormControl.HelperText>
+            <Text
+              style={errors.name ? { color: "#fb7185" } : { display: "none" }}
+            >
+              {errors.name}
+            </Text>
+          </FormControl.HelperText>
+        </FormControl>
 
-        <TextInput
-          style={styles.textInput}
-          mode="outlined"
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-        ></TextInput>
-        <HelperText padding="none" type="error" visible={!!errors.email}>
-          {errors.email}
-        </HelperText>
+        <FormControl>
+          <FormControl.Label>Email</FormControl.Label>
+          <Input
+            disabled={loading}
+            onBlur={handleBlur("email")}
+            onChangeText={handleChange("email")}
+            error={!!errors.email}
+            autoCapitalize="none"
+          ></Input>
+          <FormControl.HelperText>
+            <Text
+              style={errors.email ? { color: "#fb7185" } : { display: "none" }}
+            >
+              {errors.email}
+            </Text>
+          </FormControl.HelperText>
+        </FormControl>
 
-        <TextInput
-          style={styles.textInput}
-          mode="outlined"
-          label="Nome de usuário"
-          value={username}
-          onChangeText={setUsername}
-        ></TextInput>
-        <HelperText padding="none" type="error" visible={!!errors.username}>
-          {errors.username}
-        </HelperText>
+        <FormControl>
+          <FormControl.Label>Nome de usuário</FormControl.Label>
+          <Input
+            disabled={loading}
+            onBlur={handleBlur("username")}
+            onChangeText={handleChange("username")}
+            error={!!errors.username}
+            autoCapitalize="none"
+          ></Input>
+          <FormControl.HelperText>
+            <Text
+              style={
+                errors.username ? { color: "#fb7185" } : { display: "none" }
+              }
+            >
+              {errors.username}
+            </Text>
+          </FormControl.HelperText>
+        </FormControl>
 
-        <TextInput
-          style={styles.textInput}
-          mode="outlined"
-          label="Senha"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-        ></TextInput>
-        <HelperText padding="none" type="error" visible={!!errors.password}>
-          {errors.name}
-        </HelperText>
+        <FormControl>
+          <FormControl.Label>Senha</FormControl.Label>
+          <Input
+            disabled={loading}
+            onBlur={handleBlur("password")}
+            onChangeText={handleChange("password")}
+            secureTextEntry={true}
+            error={!!errors.password}
+          ></Input>
+          <FormControl.HelperText>
+            <Text
+              style={
+                errors.password ? { color: "#fb7185" } : { display: "none" }
+              }
+            >
+              {errors.password}
+            </Text>
+          </FormControl.HelperText>
+        </FormControl>
 
-        <TextInput
-          style={styles.textInput}
-          mode="outlined"
-          label="Confirmar senha"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry={true}
-        ></TextInput>
-        <HelperText
-          padding="none"
-          type="error"
-          visible={!!errors.confirmPassword}
+        <FormControl>
+          <FormControl.Label>Confirmação de senha</FormControl.Label>
+          <Input
+            disabled={loading}
+            onBlur={handleBlur("confirmPassword")}
+            onChangeText={handleChange("confirmPassword")}
+            secureTextEntry={true}
+            error={!!errors.confirmPassword}
+          ></Input>
+          <FormControl.HelperText>
+            <Text
+              style={
+                errors.confirmPassword
+                  ? { color: "#fb7185" }
+                  : { display: "none" }
+              }
+            >
+              {errors.confirmPassword}
+            </Text>
+          </FormControl.HelperText>
+        </FormControl>
+
+        <Button
+          paddingX={20}
+          paddingY={4}
+          isLoading={loading}
+          isLoadingText="Registrando"
+          marginTop={5}
+          onPress={handleSubmit}
         >
-          {errors.name}
-        </HelperText>
-
-        <Button mode="contained" onPress={validarForm}>
           <Text style={{ color: "#fff" }}>Registrar</Text>
         </Button>
 
-        <Text>
-          Já possui uma conta?
-          <Button
-            uppercase={false}
+        <Box style={{ flexDirection: "row" }} mt={5}>
+          <Text mr={2}>Já tem uma conta?</Text>
+          <Link
             onPress={() => {
               props.navigation.navigate("Login");
             }}
           >
-            Faça login
-          </Button>
-        </Text>
-      </View>
-    </SafeAreaView>
+            <Text color="blue.500"> Faça login</Text>
+          </Link>
+        </Box>
+      </Center>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
-  logo: {
-    marginBottom: 30,
-  },
-  form: {
-    width: "85%",
-  },
-  textInput: {
-    marginBottom: 10,
-  },
-});

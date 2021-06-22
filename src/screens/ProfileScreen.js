@@ -1,6 +1,6 @@
-import React, {useContext} from "react";
-import { SafeAreaView, Text } from "react-native";
-import { Button } from "react-native-paper";
+import React, { useContext } from "react";
+import { SafeAreaView } from "react-native";
+import { Button, Text } from "native-base";
 
 import { AuthContext } from "../context/AuthProvider";
 

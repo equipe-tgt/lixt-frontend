@@ -1,10 +1,10 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+import React from "react";
+import { Center, Image } from "native-base";
 
 export default function SplashScreen() {
-    return (
-        <View>
-            <Text>Lixt.</Text>
-        </View>
-    )
+  return (
+    <Center>
+      <Image source={require("../../assets/logo_lixt.png")} />
+    </Center>
+  );
 }

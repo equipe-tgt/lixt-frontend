@@ -1,22 +1,39 @@
-import React, { useState, useContext } from "react";
-import { SafeAreaView, StyleSheet, View, Image } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
-
+import React, { useContext } from "react";
+import { SafeAreaView, StyleSheet, Image } from "react-native";
 import { AuthContext } from "../context/AuthProvider";
+import {
+  Button,
+  Link,
+  Text,
+  Input,
+  FormControl,
+  Center,
+  Box,
+} from "native-base";
+
+// Validação e controle do formulário
+import { useFormik } from "formik";
+import { LoginSchema } from "../validationSchemas";
 
 export default function LoginScreen(props) {
-  /**
-   * @todo Remover dado inicial do username e password
-   */
-  const [username, setUsername] = useState("shakira@gmail.com");
-  const [password, setPassword] = useState("gipsy123");
+  const { login } = useContext(AuthContext);
 
-  const { login, user } = useContext(AuthContext);
+  // Instanciando formik para controlar as validações do formulário
+  const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
+    initialValues: { username: "", password: "" },
+    validationSchema: LoginSchema,
+    onSubmit: (values) => {
+      console.log(values);
+      tryLogin(values);
+    },
+    validateOnBlur: false,
+    validateOnChange: false,
+  });
 
   /**
    * @todo fazer trativa de erros
    */
-  const tryLogin = async () => {
+  const tryLogin = async ({ username, password }) => {
     try {
       await login(username, password);
     } catch (error) {
@@ -25,66 +42,69 @@ export default function LoginScreen(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image
-        source={require("../../assets/logo_lixt.png")}
-        resizeMode="cover"
-        style={styles.logo}
-      />
-
-      <View style={styles.form}>
-        <TextInput
-          mode="outlined"
-          style={styles.textInput}
-          label="Email ou nome de usuário"
-          value={username}
-          onChangeText={setUsername}
+    <SafeAreaView>
+      <Center width="90%">
+        <Image
+          source={require("../../assets/logo_lixt.png")}
+          resizeMode="cover"
         />
 
-        <TextInput
-          mode="outlined"
-          style={styles.textInput}
-          label="Senha"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-        />
-        <Button mode="contained" title="Login" onPress={tryLogin}>
-          <Text style={{ color: "#fff" }}>Login</Text>
+        <FormControl marginTop={10} marginBottom={5}>
+          <FormControl.Label>Email ou nome de usuário</FormControl.Label>
+          <Input
+            type="text"
+            onChangeText={handleChange("username")}
+            onBlur={handleBlur("username")}
+            value={values.username}
+            isInvalid={!!errors.username}
+          />
+          <FormControl.HelperText>
+            <Text
+              style={
+                errors.username ? { color: "#fb7185" } : { display: "none" }
+              }
+            >
+              {errors.username}
+            </Text>
+          </FormControl.HelperText>
+        </FormControl>
+
+        <FormControl>
+          <FormControl.Label>Senha</FormControl.Label>
+          <Input
+            type="password"
+            onBlur={handleBlur("password")}
+            onChangeText={handleChange("password")}
+            secureTextEntry={true}
+            value={values.password}
+            isInvalid={!!errors.password}
+          />
+          <FormControl.HelperText isInvalid={!!errors.password}>
+            <Text
+              style={
+                errors.password ? { color: "#fb7185" } : { display: "none" }
+              }
+            >
+              {errors.password}
+            </Text>
+          </FormControl.HelperText>
+        </FormControl>
+
+        <Button marginTop={5} paddingX={20} paddingY={4} onPress={handleSubmit}>
+          Login
         </Button>
 
-        <Text>
-          Não tem login?{" "}
-          <Button
-            uppercase={false}
+        <Box style={{ flexDirection: "row" }} mt={5}>
+          <Text mr={2}>Não tem login?</Text>
+          <Link
             onPress={() => {
               props.navigation.navigate("Register");
             }}
           >
-            Cadastre-se
-          </Button>
-        </Text>
-      </View>
+            <Text color="blue.500">Cadastre-se</Text>
+          </Link>
+        </Box>
+      </Center>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
-  logo: {
-    marginBottom: 30
-  },
-  form: {
-    height: 60,
-    width: "85%",
-  },
-  textInput: {
-    marginBottom: 25,
-  },
-});
