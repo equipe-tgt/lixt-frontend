@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
       // Armazena o usuário no contexto da aplicação, que poderá ser acessado de qualquer página
       setUser({ username: data.username, name: data.name });
 
-      // Adiciona nome e senha no async Storage o que nos permitirá logar o usuário assim que 
+      // Adicionar nome e senha no async Storage o que nos permitirá logar o usuário assim que
       // ele abrir novamente a aplicação
       await AsyncStorage.setItem(
         "user",

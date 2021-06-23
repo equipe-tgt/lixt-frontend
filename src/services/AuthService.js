@@ -1,17 +1,19 @@
 import axios from "axios";
+import BaseService from "./BaseService";
 
-export default AuthService = {
-  /**
-   * @todo integrar com o endereço real da API
-   */
-  doLogin: (email, senha) => {
-    return axios.post(
-      "https://run.mocky.io/v3/3269a11b-c698-4c66-a1bd-073657a9e158",
-      {
-        email: email,
-        senha: senha,
-      }
-    );
+const AuthService = {
+  doLogin: (username, password) => {
+    const dataLogin = new FormData();
+
+    dataLogin.append("username", username);
+    dataLogin.append("password", password);
+    dataLogin.append("grant_type", "password");
+
+    return BaseService.post("/oauth/token", dataLogin, {
+      headers: {
+        "Content-type": "application/x-www-form-urlencoded",
+      },
+    });
   },
 
   doRegister: (user) => {
@@ -21,3 +23,5 @@ export default AuthService = {
     );
   },
 };
+
+export default AuthService;

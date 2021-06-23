@@ -11,7 +11,7 @@ import {
   Image,
 } from "native-base";
 
-import AuthService from "../services/AuthService";
+import UserService from "../services/UserService";
 
 // Validação do formulário
 import { useFormik } from "formik";
@@ -51,7 +51,7 @@ export default function RegisterScreen(props) {
         email: values.email,
       };
 
-      await AuthService.doRegister(user);
+      await UserService.doRegister(user);
       props.navigation.navigate("Login");
     } catch (error) {}
   };
@@ -71,6 +71,7 @@ export default function RegisterScreen(props) {
         <Image
           source={require("../../assets/logo_lixt.png")}
           resizeMode="cover"
+          alt="Lixt logo"
         />
 
         <FormControl>

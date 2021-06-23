@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { SafeAreaView, StyleSheet, Image } from "react-native";
+import { SafeAreaView, StyleSheet } from "react-native";
 import { AuthContext } from "../context/AuthProvider";
 import {
   Button,
@@ -8,6 +8,7 @@ import {
   Input,
   FormControl,
   Center,
+  Image,
   Box,
 } from "native-base";
 
@@ -46,6 +47,7 @@ export default function LoginScreen(props) {
         <Image
           source={require("../../assets/logo_lixt.png")}
           resizeMode="cover"
+          alt="Lixt logo"
         />
 
         <FormControl marginTop={10} marginBottom={5}>
