@@ -1,6 +1,5 @@
 import axios from "axios";
 import { Base64 } from "../utils/base64";
-import * as Network from "expo-network";
 
 /**
 @todo alterar valor vazio de URL para valor do endereço da API em produção
@@ -8,7 +7,8 @@ import * as Network from "expo-network";
 
 // Define o valor da URL que será utilizada para consulta da API baseado na variável __DEV__ que informa
 // se está em produção ou em desenvolvimento
-const BASE_URL = __DEV__ ? "http://192.168.1.180:8080" : "";
+// USAR SEU IP pegue o valor de ipv4 gerado pelo comando "ipconfig" no cmd
+const BASE_URL = __DEV__ ? "http://192.168.1.186:8080" : "";
 
 // Valores de acesso da API
 const clientId = "client";
