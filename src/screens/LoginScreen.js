@@ -61,14 +61,16 @@ export default function LoginScreen(props) {
       <Center width="90%">
         <Image
           source={require("../../assets/logo_lixt.png")}
-          resizeMode="cover"
+          resizeMode="contain"
+          width="60%"
+          height="14%"
           alt="Lixt logo"
         />
 
         <FormControl marginTop={10} marginBottom={5}>
           <FormControl.Label>Email ou nome de usuário</FormControl.Label>
           <Input
-            autoCapitalize={false}
+            autoCapitalize="none"
             type="text"
             onChangeText={handleChange("username")}
             onBlur={handleBlur("username")}

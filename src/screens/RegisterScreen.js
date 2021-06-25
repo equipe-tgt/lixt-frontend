@@ -10,6 +10,7 @@ import {
   Box,
   Image,
   useToast,
+  KeyboardAvoidingView
 } from "native-base";
 
 import UserService from "../services/UserService";
@@ -76,7 +77,7 @@ export default function RegisterScreen(props) {
   };
 
   return (
-    <ScrollView
+    <KeyboardAvoidingView
       flex={1}
       _contentContainerStyle={{
         justifyContent: "center",
@@ -86,10 +87,12 @@ export default function RegisterScreen(props) {
         w: "100%",
       }}
     >
-      <Center width="90%">
+      <Center mx="auto" my="auto" width="90%">
         <Image
           source={require("../../assets/logo_lixt.png")}
-          resizeMode="cover"
+          resizeMode="contain"
+          width="30%"
+          height="7%"
           alt="Lixt logo"
         />
 
@@ -212,6 +215,6 @@ export default function RegisterScreen(props) {
           </Link>
         </Box>
       </Center>
-    </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

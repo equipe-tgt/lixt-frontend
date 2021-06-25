@@ -62,7 +62,9 @@ export default function ForgotPasswordScreen(props) {
       <Center w="90%">
         <Image
           source={require("../../assets/logo_lixt.png")}
-          resizeMode="cover"
+          resizeMode="contain"
+          width="60%"
+          height="14%"
           alt="Lixt logo"
         />
 
@@ -74,7 +76,7 @@ export default function ForgotPasswordScreen(props) {
             onBlur={handleBlur("email")}
             value={values.email}
             isInvalid={!!errors.email}
-            autoCapitalize={false}
+            autoCapitalize="none"
           />
           <FormControl.HelperText>
             <Text
