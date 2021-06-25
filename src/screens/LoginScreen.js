@@ -41,7 +41,7 @@ export default function LoginScreen(props) {
       // Usuário com dados inválidos
       if (error?.response?.status === 401 || error?.response?.status === 400) {
         toast.show({
-          title: "Usuário inválido",
+          title: "Seus dados estão incorretos",
           status: "warning",
         });
       }
@@ -52,7 +52,6 @@ export default function LoginScreen(props) {
           status: "error",
         });
       }
-    } finally {
       setLoading(false);
     }
   };
@@ -69,6 +68,7 @@ export default function LoginScreen(props) {
         <FormControl marginTop={10} marginBottom={5}>
           <FormControl.Label>Email ou nome de usuário</FormControl.Label>
           <Input
+            autoCapitalize={false}
             type="text"
             onChangeText={handleChange("username")}
             onBlur={handleBlur("username")}

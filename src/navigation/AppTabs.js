@@ -1,7 +1,7 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import HomeScreen from "../screens/HomeScreen";
+import ListStack from "./ListStack";
 import CartScreen from "../screens/CartScreen";
 import ProfileStack from "./ProfileStack";
 
@@ -12,12 +12,19 @@ const Tabs = createBottomTabNavigator();
 export default function AppTabs() {
   return (
     <Tabs.Navigator
-      tabBarOptions={{ style: { height: 60 } }}
-      initialRouteName="Dashboard"
+      tabBarOptions={{
+        style: {
+          height: 60,
+          borderTopWidth: 0,
+          shadowOpacity: 0,
+          elevation: 0,
+        },
+      }}
+      initialRouteName="Lists"
     >
       <Tabs.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Lists"
+        component={ListStack}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             return <Ionicons name="home" size={size} color={color} />;

@@ -1,10 +1,10 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { SafeAreaView, Text } from 'react-native'
 
 export default function CartScreen() {
     return (
-        <View>
+        <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
             <Text>Cart</Text>
-        </View>
+        </SafeAreaView>
     )
 }

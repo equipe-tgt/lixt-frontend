@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-
 import {
   Button,
   Link,
@@ -13,11 +12,13 @@ import {
   useToast,
 } from "native-base";
 
+import UserService from "../services/UserService";
+
 // Validação e controle do formulário
 import { ResetPasswordSchema } from "../validationSchemas/index";
 import { useFormik } from "formik";
 
-export default function ForgotPasswordScreen() {
+export default function ForgotPasswordScreen(props) {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
@@ -25,13 +26,36 @@ export default function ForgotPasswordScreen() {
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
     initialValues: { email: "" },
     validationSchema: ResetPasswordSchema,
-    onSubmit: (values) => {
-      resetPassword(values);
+    onSubmit: () => {
+      resetPassword();
     },
     validateOnChange: false,
   });
 
-  const resetPassword = () => {};
+  const resetPassword = async () => {
+    setLoading(true);
+    try {
+      await UserService.resetPassword(values.email);
+      toast.show({
+        title: "Email enviado com sucesso",
+        status: "success",
+      });
+      props.navigation.navigate("Login");
+    } catch (error) {
+      if (error.response.status === 404) {
+        toast.show({
+          title: "Este usuário não existe",
+          status: "warning",
+        });
+      } else {
+        toast.show({
+          title: "Um erro inesperado ocorreu no servidor",
+          status: "warning",
+        });
+      }
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,6 +74,7 @@ export default function ForgotPasswordScreen() {
             onBlur={handleBlur("email")}
             value={values.email}
             isInvalid={!!errors.email}
+            autoCapitalize={false}
           />
           <FormControl.HelperText>
             <Text
@@ -66,7 +91,7 @@ export default function ForgotPasswordScreen() {
           </Text>
           <Button
             isLoading={loading}
-            isLoadingText="Enviando senha"
+            isLoadingText="Enviando email"
             onPress={handleSubmit}
             paddingX={20}
             paddingY={4}

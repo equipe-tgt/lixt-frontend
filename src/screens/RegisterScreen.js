@@ -39,9 +39,7 @@ export default function RegisterScreen(props) {
         register();
       },
     });
-  /**
-   * @todo lidar com erros
-   */
+
   const register = async () => {
     try {
       setLoading(true);
