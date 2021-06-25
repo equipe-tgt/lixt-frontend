@@ -15,7 +15,7 @@ export default function ListScreen(props) {
   useEffect(() => {});
 
   return (
-    <SafeAreaView style={screenBasicStyle.container}>
+    <SafeAreaView style={style.container}>
       <StatusBar barStyle="dark-content" />
       <Box safeAreaTop />
       <HStack
