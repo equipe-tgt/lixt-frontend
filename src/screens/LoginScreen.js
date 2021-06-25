@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { AuthContext } from "../context/AuthProvider";
 import {
@@ -10,6 +10,7 @@ import {
   Center,
   Image,
   Box,
+  useToast,
 } from "native-base";
 
 // Validação e controle do formulário
@@ -18,6 +19,8 @@ import { LoginSchema } from "../validationSchemas";
 
 export default function LoginScreen(props) {
   const { login } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
@@ -30,14 +33,27 @@ export default function LoginScreen(props) {
     validateOnChange: false,
   });
 
-  /**
-   * @todo fazer trativa de erros
-   */
   const tryLogin = async ({ username, password }) => {
+    setLoading(true);
     try {
       await login(username, password);
     } catch (error) {
-      alert("Não logou");
+      // Usuário com dados inválidos
+      if (error?.response?.status === 401 || error?.response?.status === 400) {
+        toast.show({
+          title: "Usuário inválido",
+          status: "warning",
+        });
+      }
+      // Erro do servidor
+      else {
+        toast.show({
+          title: "Um erro inesperado ocorreu no servidor",
+          status: "error",
+        });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,7 +107,14 @@ export default function LoginScreen(props) {
           </FormControl.HelperText>
         </FormControl>
 
-        <Button marginTop={5} paddingX={20} paddingY={4} onPress={handleSubmit}>
+        <Button
+          isLoading={loading}
+          isLoadingText="Logando"
+          marginTop={5}
+          paddingX={20}
+          paddingY={4}
+          onPress={handleSubmit}
+        >
           Login
         </Button>
 
@@ -105,10 +128,19 @@ export default function LoginScreen(props) {
             <Text color="blue.500">Cadastre-se</Text>
           </Link>
         </Box>
+        <Box style={{ flexDirection: "row" }} mt={5}>
+          <Link
+            onPress={() => {
+              props.navigation.navigate("ForgotPassword");
+            }}
+          >
+            <Text color="blue.500">Esqueci minha senha</Text>
+          </Link>
+        </Box>
       </Center>
     </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" }
+  container: { flex: 1, justifyContent: "center", alignItems: "center" },
 });

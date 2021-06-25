@@ -9,6 +9,7 @@ import {
   ScrollView,
   Box,
   Image,
+  useToast,
 } from "native-base";
 
 import UserService from "../services/UserService";
@@ -19,6 +20,7 @@ import { RegisterSchema } from "../validationSchemas";
 
 export default function RegisterScreen(props) {
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
@@ -52,8 +54,27 @@ export default function RegisterScreen(props) {
       };
 
       await UserService.doRegister(user);
+
+      // Se o registro foi autorizado manda para o login
       props.navigation.navigate("Login");
-    } catch (error) {}
+    } catch (error) {
+      // Usuário com dados repetidos
+      if (error?.response?.status === 401) {
+        toast.show({
+          title: "Este nome de usuário ou email já foram registrados",
+          status: "warning",
+        });
+      }
+      // Erro do servidor
+      else {
+        toast.show({
+          title: "Um erro inesperado ocorreu no servidor",
+          status: "error",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

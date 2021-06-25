@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const AuthContext = React.createContext({
   user: null,
   signed: false,
-  login: () => {},
+  login: async () => {},
   logout: () => {},
 });
 
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         JSON.stringify({ username, password })
       );
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 
@@ -38,8 +38,8 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
-        login: (username, password) => {
-          signIn(username, password);
+        login: async (username, password) => {
+          await signIn(username, password);
         },
         logout: () => {
           setUser(null);
