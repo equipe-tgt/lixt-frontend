@@ -61,17 +61,8 @@ export default function ListScreen(props) {
         {/*  Input de buscas */}
         <FormControl>
           <FormControl.Label>Buscar</FormControl.Label>
-          <Input value={productName} onChangeText={setProductName}/>
+          <Input value={productName} onChangeText={setProductName} />
         </FormControl>
-
-        <Text>Lists</Text>
-        <Button
-          onPress={() => {
-            console.log(user);
-          }}
-        >
-          Ver user
-        </Button>
       </VStack>
     </SafeAreaView>
   );

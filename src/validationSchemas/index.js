@@ -36,7 +36,10 @@ export const ResetPasswordSchema = Yup.object().shape({
 
 export const ListSchema = Yup.object().shape({
   nameList: Yup.string()
-    .max(120, "Este campo deve possuir até 120 caracteres")
-    .email("O email é inválido")
+    .max(45, "Este campo deve possuir até 45 caracteres")
     .required("Este campo é obrigatório"),
+  description: Yup.string().max(
+    200,
+    "Este campo deve possuir até 200 caracteres"
+  ),
 });
