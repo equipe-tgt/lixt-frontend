@@ -1,10 +1,15 @@
 import BaseService from "./BaseService";
 
 const ListService = {
-  getLists: () => {},
+  getLists: (user) => {
+    return BaseService.get("/list/by-user", {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
 
   createList: (list, user) => {
-    console.log("payload", list, user);
     return BaseService.post("/list", list, {
       headers: {
         Authorization: `Bearer ${user.token}`,
@@ -12,6 +17,5 @@ const ListService = {
     });
   },
 };
-
 
 export default ListService;

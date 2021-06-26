@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, RefreshControl } from "react-native";
 import {
   Button,
   Text,
@@ -10,20 +10,44 @@ import {
   Input,
   FormControl,
   VStack,
+  ScrollView,
 } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { screenBasicStyle as style } from "../styles/style";
 
+import ListService from "../services/ListService";
 import { AuthContext } from "../context/AuthProvider";
 
 export default function ListScreen(props) {
   const { user } = useContext(AuthContext);
 
-  const [lists, setLists] = useState([{}]);
+  const [lists, setLists] = useState([]);
   const [selectedList, setSelectedList] = useState({});
   const [productName, setProductName] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {});
+  const fetchLists = async () => {
+    try {
+      // Busca todas as listas do usuário
+      const { data } = await ListService.getLists(user);
+
+      // Se o array de listas tiver resultados coloque-os no
+      // componente de select e atribua o primeiro resultado para a
+      // variável da lista selecionada
+      if (data.length > 0) {
+        setLists([...data]);
+        setSelectedList(data[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLists();
+  }, []);
 
   return (
     <SafeAreaView style={style.container}>
@@ -39,8 +63,18 @@ export default function ListScreen(props) {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Select width="70%">
-          <Select.Item label="Teste" value="teste" />
+        {/* Select de listas no header */}
+        <Select
+          selectedValue={selectedList}
+          width="70%"
+          onValueChange={(itemValue) => {
+            console.log(itemValue);
+            setSelectedList(itemValue);
+          }}
+        >
+          {lists.map((list) => (
+            <Select.Item key={list.id} label={list.nameList} value={list} />
+          ))}
         </Select>
         <Button
           variant="link"
@@ -56,14 +90,19 @@ export default function ListScreen(props) {
           }
         />
       </HStack>
-
-      <VStack w="90%" mx="auto">
-        {/*  Input de buscas */}
-        <FormControl>
-          <FormControl.Label>Buscar</FormControl.Label>
-          <Input value={productName} onChangeText={setProductName} />
-        </FormControl>
-      </VStack>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={fetchLists} />
+        }
+      >
+        <VStack w="90%" mx="auto">
+          {/*  Input de buscas */}
+          <FormControl>
+            <FormControl.Label>Buscar</FormControl.Label>
+            <Input value={productName} onChangeText={setProductName} />
+          </FormControl>
+        </VStack>
+      </ScrollView>
     </SafeAreaView>
   );
 }
