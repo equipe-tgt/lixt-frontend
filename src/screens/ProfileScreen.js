@@ -11,11 +11,13 @@ import {
 } from "native-base";
 import { screenBasicStyle as style } from "../styles/style";
 import { Ionicons } from "@expo/vector-icons";
+import {useTranslation} from 'react-i18next';
 
 import { AuthContext } from "../context/AuthProvider";
 
 export default function ProfileScreen(props) {
   const { logout, user } = useContext(AuthContext);
+  const {t} = useTranslation();
 
   return (
     <SafeAreaView style={style.container}>
@@ -29,17 +31,31 @@ export default function ProfileScreen(props) {
           <Pressable
             style={styles.menuItem}
             onPress={() => {
-              props.navigation.navigate("Settings");
+              props.navigation.navigate("UpdatePassword");
             }}
           >
-            <Text fontSize="lg">Configurações</Text>
+            <Text fontSize="lg">{t("updatePassword")}</Text>
 
             <Ionicons name="chevron-forward" size={16}></Ionicons>
           </Pressable>
         </Box>
+
+        <Box py={5}>
+          <Pressable
+            style={styles.menuItem}
+            onPress={() => {
+              props.navigation.navigate("Settings");
+            }}
+          >
+            <Text fontSize="lg">{t("settings")}</Text>
+
+            <Ionicons name="chevron-forward" size={16}></Ionicons>
+          </Pressable>
+        </Box>
+
         <Box py={5}>
           <Pressable style={styles.menuItem} onPress={logout}>
-            <Text fontSize="lg" color="blue.500">Sair</Text>
+            <Text fontSize="lg" color="blue.500">{t("logout")}</Text>
           </Pressable>
         </Box>
       </VStack>

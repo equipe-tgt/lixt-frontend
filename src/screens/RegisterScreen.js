@@ -13,6 +13,7 @@ import {
   KeyboardAvoidingView
 } from "native-base";
 
+import {useTranslation} from 'react-i18next';
 import UserService from "../services/UserService";
 
 // Validação do formulário
@@ -22,6 +23,8 @@ import { RegisterSchema } from "../validationSchemas";
 export default function RegisterScreen(props) {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  const {t} = useTranslation();
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
@@ -67,7 +70,7 @@ export default function RegisterScreen(props) {
       // Erro do servidor
       else {
         toast.show({
-          title: "Um erro inesperado ocorreu no servidor",
+          title: t("errorServerDefault"),
           status: "error",
         });
       }
@@ -97,7 +100,7 @@ export default function RegisterScreen(props) {
         />
 
         <FormControl>
-          <FormControl.Label>Nome</FormControl.Label>
+          <FormControl.Label>{t("name")}</FormControl.Label>
           <Input
             disabled={loading}
             onChangeText={handleChange("name")}
@@ -132,7 +135,7 @@ export default function RegisterScreen(props) {
         </FormControl>
 
         <FormControl>
-          <FormControl.Label>Nome de usuário</FormControl.Label>
+          <FormControl.Label>{t("username")}</FormControl.Label>
           <Input
             disabled={loading}
             onBlur={handleBlur("username")}
@@ -152,7 +155,7 @@ export default function RegisterScreen(props) {
         </FormControl>
 
         <FormControl>
-          <FormControl.Label>Senha</FormControl.Label>
+          <FormControl.Label>{t('password')}</FormControl.Label>
           <Input
             disabled={loading}
             onBlur={handleBlur("password")}
@@ -172,7 +175,7 @@ export default function RegisterScreen(props) {
         </FormControl>
 
         <FormControl>
-          <FormControl.Label>Confirmação de senha</FormControl.Label>
+          <FormControl.Label>{t("confirmPassword")}</FormControl.Label>
           <Input
             disabled={loading}
             onBlur={handleBlur("confirmPassword")}
@@ -197,21 +200,21 @@ export default function RegisterScreen(props) {
           paddingX={20}
           paddingY={4}
           isLoading={loading}
-          isLoadingText="Registrando"
+          isLoadingText={t("registering")}
           marginTop={5}
           onPress={handleSubmit}
         >
-          <Text style={{ color: "#fff" }}>Registrar</Text>
+          <Text style={{ color: "#fff" }}>{t("register")}</Text>
         </Button>
 
         <Box style={{ flexDirection: "row" }} mt={5}>
-          <Text mr={2}>Já tem uma conta?</Text>
+          <Text mr={2}>{t("alreadyHaveAnAccount")}</Text>
           <Link
             onPress={() => {
               props.navigation.navigate("Login");
             }}
           >
-            <Text color="blue.500"> Faça login</Text>
+            <Text color="blue.500">{t("doLogin")}</Text>
           </Link>
         </Box>
       </Center>
