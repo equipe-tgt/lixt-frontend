@@ -224,6 +224,7 @@ export default function ListScreen(props) {
                     onPress={() => {
                       addToList(product);
                     }}
+                    _pressed={{ bg: 'primary.500' }}
                   >
                     {product.name}
                   </List.Item>
@@ -231,12 +232,6 @@ export default function ListScreen(props) {
               </ScrollView>
             </List>
           ) : null}
-
-          {/* Produtos adicionados */}
-          <Text>
-            {/* Só pra ver */}
-            {selectedList.productsOfList.map((p) => p.name).join(", ")}
-          </Text>
         </VStack>
       </ScrollView>
     </SafeAreaView>
