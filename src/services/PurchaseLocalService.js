@@ -5,7 +5,7 @@ const PurchaseLocalService = {
   createPurchaseLocal: (purchaseLocal, user) => {
     return BaseService.post("/purchaseLocal", purchaseLocal, {
       headers: {
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `bearer ${user.token}`,
       },
     });
   },

@@ -4,7 +4,7 @@ import * as Location from 'expo-location'
 import { useToast, Center } from "native-base";
 
 import { AuthContext } from "../context/AuthProvider";
-import { PurchaseLocalService } from "../services/PurchaseLocalService";
+import PurchaseLocalService from "../services/PurchaseLocalService";
 
 export default function CartScreen() {
 
@@ -35,7 +35,9 @@ export default function CartScreen() {
             status: "success",
         });
 
-        await PurchaseLocalService.createPurchaseLocal({name, latitude, longitude}, user);
+        const purchaseLocal = {name, latitude, longitude}
+        await PurchaseLocalService.createPurchaseLocal(purchaseLocal, user);
+        
     } 
 
     return (
