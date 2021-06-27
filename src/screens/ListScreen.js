@@ -18,12 +18,14 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { screenBasicStyle as style } from "../styles/style";
 
+import {useTranslation} from 'react-i18next';
 import ListService from "../services/ListService";
 import { AuthContext } from "../context/AuthProvider";
 
 export default function ListScreen(props) {
   const toast = useToast();
   const { user } = useContext(AuthContext);
+  const {t} = useTranslation();
 
   const [lists, setLists] = useState([]);
   const [selectedList, setSelectedList] = useState({});
@@ -142,7 +144,7 @@ export default function ListScreen(props) {
         <VStack w="90%" mx="auto">
           {/*  Input de buscas */}
           <FormControl>
-            <FormControl.Label>Buscar</FormControl.Label>
+            <FormControl.Label>{t("search")}</FormControl.Label>
             <Input value={productName} onChangeText={setProductName} />
           </FormControl>
         </VStack>

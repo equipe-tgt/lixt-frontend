@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import ListScreen from "../screens/ListScreen";
 import NewListScreen from "../screens/NewListScreen";
+import {useTranslation} from 'react-i18next';
 
 const Stack = createStackNavigator();
 
@@ -13,6 +14,9 @@ const stackHeaderStyle = {
 };
 
 export default function ListStack() {
+
+  const {t} = useTranslation();
+
   return (
     <Stack.Navigator initialRouteName="Lists">
       <Stack.Screen
@@ -22,7 +26,7 @@ export default function ListStack() {
       ></Stack.Screen>
       <Stack.Screen
         name="NewList"
-        options={{ title: "Nova Lista", headerStyle: stackHeaderStyle }}
+        options={{ title: t("newList"), headerStyle: stackHeaderStyle }}
         component={NewListScreen}
       ></Stack.Screen>
     </Stack.Navigator>

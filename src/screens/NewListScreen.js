@@ -22,6 +22,7 @@ export default function NewListScreen(props) {
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const {t} = useTranslation();
 
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
     initialValues: { nameList: "", description: "" },
@@ -45,7 +46,7 @@ export default function NewListScreen(props) {
       props.navigation.navigate("Lists");
     } catch (error) {
       toast.show({
-        title: "Um erro inesperado ocorreu no servidor",
+        title: t("errorServerDefault"),
         status: "error",
       });
       setLoading(false);
@@ -56,7 +57,7 @@ export default function NewListScreen(props) {
     <SafeAreaView style={style.container}>
       <Center width="90%" mx="auto" mt={10}>
         <FormControl>
-          <FormControl.Label>Nome da lista</FormControl.Label>
+          <FormControl.Label>{t("nameList")}</FormControl.Label>
           <Input
             type="text"
             onChangeText={handleChange("nameList")}
@@ -76,7 +77,7 @@ export default function NewListScreen(props) {
         </FormControl>
 
         <FormControl>
-          <FormControl.Label>Descrição</FormControl.Label>
+          <FormControl.Label>{t("description")}</FormControl.Label>
           <TextArea
             onChangeText={handleChange("description")}
             onBlur={handleBlur("description")}

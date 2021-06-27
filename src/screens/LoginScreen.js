@@ -13,6 +13,8 @@ import {
   useToast,
 } from "native-base";
 
+import {useTranslation} from 'react-i18next';
+
 // Validação e controle do formulário
 import { useFormik } from "formik";
 import { LoginSchema } from "../validationSchemas";
@@ -21,6 +23,8 @@ export default function LoginScreen(props) {
   const { login } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  const {t} = useTranslation();
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
@@ -48,7 +52,7 @@ export default function LoginScreen(props) {
       // Erro do servidor
       else {
         toast.show({
-          title: "Um erro inesperado ocorreu no servidor",
+          title: t("errorServerDefault"),
           status: "error",
         });
       }
@@ -68,7 +72,7 @@ export default function LoginScreen(props) {
         />
 
         <FormControl marginTop={10} marginBottom={5}>
-          <FormControl.Label>Email ou nome de usuário</FormControl.Label>
+          <FormControl.Label>{t("emailOrUsername")}</FormControl.Label>
           <Input
             autoCapitalize="none"
             type="text"
@@ -89,7 +93,7 @@ export default function LoginScreen(props) {
         </FormControl>
 
         <FormControl>
-          <FormControl.Label>Senha</FormControl.Label>
+          <FormControl.Label>{t("password")}</FormControl.Label>
           <Input
             type="password"
             onBlur={handleBlur("password")}

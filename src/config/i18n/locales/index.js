@@ -1,27 +1,58 @@
-import i18n from "i18n-js";
-import * as Localization from "expo-localization";
-import enUS from "./enUS";
-import ptBR from "./ptBR";
+import {NativeModules, Platform} from 'react-native';
+import i18n from 'i18next';
+import {initReactI18next} from 'react-i18next';
+import pt_br from './ptBR';
+import en_us from './enUS';
 
-// Pega os valores capturados pelo expo-localization e normaliza para os nomes
-// das traduções que o i18n oferece
-const normalizeTranslate = {
-  pt: "pt-BR",
-  "pt-BR": "pt-BR",
-  en: "en-US",
-  "en-US": "en-US",
+const resources = {
+  pt_BR: {
+    translation: pt_br
+  },
+  en_US: {
+    translation: en_us
+  }
 };
 
-// Configurando traduções
-i18n.translations = {
-  en: enUS,
-  pt: ptBR,
-};
-i18n.fallbacks = true;
-i18n.defaultLocale = "en";
-i18n.locale = normalizeTranslate[Localization.locale];
+const languageDetector = {
+  type: 'languageDetector',
+  async: true,
+  detect: async callback => {
+    
+    // const storedLanguage = await AsyncStorage.getItem('language');
+    // if (storedLanguage) {
+    //   return callback(storedLanguage);
+    // }
 
-// Função de tradução
-export function t(key) {
-  return i18n.t(key);
-}
+    // let phoneLanguage = null;
+    // if (Platform.OS === 'android') {
+    //   phoneLanguage = NativeModules.I18Manager.localeIdentifier;
+    // } else {
+    //   phoneLanguage = NativeModules.SettingsManager.settings.AppleLocale;
+    // }
+
+    // phoneLanguage = phoneLanguage.replace('_', '-');
+
+    return callback('en_US');
+  },
+  init: () => {},
+  cacheUserLanguage: language => {
+    
+    // AsyncStorage.setItem('language', language);
+  },
+};
+
+i18n
+  .use(languageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: "pt_BR",
+
+    keySeparator: false,
+
+    interpolation: {
+      escapeValue: false
+    }
+  });
+
+export default i18n;

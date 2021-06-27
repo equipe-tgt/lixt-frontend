@@ -13,6 +13,7 @@ import {
 } from "native-base";
 
 import UserService from "../services/UserService";
+import {useTranslation} from 'react-i18next';
 
 // Validação e controle do formulário
 import { ResetPasswordSchema } from "../validationSchemas/index";
@@ -21,6 +22,8 @@ import { useFormik } from "formik";
 export default function ForgotPasswordScreen(props) {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  const {t} = useTranslation();
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
@@ -37,19 +40,19 @@ export default function ForgotPasswordScreen(props) {
     try {
       await UserService.resetPassword(values.email);
       toast.show({
-        title: "Email enviado com sucesso",
+        title: t("emailSuccessfullySend"),
         status: "success",
       });
       props.navigation.navigate("Login");
     } catch (error) {
       if (error.response.status === 404) {
         toast.show({
-          title: "Este usuário não existe",
+          title: t("userDoesntExists"),
           status: "warning",
         });
       } else {
         toast.show({
-          title: "Um erro inesperado ocorreu no servidor",
+          title: t("errorServerDefault"),
           status: "warning",
         });
       }
@@ -99,7 +102,7 @@ export default function ForgotPasswordScreen(props) {
             paddingY={4}
             mt={5}
           >
-            Ok, quero continuar
+            {t("okContinue")}
           </Button>
         </Box>
 
@@ -109,7 +112,7 @@ export default function ForgotPasswordScreen(props) {
               props.navigation.navigate("Login");
             }}
           >
-            <Text color="blue.500"> Voltar à tela de login</Text>
+            <Text color="blue.500">{t("backToLoginScreen")}</Text>
           </Link>
         </Box>
       </Center>

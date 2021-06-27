@@ -43,3 +43,14 @@ export const ListSchema = Yup.object().shape({
     "Este campo deve possuir até 200 caracteres"
   ),
 });
+
+export const UpdatePasswordSchema = Yup.object().shape({
+  password: Yup.string()
+    .min(8, "A senha deve ter no mínimo 8 caracteres")
+    .max(20, "Senha muito longa")
+    .required("Este campo é obrigatório"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "As senhas não são iguais")
+    .required("Este campo é obrigatório"),
+});
+
