@@ -9,6 +9,14 @@ const ListService = {
     });
   },
 
+  getListById: (id, user) => {
+    return BaseService.get(`/list/${id}`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
+
   createList: (list, user) => {
     return BaseService.post("/list", list, {
       headers: {

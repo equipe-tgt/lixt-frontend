@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView, RefreshControl, Keyboard } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Button,
   Text,
@@ -19,6 +20,7 @@ import {
 } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { screenBasicStyle as style } from "../styles/style";
+import _ from "lodash";
 
 import { useTranslation } from "react-i18next";
 import ListService from "../services/ListService";
@@ -37,10 +39,23 @@ export default function ListScreen(props) {
   const [productsFound, setProductsFound] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Ao montar o componente busca as listas e passa a "ouvir" se algum usuário voltou para essa tela
+  // Ao montar o componente busca as listas
   useEffect(() => {
     fetchLists();
   }, []);
+
+  // Hook que dispara toda vez que esta tela for focada
+  useFocusEffect(() => {
+    // Verifica se alguma tela enviou props para essa
+    // Caso a tela de nova lista tenha enviado uma lista nova, inclui na lista das listas
+    // e seleciona ela automaticamente
+    if (props.route.params && props.route.params.newList) {
+      const newList = props.route.params.newList;
+      setLists([...lists, newList]);
+      setSelectedList(newList);
+      props.route.params.newList = null;
+    }
+  });
 
   const fetchLists = async () => {
     try {
@@ -73,9 +88,9 @@ export default function ListScreen(props) {
       setLists(lists.filter((list) => list.id !== listIdToDelete));
       setSelectedList(lists[0]);
 
-      toast.info({
+      toast.show({
         title: "Lista removida",
-        status: "success",
+        status: "info",
       });
     } catch (error) {
       toast.show({
@@ -113,6 +128,7 @@ export default function ListScreen(props) {
       name,
       measureType,
       measureValue,
+      product: value,
     };
 
     try {
@@ -121,11 +137,12 @@ export default function ListScreen(props) {
         user
       );
 
-      // Insere o produto adicionado em uma cópia da lista atual e depois atribui a lista atual
-      let copyOfList = Object.assign({}, list);
-      copyOfList.productsOfList.concat(data);
+      // Faz uma cópia do objeto original e depois atribui ao state com o produto
+      // adicionado
+      const objCopy = Object.assign({}, selectedList);
+      objCopy.productsOfList.push(data);
 
-      setSelectedList(copyOfList);
+      setSelectedList(objCopy);
 
       // Esconde o teclado
       Keyboard.dismiss();
@@ -138,7 +155,7 @@ export default function ListScreen(props) {
   };
 
   const listItemsByCategory = () => {
-    if (selectedList) {
+    if (selectedList && selectedList.productsOfList) {
       // Agrupa os produtos por categorias
       let groupedProducts = selectedList.productsOfList.reduce(
         (accumlator, currentProductOfList) => {
@@ -256,60 +273,62 @@ export default function ListScreen(props) {
           ) : null}
 
           {/* Itera por cada categoria dos produtos */}
-          {Object.keys(listItemsByCategory()).map((category, index) => {
-            return (
-              <Box key={index} my={3}>
-                <Heading
-                  style={{ textTransform: "uppercase", letterSpacing: 4 }}
-                  mb={2}
-                  fontWeight="normal"
-                  size="sm"
-                >
-                  {category}
-                </Heading>
-
-                {/* Mostra todos os produtos pertencentes àquela categoria */}
-                {listItemsByCategory()[category].map((p) => {
-                  return (
-                    <Box
-                      key={p.id}
-                      my={3}
-                      flexDirection="row"
-                      justifyContent="space-between"
-                      alignItems="center"
+          {Object.keys(listItemsByCategory()).length > 0
+            ? Object.keys(listItemsByCategory()).map((category, index) => {
+                return (
+                  <Box key={index} my={3}>
+                    <Heading
+                      style={{ textTransform: "uppercase", letterSpacing: 4 }}
+                      mb={2}
+                      fontWeight="normal"
+                      size="sm"
                     >
-                      <Box
-                        onPress={() => {
-                          alert("hi");
-                        }}
-                      >
-                        <Text fontWeight="bold">{p.name}</Text>
-                        <Text>
-                          {p.measureValue} {p.measureType}
-                        </Text>
-                        <Text>{p.price ? `R$ ${p.price}` : "R$ 0,00"}</Text>
-                      </Box>
+                      {category}
+                    </Heading>
 
-                      <Menu
-                        trigger={(triggerProps) => {
-                          return (
-                            <Pressable p={3} {...triggerProps}>
-                              <Ionicons
-                                color="#27272a"
-                                name="ellipsis-vertical"
-                              />
-                            </Pressable>
-                          );
-                        }}
-                      >
-                        <Menu.Item>opção</Menu.Item>
-                      </Menu>
-                    </Box>
-                  );
-                })}
-              </Box>
-            );
-          })}
+                    {/* Mostra todos os produtos pertencentes àquela categoria */}
+                    {listItemsByCategory()[category].map((p) => {
+                      return (
+                        <Box
+                          key={p.id}
+                          my={3}
+                          flexDirection="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <Box
+                            onPress={() => {
+                              alert("hi");
+                            }}
+                          >
+                            <Text fontWeight="bold">{p.name}</Text>
+                            <Text>
+                              {p.measureValue} {p.measureType}
+                            </Text>
+                            <Text>{p.price ? `R$ ${p.price}` : "R$ 0,00"}</Text>
+                          </Box>
+
+                          <Menu
+                            trigger={(triggerProps) => {
+                              return (
+                                <Pressable p={3} {...triggerProps}>
+                                  <Ionicons
+                                    color="#27272a"
+                                    name="ellipsis-vertical"
+                                  />
+                                </Pressable>
+                              );
+                            }}
+                          >
+                            <Menu.Item>opção</Menu.Item>
+                          </Menu>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                );
+              })
+            : null}
         </VStack>
       </ScrollView>
     </SafeAreaView>

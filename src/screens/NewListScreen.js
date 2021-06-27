@@ -14,7 +14,7 @@ import {
 import { AuthContext } from "../context/AuthProvider";
 import ListService from "../services/ListService";
 
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 // Validação e controle do formulário
 import { useFormik } from "formik";
@@ -24,7 +24,7 @@ export default function NewListScreen(props) {
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
     initialValues: { nameList: "", description: "" },
@@ -38,14 +38,19 @@ export default function NewListScreen(props) {
   const createList = async () => {
     setLoading(true);
     try {
-      await ListService.createList({ ...values, ownerId: user.id }, user);
+      const { data } = await ListService.createList(
+        { ...values, ownerId: user.id },
+        user
+      );
       toast.show({
         title: "Lista criada com sucesso!",
         status: "success",
       });
 
       // Retorna para a tela de listas
-      props.navigation.navigate("Lists");
+      props.navigation.navigate("Lists", {
+        newList: data,
+      });
     } catch (error) {
       toast.show({
         title: t("errorServerDefault"),
