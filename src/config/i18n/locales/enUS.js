@@ -18,7 +18,8 @@ export default {
 
     updating: "Updating",
     registering: "Registering",
-    
+    sendingMail: "Sending email",
+
     search: "Search",
     logout: "Log out",
     yourProfile: "Your profile",

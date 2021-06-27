@@ -96,7 +96,7 @@ export default function ForgotPasswordScreen(props) {
           </Text>
           <Button
             isLoading={loading}
-            isLoadingText="Enviando email"
+            isLoadingText={t("sendingMail")}
             onPress={handleSubmit}
             paddingX={20}
             paddingY={4}

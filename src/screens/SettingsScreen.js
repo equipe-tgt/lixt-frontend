@@ -4,6 +4,7 @@ import { Text, FormControl, Center, Box, Select } from "native-base";
 import { screenBasicStyle as style } from "../styles/style";
 import {useTranslation} from 'react-i18next';
 
+import {setLanguageApp, getLanguageApp} from '../services/LanguageService'
 import i18n from '../config/i18n/locales/index';
 
 export default function SettingsScreen() {
@@ -12,10 +13,11 @@ export default function SettingsScreen() {
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
+    setLanguageApp(lng);
     setLanguage(lng)
   }
 
-  const [language, setLanguage] = useState('en_US')
+  const [language, setLanguage] = useState(getLanguageApp())
 
   return (
     <SafeAreaView style={style.container}>

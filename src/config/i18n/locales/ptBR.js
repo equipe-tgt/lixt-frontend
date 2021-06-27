@@ -18,6 +18,7 @@ export default {
 
     updating: "Atualizando",
     registering: "Registrando",
+    sendingMail: "Enviando email",
 
     search: "Buscar",
     logout: "Sair",
