@@ -8,7 +8,7 @@ export default {
     name: "Name",
     username: "Username",
     password: "Password",
-    nameList: "Name of List",
+    nameList: "List name",
     description: "Description",
     confirmPassword: "Confirm the password",
 
@@ -34,4 +34,5 @@ export default {
     passwordUpdatedSucessfully: "Password updated successfully",
     errorServerDefault: "An unexpected error has occurred on the server",
 
+    edit: "Editar"
 }
