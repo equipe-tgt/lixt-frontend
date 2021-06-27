@@ -11,6 +11,9 @@ import {
   FormControl,
   VStack,
   ScrollView,
+  Menu,
+  useToast,
+  Pressable,
 } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { screenBasicStyle as style } from "../styles/style";
@@ -19,12 +22,18 @@ import ListService from "../services/ListService";
 import { AuthContext } from "../context/AuthProvider";
 
 export default function ListScreen(props) {
+  const toast = useToast();
   const { user } = useContext(AuthContext);
 
   const [lists, setLists] = useState([]);
   const [selectedList, setSelectedList] = useState({});
   const [productName, setProductName] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+
+  // Ao montar o componente busca as listas
+  useEffect(() => {
+    fetchLists();
+  }, []);
 
   const fetchLists = async () => {
     try {
@@ -39,15 +48,35 @@ export default function ListScreen(props) {
         setSelectedList(data[0]);
       }
     } catch (error) {
-      console.log(error);
+      toast.show({
+        title: "Não foi possível buscar suas listas",
+        status: "warning",
+      });
     } finally {
       setRefreshing(false);
     }
   };
 
-  useEffect(() => {
-    fetchLists();
-  }, []);
+  const deleteList = async () => {
+    try {
+      let listIdToDelete = selectedList.id;
+      await ListService.deleteList(listIdToDelete, user);
+
+      // Filtra as listas depois de uma deleção ocorrer
+      setLists(lists.filter((list) => list.id !== listIdToDelete));
+      setSelectedList(lists[0]);
+
+      toast.info({
+        title: "Lista removida",
+        status: "success",
+      });
+    } catch (error) {
+      toast.show({
+        title: "Não foi possível deletar esta lista",
+        status: "warning",
+      });
+    }
+  };
 
   return (
     <SafeAreaView style={style.container}>
@@ -83,12 +112,27 @@ export default function ListScreen(props) {
             props.navigation.navigate("NewList");
           }}
         />
-        <Button
-          variant="ghost"
-          startIcon={
-            <Ionicons size={20} color="#27272a" name="ellipsis-vertical" />
-          }
-        />
+
+        <Menu
+          trigger={(triggerProps) => {
+            return (
+              <Pressable {...triggerProps}>
+                <Ionicons size={20} color="#27272a" name="ellipsis-vertical" />
+              </Pressable>
+            );
+          }}
+        >
+          {/* Só mostra a opção de deletar lista se ele for o dono da lista */}
+          {selectedList.ownerId === user.id ? (
+            <Menu.Item
+              onPress={() => {
+                deleteList();
+              }}
+            >
+              Deletar lista
+            </Menu.Item>
+          ) : null}
+        </Menu>
       </HStack>
       <ScrollView
         refreshControl={

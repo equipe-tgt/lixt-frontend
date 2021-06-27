@@ -16,6 +16,14 @@ const ListService = {
       },
     });
   },
+
+  deleteList: (listId, user) => {
+    return BaseService.delete(`/list/${listId}`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
 };
 
 export default ListService;
