@@ -21,6 +21,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { screenBasicStyle as style } from "../styles/style";
 import _ from "lodash";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTranslation } from "react-i18next";
 import ListService from "../services/ListService";
@@ -67,7 +68,16 @@ export default function ListScreen(props) {
       // variável da lista selecionada
       if (data.length > 0) {
         setLists([...data]);
-        setSelectedList(data[0]);
+        try {
+          const lastSelectedList = await AsyncStorage.getItem('lastSelectedList');
+          if (lastSelectedList) {
+            setSelectedList(data.find(list => list.id === Number(lastSelectedList)));
+          } else {
+            setSelectedList(data[0]);
+          }
+        } catch (error) {
+          console.log({ error });
+        }
       }
     } catch (error) {
       toast.show({
@@ -172,6 +182,14 @@ export default function ListScreen(props) {
     return {};
   };
 
+  const storeListId = async (listId) => {
+    try {
+      await AsyncStorage.setItem('lastSelectedList', listId)
+    } catch (e) {
+      console.log({ error });
+    }
+  }
+
   return (
     <SafeAreaView style={style.container}>
       {/* Header com o select de listas e opções da lista */}
@@ -188,14 +206,15 @@ export default function ListScreen(props) {
       >
         {/* Select de listas no header */}
         <Select
-          selectedValue={selectedList}
+          selectedValue={selectedList.id}
           width="70%"
-          onValueChange={(itemValue) => {
-            setSelectedList(itemValue);
+          onValueChange={(listId) => {
+            setSelectedList(lists.find(list => list.id === Number(listId)));
+            storeListId(listId);
           }}
         >
           {lists.map((list) => (
-            <Select.Item key={list.id} label={list.nameList} value={list} />
+            <Select.Item key={list.id} value={list.id} label={list.nameList} />
           ))}
         </Select>
         {/* Botão nova lista */}
