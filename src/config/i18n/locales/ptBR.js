@@ -35,4 +35,5 @@ export default {
     passwordUpdatedSucessfully: "Senha atualizada com sucesso!",
     errorServerDefault: "Um erro inesperado ocorreu no servidor",
 
+    edit: "Editar"
 };

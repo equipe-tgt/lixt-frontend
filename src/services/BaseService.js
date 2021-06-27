@@ -7,7 +7,7 @@ import axios from "axios";
 // Define o valor da URL que será utilizada para consulta da API baseado na variável __DEV__ que informa
 // se está em produção ou em desenvolvimento
 // USAR SEU IP pegue o valor de ipv4 gerado pelo comando "ipconfig" no cmd
-const BASE_URL = __DEV__ ? "http://192.168.15.12:8080" : "";
+const BASE_URL = __DEV__ ? "http://192.168.1.186:8080" : "";
 /**
  * Cria um objeto customizado do axios para fazer requisições
  * a partir das configurações da aplicação

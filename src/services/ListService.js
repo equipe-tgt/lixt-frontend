@@ -9,8 +9,24 @@ const ListService = {
     });
   },
 
+  getListById: (id, user) => {
+    return BaseService.get(`/list/${id}`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
+
   createList: (list, user) => {
     return BaseService.post("/list", list, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
+
+  deleteList: (listId, user) => {
+    return BaseService.delete(`/list/${listId}`, {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
