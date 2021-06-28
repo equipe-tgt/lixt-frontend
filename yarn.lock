@@ -2018,7 +2018,7 @@
   "resolved" "https://registry.npmjs.org/@react-native-aria/utils/-/utils-0.2.7.tgz"
   "version" "0.2.7"
 
-"@react-native-async-storage/async-storage@^1.13.0":
+"@react-native-async-storage/async-storage@^1.15.5":
   "integrity" "sha512-4AYehLH39B9a8UXCMf3ieOK+G61wGMP72ikx6/XSMA0DUnvx0PgaeaT2Wyt06kTrDTy8edewKnbrbeqwaM50TQ=="
   "resolved" "https://registry.npmjs.org/@react-native-async-storage/async-storage/-/async-storage-1.15.5.tgz"
   "version" "1.15.5"

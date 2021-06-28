@@ -50,4 +50,5 @@ export default {
 
   creating: "Criando",
   add: "Adicionar",
+  remove: "Remover"
 };

@@ -49,5 +49,6 @@ export default {
   editing: "Editing",
 
   creating: "Creating",
-  add: "Add"
+  add: "Add",
+  remove: "Remove"
 };

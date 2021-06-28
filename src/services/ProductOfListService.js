@@ -8,6 +8,13 @@ const ProductOfListService = {
       },
     });
   },
+  removeProductOfList: (id, user) => {
+    return BaseService.delete(`/productOfList/${id}`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    })
+  },
 };
 
 export default ProductOfListService;

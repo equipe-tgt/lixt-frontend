@@ -172,6 +172,32 @@ export default function ListScreen(props) {
     }
   };
 
+  const deleteProductOfList = async (id) => {
+    try {
+      await ProductOfListService.removeProductOfList(id, user);
+
+      // Faz uma cópia do objeto original e depois atribui ao state com o produto
+      // adicionado
+      const objCopy = Object.assign({}, selectedList);
+      objCopy.productsOfList = objCopy.productsOfList.filter(
+        (p) => p.id !== id
+      );
+
+      setSelectedList(objCopy);
+
+      toast.show({
+        title: "Item foi removido da lista",
+        status: "info",
+      });
+    } catch (error) {
+      console.log({error});
+      toast.show({
+        title: "Não foi possível remover o item da lista",
+        status: "warning",
+      });
+    }
+  };
+
   const listItemsByCategory = () => {
     if (selectedList && selectedList.productsOfList) {
       // Agrupa os produtos por categorias
@@ -285,7 +311,11 @@ export default function ListScreen(props) {
 
             {/* Produtos encontrados */}
             {productsFound.length > 0 ? (
-              <List borderBottomRadius={3} borderTopColor="transparent" space="md">
+              <List
+                borderBottomRadius={3}
+                borderTopColor="transparent"
+                space="md"
+              >
                 <ScrollView keyboardShouldPersistTaps="always">
                   {productsFound.map((product) => (
                     <List.Item
@@ -366,6 +396,7 @@ export default function ListScreen(props) {
                                 return (
                                   <Pressable p={3} {...triggerProps}>
                                     <Ionicons
+                                      size={18}
                                       color="#27272a"
                                       name="ellipsis-vertical"
                                     />
@@ -373,7 +404,13 @@ export default function ListScreen(props) {
                                 );
                               }}
                             >
-                              <Menu.Item>opção</Menu.Item>
+                              <Menu.Item
+                                onPress={() => {
+                                  deleteProductOfList(p.id);
+                                }}
+                              >
+                                {t("remove")}
+                              </Menu.Item>
                             </Menu>
                           </Pressable>
                         );
