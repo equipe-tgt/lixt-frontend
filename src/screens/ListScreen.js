@@ -17,11 +17,12 @@ import {
   Pressable,
   List,
   Heading,
+  Center,
 } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { screenBasicStyle as style } from "../styles/style";
 import _ from "lodash";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useTranslation } from "react-i18next";
 import ListService from "../services/ListService";
@@ -35,7 +36,10 @@ export default function ListScreen(props) {
   const { t } = useTranslation();
 
   const [lists, setLists] = useState([]);
-  const [selectedList, setSelectedList] = useState({ productsOfList: [] });
+  const [selectedList, setSelectedList] = useState({
+    productsOfList: [],
+    id: null,
+  });
   const [productName, setProductName] = useState("");
   const [productsFound, setProductsFound] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -69,9 +73,13 @@ export default function ListScreen(props) {
       if (data.length > 0) {
         setLists([...data]);
         try {
-          const lastSelectedList = await AsyncStorage.getItem('lastSelectedList');
+          const lastSelectedList = await AsyncStorage.getItem(
+            "lastSelectedList"
+          );
           if (lastSelectedList) {
-            setSelectedList(data.find(list => list.id === Number(lastSelectedList)));
+            setSelectedList(
+              data.find((list) => list.id === Number(lastSelectedList))
+            );
           } else {
             setSelectedList(data[0]);
           }
@@ -184,11 +192,11 @@ export default function ListScreen(props) {
 
   const storeListId = async (listId) => {
     try {
-      await AsyncStorage.setItem('lastSelectedList', listId)
-    } catch (e) {
+      await AsyncStorage.setItem("lastSelectedList", String(listId));
+    } catch (error) {
       console.log({ error });
     }
-  }
+  };
 
   return (
     <SafeAreaView style={style.container}>
@@ -206,12 +214,13 @@ export default function ListScreen(props) {
       >
         {/* Select de listas no header */}
         <Select
-          selectedValue={selectedList.id}
+          selectedValue={selectedList?.id}
           width="70%"
           onValueChange={(listId) => {
-            setSelectedList(lists.find(list => list.id === Number(listId)));
+            setSelectedList(lists.find((list) => list.id === Number(listId)));
             storeListId(listId);
           }}
+          isDisabled={lists.length === 0}
         >
           {lists.map((list) => (
             <Select.Item key={list.id} value={list.id} label={list.nameList} />
@@ -237,7 +246,7 @@ export default function ListScreen(props) {
           }}
         >
           {/* Só mostra a opção de deletar lista se ele for o dono da lista */}
-          {selectedList.ownerId === user.id ? (
+          {selectedList && selectedList.ownerId === user.id ? (
             <Menu.Item
               onPress={() => {
                 deleteList();
@@ -248,108 +257,148 @@ export default function ListScreen(props) {
           ) : null}
         </Menu>
       </HStack>
-      <ScrollView
-        keyboardShouldPersistTaps="always"
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={fetchLists}
-            scrollEnabled={productName.length === 0}
-          />
-        }
-      >
-        <VStack w="90%" mx="auto">
-          {/*  Input de buscas */}
-          <FormControl mb={5}>
-            <FormControl.Label>{t("search")}</FormControl.Label>
-            <Input
-              value={productName}
-              onChangeText={(value) => {
-                setProductName(value);
-                searchProducts(value);
-              }}
+
+      {/* Se o usuário possuir listas as mostra, caso não mostre um botão para adicionar a primeira lista */}
+      {lists.length > 0 ? (
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={fetchLists}
+              scrollEnabled={productName.length === 0}
             />
-          </FormControl>
+          }
+        >
+          <VStack w="90%" mx="auto">
+            {/*  Input de buscas */}
+            <FormControl>
+              <FormControl.Label>{t("search")}</FormControl.Label>
+              <Input
+                value={productName}
+                onChangeText={(value) => {
+                  setProductName(value);
+                  searchProducts(value);
+                }}
+              />
+            </FormControl>
 
-          {/* Produtos encontrados */}
-          {productsFound.length > 0 ? (
-            <List borderBottomRadius={3} space="md">
-              <ScrollView keyboardShouldPersistTaps="always">
-                {productsFound.map((product) => (
-                  <List.Item
-                    py={4}
-                    key={product.id}
-                    onPress={() => {
-                      addToList(product, selectedList);
-                    }}
-                    _pressed={{ bg: "primary.500" }}
-                  >
-                    {product.name}
-                  </List.Item>
-                ))}
-              </ScrollView>
-            </List>
-          ) : null}
-
-          {/* Itera por cada categoria dos produtos */}
-          {Object.keys(listItemsByCategory()).length > 0
-            ? Object.keys(listItemsByCategory()).map((category, index) => {
-                return (
-                  <Box key={index} my={3}>
-                    <Heading
-                      style={{ textTransform: "uppercase", letterSpacing: 4 }}
-                      mb={2}
-                      fontWeight="normal"
-                      size="sm"
+            {/* Produtos encontrados */}
+            {productsFound.length > 0 ? (
+              <List borderBottomRadius={3} borderTopColor="transparent" space="md">
+                <ScrollView keyboardShouldPersistTaps="always">
+                  {productsFound.map((product) => (
+                    <List.Item
+                      py={4}
+                      key={product.id}
+                      onPress={() => {
+                        addToList(product, selectedList);
+                      }}
+                      _pressed={{ bg: "primary.500" }}
                     >
-                      {category}
-                    </Heading>
+                      {product.name}
+                    </List.Item>
+                  ))}
+                </ScrollView>
+              </List>
+            ) : null}
 
-                    {/* Mostra todos os produtos pertencentes àquela categoria */}
-                    {listItemsByCategory()[category].map((p) => {
-                      return (
-                        <Box
-                          key={p.id}
-                          my={3}
-                          flexDirection="row"
-                          justifyContent="space-between"
-                          alignItems="center"
-                        >
-                          <Box
+            {/* Se a pessoa não encontrou o produto desejado dá a opção para criar um novo */}
+            {productName.length > 3 && productsFound.length === 0 ? (
+              <List borderBottomRadius={3} space="md">
+                <List.Item
+                  _pressed={{ bg: "primary.500" }}
+                  onPress={() => {
+                    props.navigation.navigate("NewProduct", {
+                      productName: productName,
+                    });
+                  }}
+                >
+                  {t("add")} "{productName}"
+                </List.Item>
+              </List>
+            ) : null}
+
+            {/* Itera por cada categoria dos produtos */}
+            {Object.keys(listItemsByCategory()).length > 0
+              ? Object.keys(listItemsByCategory()).map((category, index) => {
+                  return (
+                    <Box key={index} my={3}>
+                      <Heading
+                        style={{ textTransform: "uppercase", letterSpacing: 4 }}
+                        mb={2}
+                        fontWeight="normal"
+                        size="sm"
+                      >
+                        {category}
+                      </Heading>
+
+                      {/* Mostra todos os produtos pertencentes àquela categoria */}
+                      {listItemsByCategory()[category].map((p) => {
+                        return (
+                          <Pressable
+                            key={p.id}
+                            my={3}
+                            flexDirection="row"
+                            justifyContent="space-between"
+                            alignItems="center"
                             onPress={() => {
-                              alert("hi");
-                            }}
-                          >
-                            <Text fontWeight="bold">{p.name}</Text>
-                            <Text>
-                              {p.measureValue} {p.measureType}
-                            </Text>
-                            <Text>{p.price ? `R$ ${p.price}` : "R$ 0,00"}</Text>
-                          </Box>
-
-                          <Menu
-                            trigger={(triggerProps) => {
-                              return (
-                                <Pressable p={3} {...triggerProps}>
-                                  <Ionicons
-                                    color="#27272a"
-                                    name="ellipsis-vertical"
-                                  />
-                                </Pressable>
+                              props.navigation.navigate(
+                                "ProductOfListDetails",
+                                {
+                                  product: p,
+                                }
                               );
                             }}
                           >
-                            <Menu.Item>opção</Menu.Item>
-                          </Menu>
-                        </Box>
-                      );
-                    })}
-                  </Box>
-                );
-              })
-            : null}
-        </VStack>
-      </ScrollView>
+                            <Box>
+                              <Text fontWeight="bold">{p.name}</Text>
+                              <Text>
+                                {p.measureValue} {p.measureType}
+                              </Text>
+                              <Text>
+                                {p.price ? `R$ ${p.price}` : "R$ 0,00"}
+                              </Text>
+                            </Box>
+
+                            <Menu
+                              trigger={(triggerProps) => {
+                                return (
+                                  <Pressable p={3} {...triggerProps}>
+                                    <Ionicons
+                                      color="#27272a"
+                                      name="ellipsis-vertical"
+                                    />
+                                  </Pressable>
+                                );
+                              }}
+                            >
+                              <Menu.Item>opção</Menu.Item>
+                            </Menu>
+                          </Pressable>
+                        );
+                      })}
+                    </Box>
+                  );
+                })
+              : null}
+          </VStack>
+        </ScrollView>
+      ) : (
+        <Center w="90%" mx="auto">
+          <Text textAlign="center">{t("noListsFound")}</Text>
+          <Button
+            onPress={() => {
+              props.navigation.navigate("NewList");
+            }}
+            marginTop={5}
+            paddingX={20}
+            paddingY={4}
+          >
+            {t("createMyFirstList")}
+          </Button>
+        </Center>
+      )}
     </SafeAreaView>
   );
 }

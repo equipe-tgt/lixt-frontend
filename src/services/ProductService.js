@@ -8,6 +8,13 @@ const ProductService = {
       },
     });
   },
+  createProduct: (product, user) => {
+    return BaseService.post("/product", product, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
 };
 
 export default ProductService;

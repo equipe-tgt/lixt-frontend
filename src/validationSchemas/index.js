@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import MEASURE_TYPES from "../utils/measureTypes";
 
 export const LoginSchema = Yup.object().shape({
   username: Yup.string().required("Este campo é obrigatório"),
@@ -54,3 +55,15 @@ export const UpdatePasswordSchema = Yup.object().shape({
     .required("Este campo é obrigatório"),
 });
 
+export const ProductOfListSchema = Yup.object().shape({
+  price: Yup.number().typeError("Este campo deve ser numérico"),
+  amount: Yup.number().typeError("Este campo deve ser numérico"),
+  measureValue: Yup.number().typeError("Este campo deve ser numérico"),
+});
+
+export const ProductSchema = Yup.object().shape({
+  name: Yup.string()
+    .max(45, "Este campo deve possuir até 45 caracteres")
+    .required("Este campo é obrigatório"),
+  measureValue: Yup.number().typeError("Este campo deve ser numérico"),
+});

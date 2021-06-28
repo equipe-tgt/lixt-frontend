@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import ListScreen from "../screens/ListScreen";
 import NewListScreen from "../screens/NewListScreen";
+import NewProductScreen from "../screens/NewProductScreen";
 import ProductOfListDetails from "../screens/ProductOfListDetails";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +34,11 @@ export default function ListStack() {
         name="ProductOfListDetails"
         options={{ title: t("edit"), headerStyle: stackHeaderStyle }}
         component={ProductOfListDetails}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="NewProduct"
+        options={{ title: t("newProduct"), headerStyle: stackHeaderStyle }}
+        component={NewProductScreen}
       ></Stack.Screen>
     </Stack.Navigator>
   );
