@@ -13,7 +13,18 @@ const ProductOfListService = {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
-    })
+    });
+  },
+  editProductOfList: (productOfList, user) => {
+    return BaseService.put(
+      `/productOfList/${productOfList.id}`,
+      productOfList,
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
   },
 };
 

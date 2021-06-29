@@ -20,12 +20,13 @@ export default function Routes() {
         const userString = await AsyncStorage.getItem("user");
         if (userString) {
           let { username, password } = JSON.parse(userString);
-          login(username, password);
+          await login(username, password);
         }
 
         setLoading(false);
       } catch (error) {
         console.log(error);
+        return;
       }
     };
     doLogin();

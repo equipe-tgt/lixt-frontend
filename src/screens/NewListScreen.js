@@ -13,8 +13,7 @@ import {
 } from "native-base";
 import { AuthContext } from "../context/AuthProvider";
 import ListService from "../services/ListService";
-import {useTranslation} from 'react-i18next';
-
+import { useTranslation } from "react-i18next";
 
 // Validação e controle do formulário
 import { useFormik } from "formik";
@@ -110,7 +109,7 @@ export default function NewListScreen(props) {
           isLoadingText="Criando"
           onPress={handleSubmit}
         >
-          Salvar lista
+          {t("saveList")}
         </Button>
       </Center>
     </SafeAreaView>

@@ -56,9 +56,11 @@ export const UpdatePasswordSchema = Yup.object().shape({
 });
 
 export const ProductOfListSchema = Yup.object().shape({
-  price: Yup.number().typeError("Este campo deve ser numérico"),
-  amount: Yup.number().typeError("Este campo deve ser numérico"),
-  measureValue: Yup.number().typeError("Este campo deve ser numérico"),
+  price: Yup.string().matches(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/),
+  amount: Yup.string().matches(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/),
+  measureValue: Yup.string().matches(
+    /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/
+  ),
 });
 
 export const ProductSchema = Yup.object().shape({

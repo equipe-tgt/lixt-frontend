@@ -52,13 +52,15 @@ export default function ListScreen(props) {
   // Hook que dispara toda vez que esta tela for focada
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa
-    // Caso a tela de nova lista tenha enviado uma lista nova, inclui na lista das listas
-    // e seleciona ela automaticamente
-    if (props.route.params && props.route.params.newList) {
-      const newList = props.route.params.newList;
-      setLists([...lists, newList]);
-      setSelectedList(newList);
-      props.route.params.newList = null;
+    if (props.route.params) {
+      // Caso a tela de nova lista tenha enviado uma lista nova, inclui na lista das listas
+      // e seleciona ela automaticamente
+      if (props.route.params.newList) {
+        const newList = props.route.params.newList;
+        setLists([...lists, newList]);
+        setSelectedList(newList);
+        props.route.params.newList = null;
+      }
     }
   });
 
@@ -117,7 +119,6 @@ export default function ListScreen(props) {
       });
     }
   };
-
   /**
    * @todo tratar erros das requisições de search/add
    */
@@ -190,7 +191,7 @@ export default function ListScreen(props) {
         status: "info",
       });
     } catch (error) {
-      console.log({error});
+      console.log({ error });
       toast.show({
         title: "Não foi possível remover o item da lista",
         status: "warning",

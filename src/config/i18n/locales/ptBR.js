@@ -38,6 +38,7 @@ export default {
   createMyFirstList: "Criar minha primeira lista!",
 
   newProduct: "Novo produto",
+  saveList: "Salvar lista",
 
   edit: "Editar",
   price: "Preço",
