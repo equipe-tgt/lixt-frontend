@@ -10,10 +10,10 @@ import {
   Box,
   Image,
   useToast,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from "native-base";
 
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import UserService from "../services/UserService";
 
 // Validação do formulário
@@ -24,7 +24,7 @@ export default function RegisterScreen(props) {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
@@ -60,6 +60,8 @@ export default function RegisterScreen(props) {
       // Se o registro foi autorizado manda para o login
       props.navigation.navigate("Login");
     } catch (error) {
+      console.log({ error });
+
       // Usuário com dados repetidos
       if (error?.response?.status === 401) {
         toast.show({
@@ -155,7 +157,7 @@ export default function RegisterScreen(props) {
         </FormControl>
 
         <FormControl>
-          <FormControl.Label>{t('password')}</FormControl.Label>
+          <FormControl.Label>{t("password")}</FormControl.Label>
           <Input
             disabled={loading}
             onBlur={handleBlur("password")}
