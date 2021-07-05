@@ -27,17 +27,6 @@ const languageDetector = {
       return callback(storedLanguage);
     }
 
-    // let phoneLanguage = null;
-    // if (Platform.OS === 'android') {
-    //   phoneLanguage = NativeModules.I18Manager.localeIdentifier;
-    // } else {
-    //   phoneLanguage = NativeModules.SettingsManager.settings.AppleLocale;
-    // }
-
-    // phoneLanguage = phoneLanguage.replace('_', '-');
-
-    // return callback(phoneLanguage);
-
     return callback('en_US');
   },
   init: () => {},

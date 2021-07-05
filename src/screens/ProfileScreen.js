@@ -31,6 +31,20 @@ export default function ProfileScreen(props) {
           <Pressable
             style={styles.menuItem}
             onPress={() => {
+              props.navigation.navigate("Invitation");
+            }}
+          >
+            <Text fontSize="lg">{t("sendInvitation")}</Text>
+
+            <Ionicons name="chevron-forward" size={16}></Ionicons>
+          </Pressable>
+        </Box>
+
+
+        <Box py={5}>
+          <Pressable
+            style={styles.menuItem}
+            onPress={() => {
               props.navigation.navigate("UpdatePassword");
             }}
           >

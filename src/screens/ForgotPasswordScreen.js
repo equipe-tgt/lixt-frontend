@@ -45,6 +45,7 @@ export default function ForgotPasswordScreen(props) {
       });
       props.navigation.navigate("Login");
     } catch (error) {
+      console.log(error);
       if (error.response.status === 404) {
         toast.show({
           title: t("userDoesntExists"),

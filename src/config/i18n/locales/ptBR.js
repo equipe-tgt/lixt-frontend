@@ -51,5 +51,7 @@ export default {
 
   creating: "Criando",
   add: "Adicionar",
-  remove: "Remover"
+  remove: "Remover",
+
+  sendInvitation: "Convidar"
 };
