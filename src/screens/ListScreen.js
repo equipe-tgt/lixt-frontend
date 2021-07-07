@@ -29,13 +29,13 @@ import ListService from "../services/ListService";
 import ProductService from "../services/ProductService";
 import ProductOfListService from "../services/ProductOfListService";
 import { AuthContext } from "../context/AuthProvider";
+import { ListContext } from "../context/ListProvider";
 
 export default function ListScreen(props) {
   const toast = useToast();
   const { user } = useContext(AuthContext);
   const { t } = useTranslation();
-
-  const [lists, setLists] = useState([]);
+  const { lists, setLists } = useContext(ListContext);
   const [selectedList, setSelectedList] = useState({
     productsOfList: [],
     id: null,
@@ -43,6 +43,7 @@ export default function ListScreen(props) {
   const [productName, setProductName] = useState("");
   const [productsFound, setProductsFound] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(true);
 
   // Ao montar o componente busca as listas
   useEffect(() => {
@@ -96,6 +97,7 @@ export default function ListScreen(props) {
       });
     } finally {
       setRefreshing(false);
+      setLoadingScreen(false);
     }
   };
 
@@ -274,13 +276,24 @@ export default function ListScreen(props) {
         >
           {/* Só mostra a opção de deletar lista se ele for o dono da lista */}
           {selectedList && selectedList.ownerId === user.id ? (
-            <Menu.Item
-              onPress={() => {
-                deleteList();
-              }}
-            >
-              Deletar lista
-            </Menu.Item>
+            <Box>
+              <Menu.Item
+                onPress={() => {
+                  props.navigation.navigate("Invitation", {
+                    list: selectedList,
+                  });
+                }}
+              >
+                Convidar
+              </Menu.Item>
+              <Menu.Item
+                onPress={() => {
+                  deleteList();
+                }}
+              >
+                Deletar lista
+              </Menu.Item>
+            </Box>
           ) : null}
         </Menu>
       </HStack>
