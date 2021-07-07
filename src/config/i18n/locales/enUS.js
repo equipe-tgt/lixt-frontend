@@ -53,5 +53,6 @@ export default {
   add: "Add",
   remove: "Remove",
 
-  sendInvitation: "Invite"
+  sendInvitation: "Invite",
+  selectList: "Select a list"
 };
