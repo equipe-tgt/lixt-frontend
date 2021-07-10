@@ -4,7 +4,7 @@ import axios from "axios";
 // se está em produção ou em desenvolvimento
 // USAR SEU IP pegue o valor de ipv4 gerado pelo comando "ipconfig" no cmd
 const BASE_URL = __DEV__
-  ? "http://192.168.1.184:8080"
+  ? "http://192.168.1.186:8080"
   : "http://ec2co-ecsel-176ys9c8b1dae-319852006.us-east-1.elb.amazonaws.com:8080";
 console.log("BASE_URL: ", BASE_URL);
 

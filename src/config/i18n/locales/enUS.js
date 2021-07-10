@@ -54,5 +54,9 @@ export default {
   remove: "Remove",
 
   sendInvitation: "Invite",
-  selectList: "Select a list"
+  selectList: "Select a list",
+  invitations: "Invitations",
+  waitingInvitation: "Pending",
+  acceptedInvitation: "Accepted",
+  rejectedInvitation: "Rejected"
 };

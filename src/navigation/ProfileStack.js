@@ -5,6 +5,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import UpdatePasswordScreen from "../screens/UpdatePasswordScreen";
 import SendInvitationScreen from "../screens/SendInvitationScreen";
+import ManageInvitationsScreen from "../screens/ManageInvitationsScreen";
 
 import {useTranslation} from 'react-i18next';
 
@@ -48,9 +49,15 @@ export default function ProfileStack() {
 
       
       <Stack.Screen
-        name="Invitation"
+        name="Invite"
         options={{ title: t("sendInvitation"), headerStyle: stackHeaderStyle }}
         component={SendInvitationScreen}
+      ></Stack.Screen>
+
+            <Stack.Screen
+        name="Invitations"
+        options={{ title: t("invitations"), headerStyle: stackHeaderStyle }}
+        component={ManageInvitationsScreen}
       ></Stack.Screen>
     </Stack.Navigator>
   );

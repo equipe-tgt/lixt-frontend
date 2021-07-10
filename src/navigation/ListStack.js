@@ -43,7 +43,7 @@ export default function ListStack() {
         component={NewProductScreen}
       ></Stack.Screen>
       <Stack.Screen
-        name="Invitation"
+        name="Invite"
         options={{ title: t("sendInvitation"), headerStyle: stackHeaderStyle }}
         component={SendInvitationScreen}
       ></Stack.Screen>

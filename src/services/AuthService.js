@@ -18,10 +18,11 @@ const AuthService = {
     return BaseService.post("/oauth/token", dataLogin, {
       headers: {
         "Content-type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
         Authorization: `Basic ${Base64.btoa(STRING_API_AUTH)}`,
-      },
+      }
     });
-  }
+  },
 };
 
 export default AuthService;
