@@ -39,6 +39,7 @@ export default {
 
   newProduct: "Novo produto",
   saveList: "Salvar lista",
+  listInfo: "Informações da lista",
 
   edit: "Editar",
   price: "Preço",
@@ -56,7 +57,17 @@ export default {
   sendInvitation: "Convidar",
   selectList: "Selecione uma lista",
   invitations: "Convites",
+  sent: "Enviados",
+  received: "Recebidos",
+  accept: "Aceitar",
+  reject: "Rejeitar",
   waitingInvitation: "Pendente",
   acceptedInvitation: "Aceito",
-  rejectedInvitation: "Rejeitado"
+  rejectedInvitation: "Rejeitado",
+  hasInvitedYou: "te convidou para participar de",
+  youInvited: "Você convidou",
+  toJoin: "para participar de",
+  youAccepted: "Você aceitou este convite",
+  youRejected: "Você rejeitou este convite",
+  noInvitationsFound: "Nenhum convite foi encontrado"
 };

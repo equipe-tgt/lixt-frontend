@@ -79,7 +79,6 @@ export default function ManageInvitationsScreen() {
           receivedInvite.statusListMember = data.statusListMember;
         }
       }
-
     } catch (error) {
       toast.show({
         status: "warning",
@@ -109,8 +108,8 @@ export default function ManageInvitationsScreen() {
       <VStack>
         <Tabs onChange={getInvitations} isFitted={true}>
           <Tabs.Bar>
-            <Tabs.Tab>Enviados</Tabs.Tab>
-            <Tabs.Tab>Recebidos</Tabs.Tab>
+            <Tabs.Tab>{t("sent")}</Tabs.Tab>
+            <Tabs.Tab>{t("received")}</Tabs.Tab>
           </Tabs.Bar>
           <Tabs.Views>
             <Tabs.View>
@@ -119,8 +118,9 @@ export default function ManageInvitationsScreen() {
                   {sentInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
                       <Text fontSize="lg" fontWeight="bold">
-                        Você convidou {invite.userInvited} para participar de{" "}
-                        {invite.nameList}
+                        {`${t("youInvited")} ${invite.userInvited} ${t(
+                          "toJoin"
+                        )} ${invite.nameList}`}
                       </Text>
                       <Text>Status: {getStatus(invite.statusListMember)}</Text>
                     </Box>
@@ -128,7 +128,7 @@ export default function ManageInvitationsScreen() {
                 </ScrollView>
               ) : (
                 <Center>
-                  <Text>Não há nada aqui</Text>
+                  <Text>{t("noInvitationsFound")}</Text>
                 </Center>
               )}
             </Tabs.View>
@@ -138,8 +138,9 @@ export default function ManageInvitationsScreen() {
                   {receivedInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
                       <Text fontSize="lg" fontWeight="bold">
-                        {invite.userWhoInvite} te convidou para participar de{" "}
-                        {invite.nameList}
+                        {`${invite.userWhoInvite} ${t("hasInvitedYou")} ${
+                          invite.nameList
+                        }`}
                       </Text>
 
                       {/* Se o status do convite for "WAITING" dá as opções para rejeitar ou aceitar
@@ -157,7 +158,7 @@ export default function ManageInvitationsScreen() {
                               );
                             }}
                           >
-                            Aceitar
+                            {t("accept")}
                           </Button>
                           <Button
                             isDisabled={loadingInvitation}
@@ -170,7 +171,7 @@ export default function ManageInvitationsScreen() {
                               );
                             }}
                           >
-                            Rejeitar
+                            {t("reject")}
                           </Button>
 
                           {idInvitationLoading === invite.id ? (
@@ -179,11 +180,9 @@ export default function ManageInvitationsScreen() {
                         </HStack>
                       ) : (
                         <Text>
-                          Você{" "}
                           {invite.statusListMember === "ACCEPT"
-                            ? "aceitou"
-                            : "negou"}{" "}
-                          este convite
+                            ? t("youAccepted")
+                            : t("youRejected")}
                         </Text>
                       )}
                     </Box>
@@ -191,7 +190,7 @@ export default function ManageInvitationsScreen() {
                 </ScrollView>
               ) : (
                 <Center>
-                  <Text>Não há nada aqui</Text>
+                  <Text>{t("noInvitationsFound")}</Text>
                 </Center>
               )}
             </Tabs.View>
