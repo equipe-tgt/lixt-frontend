@@ -4,6 +4,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import UpdatePasswordScreen from "../screens/UpdatePasswordScreen";
+import SendInvitationScreen from "../screens/SendInvitationScreen";
+import ManageInvitationsScreen from "../screens/ManageInvitationsScreen";
 
 import {useTranslation} from 'react-i18next';
 
@@ -43,6 +45,19 @@ export default function ProfileStack() {
         name="Settings"
         options={{ title: t("settings"), headerStyle: stackHeaderStyle }}
         component={SettingsScreen}
+      ></Stack.Screen>
+
+      
+      <Stack.Screen
+        name="Invite"
+        options={{ title: t("sendInvitation"), headerStyle: stackHeaderStyle }}
+        component={SendInvitationScreen}
+      ></Stack.Screen>
+
+            <Stack.Screen
+        name="Invitations"
+        options={{ title: t("invitations"), headerStyle: stackHeaderStyle }}
+        component={ManageInvitationsScreen}
       ></Stack.Screen>
     </Stack.Navigator>
   );

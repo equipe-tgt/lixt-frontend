@@ -39,6 +39,7 @@ export default {
 
   newProduct: "New product",
   saveList: "Save list",
+  listInfo: "List informations",
 
   edit: "Edit",
   price: "Price",
@@ -51,5 +52,22 @@ export default {
 
   creating: "Creating",
   add: "Add",
-  remove: "Remove"
+  remove: "Remove",
+
+  sendInvitation: "Invite",
+  selectList: "Select a list",
+  invitations: "Invitations",
+  sent: "Sent",
+  received: "Received",
+  accept: "Accept",
+  reject: "Reject",
+  waitingInvitation: "Pending",
+  acceptedInvitation: "Accepted",
+  rejectedInvitation: "Rejected",
+  hasInvitedYou: "has invited you to join",
+  youInvited: "You invited",
+  toJoin: "to join",
+  youAccepted: "You accepted this invitation",
+  youRejected: "You rejected this invitation",
+  noInvitationsFound: "No invitations were found"
 };
