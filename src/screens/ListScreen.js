@@ -279,7 +279,7 @@ export default function ListScreen(props) {
             <Box>
               <Menu.Item
                 onPress={() => {
-                  props.navigation.navigate("Invitation", {
+                  props.navigation.navigate("Invite", {
                     list: selectedList,
                   });
                 }}
