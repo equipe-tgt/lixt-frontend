@@ -6,6 +6,7 @@ import NewListScreen from "../screens/NewListScreen";
 import NewProductScreen from "../screens/NewProductScreen";
 import ProductOfListDetails from "../screens/ProductOfListDetails";
 import SendInvitationScreen from "../screens/SendInvitationScreen";
+import ListDetailsScreen from "../screens/ListDetailsScreen";
 
 import { useTranslation } from "react-i18next";
 
@@ -14,7 +15,7 @@ const Stack = createStackNavigator();
 const stackHeaderStyle = {
   shadowOpacity: 0,
   elevation: 0,
-  borderBottomWidth: 0,
+  borderBottomWidth: 0
 };
 
 export default function ListStack() {
@@ -41,6 +42,11 @@ export default function ListStack() {
         name="NewProduct"
         options={{ title: t("newProduct"), headerStyle: stackHeaderStyle }}
         component={NewProductScreen}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="ListDetails"
+        options={{ title: t("listInfo"), headerStyle: stackHeaderStyle }}
+        component={ListDetailsScreen}
       ></Stack.Screen>
       <Stack.Screen
         name="Invite"

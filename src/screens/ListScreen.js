@@ -17,7 +17,7 @@ import {
   Pressable,
   List,
   Heading,
-  Center,
+  Center
 } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { screenBasicStyle as style } from "../styles/style";
@@ -38,7 +38,7 @@ export default function ListScreen(props) {
   const { lists, setLists } = useContext(ListContext);
   const [selectedList, setSelectedList] = useState({
     productsOfList: [],
-    id: null,
+    id: null
   });
   const [productName, setProductName] = useState("");
   const [productsFound, setProductsFound] = useState([]);
@@ -93,7 +93,7 @@ export default function ListScreen(props) {
     } catch (error) {
       toast.show({
         title: "Não foi possível buscar suas listas",
-        status: "warning",
+        status: "warning"
       });
     } finally {
       setRefreshing(false);
@@ -112,12 +112,12 @@ export default function ListScreen(props) {
 
       toast.show({
         title: "Lista removida",
-        status: "info",
+        status: "info"
       });
     } catch (error) {
       toast.show({
         title: "Não foi possível deletar esta lista",
-        status: "warning",
+        status: "warning"
       });
     }
   };
@@ -149,7 +149,7 @@ export default function ListScreen(props) {
       name,
       measureType,
       measureValue,
-      product: value,
+      product: value
     };
 
     try {
@@ -190,13 +190,13 @@ export default function ListScreen(props) {
 
       toast.show({
         title: "Item foi removido da lista",
-        status: "info",
+        status: "info"
       });
     } catch (error) {
       console.log({ error });
       toast.show({
         title: "Não foi possível remover o item da lista",
-        status: "warning",
+        status: "warning"
       });
     }
   };
@@ -208,7 +208,7 @@ export default function ListScreen(props) {
         (accumlator, currentProductOfList) => {
           accumlator[currentProductOfList.product.category.name] = [
             ...(accumlator[currentProductOfList.product.category.name] || []),
-            currentProductOfList,
+            currentProductOfList
           ];
           return accumlator;
         },
@@ -266,6 +266,7 @@ export default function ListScreen(props) {
 
         {/* Menu de contexto */}
         <Menu
+          placement="bottom left"
           trigger={(triggerProps) => {
             return (
               <Pressable {...triggerProps}>
@@ -274,13 +275,20 @@ export default function ListScreen(props) {
             );
           }}
         >
-          {/* Só mostra a opção de deletar lista se ele for o dono da lista */}
+          <Menu.Item
+            onPress={props.navigation.navigate("ListDetails", {list: selectedList})}
+          >
+            Ver informações da lista
+          </Menu.Item>
+
+          {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista, 
+          se ele for convidado mostra a opção de deixar a lista */}
           {selectedList && selectedList.ownerId === user.id ? (
             <Box>
               <Menu.Item
                 onPress={() => {
                   props.navigation.navigate("Invite", {
-                    list: selectedList,
+                    list: selectedList
                   });
                 }}
               >
@@ -294,7 +302,11 @@ export default function ListScreen(props) {
                 Deletar lista
               </Menu.Item>
             </Box>
-          ) : null}
+          ) : <Box>
+            <Menu.Item>
+              Sair da lista
+            </Menu.Item>
+          </Box>}
         </Menu>
       </HStack>
 
@@ -354,7 +366,7 @@ export default function ListScreen(props) {
                   _pressed={{ bg: "primary.500" }}
                   onPress={() => {
                     props.navigation.navigate("NewProduct", {
-                      productName: productName,
+                      productName: productName
                     });
                   }}
                 >
@@ -390,7 +402,7 @@ export default function ListScreen(props) {
                               props.navigation.navigate(
                                 "ProductOfListDetails",
                                 {
-                                  product: p,
+                                  product: p
                                 }
                               );
                             }}
