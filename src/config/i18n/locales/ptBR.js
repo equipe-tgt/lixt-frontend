@@ -1,4 +1,13 @@
 export default {
+  // Schemas
+  requiredField: "Este campo é obrigatório",
+  invalidEmail: "O e-mail é inválido",
+  passwordMinLength: "A senha deve ter no mínimo {{min}} caracteres",
+  longPassword: "Senha muito longa",
+  passwordsDontMatch: "As senhas não são iguais",
+  fieldMinChars: "Este campo deve possuir até {{min}} caracteres",
+  fieldMaxChars: "Este campo deve possuir até {{max}} caracteres",
+
   emailOrUsername: "Email ou nome de usuário",
 
   portuguese: "Português",
@@ -51,5 +60,8 @@ export default {
 
   creating: "Criando",
   add: "Adicionar",
-  remove: "Remover"
+  remove: "Remover",
+
+  emailAlreadyTaken: "Este e-mail já está cadastrado na plataforma",
+  usernameAlreadyTaken: "Este nome de usuário já está cadastrado na plataforma",
 };
