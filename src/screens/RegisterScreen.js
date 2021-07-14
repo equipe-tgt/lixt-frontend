@@ -3,31 +3,28 @@ import {
   Button,
   Link,
   Text,
-  Input,
-  FormControl,
   Center,
-  ScrollView,
   Box,
   Image,
   useToast,
   KeyboardAvoidingView,
-} from "native-base";
-
+} from "native-base"; 
 import { useTranslation } from "react-i18next";
-import UserService from "../services/UserService";
-
-// Validação do formulário
 import { useFormik } from "formik";
-import { RegisterSchema } from "../validationSchemas";
 
-export default function RegisterScreen(props) {
+import UserService from "../services/UserService";
+// Validação do formulário
+import { RegisterSchema } from "../validationSchemas";
+import LixtInput from "../components/LixtInput";
+
+export default function RegisterScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const { t } = useTranslation();
 
   // Instanciando formik para controlar as validações do formulário
-  const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
+  const { handleChange, handleSubmit, handleBlur, values, errors } =
     useFormik({
       initialValues: {
         username: "",
@@ -38,47 +35,40 @@ export default function RegisterScreen(props) {
       },
       validateOnChange: false,
       validateOnBlur: false,
-      validationSchema: RegisterSchema,
-      onSubmit: () => {
-        register();
-      },
+      validationSchema: RegisterSchema(t),
+      onSubmit: () => register()
     });
 
-  const register = async () => {
-    try {
-      setLoading(true);
+  const register = () => {
+    setLoading(true);
+    const { username, password, name, email } = values;
 
-      const user = {
-        username: values.username,
-        password: values.password,
-        name: values.name,
-        email: values.email,
-      };
+    UserService.doRegister({ username, password, name, email })
+      .then(() => navigation.navigate("Login"))
+      .catch(error => {
+        console.log({ error });
 
-      await UserService.doRegister(user);
-
-      // Se o registro foi autorizado manda para o login
-      props.navigation.navigate("Login");
-    } catch (error) {
-      console.log({ error });
-
-      // Usuário com dados repetidos
-      if (error?.response?.status === 401) {
-        toast.show({
-          title: "Este nome de usuário ou email já foram registrados",
-          status: "warning",
-        });
-      }
-      // Erro do servidor
-      else {
-        toast.show({
-          title: t("errorServerDefault"),
-          status: "error",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
+        if (error?.response?.data === "Email já cadastrado na plataforma") {
+          toast.show({
+            title: t("emailAlreadyTaken"),
+            status: "warning",
+          });
+        }
+        else if (error?.response?.data === "Usuário já cadastrado na plataforma") {
+          toast.show({
+            title: t("usernameAlreadyTaken"),
+            status: "warning",
+          });
+        }
+        // Erro do servidor
+        else {
+          toast.show({
+            title: t("errorServerDefault"),
+            status: "error",
+          });
+        }
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -101,102 +91,49 @@ export default function RegisterScreen(props) {
           alt="Lixt logo"
         />
 
-        <FormControl>
-          <FormControl.Label>{t("name")}</FormControl.Label>
-          <Input
-            disabled={loading}
-            onChangeText={handleChange("name")}
-            onBlur={handleBlur("name")}
-            error={!!errors.name}
-          ></Input>
-          <FormControl.HelperText>
-            <Text
-              style={errors.name ? { color: "#fb7185" } : { display: "none" }}
-            >
-              {errors.name}
-            </Text>
-          </FormControl.HelperText>
-        </FormControl>
+        <LixtInput
+          labelName="name"
+          error={errors.name}
+          isDisabled={loading}
+          onChangeText={handleChange("name")}
+          handleBlur={handleBlur("name")}
+        />
 
-        <FormControl>
-          <FormControl.Label>Email</FormControl.Label>
-          <Input
-            disabled={loading}
-            onBlur={handleBlur("email")}
-            onChangeText={handleChange("email")}
-            error={!!errors.email}
-            autoCapitalize="none"
-          ></Input>
-          <FormControl.HelperText>
-            <Text
-              style={errors.email ? { color: "#fb7185" } : { display: "none" }}
-            >
-              {errors.email}
-            </Text>
-          </FormControl.HelperText>
-        </FormControl>
+        <LixtInput
+          labelName="Email"
+          error={errors.email}
+          isDisabled={loading}
+          onChangeText={handleChange("email")}
+          onBlur={handleBlur("email")}
+          autoCapitalize="none"
+        />
 
-        <FormControl>
-          <FormControl.Label>{t("username")}</FormControl.Label>
-          <Input
-            disabled={loading}
-            onBlur={handleBlur("username")}
-            onChangeText={handleChange("username")}
-            error={!!errors.username}
-            autoCapitalize="none"
-          ></Input>
-          <FormControl.HelperText>
-            <Text
-              style={
-                errors.username ? { color: "#fb7185" } : { display: "none" }
-              }
-            >
-              {errors.username}
-            </Text>
-          </FormControl.HelperText>
-        </FormControl>
+        <LixtInput
+          labelName="username"
+          error={errors.username}
+          isDisabled={loading}
+          onChangeText={handleChange("username")}
+          onBlur={handleBlur("username")}
+          autoCapitalize="none"
+        />
 
-        <FormControl>
-          <FormControl.Label>{t("password")}</FormControl.Label>
-          <Input
-            disabled={loading}
-            onBlur={handleBlur("password")}
-            onChangeText={handleChange("password")}
-            secureTextEntry={true}
-            error={!!errors.password}
-          ></Input>
-          <FormControl.HelperText>
-            <Text
-              style={
-                errors.password ? { color: "#fb7185" } : { display: "none" }
-              }
-            >
-              {errors.password}
-            </Text>
-          </FormControl.HelperText>
-        </FormControl>
+        <LixtInput
+          labelName="password"
+          error={errors.password}
+          isDisabled={loading}
+          onChangeText={handleChange("password")}
+          onBlur={handleBlur("password")}
+          secureTextEntry
+        />
 
-        <FormControl>
-          <FormControl.Label>{t("confirmPassword")}</FormControl.Label>
-          <Input
-            disabled={loading}
-            onBlur={handleBlur("confirmPassword")}
-            onChangeText={handleChange("confirmPassword")}
-            secureTextEntry={true}
-            error={!!errors.confirmPassword}
-          ></Input>
-          <FormControl.HelperText>
-            <Text
-              style={
-                errors.confirmPassword
-                  ? { color: "#fb7185" }
-                  : { display: "none" }
-              }
-            >
-              {errors.confirmPassword}
-            </Text>
-          </FormControl.HelperText>
-        </FormControl>
+        <LixtInput
+          labelName="confirmPassword"
+          error={errors.confirmPassword}
+          onChangeText={handleChange("confirmPassword")}
+          onBlur={handleBlur("confirmPassword")}
+          isDisabled={loading}
+          secureTextEntry
+        />
 
         <Button
           paddingX={20}
@@ -213,7 +150,7 @@ export default function RegisterScreen(props) {
           <Text mr={2}>{t("alreadyHaveAnAccount")}</Text>
           <Link
             onPress={() => {
-              props.navigation.navigate("Login");
+              navigation.navigate("Login");
             }}
           >
             <Text color="blue.500">{t("doLogin")}</Text>
