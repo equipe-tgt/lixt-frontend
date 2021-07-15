@@ -6,6 +6,8 @@ export default {
   longPassword: "Senha muito longa",
   passwordsDontMatch: "As senhas não são iguais",
   fieldMaxChars: "Este campo deve possuir até {{max}} caracteres",
+  emailAlreadyTaken: "Este e-mail já está cadastrado na plataforma",
+  usernameAlreadyTaken: "Este nome de usuário já está cadastrado na plataforma",
 
   emailOrUsername: "Email ou nome de usuário",
 
@@ -47,6 +49,7 @@ export default {
 
   newProduct: "Novo produto",
   saveList: "Salvar lista",
+  listInfo: "Informações da lista",
 
   edit: "Editar",
   price: "Preço",
@@ -61,6 +64,20 @@ export default {
   add: "Adicionar",
   remove: "Remover",
 
-  emailAlreadyTaken: "Este e-mail já está cadastrado na plataforma",
-  usernameAlreadyTaken: "Este nome de usuário já está cadastrado na plataforma",
+  sendInvitation: "Convidar",
+  selectList: "Selecione uma lista",
+  invitations: "Convites",
+  sent: "Enviados",
+  received: "Recebidos",
+  accept: "Aceitar",
+  reject: "Rejeitar",
+  waitingInvitation: "Pendente",
+  acceptedInvitation: "Aceito",
+  rejectedInvitation: "Rejeitado",
+  hasInvitedYou: "te convidou para participar de",
+  youInvited: "Você convidou",
+  toJoin: "para participar de",
+  youAccepted: "Você aceitou este convite",
+  youRejected: "Você rejeitou este convite",
+  noInvitationsFound: "Nenhum convite foi encontrado"
 };

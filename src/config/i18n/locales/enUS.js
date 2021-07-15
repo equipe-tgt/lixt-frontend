@@ -6,6 +6,8 @@ export default {
   longPassword: "Password too long",
   passwordsDontMatch: "The passwords don't match",
   fieldMaxChars: "This field should have up to {{max}} characters",
+  emailAlreadyTaken: "This e-mail is already taken",
+  usernameAlreadyTaken: "This username is already taken",
 
   emailOrUsername: "Email or username",
 
@@ -47,6 +49,7 @@ export default {
 
   newProduct: "New product",
   saveList: "Save list",
+  listInfo: "List informations",
 
   edit: "Edit",
   price: "Price",
@@ -61,6 +64,20 @@ export default {
   add: "Add",
   remove: "Remove",
 
-  emailAlreadyTaken: "This e-mail is already taken",
-  usernameAlreadyTaken: "This username is already taken",
+  sendInvitation: "Invite",
+  selectList: "Select a list",
+  invitations: "Invitations",
+  sent: "Sent",
+  received: "Received",
+  accept: "Accept",
+  reject: "Reject",
+  waitingInvitation: "Pending",
+  acceptedInvitation: "Accepted",
+  rejectedInvitation: "Rejected",
+  hasInvitedYou: "has invited you to join",
+  youInvited: "You invited",
+  toJoin: "to join",
+  youAccepted: "You accepted this invitation",
+  youRejected: "You rejected this invitation",
+  noInvitationsFound: "No invitations were found"
 };

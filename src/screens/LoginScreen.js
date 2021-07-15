@@ -42,6 +42,9 @@ export default function LoginScreen(props) {
     try {
       await login(username, password);
     } catch (error) {
+
+      console.log(error);
+
       // Usuário com dados inválidos
       if (error?.response?.status === 401 || error?.response?.status === 400) {
         toast.show({
