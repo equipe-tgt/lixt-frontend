@@ -5,7 +5,6 @@ export default {
   passwordMinLength: "A senha deve ter no mínimo {{min}} caracteres",
   longPassword: "Senha muito longa",
   passwordsDontMatch: "As senhas não são iguais",
-  fieldMinChars: "Este campo deve possuir até {{min}} caracteres",
   fieldMaxChars: "Este campo deve possuir até {{max}} caracteres",
 
   emailOrUsername: "Email ou nome de usuário",

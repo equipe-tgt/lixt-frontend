@@ -5,7 +5,6 @@ export default {
   passwordMinLength: "Password should have at least {{min}} characters",
   longPassword: "Password too long",
   passwordsDontMatch: "The passwords don't match",
-  fieldMinChars: "This field should have at least {{min}} characters",
   fieldMaxChars: "This field should have up to {{max}} characters",
 
   emailOrUsername: "Email or username",
