@@ -10,7 +10,7 @@ export const LoginSchema = Yup.object().shape({
 
 export const RegisterSchema = (t) => Yup.object().shape({
   username: Yup.string()
-    .max(45, t("fieldMinChars", { min: 45 }))
+    .max(45, t("fieldMaxChars", { max: 45 }))
     .required(t("requiredField")),
   password: Yup.string()
     .min(8, t("passwordMinLength", { min: 8 }))
@@ -21,7 +21,7 @@ export const RegisterSchema = (t) => Yup.object().shape({
     .email(t("invalidEmail"))
     .required(t("requiredField")),
   name: Yup.string()
-    .max(45, t("fieldMinChars", { min: 45 }))
+    .max(45, t("fieldMaxChars", { max: 45 }))
     .required(t("requiredField")),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], t("passwordsDontMatch"))
