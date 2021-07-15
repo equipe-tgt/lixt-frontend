@@ -276,7 +276,9 @@ export default function ListScreen(props) {
           }}
         >
           <Menu.Item
-            onPress={props.navigation.navigate("ListDetails", {list: selectedList})}
+            onPress={() => {
+              props.navigation.navigate("ListDetails", { list: selectedList });
+            }}
           >
             Ver informações da lista
           </Menu.Item>
@@ -302,11 +304,11 @@ export default function ListScreen(props) {
                 Deletar lista
               </Menu.Item>
             </Box>
-          ) : <Box>
-            <Menu.Item>
-              Sair da lista
-            </Menu.Item>
-          </Box>}
+          ) : (
+            <Box>
+              <Menu.Item>Sair da lista</Menu.Item>
+            </Box>
+          )}
         </Menu>
       </HStack>
 

@@ -69,5 +69,5 @@ export default {
   toJoin: "to join",
   youAccepted: "You accepted this invitation",
   youRejected: "You rejected this invitation",
-  noInvitationsFound: "No invitations were found"
+  noInvitationsFound: "No invitations were found",
 };
