@@ -1,4 +1,14 @@
 export default {
+  // Schemas
+  requiredField: "Este campo é obrigatório",
+  invalidEmail: "O e-mail é inválido",
+  passwordMinLength: "A senha deve ter no mínimo {{min}} caracteres",
+  longPassword: "Senha muito longa",
+  passwordsDontMatch: "As senhas não são iguais",
+  fieldMaxChars: "Este campo deve possuir até {{max}} caracteres",
+  emailAlreadyTaken: "Este e-mail já está cadastrado na plataforma",
+  usernameAlreadyTaken: "Este nome de usuário já está cadastrado na plataforma",
+
   emailOrUsername: "Email ou nome de usuário",
 
   portuguese: "Português",

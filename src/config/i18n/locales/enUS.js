@@ -1,4 +1,14 @@
 export default {
+  // Schemas
+  requiredField: "This field is required",
+  invalidEmail: "E-mail is invalid",
+  passwordMinLength: "Password should have at least {{min}} characters",
+  longPassword: "Password too long",
+  passwordsDontMatch: "The passwords don't match",
+  fieldMaxChars: "This field should have up to {{max}} characters",
+  emailAlreadyTaken: "This e-mail is already taken",
+  usernameAlreadyTaken: "This username is already taken",
+
   emailOrUsername: "Email or username",
 
   portuguese: "Portuguese",
