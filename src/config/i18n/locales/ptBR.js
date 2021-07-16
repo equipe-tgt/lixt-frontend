@@ -16,6 +16,8 @@ export default {
   incorrectData: "Seus dados estão incorretos",
   loging: 'Logando',
 
+  sendResetPasswordEmail: 'Ao clicar no botão enviaremos uma senha provisória para o seu email',
+
   emailOrUsername: "Email ou nome de usuário",
 
   portuguese: "Português",

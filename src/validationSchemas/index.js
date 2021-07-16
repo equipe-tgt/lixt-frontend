@@ -28,11 +28,11 @@ export const RegisterSchema = (t) => Yup.object().shape({
     .required(t("requiredField")),
 });
 
-export const ResetPasswordSchema = Yup.object().shape({
+export const ResetPasswordSchema = (t) => Yup.object().shape({
   email: Yup.string()
-    .max(120)
-    .email("O email é inválido")
-    .required("Este campo é obrigatório"),
+    .max(120, t("fieldMaxChars", { max: 120 }))
+    .email("invalidEmail")
+    .required("requiredField"),
 });
 
 export const ListSchema = Yup.object().shape({
