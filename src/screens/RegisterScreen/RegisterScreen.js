@@ -93,46 +93,49 @@ export default function RegisterScreen({ navigation }) {
 
         <LixtInput
           labelName="name"
-          id="name"
           error={errors.name}
-          isDisabled={loading}
           onChangeText={handleChange("name")}
           handleBlur={handleBlur("name")}
           inputTestID="register-name"
           errorTestID="error-register-name"
+          disabled={loading}
+          isInvalid={!!errors.name}
         />
 
         <LixtInput
           labelName="Email"
           error={errors.email}
-          isDisabled={loading}
           onChangeText={handleChange("email")}
           onBlur={handleBlur("email")}
-          autoCapitalize="none"
           inputTestID="register-email"
           errorTestID="error-register-email"
+          disabled={loading}
+          isInvalid={!!errors.name}
+          autoCapitalize="none"
         />
 
         <LixtInput
           labelName="username"
           error={errors.username}
-          isDisabled={loading}
           onChangeText={handleChange("username")}
           onBlur={handleBlur("username")}
-          autoCapitalize="none"
           inputTestID="register-username"
           errorTestID="error-register-username"
+          disabled={loading}
+          isInvalid={!!errors.name}
+          autoCapitalize="none"
         />
 
         <LixtInput
           labelName="password"
           error={errors.password}
-          isDisabled={loading}
           onChangeText={handleChange("password")}
           onBlur={handleBlur("password")}
-          secureTextEntry
           inputTestID="register-password"
           errorTestID="error-register-password"
+          disabled={loading}
+          isInvalid={!!errors.name}
+          secureTextEntry
         />
 
         <LixtInput
@@ -140,10 +143,11 @@ export default function RegisterScreen({ navigation }) {
           error={errors.confirmPassword}
           onChangeText={handleChange("confirmPassword")}
           onBlur={handleBlur("confirmPassword")}
-          isDisabled={loading}
-          secureTextEntry
           inputTestID="register-confirm-password"
           errorTestID="error-register-confirm-password"
+          disabled={loading}
+          isInvalid={!!errors.name}
+          secureTextEntry
         />
 
         <Button
