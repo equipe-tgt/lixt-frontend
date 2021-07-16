@@ -9,6 +9,13 @@ export default {
   emailAlreadyTaken: "Este e-mail já está cadastrado na plataforma",
   usernameAlreadyTaken: "Este nome de usuário já está cadastrado na plataforma",
 
+  forgotPassword: "Esqueci minha senha",
+  signIn: "Cadastre-se",
+  dontHaveAccount: "Não tem login?",
+  login: "Entrar",
+  incorrectData: "Seus dados estão incorretos",
+  loging: 'Logando',
+
   emailOrUsername: "Email ou nome de usuário",
 
   portuguese: "Português",

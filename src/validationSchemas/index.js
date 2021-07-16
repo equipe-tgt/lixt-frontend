@@ -1,11 +1,11 @@
 import * as Yup from "yup";
 import MEASURE_TYPES from "../utils/measureTypes";
 
-export const LoginSchema = Yup.object().shape({
-  username: Yup.string().required("Este campo é obrigatório"),
+export const LoginSchema = (t) => Yup.object().shape({
+  username: Yup.string().required("requiredField"),
   password: Yup.string()
-    .max(20, "Senha muito longa")
-    .required("Este campo é obrigatório"),
+    .max(20, "longPassword")
+    .required("requiredField"),
 });
 
 export const RegisterSchema = (t) => Yup.object().shape({

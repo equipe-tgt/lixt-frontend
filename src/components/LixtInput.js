@@ -5,9 +5,7 @@ import { useTranslation } from "react-i18next";
 
 const LixtInput = ({
   labelName,
-  id,
   error,
-  isDisabled,
   onChangeText,
   onBlur,
   inputTestID,
@@ -17,16 +15,13 @@ const LixtInput = ({
   const { t } = useTranslation();
   return (
     <FormControl>
-      <FormControl.Label htmlFor={id}>
+      <FormControl.Label>
         {t(labelName) || labelName}
       </FormControl.Label>
       <Input
-        id={id}
-        disabled={isDisabled}
         onChangeText={onChangeText}
         onBlur={onBlur}
         error={!!error}
-        isInvalid={!!error}
         testID={inputTestID}
         {...props}
       ></Input>
@@ -36,7 +31,7 @@ const LixtInput = ({
           fontSize="sm"
           style={{ display: error ? 'flex' : 'none' }}
           testID={errorTestID}>
-          {error}
+          {t(error)}
         </Text>
       </View>
     </FormControl>
