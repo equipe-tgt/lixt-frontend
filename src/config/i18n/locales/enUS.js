@@ -9,6 +9,13 @@ export default {
   emailAlreadyTaken: "This e-mail is already taken",
   usernameAlreadyTaken: "This username is already taken",
 
+  forgotPassword: "Forgot my password",
+  signIn: "Sign In",
+  dontHaveAccount: "Don't you have an account?",
+  login: "Login",
+  incorrectData: "The information you provided is incorrect.",
+  loging: 'Logging',
+
   emailOrUsername: "Email or username",
 
   portuguese: "Portuguese",
