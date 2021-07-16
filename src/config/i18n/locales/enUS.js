@@ -16,6 +16,8 @@ export default {
   incorrectData: "The information you provided is incorrect.",
   loging: 'Logging',
 
+  sendResetPasswordEmail: 'Once you click in the button below, you will receive a temporary password in your e-mail box',
+
   emailOrUsername: "Email or username",
 
   portuguese: "Portuguese",
