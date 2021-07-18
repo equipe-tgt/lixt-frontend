@@ -45,14 +45,14 @@ export const ListSchema = Yup.object().shape({
   ),
 });
 
-export const UpdatePasswordSchema = Yup.object().shape({
+export const UpdatePasswordSchema = (t) => Yup.object().shape({
   password: Yup.string()
-    .min(8, "A senha deve ter no mínimo 8 caracteres")
-    .max(20, "Senha muito longa")
-    .required("Este campo é obrigatório"),
+    .min(8, t("passwordMinLength", { min: 8 }))
+    .max(20, t("longPassword"))
+    .required(t("requiredField")),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password")], "As senhas não são iguais")
-    .required("Este campo é obrigatório"),
+    .oneOf([Yup.ref("password")], t("passwordsDontMatch"))
+    .required(t("requiredField")),
 });
 
 export const ProductOfListSchema = Yup.object().shape({
