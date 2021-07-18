@@ -1,4 +1,5 @@
 {
+  "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -8,7 +9,19 @@
     "eject": "expo eject",
     "test": "jest --verbose --coverage",
     "test:watch": "jest --verbose --watch",
-    "coverage": "jest --verbose --coverage && open ./coverage/lcov-report/index.html"
+    "coverage": "jest --verbose --coverage && open ./coverage/lcov-report/index.html",
+    "lint": "prettier --write . && eslint --cache --fix",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{js}": "eslint --cache --fix",
+    "*.{js, md}": "prettier --write"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^12.0.0",
@@ -46,16 +59,19 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/jest-native": "^4.0.1",
     "@testing-library/react-native": "^7.1.0",
+    "eslint": "^7.31.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-react": "^7.24.0",
+    "husky": "^7.0.1",
     "jest": "^27.0.6",
     "jest-dom": "^4.0.0",
     "jest-expo": "^42.0.1",
+    "lint-staged": "^11.0.1",
+    "prettier": "^2.3.2",
     "react-test-renderer": "^16.3.1"
-  },
-  "private": true,
-  "jest": {
-    "preset": "jest-expo",
-    "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
-    ]
   }
 }

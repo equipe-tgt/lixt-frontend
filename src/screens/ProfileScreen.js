@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import React, { useContext } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import {
   Button,
   Text,
@@ -8,13 +8,13 @@ import {
   Box,
   Heading,
   Pressable,
-} from "native-base";
-import { screenBasicStyle as style } from "../styles/style";
-import { Ionicons } from "@expo/vector-icons";
-import { useTranslation } from "react-i18next";
+} from 'native-base';
+import { screenBasicStyle as style } from '../styles/style';
+import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
-import { AuthContext } from "../context/AuthProvider";
-import { ListContext } from "../context/ListProvider";
+import { AuthContext } from '../context/AuthProvider';
+import { ListContext } from '../context/ListProvider';
 
 export default function ProfileScreen(props) {
   const { logout, user } = useContext(AuthContext);
@@ -33,10 +33,10 @@ export default function ProfileScreen(props) {
           <Pressable
             style={styles.menuItem}
             onPress={() => {
-              props.navigation.navigate("Invitations");
+              props.navigation.navigate('Invitations');
             }}
           >
-            <Text fontSize="lg">{t("invitations")}</Text>
+            <Text fontSize="lg">{t('invitations')}</Text>
 
             <Ionicons name="chevron-forward" size={16}></Ionicons>
           </Pressable>
@@ -46,10 +46,10 @@ export default function ProfileScreen(props) {
           <Pressable
             style={styles.menuItem}
             onPress={() => {
-              props.navigation.navigate("Invite");
+              props.navigation.navigate('Invite');
             }}
           >
-            <Text fontSize="lg">{t("sendInvitation")}</Text>
+            <Text fontSize="lg">{t('sendInvitation')}</Text>
 
             <Ionicons name="chevron-forward" size={16}></Ionicons>
           </Pressable>
@@ -59,10 +59,10 @@ export default function ProfileScreen(props) {
           <Pressable
             style={styles.menuItem}
             onPress={() => {
-              props.navigation.navigate("UpdatePassword");
+              props.navigation.navigate('UpdatePassword');
             }}
           >
-            <Text fontSize="lg">{t("updatePassword")}</Text>
+            <Text fontSize="lg">{t('updatePassword')}</Text>
 
             <Ionicons name="chevron-forward" size={16}></Ionicons>
           </Pressable>
@@ -72,10 +72,10 @@ export default function ProfileScreen(props) {
           <Pressable
             style={styles.menuItem}
             onPress={() => {
-              props.navigation.navigate("Settings");
+              props.navigation.navigate('Settings');
             }}
           >
-            <Text fontSize="lg">{t("settings")}</Text>
+            <Text fontSize="lg">{t('settings')}</Text>
 
             <Ionicons name="chevron-forward" size={16}></Ionicons>
           </Pressable>
@@ -90,7 +90,7 @@ export default function ProfileScreen(props) {
             }}
           >
             <Text fontSize="lg" color="blue.500">
-              {t("logout")}
+              {t('logout')}
             </Text>
           </Pressable>
         </Box>
@@ -101,9 +101,9 @@ export default function ProfileScreen(props) {
 
 const styles = StyleSheet.create({
   menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "90%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '90%',
   },
 });

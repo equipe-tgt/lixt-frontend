@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from "react";
-import { SafeAreaView } from "react-native";
+import React, { useState, useEffect, useContext } from 'react';
+import { SafeAreaView } from 'react-native';
 
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
-import { screenBasicStyle as style } from "../styles/style";
+import { screenBasicStyle as style } from '../styles/style';
 
 import {
   Button,
@@ -16,17 +16,17 @@ import {
   useToast,
   Select,
   KeyboardAvoidingView,
-} from "native-base";
+} from 'native-base';
 
 // Validação do formulário
-import { useFormik } from "formik";
-import { ProductSchema } from "../validationSchemas";
-import MEASURE_TYPES from "../utils/measureTypes";
+import { useFormik } from 'formik';
+import { ProductSchema } from '../validationSchemas';
+import MEASURE_TYPES from '../utils/measureTypes';
 
-import ProductService from "../services/ProductService";
-import CategoryService from "../services/CategoryService";
+import ProductService from '../services/ProductService';
+import CategoryService from '../services/CategoryService';
 
-import { AuthContext } from "../context/AuthProvider";
+import { AuthContext } from '../context/AuthProvider';
 
 export default function NewProductScreen(props) {
   const [loading, setLoading] = useState(false);
@@ -47,8 +47,8 @@ export default function NewProductScreen(props) {
     } catch (error) {
       console.log({ error });
       toast.show({
-        title: "Não foi possível buscar as categorias",
-        status: "error",
+        title: 'Não foi possível buscar as categorias',
+        status: 'error',
       });
     }
   };
@@ -58,9 +58,9 @@ export default function NewProductScreen(props) {
     useFormik({
       initialValues: {
         name: props.route.params.productName,
-        categoryId: "",
-        measureType: "UN",
-        measureValue: "",
+        categoryId: '',
+        measureType: 'UN',
+        measureValue: '',
       },
       validateOnChange: false,
       validateOnBlur: false,
@@ -71,19 +71,19 @@ export default function NewProductScreen(props) {
     <SafeAreaView style={style.container}>
       <Center width="90%" mx="auto">
         <FormControl>
-          <FormControl.Label>{t("name")}</FormControl.Label>
+          <FormControl.Label>{t('name')}</FormControl.Label>
           <Input
             value={values.name}
-            onChangeText={handleChange("name")}
+            onChangeText={handleChange('name')}
             onBlur={handleBlur}
           />
         </FormControl>
 
         <FormControl my={3}>
-          <FormControl.Label>{t("measureType")}</FormControl.Label>
+          <FormControl.Label>{t('measureType')}</FormControl.Label>
           <Radio.Group
             value={values.measureType}
-            onChange={handleChange("measureType")}
+            onChange={handleChange('measureType')}
             flexDirection="row"
             justifyContent="space-around"
           >
@@ -103,10 +103,10 @@ export default function NewProductScreen(props) {
         </FormControl>
 
         <FormControl>
-          <FormControl.Label>{t("category")}</FormControl.Label>
+          <FormControl.Label>{t('category')}</FormControl.Label>
           <Select
             selectedValue={values.categoryId}
-            onValueChange={handleChange("categoryId")}
+            onValueChange={handleChange('categoryId')}
           >
             {categories.map((c) => (
               <Select.Item key={c.id} value={String(c.id)} label={c.name} />
@@ -117,11 +117,11 @@ export default function NewProductScreen(props) {
           paddingX={20}
           paddingY={4}
           isLoading={loading}
-          isLoadingText={t("creating")}
+          isLoadingText={t('creating')}
           marginTop={5}
           onPress={handleSubmit}
         >
-          {t("add")}
+          {t('add')}
         </Button>
       </Center>
     </SafeAreaView>

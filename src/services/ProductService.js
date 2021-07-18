@@ -1,4 +1,4 @@
-import BaseService from "./BaseService";
+import BaseService from './BaseService';
 
 const ProductService = {
   getProductByName: (name, user) => {
@@ -9,7 +9,7 @@ const ProductService = {
     });
   },
   createProduct: (product, user) => {
-    return BaseService.post("/product", product, {
+    return BaseService.post('/product', product, {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },

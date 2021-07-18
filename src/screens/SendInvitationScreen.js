@@ -1,6 +1,6 @@
-import React, { useState, useContext } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { SafeAreaView, Text } from "react-native";
+import React, { useState, useContext } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { SafeAreaView, Text } from 'react-native';
 import {
   FormControl,
   Input,
@@ -8,16 +8,16 @@ import {
   Button,
   Select,
   useToast,
-} from "native-base";
+} from 'native-base';
 
-import { screenBasicStyle as style } from "../styles/style";
-import { useTranslation } from "react-i18next";
+import { screenBasicStyle as style } from '../styles/style';
+import { useTranslation } from 'react-i18next';
 
-import { AuthContext } from "../context/AuthProvider";
-import { useFormik } from "formik";
-import { InviteSchema } from "../validationSchemas";
-import ListMembersService from "../services/ListMembersService";
-import { ListContext } from "../context/ListProvider";
+import { AuthContext } from '../context/AuthProvider';
+import { useFormik } from 'formik';
+import { InviteSchema } from '../validationSchemas';
+import ListMembersService from '../services/ListMembersService';
+import { ListContext } from '../context/ListProvider';
 
 export default function SendInvitationScreen(props) {
   const { t } = useTranslation();
@@ -43,7 +43,7 @@ export default function SendInvitationScreen(props) {
   const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
     useFormik({
       initialValues: {
-        username: "",
+        username: '',
       },
       validateOnChange: false,
       validateOnBlur: false,
@@ -66,17 +66,17 @@ export default function SendInvitationScreen(props) {
         user
       );
       title = `Convite enviado para ${values.username}`;
-      status = "success";
+      status = 'success';
     } catch (error) {
       if (error?.response?.status === 409) {
-        status = "info";
+        status = 'info';
         title = `Um convite já foi enviado para "${values.username}"`;
       } else if (error?.response?.status === 404) {
-        status = "info";
+        status = 'info';
         title = `Usuário "${values.username}" não existe`;
       } else {
-        status = "warning";
-        title = "Um erro inesperado ocorreu no servidor";
+        status = 'warning';
+        title = 'Um erro inesperado ocorreu no servidor';
       }
     } finally {
       toast.show({
@@ -91,7 +91,7 @@ export default function SendInvitationScreen(props) {
     <SafeAreaView style={style.container}>
       <Center width="90%" mx="auto" mt={5}>
         <FormControl mb={5}>
-          <FormControl.Label>{t("selectList")}</FormControl.Label>
+          <FormControl.Label>{t('selectList')}</FormControl.Label>
           <Select
             isDisabled={loading}
             selectedValue={selectedList.id}
@@ -110,18 +110,18 @@ export default function SendInvitationScreen(props) {
         </FormControl>
 
         <FormControl mb={5}>
-          <FormControl.Label>{t("emailOrUsername")}</FormControl.Label>
+          <FormControl.Label>{t('emailOrUsername')}</FormControl.Label>
           <Input
             autoCapitalize="none"
             disabled={loading}
-            onBlur={handleBlur("username")}
-            onChangeText={handleChange("username")}
+            onBlur={handleBlur('username')}
+            onChangeText={handleChange('username')}
             error={!!errors.username}
           />
           <FormControl.HelperText>
             <Text
               style={
-                errors.username ? { color: "#fb7185" } : { display: "none" }
+                errors.username ? { color: '#fb7185' } : { display: 'none' }
               }
             >
               {errors.username}
@@ -136,7 +136,7 @@ export default function SendInvitationScreen(props) {
           isLoadingText="Enviando"
           onPress={handleSubmit}
         >
-          {t("sendInvitation")}
+          {t('sendInvitation')}
         </Button>
       </Center>
     </SafeAreaView>

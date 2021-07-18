@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
-import SplashScreen from "../screens/SplashScreen";
+import React, { useState, useEffect, useContext } from 'react';
+import SplashScreen from '../screens/SplashScreen';
 
-import { AuthContext } from "../context/AuthProvider";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from '../context/AuthProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import AuthStack from "./AuthStack";
-import AppTabs from "./AppTabs";
+import AuthStack from './AuthStack';
+import AppTabs from './AppTabs';
 
 export default function Routes() {
   const { user, login } = useContext(AuthContext);
@@ -17,7 +17,7 @@ export default function Routes() {
   useEffect(() => {
     const doLogin = async () => {
       try {
-        const userString = await AsyncStorage.getItem("user");
+        const userString = await AsyncStorage.getItem('user');
         if (userString) {
           let { username, password } = JSON.parse(userString);
           await login(username, password);

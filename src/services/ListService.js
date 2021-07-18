@@ -1,8 +1,8 @@
-import BaseService from "./BaseService";
+import BaseService from './BaseService';
 
 const ListService = {
   getLists: (user) => {
-    return BaseService.get("/list/by-user", {
+    return BaseService.get('/list/by-user', {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
@@ -18,7 +18,7 @@ const ListService = {
   },
 
   createList: (list, user) => {
-    return BaseService.post("/list", list, {
+    return BaseService.post('/list', list, {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },

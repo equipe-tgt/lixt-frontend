@@ -1,8 +1,8 @@
-import BaseService from "./BaseService";
+import BaseService from './BaseService';
 
 const ProductOfListService = {
   createProductOfList: (productOfList, user) => {
-    return BaseService.post("/productOfList", productOfList, {
+    return BaseService.post('/productOfList', productOfList, {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },

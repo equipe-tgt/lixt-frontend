@@ -1,24 +1,16 @@
-import React, { useContext, useState } from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
-import { AuthContext } from "../../context/AuthProvider";
-import {
-  Button,
-  Link,
-  Text,
-  Center,
-  Image,
-  Box,
-  useToast,
-} from "native-base";
-import { useFormik } from "formik";
-import {useTranslation} from 'react-i18next';
+import React, { useContext, useState } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { AuthContext } from '../../context/AuthProvider';
+import { Button, Link, Text, Center, Image, Box, useToast } from 'native-base';
+import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 
 // Validação e controle do formulário
-import { LoginSchema } from "../../validationSchemas";
+import { LoginSchema } from '../../validationSchemas';
 import LixtInput from '../../components/LixtInput';
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });
 
 export default function LoginScreen({ navigation }) {
@@ -29,7 +21,7 @@ export default function LoginScreen({ navigation }) {
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
-    initialValues: { username: "", password: "" },
+    initialValues: { username: '', password: '' },
     validationSchema: LoginSchema(t),
     onSubmit: (values) => tryLogin(values),
     validateOnBlur: false,
@@ -41,16 +33,18 @@ export default function LoginScreen({ navigation }) {
 
     login(username, password)
       .catch((error) => {
-        if (error?.response?.status === 401 || error?.response?.status === 400) {
+        if (
+          error?.response?.status === 401 ||
+          error?.response?.status === 400
+        ) {
           toast.show({
-            title: t("incorrectData"),
-            status: "warning",
+            title: t('incorrectData'),
+            status: 'warning',
           });
-        }
-        else {
+        } else {
           toast.show({
-            title: t("errorServerDefault"),
-            status: "error",
+            title: t('errorServerDefault'),
+            status: 'error',
           });
         }
       })
@@ -61,7 +55,7 @@ export default function LoginScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       <Center width="90%">
         <Image
-          source={require("../../../assets/logo_lixt.png")}
+          source={require('../../../assets/logo_lixt.png')}
           resizeMode="contain"
           width="60%"
           height="14%"
@@ -72,8 +66,8 @@ export default function LoginScreen({ navigation }) {
           <LixtInput
             labelName="emailOrUsername"
             error={errors.username}
-            onBlur={handleBlur("username")}
-            onChangeText={handleChange("username")}
+            onBlur={handleBlur('username')}
+            onChangeText={handleChange('username')}
             inputTestID="login-email-or-username"
             errorTestID="error-login-email-or-username"
             autoCapitalize="none"
@@ -86,8 +80,8 @@ export default function LoginScreen({ navigation }) {
         <LixtInput
           labelName="password"
           error={errors.password}
-          onBlur={handleBlur("password")}
-          onChangeText={handleChange("password")}
+          onBlur={handleBlur('password')}
+          onChangeText={handleChange('password')}
           inputTestID="login-password"
           errorTestID="error-login-password"
           secureTextEntry
@@ -108,15 +102,15 @@ export default function LoginScreen({ navigation }) {
           {t('login')}
         </Button>
 
-        <Box style={{ flexDirection: "row" }} mt={5}>
-          <Text mr={2}>{t("dontHaveAccount")}</Text>
-          <Link onPress={() => navigation.navigate("Register")}>
-            <Text color="blue.500">{t("signIn")}</Text>
+        <Box style={{ flexDirection: 'row' }} mt={5}>
+          <Text mr={2}>{t('dontHaveAccount')}</Text>
+          <Link onPress={() => navigation.navigate('Register')}>
+            <Text color="blue.500">{t('signIn')}</Text>
           </Link>
         </Box>
-        <Box style={{ flexDirection: "row" }} mt={5}>
-          <Link onPress={() => navigation.navigate("ForgotPassword")}>
-            <Text color="blue.500">{t("forgotPassword")}</Text>
+        <Box style={{ flexDirection: 'row' }} mt={5}>
+          <Link onPress={() => navigation.navigate('ForgotPassword')}>
+            <Text color="blue.500">{t('forgotPassword')}</Text>
           </Link>
         </Box>
       </Center>

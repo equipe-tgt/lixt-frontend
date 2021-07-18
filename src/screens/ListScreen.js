@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { SafeAreaView, RefreshControl, Keyboard } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { useContext, useEffect, useState } from 'react';
+import { SafeAreaView, RefreshControl, Keyboard } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Button,
   Text,
@@ -17,19 +17,19 @@ import {
   Pressable,
   List,
   Heading,
-  Center
-} from "native-base";
-import { Ionicons } from "@expo/vector-icons";
-import { screenBasicStyle as style } from "../styles/style";
-import _ from "lodash";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+  Center,
+} from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
+import { screenBasicStyle as style } from '../styles/style';
+import _ from 'lodash';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { useTranslation } from "react-i18next";
-import ListService from "../services/ListService";
-import ProductService from "../services/ProductService";
-import ProductOfListService from "../services/ProductOfListService";
-import { AuthContext } from "../context/AuthProvider";
-import { ListContext } from "../context/ListProvider";
+import { useTranslation } from 'react-i18next';
+import ListService from '../services/ListService';
+import ProductService from '../services/ProductService';
+import ProductOfListService from '../services/ProductOfListService';
+import { AuthContext } from '../context/AuthProvider';
+import { ListContext } from '../context/ListProvider';
 
 export default function ListScreen(props) {
   const toast = useToast();
@@ -38,9 +38,9 @@ export default function ListScreen(props) {
   const { lists, setLists } = useContext(ListContext);
   const [selectedList, setSelectedList] = useState({
     productsOfList: [],
-    id: null
+    id: null,
   });
-  const [productName, setProductName] = useState("");
+  const [productName, setProductName] = useState('');
   const [productsFound, setProductsFound] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingScreen, setLoadingScreen] = useState(true);
@@ -77,7 +77,7 @@ export default function ListScreen(props) {
         setLists([...data]);
         try {
           const lastSelectedList = await AsyncStorage.getItem(
-            "lastSelectedList"
+            'lastSelectedList'
           );
           if (lastSelectedList) {
             setSelectedList(
@@ -92,8 +92,8 @@ export default function ListScreen(props) {
       }
     } catch (error) {
       toast.show({
-        title: "Não foi possível buscar suas listas",
-        status: "warning"
+        title: 'Não foi possível buscar suas listas',
+        status: 'warning',
       });
     } finally {
       setRefreshing(false);
@@ -111,13 +111,13 @@ export default function ListScreen(props) {
       setSelectedList(lists[0]);
 
       toast.show({
-        title: "Lista removida",
-        status: "info"
+        title: 'Lista removida',
+        status: 'info',
       });
     } catch (error) {
       toast.show({
-        title: "Não foi possível deletar esta lista",
-        status: "warning"
+        title: 'Não foi possível deletar esta lista',
+        status: 'warning',
       });
     }
   };
@@ -149,7 +149,7 @@ export default function ListScreen(props) {
       name,
       measureType,
       measureValue,
-      product: value
+      product: value,
     };
 
     try {
@@ -170,7 +170,7 @@ export default function ListScreen(props) {
     } catch (error) {
       console.log(error);
     } finally {
-      setProductName("");
+      setProductName('');
       setProductsFound([]);
     }
   };
@@ -189,14 +189,14 @@ export default function ListScreen(props) {
       setSelectedList(objCopy);
 
       toast.show({
-        title: "Item foi removido da lista",
-        status: "info"
+        title: 'Item foi removido da lista',
+        status: 'info',
       });
     } catch (error) {
       console.log({ error });
       toast.show({
-        title: "Não foi possível remover o item da lista",
-        status: "warning"
+        title: 'Não foi possível remover o item da lista',
+        status: 'warning',
       });
     }
   };
@@ -208,7 +208,7 @@ export default function ListScreen(props) {
         (accumlator, currentProductOfList) => {
           accumlator[currentProductOfList.product.category.name] = [
             ...(accumlator[currentProductOfList.product.category.name] || []),
-            currentProductOfList
+            currentProductOfList,
           ];
           return accumlator;
         },
@@ -221,7 +221,7 @@ export default function ListScreen(props) {
 
   const storeListId = async (listId) => {
     try {
-      await AsyncStorage.setItem("lastSelectedList", String(listId));
+      await AsyncStorage.setItem('lastSelectedList', String(listId));
     } catch (error) {
       console.log({ error });
     }
@@ -260,7 +260,7 @@ export default function ListScreen(props) {
           variant="link"
           startIcon={<Ionicons name="add-circle" size={35} color="#06b6d4" />}
           onPress={() => {
-            props.navigation.navigate("NewList");
+            props.navigation.navigate('NewList');
           }}
         />
 
@@ -277,7 +277,7 @@ export default function ListScreen(props) {
         >
           <Menu.Item
             onPress={() => {
-              props.navigation.navigate("ListDetails", { list: selectedList });
+              props.navigation.navigate('ListDetails', { list: selectedList });
             }}
           >
             Ver informações da lista
@@ -289,8 +289,8 @@ export default function ListScreen(props) {
             <Box>
               <Menu.Item
                 onPress={() => {
-                  props.navigation.navigate("Invite", {
-                    list: selectedList
+                  props.navigation.navigate('Invite', {
+                    list: selectedList,
                   });
                 }}
               >
@@ -327,7 +327,7 @@ export default function ListScreen(props) {
           <VStack w="90%" mx="auto">
             {/*  Input de buscas */}
             <FormControl>
-              <FormControl.Label>{t("search")}</FormControl.Label>
+              <FormControl.Label>{t('search')}</FormControl.Label>
               <Input
                 value={productName}
                 onChangeText={(value) => {
@@ -352,7 +352,7 @@ export default function ListScreen(props) {
                       onPress={() => {
                         addToList(product, selectedList);
                       }}
-                      _pressed={{ bg: "primary.500" }}
+                      _pressed={{ bg: 'primary.500' }}
                     >
                       {product.name}
                     </List.Item>
@@ -365,14 +365,14 @@ export default function ListScreen(props) {
             {productName.length > 3 && productsFound.length === 0 ? (
               <List borderBottomRadius={3} space="md">
                 <List.Item
-                  _pressed={{ bg: "primary.500" }}
+                  _pressed={{ bg: 'primary.500' }}
                   onPress={() => {
-                    props.navigation.navigate("NewProduct", {
-                      productName: productName
+                    props.navigation.navigate('NewProduct', {
+                      productName: productName,
                     });
                   }}
                 >
-                  {t("add")} "{productName}"
+                  {t('add')} "{productName}"
                 </List.Item>
               </List>
             ) : null}
@@ -383,7 +383,7 @@ export default function ListScreen(props) {
                   return (
                     <Box key={index} my={3}>
                       <Heading
-                        style={{ textTransform: "uppercase", letterSpacing: 4 }}
+                        style={{ textTransform: 'uppercase', letterSpacing: 4 }}
                         mb={2}
                         fontWeight="normal"
                         size="sm"
@@ -402,9 +402,9 @@ export default function ListScreen(props) {
                             alignItems="center"
                             onPress={() => {
                               props.navigation.navigate(
-                                "ProductOfListDetails",
+                                'ProductOfListDetails',
                                 {
-                                  product: p
+                                  product: p,
                                 }
                               );
                             }}
@@ -415,7 +415,7 @@ export default function ListScreen(props) {
                                 {p.measureValue} {p.measureType}
                               </Text>
                               <Text>
-                                {p.price ? `R$ ${p.price}` : "R$ 0,00"}
+                                {p.price ? `R$ ${p.price}` : 'R$ 0,00'}
                               </Text>
                             </Box>
 
@@ -437,7 +437,7 @@ export default function ListScreen(props) {
                                   deleteProductOfList(p.id);
                                 }}
                               >
-                                {t("remove")}
+                                {t('remove')}
                               </Menu.Item>
                             </Menu>
                           </Pressable>
@@ -451,16 +451,16 @@ export default function ListScreen(props) {
         </ScrollView>
       ) : (
         <Center w="90%" mx="auto">
-          <Text textAlign="center">{t("noListsFound")}</Text>
+          <Text textAlign="center">{t('noListsFound')}</Text>
           <Button
             onPress={() => {
-              props.navigation.navigate("NewList");
+              props.navigation.navigate('NewList');
             }}
             marginTop={5}
             paddingX={20}
             paddingY={4}
           >
-            {t("createMyFirstList")}
+            {t('createMyFirstList')}
           </Button>
         </Center>
       )}

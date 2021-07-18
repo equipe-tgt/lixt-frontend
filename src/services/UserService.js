@@ -1,22 +1,22 @@
-import BaseService from "./BaseService";
+import BaseService from './BaseService';
 
 const UserService = {
   doRegister: (user) => {
-    return BaseService.post("/auth/register", user);
+    return BaseService.post('/auth/register', user);
   },
   resetPassword: (email) => {
     return BaseService.post(`/auth/forget-password/${email}`);
   },
   updatePassword: (password, token) => {
-    return BaseService.post("/auth/update-password", password, {
-      headers: { 
-        "Content-Type": "text/plain",
-        Authorization: `Bearer ${token}`, 
-      }
+    return BaseService.post('/auth/update-password', password, {
+      headers: {
+        'Content-Type': 'text/plain',
+        Authorization: `Bearer ${token}`,
+      },
     });
   },
   getUser: (token) => {
-    return BaseService.get("/auth/data-user", {
+    return BaseService.get('/auth/data-user', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
