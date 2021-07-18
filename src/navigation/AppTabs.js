@@ -1,11 +1,11 @@
-import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import ListStack from "./ListStack";
-import CartScreen from "../screens/CartScreen";
-import ProfileStack from "./ProfileStack";
+import ListStack from './ListStack';
+import CartScreen from '../screens/CartScreen';
+import ProfileStack from './ProfileStack';
 
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons } from '@expo/vector-icons';
 
 const Tabs = createBottomTabNavigator();
 

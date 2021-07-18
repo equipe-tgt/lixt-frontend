@@ -1,62 +1,53 @@
-import React, { useState } from "react";
-import AuthService from "../services/AuthService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import UserService from "../services/UserService";
+import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const AuthContext = React.createContext({
-  user: null,
-  signed: false,
-  login: async () => {},
-  logout: () => {},
-});
+import AuthService from '../services/AuthService';
+import UserService from '../services/UserService';
+
+export const AuthContext = React.createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  async function signIn(username, password) {
+  const login = async (username, password) => {
     try {
       // Chama o serviço de autenticação
       const responseAuth = await AuthService.doLogin(username, password);
+      const { access_token } = responseAuth.data;
 
       // Chama o serviço de usuário para pegar os detalhes do usuário que acabou de logar
-      const responseUser = await UserService.getUser(
-        responseAuth.data.access_token
-      );
+      const responseUser = await UserService.getUser(access_token);
+
+      const { id, email, name } = responseUser.data;
 
       // Armazena o usuário no contexto da aplicação, que poderá ser acessado de qualquer página
       setUser({
-        id: responseUser.data.id,
-        username: responseUser.data.username,
-        email: responseUser.data.email,
-        name: responseUser.data.name,
-        token: responseAuth.data.access_token,
+        id,
+        username,
+        email,
+        name,
+        token: access_token,
       });
 
       // Adicionar nome e senha no async Storage o que nos permitirá logar o usuário assim que
       // ele abrir novamente a aplicação
       await AsyncStorage.setItem(
-        "user",
+        'user',
         JSON.stringify({ username, password })
       );
     } catch (error) {
       throw error;
     }
-  }
+  };
+
+  const logout = () => {
+    setUser(null);
+    AsyncStorage.removeItem('user');
+    AsyncStorage.removeItem('lastSelectedList');
+  };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login: async (username, password) => {
-          await signIn(username, password);
-        },
-        logout: () => {
-          setUser(null);
-          AsyncStorage.removeItem("user");
-          AsyncStorage.removeItem("lastSelectedList");
-        },
-      }}
-    >
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

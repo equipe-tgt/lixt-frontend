@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
-import { SafeAreaView } from "react-native";
+import React, { useState, useContext, useEffect } from 'react';
+import { SafeAreaView } from 'react-native';
 import {
   Tabs,
   VStack,
@@ -10,17 +10,17 @@ import {
   ScrollView,
   HStack,
   Button,
-  Spinner
-} from "native-base";
-import { screenBasicStyle as style } from "../styles/style";
+  Spinner,
+} from 'native-base';
+import { screenBasicStyle as style } from '../styles/style';
 
-import { AuthContext } from "../context/AuthProvider";
-import { ListContext } from "../context/ListProvider";
-import { useTranslation } from "react-i18next";
+import { AuthContext } from '../context/AuthProvider';
+import { ListContext } from '../context/ListProvider';
+import { useTranslation } from 'react-i18next';
 import ListMembersService, {
   INVITATION_TYPES,
-  INVITATION_ACTIONS
-} from "../services/ListMembersService";
+  INVITATION_ACTIONS,
+} from '../services/ListMembersService';
 
 export default function ManageInvitationsScreen() {
   const { user } = useContext(AuthContext);
@@ -56,8 +56,8 @@ export default function ManageInvitationsScreen() {
       }
     } catch (error) {
       toast.show({
-        status: "warning",
-        title: "Um erro inesperado do servidor ocorreu"
+        status: 'warning',
+        title: 'Um erro inesperado do servidor ocorreu',
       });
     } finally {
       setLoadingScreen(false);
@@ -81,8 +81,8 @@ export default function ManageInvitationsScreen() {
       }
     } catch (error) {
       toast.show({
-        status: "warning",
-        title: "Um erro inesperado do servidor ocorreu"
+        status: 'warning',
+        title: 'Um erro inesperado do servidor ocorreu',
       });
     } finally {
       setLoadingInvitation(false);
@@ -92,12 +92,12 @@ export default function ManageInvitationsScreen() {
 
   const getStatus = (statusFromServer) => {
     switch (statusFromServer) {
-      case "WAITING":
-        return t("waitingInvitation");
-      case "ACCEPT":
-        return t("acceptedInvitation");
-      case "REJECT":
-        return t("rejectedInvitation");
+      case 'WAITING':
+        return t('waitingInvitation');
+      case 'ACCEPT':
+        return t('acceptedInvitation');
+      case 'REJECT':
+        return t('rejectedInvitation');
       default:
         break;
     }
@@ -108,8 +108,8 @@ export default function ManageInvitationsScreen() {
       <VStack>
         <Tabs onChange={getInvitations} isFitted={true}>
           <Tabs.Bar>
-            <Tabs.Tab>{t("sent")}</Tabs.Tab>
-            <Tabs.Tab>{t("received")}</Tabs.Tab>
+            <Tabs.Tab>{t('sent')}</Tabs.Tab>
+            <Tabs.Tab>{t('received')}</Tabs.Tab>
           </Tabs.Bar>
           <Tabs.Views>
             <Tabs.View>
@@ -118,8 +118,8 @@ export default function ManageInvitationsScreen() {
                   {sentInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
                       <Text fontSize="lg" fontWeight="bold">
-                        {`${t("youInvited")} ${invite.userInvited} ${t(
-                          "toJoin"
+                        {`${t('youInvited')} ${invite.userInvited} ${t(
+                          'toJoin'
                         )} ${invite.nameList}`}
                       </Text>
                       <Text>Status: {getStatus(invite.statusListMember)}</Text>
@@ -128,7 +128,7 @@ export default function ManageInvitationsScreen() {
                 </ScrollView>
               ) : (
                 <Center>
-                  <Text>{t("noInvitationsFound")}</Text>
+                  <Text>{t('noInvitationsFound')}</Text>
                 </Center>
               )}
             </Tabs.View>
@@ -138,7 +138,7 @@ export default function ManageInvitationsScreen() {
                   {receivedInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
                       <Text fontSize="lg" fontWeight="bold">
-                        {`${invite.userWhoInvite} ${t("hasInvitedYou")} ${
+                        {`${invite.userWhoInvite} ${t('hasInvitedYou')} ${
                           invite.nameList
                         }`}
                       </Text>
@@ -146,7 +146,7 @@ export default function ManageInvitationsScreen() {
                       {/* Se o status do convite for "WAITING" dá as opções para rejeitar ou aceitar
                         Caso seja outro status ("ACCEPT" ou "REJECT") só exibe para o usuário
                        */}
-                      {invite.statusListMember === "WAITING" ? (
+                      {invite.statusListMember === 'WAITING' ? (
                         <HStack mt={4}>
                           <Button
                             isDisabled={loadingInvitation}
@@ -158,7 +158,7 @@ export default function ManageInvitationsScreen() {
                               );
                             }}
                           >
-                            {t("accept")}
+                            {t('accept')}
                           </Button>
                           <Button
                             isDisabled={loadingInvitation}
@@ -171,7 +171,7 @@ export default function ManageInvitationsScreen() {
                               );
                             }}
                           >
-                            {t("reject")}
+                            {t('reject')}
                           </Button>
 
                           {idInvitationLoading === invite.id ? (
@@ -180,9 +180,9 @@ export default function ManageInvitationsScreen() {
                         </HStack>
                       ) : (
                         <Text>
-                          {invite.statusListMember === "ACCEPT"
-                            ? t("youAccepted")
-                            : t("youRejected")}
+                          {invite.statusListMember === 'ACCEPT'
+                            ? t('youAccepted')
+                            : t('youRejected')}
                         </Text>
                       )}
                     </Box>
@@ -190,7 +190,7 @@ export default function ManageInvitationsScreen() {
                 </ScrollView>
               ) : (
                 <Center>
-                  <Text>{t("noInvitationsFound")}</Text>
+                  <Text>{t('noInvitationsFound')}</Text>
                 </Center>
               )}
             </Tabs.View>

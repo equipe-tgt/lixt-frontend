@@ -1,6 +1,6 @@
-import React, { useState, useContext } from "react";
-import { SafeAreaView } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { useState, useContext } from 'react';
+import { SafeAreaView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Box,
   VStack,
@@ -9,13 +9,13 @@ import {
   Button,
   Center,
   Spinner,
-  useToast
-} from "native-base";
-import { useTranslation } from "react-i18next";
-import { screenBasicStyle as style } from "../styles/style";
-import { AuthContext } from "../context/AuthProvider";
-import { ListContext } from "../context/ListProvider";
-import ListMembersService from "../services/ListMembersService";
+  useToast,
+} from 'native-base';
+import { useTranslation } from 'react-i18next';
+import { screenBasicStyle as style } from '../styles/style';
+import { AuthContext } from '../context/AuthProvider';
+import { ListContext } from '../context/ListProvider';
+import ListMembersService from '../services/ListMembersService';
 
 export default function ListDetailsScreen(props) {
   const toast = useToast();
@@ -27,7 +27,7 @@ export default function ListDetailsScreen(props) {
   const [list, setList] = useState({
     productsOfList: [],
     listMembers: [],
-    description: ""
+    description: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -49,15 +49,15 @@ export default function ListDetailsScreen(props) {
       setLists([...editedLists]);
 
       toast.show({
-        status: "success",
-        title: "Você saiu da lista"
+        status: 'success',
+        title: 'Você saiu da lista',
       });
 
-      props.navigation.navigate("Lists");
+      props.navigation.navigate('Lists');
     } catch (error) {
       toast.show({
-        status: "warning",
-        title: "Um erro inesperado ocorreu no servidor"
+        status: 'warning',
+        title: 'Um erro inesperado ocorreu no servidor',
       });
     } finally {
       setLoading(false);
@@ -81,7 +81,7 @@ export default function ListDetailsScreen(props) {
           </Text>
           <Text>
             {user.id === list.ownerId
-              ? "Você é o proprietário desta lista"
+              ? 'Você é o proprietário desta lista'
               : `${list.ownerId} é o proprietário desta lista`}
           </Text>
         </Box>
@@ -90,7 +90,7 @@ export default function ListDetailsScreen(props) {
           <Text>
             {list.description.length
               ? list.description
-              : "Não há descrição para esta lista"}
+              : 'Não há descrição para esta lista'}
           </Text>
         </Box>
         <HStack justifyContent="space-between" width="70%" mb={3}>
@@ -107,13 +107,13 @@ export default function ListDetailsScreen(props) {
         {user.id === list.ownerId ? (
           <Button
             onPress={() => {
-              props.navigation.navigate("Invite", {
-                list: list
+              props.navigation.navigate('Invite', {
+                list: list,
               });
             }}
             mt={5}
           >
-            {t("sendInvitation")}
+            {t('sendInvitation')}
           </Button>
         ) : (
           <Button
