@@ -30,6 +30,7 @@ import ProductService from '../services/ProductService';
 import ProductOfListService from '../services/ProductOfListService';
 import { AuthContext } from '../context/AuthProvider';
 import { ListContext } from '../context/ListProvider';
+import ListMembersService from '../services/ListMembersService';
 
 export default function ListScreen(props) {
   const toast = useToast();
@@ -119,6 +120,31 @@ export default function ListScreen(props) {
       toast.show({
         title: 'Não foi possível deletar esta lista',
         status: 'warning',
+      });
+    }
+  };
+
+  const leaveList = async () => {
+    try {
+      // Pega o id do convite atual e faz a deleção do convite
+      const { id } = selectedList.listMembers.find(
+        (lm) => lm.userId === user.id
+      );
+      await ListMembersService.deleteInvitation(id, user);
+
+      // Após se desvincular da lista, filtra as listas do usuário de forma
+      // que a lista da qual ele se desvinculou não apareça mais
+      const editedLists = lists.filter((l) => l.id !== selectedList.id);
+      setLists([...editedLists]);
+
+      toast.show({
+        status: 'success',
+        title: 'Você saiu da lista',
+      });
+    } catch (error) {
+      toast.show({
+        status: 'warning',
+        title: 'Um erro inesperado ocorreu no servidor',
       });
     }
   };
@@ -316,7 +342,7 @@ export default function ListScreen(props) {
             </Box>
           ) : (
             <Box>
-              <Menu.Item>Sair da lista</Menu.Item>
+              <Menu.Item onPress={leaveList}>Sair da lista</Menu.Item>
             </Box>
           )}
         </Menu>
