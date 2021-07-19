@@ -136,6 +136,7 @@ export default function ListScreen(props) {
       // que a lista da qual ele se desvinculou não apareça mais
       const editedLists = lists.filter((l) => l.id !== selectedList.id);
       setLists([...editedLists]);
+      setSelectedList(lists[0]);
 
       toast.show({
         status: 'success',
@@ -307,7 +308,7 @@ export default function ListScreen(props) {
             Ver informações da lista
           </Menu.Item>
 
-          {selectedList.id && selectedList.listMembers.length > 0 ? (
+          {selectedList?.id && selectedList.listMembers.length > 0 ? (
             <Menu.Item
               onPress={() => {
                 props.navigation.navigate('Members', {
