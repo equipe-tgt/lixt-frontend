@@ -23,7 +23,7 @@ const LixtInput = ({
         testID={inputTestID}
         {...props}
       ></Input>
-      <View style={{ height: '20px' }}>
+      <View style={{ height: 20 }}>
         <Text
           color="rose.600"
           fontSize="sm"

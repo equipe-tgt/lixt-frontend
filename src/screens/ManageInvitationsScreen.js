@@ -15,7 +15,6 @@ import {
 import { screenBasicStyle as style } from '../styles/style';
 
 import { AuthContext } from '../context/AuthProvider';
-import { ListContext } from '../context/ListProvider';
 import { useTranslation } from 'react-i18next';
 import ListMembersService, {
   INVITATION_TYPES,
@@ -24,11 +23,9 @@ import ListMembersService, {
 
 export default function ManageInvitationsScreen() {
   const { user } = useContext(AuthContext);
-  const { lists } = useContext(ListContext);
   const { t } = useTranslation();
   const toast = useToast();
 
-  const [loadingScreen, setLoadingScreen] = useState(true);
   const [loadingInvitation, setLoadingInvitation] = useState(false);
   const [idInvitationLoading, setIdInvitationLoading] = useState(null);
   const [receivedInvitations, setReceivedInvitations] = useState([]);
@@ -59,8 +56,6 @@ export default function ManageInvitationsScreen() {
         status: 'warning',
         title: 'Um erro inesperado do servidor ocorreu',
       });
-    } finally {
-      setLoadingScreen(false);
     }
   };
 
@@ -114,7 +109,7 @@ export default function ManageInvitationsScreen() {
           <Tabs.Views>
             <Tabs.View>
               {sentInvitations.length > 0 ? (
-                <ScrollView w="90%">
+                <ScrollView>
                   {sentInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
                       <Text fontSize="lg" fontWeight="bold">
@@ -134,7 +129,7 @@ export default function ManageInvitationsScreen() {
             </Tabs.View>
             <Tabs.View>
               {receivedInvitations.length > 0 ? (
-                <ScrollView w="90%">
+                <ScrollView>
                   {receivedInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
                       <Text fontSize="lg" fontWeight="bold">

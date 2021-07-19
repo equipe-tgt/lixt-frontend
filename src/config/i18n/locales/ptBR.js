@@ -73,6 +73,7 @@ export default {
   creating: 'Criando',
   add: 'Adicionar',
   remove: 'Remover',
+  removing: 'Removendo',
 
   sendInvitation: 'Convidar',
   selectList: 'Selecione uma lista',
@@ -90,4 +91,12 @@ export default {
   youAccepted: 'Você aceitou este convite',
   youRejected: 'Você rejeitou este convite',
   noInvitationsFound: 'Nenhum convite foi encontrado',
+
+  isTheListOwner: 'é o proprietário da lista',
+  youAreTheListOwner: 'você é o proprietário da lista',
+  owner: 'Proprietário',
+  members: 'Membros',
+  products: 'Produtos',
+  guest: 'Convidado',
+  you: 'Você',
 };

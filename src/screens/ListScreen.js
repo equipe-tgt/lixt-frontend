@@ -21,7 +21,7 @@ import {
 } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { screenBasicStyle as style } from '../styles/style';
-import _ from 'lodash';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTranslation } from 'react-i18next';
@@ -38,6 +38,7 @@ export default function ListScreen(props) {
   const { lists, setLists } = useContext(ListContext);
   const [selectedList, setSelectedList] = useState({
     productsOfList: [],
+    listMembers: [],
     id: null,
   });
   const [productName, setProductName] = useState('');
@@ -103,7 +104,7 @@ export default function ListScreen(props) {
 
   const deleteList = async () => {
     try {
-      let listIdToDelete = selectedList.id;
+      const listIdToDelete = selectedList.id;
       await ListService.deleteList(listIdToDelete, user);
 
       // Filtra as listas depois de uma deleção ocorrer
@@ -121,9 +122,6 @@ export default function ListScreen(props) {
       });
     }
   };
-  /**
-   * @todo tratar erros das requisições de search/add
-   */
 
   const searchProducts = async (value) => {
     if (value.length > 2) {
@@ -282,6 +280,18 @@ export default function ListScreen(props) {
           >
             Ver informações da lista
           </Menu.Item>
+
+          {selectedList.id && selectedList.listMembers.length > 0 ? (
+            <Menu.Item
+              onPress={() => {
+                props.navigation.navigate('Members', {
+                  list: selectedList,
+                });
+              }}
+            >
+              Membros da lista
+            </Menu.Item>
+          ) : null}
 
           {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista, 
           se ele for convidado mostra a opção de deixar a lista */}

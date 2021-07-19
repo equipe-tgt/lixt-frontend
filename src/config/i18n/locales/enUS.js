@@ -73,6 +73,7 @@ export default {
   creating: 'Creating',
   add: 'Add',
   remove: 'Remove',
+  removing: 'Removing',
 
   sendInvitation: 'Invite',
   selectList: 'Select a list',
@@ -90,4 +91,11 @@ export default {
   youAccepted: 'You accepted this invitation',
   youRejected: 'You rejected this invitation',
   noInvitationsFound: 'No invitations were found',
+  isTheListOwner: 'is the list owner',
+  youAreTheListOwner: 'you are the list owner',
+  owner: 'Owner',
+  members: 'Members',
+  products: 'Products',
+  guest: 'Guest',
+  you: 'You',
 };
