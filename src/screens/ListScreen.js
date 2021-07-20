@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { SafeAreaView, RefreshControl, Keyboard } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import {
@@ -229,7 +230,7 @@ export default function ListScreen(props) {
   const listItemsByCategory = () => {
     if (selectedList && selectedList.productsOfList) {
       // Agrupa os produtos por categorias
-      let groupedProducts = selectedList.productsOfList.reduce(
+      const groupedProducts = selectedList.productsOfList.reduce(
         (accumlator, currentProductOfList) => {
           accumlator[currentProductOfList.product.category.name] = [
             ...(accumlator[currentProductOfList.product.category.name] || []),
@@ -305,7 +306,7 @@ export default function ListScreen(props) {
               props.navigation.navigate('ListDetails', { list: selectedList });
             }}
           >
-            Ver informações da lista
+            {t('listInfo')}
           </Menu.Item>
 
           {selectedList?.id && selectedList.listMembers.length > 0 ? (
@@ -316,11 +317,11 @@ export default function ListScreen(props) {
                 });
               }}
             >
-              Membros da lista
+              {t('members')}
             </Menu.Item>
           ) : null}
 
-          {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista, 
+          {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista,
           se ele for convidado mostra a opção de deixar a lista */}
           {selectedList && selectedList.ownerId === user.id ? (
             <Box>
@@ -331,19 +332,19 @@ export default function ListScreen(props) {
                   });
                 }}
               >
-                Convidar
+                {t('sendInvitation')}
               </Menu.Item>
               <Menu.Item
                 onPress={() => {
                   deleteList();
                 }}
               >
-                Deletar lista
+                {t('deleteList')}
               </Menu.Item>
             </Box>
           ) : (
             <Box>
-              <Menu.Item onPress={leaveList}>Sair da lista</Menu.Item>
+              <Menu.Item onPress={leaveList}>{t('leaveList')}</Menu.Item>
             </Box>
           )}
         </Menu>
@@ -409,7 +410,7 @@ export default function ListScreen(props) {
                     });
                   }}
                 >
-                  {t('add')} "{productName}"
+                  {`${t('add')} ${productName}`}
                 </List.Item>
               </List>
             ) : null}
@@ -504,3 +505,8 @@ export default function ListScreen(props) {
     </SafeAreaView>
   );
 }
+
+ListScreen.propTypes = {
+  route: PropTypes.object,
+  navigation: PropTypes.object,
+};

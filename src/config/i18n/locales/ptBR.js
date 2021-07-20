@@ -59,7 +59,9 @@ export default {
 
   newProduct: 'Novo produto',
   saveList: 'Salvar lista',
+  deleteList: 'Deletar lista',
   listInfo: 'Informações da lista',
+  listHasNoDescription: 'Não há descrição para esta lista',
 
   edit: 'Editar',
   price: 'Preço',
@@ -94,6 +96,7 @@ export default {
 
   isTheListOwner: 'é o proprietário da lista',
   youAreTheListOwner: 'você é o proprietário da lista',
+  leaveList: 'Sair da lista',
   owner: 'Proprietário',
   members: 'Membros',
   products: 'Produtos',

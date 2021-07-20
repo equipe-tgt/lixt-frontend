@@ -59,7 +59,9 @@ export default {
 
   newProduct: 'New product',
   saveList: 'Save list',
+  deleteList: 'Delete list',
   listInfo: 'List informations',
+  listHasNoDescription: 'This list has no description',
 
   edit: 'Edit',
   price: 'Price',
@@ -93,6 +95,7 @@ export default {
   noInvitationsFound: 'No invitations were found',
   isTheListOwner: 'is the list owner',
   youAreTheListOwner: 'you are the list owner',
+  leaveList: 'Leave list',
   owner: 'Owner',
   members: 'Members',
   products: 'Products',

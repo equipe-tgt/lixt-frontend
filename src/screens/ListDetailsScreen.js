@@ -87,7 +87,7 @@ export default function ListDetailsScreen(props) {
           <Text>
             {list.description.length
               ? list.description
-              : 'Não há descrição para esta lista'}
+              : t('listHasNoDescription')}
           </Text>
         </Box>
         <HStack justifyContent="space-between" width="70%" mb={3}>
@@ -120,7 +120,7 @@ export default function ListDetailsScreen(props) {
             mt={5}
             variant="outline"
           >
-            Sair da lista
+            {t('leaveList')}
           </Button>
         )}
       </VStack>
