@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
@@ -7,16 +8,16 @@ import { screenBasicStyle as style } from '../styles/style';
 
 import {
   Button,
-  Text,
-  Input,
   FormControl,
   Center,
   Radio,
-  Box,
   useToast,
   Select,
-  KeyboardAvoidingView,
+  View,
+  Text,
 } from 'native-base';
+
+import LixtInput from '../components/LixtInput';
 
 // Validação do formulário
 import { useFormik } from 'formik';
@@ -53,31 +54,68 @@ export default function NewProductScreen(props) {
     }
   };
 
+  const addProduct = async () => {
+    setLoading(true);
+
+    let status;
+    let title;
+
+    try {
+      const product = {
+        categoryId: values.categoryId,
+        name: values.name,
+        userId: user.id,
+      };
+
+      product.measureType =
+        values.measureType === 'UN' ? 'UNITY' : values.measureType;
+
+      await ProductService.createProduct(product, user);
+
+      title = `Produto "${product.name}" adicionado com sucesso!`;
+      status = 'success';
+    } catch (error) {
+      title = 'Não foi possível adicionar o produto';
+      status = 'warning';
+    } finally {
+      toast.show({
+        status,
+        title,
+      });
+
+      setLoading(false);
+    }
+  };
+
   // Instanciando formik para controlar as validações do formulário
-  const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
-    useFormik({
-      initialValues: {
-        name: props.route.params.productName,
-        categoryId: '',
-        measureType: 'UN',
-        measureValue: '',
-      },
-      validateOnChange: false,
-      validateOnBlur: false,
-      validationSchema: ProductSchema,
-      onSubmit: () => {},
-    });
+  const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
+    initialValues: {
+      name: props.route.params.productName,
+      categoryId: '',
+      measureType: 'UN',
+      measureValue: '',
+    },
+    validateOnChange: false,
+    validateOnBlur: false,
+    validationSchema: ProductSchema(t),
+    onSubmit: () => {
+      addProduct();
+    },
+  });
   return (
     <SafeAreaView style={style.container}>
       <Center width="90%" mx="auto">
-        <FormControl>
-          <FormControl.Label>{t('name')}</FormControl.Label>
-          <Input
-            value={values.name}
-            onChangeText={handleChange('name')}
-            onBlur={handleBlur}
-          />
-        </FormControl>
+        <LixtInput
+          labelName="name"
+          value={values.name}
+          error={errors.name}
+          onChangeText={handleChange('name')}
+          onBlur={handleBlur('name')}
+          inputTestID="new-product-name"
+          errorTestID="error-new-product-name"
+          disabled={loading}
+          isInvalid={!!errors.name}
+        />
 
         <FormControl my={3}>
           <FormControl.Label>{t('measureType')}</FormControl.Label>
@@ -105,6 +143,7 @@ export default function NewProductScreen(props) {
         <FormControl>
           <FormControl.Label>{t('category')}</FormControl.Label>
           <Select
+            error={errors.categoryId}
             selectedValue={values.categoryId}
             onValueChange={handleChange('categoryId')}
           >
@@ -112,6 +151,11 @@ export default function NewProductScreen(props) {
               <Select.Item key={c.id} value={String(c.id)} label={c.name} />
             ))}
           </Select>
+          <View style={{ height: 20 }}>
+            <Text color="rose.600" fontSize="sm">
+              {errors.categoryId}
+            </Text>
+          </View>
         </FormControl>
         <Button
           paddingX={20}
@@ -127,3 +171,7 @@ export default function NewProductScreen(props) {
     </SafeAreaView>
   );
 }
+
+NewProductScreen.propTypes = {
+  route: PropTypes.object,
+};

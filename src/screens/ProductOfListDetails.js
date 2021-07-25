@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { screenBasicStyle as style } from '../styles/style';
 
 // Validação do formulário
-import MEASURE_TYPES from '../utils/measureTypes';
+import MEASURE_TYPES, { getMeasureType } from '../utils/measureTypes';
 import { ProductOfListSchema } from '../validationSchemas/index';
 import { useFormik } from 'formik';
 
@@ -34,7 +34,9 @@ export default function ProductOfListDetails(props) {
     initialValues: {
       price: product.price ? String(product.price) : '',
       amount: product.amount ? String(product.amount) : '',
-      measureType: product.measureType ? String(product.measureType) : '',
+      measureType: product.measureType
+        ? getMeasureType(product.measureType)
+        : '',
       measureValue: product.measureValue ? String(product.measureValue) : '',
     },
     validateOnChange: false,
@@ -71,7 +73,7 @@ export default function ProductOfListDetails(props) {
     const productOfListEdited = Object.assign({}, props.route.params.product);
     productOfListEdited.price = parseFloat(values.price.replace(',', '.'));
     productOfListEdited.amount = parseInt(values.amount);
-    productOfListEdited.measureType = values.measureType;
+    productOfListEdited.measureType = getMeasureType(values.measureType, false);
     productOfListEdited.measureValue =
       values.measureType !== 'UN' ? parseInt(values.measureValue) : null;
     return productOfListEdited;

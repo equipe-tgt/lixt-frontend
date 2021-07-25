@@ -20,6 +20,7 @@ import {
   Heading,
   Center,
 } from 'native-base';
+import ProductItem from '../components/ProductItem';
 import { Ionicons } from '@expo/vector-icons';
 import { screenBasicStyle as style } from '../styles/style';
 
@@ -105,6 +106,7 @@ export default function ListScreen(props) {
   const deleteList = async () => {
     try {
       const listIdToDelete = selectedList.id;
+
       await ListService.deleteList(listIdToDelete, user);
 
       // Filtra as listas depois de uma deleção ocorrer
@@ -408,7 +410,7 @@ export default function ListScreen(props) {
                     });
                   }}
                 >
-                  {`${t('add')} ${productName}`}
+                  {`${t('add')} "${productName}"`}
                 </List.Item>
               </List>
             ) : null}
@@ -428,57 +430,14 @@ export default function ListScreen(props) {
                       </Heading>
 
                       {/* Mostra todos os produtos pertencentes àquela categoria */}
-                      {listItemsByCategory()[category].map((p) => {
-                        return (
-                          <Pressable
-                            key={p.id}
-                            my={3}
-                            flexDirection="row"
-                            justifyContent="space-between"
-                            alignItems="center"
-                            onPress={() => {
-                              props.navigation.navigate(
-                                'ProductOfListDetails',
-                                {
-                                  product: p,
-                                }
-                              );
-                            }}
-                          >
-                            <Box>
-                              <Text fontWeight="bold">{p.name}</Text>
-                              <Text>
-                                {p.measureValue} {p.measureType}
-                              </Text>
-                              <Text>
-                                {p.price ? `R$ ${p.price}` : 'R$ 0,00'}
-                              </Text>
-                            </Box>
-
-                            <Menu
-                              trigger={(triggerProps) => {
-                                return (
-                                  <Pressable p={3} {...triggerProps}>
-                                    <Ionicons
-                                      size={18}
-                                      color="#27272a"
-                                      name="ellipsis-vertical"
-                                    />
-                                  </Pressable>
-                                );
-                              }}
-                            >
-                              <Menu.Item
-                                onPress={() => {
-                                  deleteProductOfList(p.id);
-                                }}
-                              >
-                                {t('remove')}
-                              </Menu.Item>
-                            </Menu>
-                          </Pressable>
-                        );
-                      })}
+                      {listItemsByCategory()[category].map((p) => (
+                        <ProductItem
+                          key={p.id}
+                          product={p}
+                          deleteFromList={deleteProductOfList}
+                          navigate={props.navigation.navigate}
+                        />
+                      ))}
                     </Box>
                   );
                 })
