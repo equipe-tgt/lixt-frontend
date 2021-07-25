@@ -5,7 +5,7 @@ import ListScreen from '../screens/ListScreen';
 import NewListScreen from '../screens/NewListScreen';
 import NewProductScreen from '../screens/NewProductScreen';
 import ProductOfListDetails from '../screens/ProductOfListDetails';
-import SendInvitationScreen from '../screens/SendInvitationScreen';
+import SendInvitationScreen from '../screens/SendInvitationScreen/SendInvitationScreen';
 import ListDetailsScreen from '../screens/ListDetailsScreen';
 import MembersListScreen from '../screens/MembersListScreen';
 

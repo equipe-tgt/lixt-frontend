@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import UpdatePasswordScreen from '../screens/UpdatePasswordScreen/UpdatePasswordScreen';
-import SendInvitationScreen from '../screens/SendInvitationScreen';
+import SendInvitationScreen from '../screens/SendInvitationScreen/SendInvitationScreen';
 import ManageInvitationsScreen from '../screens/ManageInvitationsScreen';
 
 import { useTranslation } from 'react-i18next';

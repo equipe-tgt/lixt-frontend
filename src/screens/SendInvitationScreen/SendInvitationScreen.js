@@ -1,30 +1,26 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaView, Text } from 'react-native';
-import {
-  FormControl,
-  Input,
-  Center,
-  Button,
-  Select,
-  useToast,
-} from 'native-base';
-
-import { screenBasicStyle as style } from '../styles/style';
+import { SafeAreaView } from 'react-native';
+import { Center, Button, Select, useToast, Box } from 'native-base';
+import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 
-import { AuthContext } from '../context/AuthProvider';
-import { useFormik } from 'formik';
-import { InviteSchema } from '../validationSchemas';
-import ListMembersService from '../services/ListMembersService';
-import { ListContext } from '../context/ListProvider';
+import { screenBasicStyle as style } from '../../styles/style';
+
+import { AuthContext } from '../../context/AuthProvider';
+import { InviteSchema } from '../../validationSchemas';
+import ListMembersService from '../../services/ListMembersService';
+import { ListContext } from '../../context/ListProvider';
+
+import LixtSelect from '../../components/LixtSelect';
+import LixtInput from '../../components/LixtInput';
 
 export default function SendInvitationScreen(props) {
-  const { t } = useTranslation();
-  const toast = useToast();
   const { user } = useContext(AuthContext);
   const { lists } = useContext(ListContext);
+  const toast = useToast();
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
   const [selectedList, setSelectedList] = useState(
@@ -47,7 +43,7 @@ export default function SendInvitationScreen(props) {
     },
     validateOnChange: false,
     validateOnBlur: false,
-    validationSchema: InviteSchema,
+    validationSchema: InviteSchema(t),
     onSubmit: () => {
       if (values.username === user.username) {
         toast.show({
@@ -61,51 +57,50 @@ export default function SendInvitationScreen(props) {
     },
   });
 
-  const sendInvitation = async () => {
+  const sendInvitation = () => {
     setLoading(true);
 
     let status;
     let title;
 
-    try {
-      await ListMembersService.sendInvite(
-        values.username,
-        selectedList.id,
-        user
-      );
-      title = `Convite enviado para ${values.username}`;
-      status = 'success';
-    } catch (error) {
-      if (error?.response?.status === 409) {
-        status = 'info';
-        title = `Um convite já foi enviado para "${values.username}"`;
-      } else if (error?.response?.status === 404) {
-        status = 'info';
-        title = `Usuário "${values.username}" não existe`;
-      } else {
-        status = 'warning';
-        title = 'Um erro inesperado ocorreu no servidor';
-      }
-    } finally {
-      toast.show({
-        status,
-        title,
+    ListMembersService.sendInvite(values.username, selectedList.id, user)
+      .then(() => {
+        title = `Convite enviado para ${values.username}`;
+        status = 'success';
+      })
+      .catch((error) => {
+        if (error?.response?.status === 409) {
+          status = 'info';
+          title = `Um convite já foi enviado para "${values.username}"`;
+        } else if (error?.response?.status === 404) {
+          status = 'info';
+          title = `Usuário "${values.username}" não existe`;
+        } else {
+          status = 'warning';
+          title = 'Um erro inesperado ocorreu no servidor';
+        }
+      })
+      .finally(() => {
+        toast.show({
+          status,
+          title,
+        });
+        setLoading(false);
       });
-      setLoading(false);
-    }
   };
 
   return (
     <SafeAreaView style={style.container}>
       <Center width="90%" mx="auto" mt={5}>
-        <FormControl mb={5}>
-          <FormControl.Label>{t('selectList')}</FormControl.Label>
-          <Select
+        <Box mb={5} width="100%">
+          <LixtSelect
+            labelName="selectList"
             isDisabled={loading}
             selectedValue={selectedList.id}
             onValueChange={(listId) => {
               setSelectedList(lists.find((list) => list.id === Number(listId)));
             }}
+            selectTestID="select-list"
           >
             {lists.map((list) => (
               <Select.Item
@@ -114,28 +109,22 @@ export default function SendInvitationScreen(props) {
                 label={list.nameList}
               />
             ))}
-          </Select>
-        </FormControl>
+          </LixtSelect>
+        </Box>
 
-        <FormControl mb={5}>
-          <FormControl.Label>{t('emailOrUsername')}</FormControl.Label>
-          <Input
+        <Box mb={5} width="100%">
+          <LixtInput
+            labelName="emailOrUsername"
+            error={errors.username}
+            onChangeText={handleChange('username')}
+            onBlur={handleBlur('username')}
+            inputTestID="invitation-username-or-email"
+            errorTestID="error-invitation-username-or-email"
             autoCapitalize="none"
             disabled={loading}
-            onBlur={handleBlur('username')}
-            onChangeText={handleChange('username')}
-            error={!!errors.username}
           />
-          <FormControl.HelperText>
-            <Text
-              style={
-                errors.username ? { color: '#fb7185' } : { display: 'none' }
-              }
-            >
-              {errors.username}
-            </Text>
-          </FormControl.HelperText>
-        </FormControl>
+        </Box>
+
         <Button
           marginTop={5}
           paddingX={20}
@@ -143,6 +132,7 @@ export default function SendInvitationScreen(props) {
           isLoading={loading}
           isLoadingText="Enviando"
           onPress={handleSubmit}
+          testID="send-invitation-button"
         >
           {t('sendInvitation')}
         </Button>
