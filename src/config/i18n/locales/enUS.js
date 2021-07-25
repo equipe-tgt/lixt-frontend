@@ -59,7 +59,9 @@ export default {
 
   newProduct: 'New product',
   saveList: 'Save list',
+  deleteList: 'Delete list',
   listInfo: 'List informations',
+  listHasNoDescription: 'This list has no description',
 
   edit: 'Edit',
   price: 'Price',
@@ -73,6 +75,7 @@ export default {
   creating: 'Creating',
   add: 'Add',
   remove: 'Remove',
+  removing: 'Removing',
 
   sendInvitation: 'Invite',
   selectList: 'Select a list',
@@ -90,4 +93,12 @@ export default {
   youAccepted: 'You accepted this invitation',
   youRejected: 'You rejected this invitation',
   noInvitationsFound: 'No invitations were found',
+  isTheListOwner: 'is the list owner',
+  youAreTheListOwner: 'you are the list owner',
+  leaveList: 'Leave list',
+  owner: 'Owner',
+  members: 'Members',
+  products: 'Products',
+  guest: 'Guest',
+  you: 'You',
 };

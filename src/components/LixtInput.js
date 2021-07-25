@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Text, Input, FormControl } from 'native-base';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,7 @@ const LixtInput = ({
         testID={inputTestID}
         {...props}
       ></Input>
-      <View style={{ height: '20px' }}>
+      <View style={{ height: 20 }}>
         <Text
           color="rose.600"
           fontSize="sm"
@@ -38,3 +39,12 @@ const LixtInput = ({
 };
 
 export default LixtInput;
+
+LixtInput.propTypes = {
+  labelName: PropTypes.string,
+  error: PropTypes.string,
+  onChangeText: PropTypes.func,
+  onBlur: PropTypes.func,
+  inputTestID: PropTypes.string,
+  errorTestID: PropTypes.string,
+};

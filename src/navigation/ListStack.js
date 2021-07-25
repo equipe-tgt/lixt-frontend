@@ -7,6 +7,7 @@ import NewProductScreen from '../screens/NewProductScreen';
 import ProductOfListDetails from '../screens/ProductOfListDetails';
 import SendInvitationScreen from '../screens/SendInvitationScreen/SendInvitationScreen';
 import ListDetailsScreen from '../screens/ListDetailsScreen';
+import MembersListScreen from '../screens/MembersListScreen';
 
 import { useTranslation } from 'react-i18next';
 
@@ -52,6 +53,11 @@ export default function ListStack() {
         name="Invite"
         options={{ title: t('sendInvitation'), headerStyle: stackHeaderStyle }}
         component={SendInvitationScreen}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="Members"
+        options={{ title: t('members'), headerStyle: stackHeaderStyle }}
+        component={MembersListScreen}
       ></Stack.Screen>
     </Stack.Navigator>
   );

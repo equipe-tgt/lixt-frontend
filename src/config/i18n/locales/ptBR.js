@@ -59,7 +59,9 @@ export default {
 
   newProduct: 'Novo produto',
   saveList: 'Salvar lista',
+  deleteList: 'Deletar lista',
   listInfo: 'Informações da lista',
+  listHasNoDescription: 'Não há descrição para esta lista',
 
   edit: 'Editar',
   price: 'Preço',
@@ -73,6 +75,7 @@ export default {
   creating: 'Criando',
   add: 'Adicionar',
   remove: 'Remover',
+  removing: 'Removendo',
 
   sendInvitation: 'Convidar',
   selectList: 'Selecione uma lista',
@@ -90,4 +93,13 @@ export default {
   youAccepted: 'Você aceitou este convite',
   youRejected: 'Você rejeitou este convite',
   noInvitationsFound: 'Nenhum convite foi encontrado',
+
+  isTheListOwner: 'é o proprietário da lista',
+  youAreTheListOwner: 'você é o proprietário da lista',
+  leaveList: 'Sair da lista',
+  owner: 'Proprietário',
+  members: 'Membros',
+  products: 'Produtos',
+  guest: 'Convidado',
+  you: 'Você',
 };

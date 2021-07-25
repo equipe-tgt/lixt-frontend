@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native';
 import {
@@ -42,18 +43,25 @@ export default function SendInvitationScreen(props) {
     }
   });
 
-  const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
-    useFormik({
-      initialValues: {
-        username: '',
-      },
-      validateOnChange: false,
-      validateOnBlur: false,
-      validationSchema: InviteSchema(t),
-      onSubmit: () => {
-        sendInvitation();
-      },
-    });
+  const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
+    initialValues: {
+      username: '',
+    },
+    validateOnChange: false,
+    validateOnBlur: false,
+    validationSchema: InviteSchema,
+    onSubmit: () => {
+      if (values.username === user.username) {
+        toast.show({
+          status: 'warning',
+          title: 'Você não pode se convidar para a lista',
+        });
+        return;
+      }
+
+      sendInvitation();
+    },
+  });
 
   const sendInvitation = () => {
     setLoading(true);
@@ -144,3 +152,8 @@ export default function SendInvitationScreen(props) {
     </SafeAreaView>
   );
 }
+
+SendInvitationScreen.propTypes = {
+  route: PropTypes.object,
+  navigation: PropTypes.object,
+};

@@ -1,4 +1,5 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import { SafeAreaView, Text } from 'react-native';
 import {
   FormControl,
@@ -26,24 +27,23 @@ export default function ProductOfListDetails(props) {
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-  const [product, setProduct] = useState(props.route.params.product);
+  const [product] = useState(props.route.params.product);
 
   // Instanciando formik para controlar as validações do formulário
-  const { handleChange, handleSubmit, handleBlur, values, errors, touched } =
-    useFormik({
-      initialValues: {
-        price: product.price ? String(product.price) : '',
-        amount: product.amount ? String(product.amount) : '',
-        measureType: product.measureType ? String(product.measureType) : '',
-        measureValue: product.measureValue ? String(product.measureValue) : '',
-      },
-      validateOnChange: false,
-      validateOnBlur: false,
-      validationSchema: ProductOfListSchema,
-      onSubmit: () => {
-        editProductOfList();
-      },
-    });
+  const { handleChange, handleSubmit, values, errors } = useFormik({
+    initialValues: {
+      price: product.price ? String(product.price) : '',
+      amount: product.amount ? String(product.amount) : '',
+      measureType: product.measureType ? String(product.measureType) : '',
+      measureValue: product.measureValue ? String(product.measureValue) : '',
+    },
+    validateOnChange: false,
+    validateOnBlur: false,
+    validationSchema: ProductOfListSchema,
+    onSubmit: () => {
+      editProductOfList();
+    },
+  });
 
   const editProductOfList = async () => {
     setLoading(true);
@@ -68,7 +68,7 @@ export default function ProductOfListDetails(props) {
   };
 
   const formatValuesForRequest = () => {
-    let productOfListEdited = Object.assign({}, props.route.params.product);
+    const productOfListEdited = Object.assign({}, props.route.params.product);
     productOfListEdited.price = parseFloat(values.price.replace(',', '.'));
     productOfListEdited.amount = parseInt(values.amount);
     productOfListEdited.measureType = values.measureType;
@@ -81,7 +81,7 @@ export default function ProductOfListDetails(props) {
     <SafeAreaView style={style.container}>
       <ScrollView w="90%" mx="auto">
         <Heading>
-          {t('editing')} "{props.route.params.product.product.name}"
+          {`${t('editing')} ${props.route.params.product.product.name}`}
         </Heading>
 
         <FormControl my={3}>
@@ -171,3 +171,8 @@ export default function ProductOfListDetails(props) {
     </SafeAreaView>
   );
 }
+
+ProductOfListDetails.propTypes = {
+  navigation: PropTypes.object,
+  route: PropTypes.object,
+};

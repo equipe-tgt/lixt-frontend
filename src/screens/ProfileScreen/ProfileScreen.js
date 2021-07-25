@@ -1,12 +1,7 @@
 import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import {
-  Text,
-  VStack,
-  Box,
-  Heading,
-  Pressable,
-} from 'native-base';
+import { Text, VStack, Box, Heading, Pressable } from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +19,9 @@ export default function ProfileScreen(props) {
       <VStack ml={5}>
         <Box my={5}>
           <Heading testID="user-name">{user.name}</Heading>
-          <Text fontSize="lg" testID="user-username">{user.username}</Text>
+          <Text fontSize="lg" testID="user-username">
+            {user.username}
+          </Text>
         </Box>
 
         <Box py={5}>
@@ -94,3 +91,7 @@ const styles = StyleSheet.create({
     width: '90%',
   },
 });
+
+ProfileScreen.propTypes = {
+  navigation: PropTypes.object,
+};

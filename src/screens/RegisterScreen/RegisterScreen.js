@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Button,
   Link,
@@ -176,3 +177,7 @@ export default function RegisterScreen({ navigation }) {
     </KeyboardAvoidingView>
   );
 }
+
+RegisterScreen.propTypes = {
+  navigation: PropTypes.object,
+};

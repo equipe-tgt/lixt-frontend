@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import { screenBasicStyle as style } from '../styles/style';
 import {
   Text,
-  Box,
   FormControl,
   Center,
   Input,
@@ -115,3 +115,7 @@ export default function NewListScreen(props) {
     </SafeAreaView>
   );
 }
+
+NewListScreen.propTypes = {
+  navigation: PropTypes.object,
+};

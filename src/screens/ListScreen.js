@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { SafeAreaView, RefreshControl, Keyboard } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import {
@@ -21,7 +22,7 @@ import {
 } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { screenBasicStyle as style } from '../styles/style';
-import _ from 'lodash';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTranslation } from 'react-i18next';
@@ -30,6 +31,7 @@ import ProductService from '../services/ProductService';
 import ProductOfListService from '../services/ProductOfListService';
 import { AuthContext } from '../context/AuthProvider';
 import { ListContext } from '../context/ListProvider';
+import ListMembersService from '../services/ListMembersService';
 
 export default function ListScreen(props) {
   const toast = useToast();
@@ -38,12 +40,12 @@ export default function ListScreen(props) {
   const { lists, setLists } = useContext(ListContext);
   const [selectedList, setSelectedList] = useState({
     productsOfList: [],
+    listMembers: [],
     id: null,
   });
   const [productName, setProductName] = useState('');
   const [productsFound, setProductsFound] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [loadingScreen, setLoadingScreen] = useState(true);
 
   // Ao montar o componente busca as listas
   useEffect(() => {
@@ -97,13 +99,12 @@ export default function ListScreen(props) {
       });
     } finally {
       setRefreshing(false);
-      setLoadingScreen(false);
     }
   };
 
   const deleteList = async () => {
     try {
-      let listIdToDelete = selectedList.id;
+      const listIdToDelete = selectedList.id;
       await ListService.deleteList(listIdToDelete, user);
 
       // Filtra as listas depois de uma deleção ocorrer
@@ -121,9 +122,32 @@ export default function ListScreen(props) {
       });
     }
   };
-  /**
-   * @todo tratar erros das requisições de search/add
-   */
+
+  const leaveList = async () => {
+    try {
+      // Pega o id do convite atual e faz a deleção do convite
+      const { id } = selectedList.listMembers.find(
+        (lm) => lm.userId === user.id
+      );
+      await ListMembersService.deleteInvitation(id, user);
+
+      // Após se desvincular da lista, filtra as listas do usuário de forma
+      // que a lista da qual ele se desvinculou não apareça mais
+      const editedLists = lists.filter((l) => l.id !== selectedList.id);
+      setLists([...editedLists]);
+      setSelectedList(lists[0]);
+
+      toast.show({
+        status: 'success',
+        title: 'Você saiu da lista',
+      });
+    } catch (error) {
+      toast.show({
+        status: 'warning',
+        title: 'Um erro inesperado ocorreu no servidor',
+      });
+    }
+  };
 
   const searchProducts = async (value) => {
     if (value.length > 2) {
@@ -204,7 +228,7 @@ export default function ListScreen(props) {
   const listItemsByCategory = () => {
     if (selectedList && selectedList.productsOfList) {
       // Agrupa os produtos por categorias
-      let groupedProducts = selectedList.productsOfList.reduce(
+      const groupedProducts = selectedList.productsOfList.reduce(
         (accumlator, currentProductOfList) => {
           accumlator[currentProductOfList.product.category.name] = [
             ...(accumlator[currentProductOfList.product.category.name] || []),
@@ -280,10 +304,22 @@ export default function ListScreen(props) {
               props.navigation.navigate('ListDetails', { list: selectedList });
             }}
           >
-            Ver informações da lista
+            {t('listInfo')}
           </Menu.Item>
 
-          {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista, 
+          {selectedList?.id && selectedList.listMembers.length > 0 ? (
+            <Menu.Item
+              onPress={() => {
+                props.navigation.navigate('Members', {
+                  list: selectedList,
+                });
+              }}
+            >
+              {t('members')}
+            </Menu.Item>
+          ) : null}
+
+          {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista,
           se ele for convidado mostra a opção de deixar a lista */}
           {selectedList && selectedList.ownerId === user.id ? (
             <Box>
@@ -294,19 +330,19 @@ export default function ListScreen(props) {
                   });
                 }}
               >
-                Convidar
+                {t('sendInvitation')}
               </Menu.Item>
               <Menu.Item
                 onPress={() => {
                   deleteList();
                 }}
               >
-                Deletar lista
+                {t('deleteList')}
               </Menu.Item>
             </Box>
           ) : (
             <Box>
-              <Menu.Item>Sair da lista</Menu.Item>
+              <Menu.Item onPress={leaveList}>{t('leaveList')}</Menu.Item>
             </Box>
           )}
         </Menu>
@@ -372,7 +408,7 @@ export default function ListScreen(props) {
                     });
                   }}
                 >
-                  {t('add')} "{productName}"
+                  {`${t('add')} ${productName}`}
                 </List.Item>
               </List>
             ) : null}
@@ -467,3 +503,8 @@ export default function ListScreen(props) {
     </SafeAreaView>
   );
 }
+
+ListScreen.propTypes = {
+  route: PropTypes.object,
+  navigation: PropTypes.object,
+};
