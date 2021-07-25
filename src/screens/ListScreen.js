@@ -46,7 +46,6 @@ export default function ListScreen(props) {
   const [productName, setProductName] = useState('');
   const [productsFound, setProductsFound] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [loadingScreen, setLoadingScreen] = useState(true);
 
   // Ao montar o componente busca as listas
   useEffect(() => {
@@ -100,7 +99,6 @@ export default function ListScreen(props) {
       });
     } finally {
       setRefreshing(false);
-      setLoadingScreen(false);
     }
   };
 

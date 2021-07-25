@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { Text, VStack, Box, Heading, Pressable } from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
@@ -90,3 +91,8 @@ const styles = StyleSheet.create({
     width: '90%',
   },
 });
+
+
+ProfileScreen.propTypes = {
+  navigation: PropTypes.object
+};

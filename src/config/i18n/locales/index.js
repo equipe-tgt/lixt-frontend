@@ -1,32 +1,31 @@
-import { NativeModules, Platform } from 'react-native';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setLanguageApp } from '../../../services/LanguageService';
-import pt_br from './ptBR';
-import en_us from './enUS';
+import ptBr from './ptBR';
+import enUs from './enUS';
 
 const resources = {
   pt_BR: {
-    translation: pt_br,
+    translation: ptBr,
   },
   en_US: {
-    translation: en_us,
+    translation: enUs,
   },
 };
 
 const languageDetector = {
   type: 'languageDetector',
   async: true,
-  detect: async (callback) => {
+  detect: async (callbackLanguage) => {
     const storedLanguage = await AsyncStorage.getItem('language');
 
     if (storedLanguage) {
       setLanguageApp(storedLanguage);
-      return callback(storedLanguage);
+      return callbackLanguage(storedLanguage);
     }
 
-    return callback('en_US');
+    return callbackLanguage('en_US');
   },
   init: () => {},
   cacheUserLanguage: (language) => {

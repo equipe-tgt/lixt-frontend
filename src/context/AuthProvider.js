@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import AuthService from '../services/AuthService';
@@ -10,34 +11,27 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const login = async (username, password) => {
-    try {
-      // Chama o serviço de autenticação
-      const responseAuth = await AuthService.doLogin(username, password);
-      const { access_token } = responseAuth.data;
+    // Chama o serviço de autenticação
+    const responseAuth = await AuthService.doLogin(username, password);
+    const accessToken = responseAuth.data.access_token;
 
-      // Chama o serviço de usuário para pegar os detalhes do usuário que acabou de logar
-      const responseUser = await UserService.getUser(access_token);
+    // Chama o serviço de usuário para pegar os detalhes do usuário que acabou de logar
+    const responseUser = await UserService.getUser(accessToken);
 
-      const { id, email, name } = responseUser.data;
+    const { id, email, name } = responseUser.data;
 
-      // Armazena o usuário no contexto da aplicação, que poderá ser acessado de qualquer página
-      setUser({
-        id,
-        username,
-        email,
-        name,
-        token: access_token,
-      });
+    // Armazena o usuário no contexto da aplicação, que poderá ser acessado de qualquer página
+    setUser({
+      id,
+      username,
+      email,
+      name,
+      token: accessToken,
+    });
 
-      // Adicionar nome e senha no async Storage o que nos permitirá logar o usuário assim que
-      // ele abrir novamente a aplicação
-      await AsyncStorage.setItem(
-        'user',
-        JSON.stringify({ username, password })
-      );
-    } catch (error) {
-      throw error;
-    }
+    // Adicionar nome e senha no async Storage o que nos permitirá logar o usuário assim que
+    // ele abrir novamente a aplicação
+    await AsyncStorage.setItem('user', JSON.stringify({ username, password }));
   };
 
   const logout = () => {
@@ -51,4 +45,9 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+
+AuthProvider.propTypes = {
+  children: PropTypes.object
 };

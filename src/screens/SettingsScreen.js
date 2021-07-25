@@ -1,11 +1,6 @@
-import React, { useMemo, useCallback, useState } from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-  Picker,
-} from 'react-native';
-import { Text, FormControl, Center, Box, Select } from 'native-base';
+import React, { useState } from 'react';
+import { SafeAreaView } from 'react-native';
+import { FormControl, Center, Box, Select } from 'native-base';
 import { screenBasicStyle as style } from '../styles/style';
 import { useTranslation } from 'react-i18next';
 
@@ -32,13 +27,13 @@ export default function SettingsScreen() {
           </FormControl.Label>
 
           <FormControl>
-            <Picker
+            <Select
               selectedValue={language}
               onValueChange={(value) => changeLanguage(value)}
             >
-              <Picker.Item label={t('portuguese')} value="pt_BR" />
-              <Picker.Item label={t('english')} value="en_US" />
-            </Picker>
+              <Select.Item label={t('portuguese')} value="pt_BR" />
+              <Select.Item label={t('english')} value="en_US" />
+            </Select>
           </FormControl>
         </Box>
       </Center>

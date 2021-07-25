@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import PropTypes from "prop-types";
 import {
   SafeAreaView,
   StyleSheet,
@@ -119,3 +120,7 @@ export default function UpdatePasswordScreen(props) {
     </SafeAreaView>
   );
 }
+
+UpdatePasswordScreen.propTypes = {
+  navigation: PropTypes.object
+};
