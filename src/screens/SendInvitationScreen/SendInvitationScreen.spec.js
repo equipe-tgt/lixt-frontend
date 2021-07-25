@@ -18,7 +18,7 @@ jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 jest.mock('@react-navigation/native', () => {
   return {
     ...jest.requireActual('@react-navigation/native'),
-    useFocusEffect: () => jest.fn()
+    useFocusEffect: () => jest.fn(),
   };
 });
 
@@ -36,13 +36,13 @@ describe('SendInvitationScreen component', () => {
 
     const route = {
       params: {
-        list: []
-      }
-    }
+        list: [],
+      },
+    };
 
     user = {
       name: 'Fulano',
-      username: 'fulanodetal'
+      username: 'fulanodetal',
     };
 
     const renderResults = render(
@@ -53,27 +53,29 @@ describe('SendInvitationScreen component', () => {
           logout: () => {},
         }}
       >
-        <ListContext.Provider value={{
-          lists: [{
-            id: 1,
-            nameList: 'Lista 01'
-          }, {
-            id: 2,
-            nameList: 'Lista 02'
-          }]
-        }}>
+        <ListContext.Provider
+          value={{
+            lists: [
+              {
+                id: 1,
+                nameList: 'Lista 01',
+              },
+              {
+                id: 2,
+                nameList: 'Lista 02',
+              },
+            ],
+          }}
+        >
           <SafeAreaProvider
             initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
           >
             <NativeBaseProvider
               children={
                 <NavigationContainer>
-                  <SendInvitationScreen
-                    navigation={navigation}
-                    route={route}  
-                  />
+                  <SendInvitationScreen navigation={navigation} route={route} />
                 </NavigationContainer>
-                }
+              }
             />
           </SafeAreaProvider>
         </ListContext.Provider>
@@ -92,7 +94,7 @@ describe('SendInvitationScreen component', () => {
       await waitFor(() => {
         fireEvent(selectList, 'valueChange', 2);
       });
-      expect(selectList.props.value).toBe("Lista 02");
+      expect(selectList.props.value).toBe('Lista 02');
     });
   });
 
@@ -119,42 +121,51 @@ describe('SendInvitationScreen component', () => {
   });
 
   describe('when form is properly filled', () => {
-    it('should show error when trying to send an invite to a user who already' +
-      ' receives an invite', async () => {
-      const registerSpy = jest.spyOn(ListMembersService, 'sendInvite');
-      registerSpy.mockReturnValue(
-        Promise.reject({
-          response: {
-            status: 409
-          },
-        })
-      );
+    it(
+      'should show error when trying to send an invite to a user who already' +
+        ' receives an invite',
+      async () => {
+        const registerSpy = jest.spyOn(ListMembersService, 'sendInvite');
+        registerSpy.mockReturnValue(
+          Promise.reject({
+            response: {
+              status: 409,
+            },
+          })
+        );
 
-      await waitFor(() => {
-        fireEvent.changeText(getByTestId('invitation-username-or-email'), 'fulanodetal');
-      });
-      await waitFor(() => fireEvent.press(sendInvitationButton));
+        await waitFor(() => {
+          fireEvent.changeText(
+            getByTestId('invitation-username-or-email'),
+            'ciclanodetal'
+          );
+        });
+        await waitFor(() => fireEvent.press(sendInvitationButton));
 
-      const toast = getByText('Um convite já foi enviado para "fulanodetal"');
-      expect(toast).toBeDefined();
-    });
+        const toast = getByText('Um convite já foi enviado para "ciclanodetal"');
+        expect(toast).toBeDefined();
+      }
+    );
 
     it('should show error when trying to send an invite to an inexistent user', async () => {
       const registerSpy = jest.spyOn(ListMembersService, 'sendInvite');
       registerSpy.mockReturnValue(
         Promise.reject({
           response: {
-            status: 404
+            status: 404,
           },
         })
       );
 
       await waitFor(() => {
-        fireEvent.changeText(getByTestId('invitation-username-or-email'), 'fulanodetal');
+        fireEvent.changeText(
+          getByTestId('invitation-username-or-email'),
+          'ciclanodetal'
+        );
       });
       await waitFor(() => fireEvent.press(sendInvitationButton));
 
-      const toast = getByText('Usuário "fulanodetal" não existe');
+      const toast = getByText('Usuário "ciclanodetal" não existe');
       expect(toast).toBeDefined();
     });
 
@@ -163,13 +174,16 @@ describe('SendInvitationScreen component', () => {
       registerSpy.mockReturnValue(
         Promise.reject({
           response: {
-            status: 500
+            status: 500,
           },
         })
       );
 
       await waitFor(() => {
-        fireEvent.changeText(getByTestId('invitation-username-or-email'), 'fulanodetal');
+        fireEvent.changeText(
+          getByTestId('invitation-username-or-email'),
+          'ciclanodetal'
+        );
       });
       await waitFor(() => fireEvent.press(sendInvitationButton));
 
@@ -179,16 +193,30 @@ describe('SendInvitationScreen component', () => {
 
     it('should show success message when sendInvite method is resolved', async () => {
       const registerSpy = jest.spyOn(ListMembersService, 'sendInvite');
-      registerSpy.mockReturnValue(
-        Promise.resolve()
-      );
+      registerSpy.mockReturnValue(Promise.resolve());
 
       await waitFor(() => {
-        fireEvent.changeText(getByTestId('invitation-username-or-email'), 'fulanodetal');
+        fireEvent.changeText(
+          getByTestId('invitation-username-or-email'),
+          'ciclanodetal'
+        );
       });
       await waitFor(() => fireEvent.press(sendInvitationButton));
 
-      const toast = getByText('Convite enviado para fulanodetal');
+      const toast = getByText('Convite enviado para ciclanodetal');
+      expect(toast).toBeDefined();
+    });
+
+    it('should show success message when sendInvite method is resolved', async () => {
+      await waitFor(() => {
+        fireEvent.changeText(
+          getByTestId('invitation-username-or-email'),
+          'fulanodetal'
+        );
+      });
+      await waitFor(() => fireEvent.press(sendInvitationButton));
+
+      const toast = getByText('Você não pode se convidar para a lista');
       expect(toast).toBeDefined();
     });
   });

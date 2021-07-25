@@ -2,13 +2,7 @@ import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native';
-import {
-  Center,
-  Button,
-  Select,
-  useToast,
-  Box,
-} from 'native-base';
+import { Center, Button, Select, useToast, Box } from 'native-base';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 
@@ -49,7 +43,7 @@ export default function SendInvitationScreen(props) {
     },
     validateOnChange: false,
     validateOnBlur: false,
-    validationSchema: InviteSchema,
+    validationSchema: InviteSchema(t),
     onSubmit: () => {
       if (values.username === user.username) {
         toast.show({
@@ -69,10 +63,7 @@ export default function SendInvitationScreen(props) {
     let status;
     let title;
 
-    ListMembersService.sendInvite(
-      values.username,
-      selectedList.id,
-      user)
+    ListMembersService.sendInvite(values.username, selectedList.id, user)
       .then(() => {
         title = `Convite enviado para ${values.username}`;
         status = 'success';
@@ -101,7 +92,6 @@ export default function SendInvitationScreen(props) {
   return (
     <SafeAreaView style={style.container}>
       <Center width="90%" mx="auto" mt={5}>
-
         <Box mb={5} width="100%">
           <LixtSelect
             labelName="selectList"
@@ -112,18 +102,16 @@ export default function SendInvitationScreen(props) {
             }}
             selectTestID="select-list"
           >
-            {
-              lists.map((list) => (
-                <Select.Item
-                  key={list.id}
-                  value={list.id}
-                  label={list.nameList}
-                />
-              ))
-            }
+            {lists.map((list) => (
+              <Select.Item
+                key={list.id}
+                value={list.id}
+                label={list.nameList}
+              />
+            ))}
           </LixtSelect>
         </Box>
-        
+
         <Box mb={5} width="100%">
           <LixtInput
             labelName="emailOrUsername"

@@ -74,8 +74,9 @@ export const ProductSchema = Yup.object().shape({
   ),
 });
 
-export const InviteSchema = (t) => Yup.object().shape({
-  username: Yup.string()
-    .max(120, t('fieldMaxChars', { max: 120 }))
-    .required(t('requiredField')),
-});
+export const InviteSchema = (t) =>
+  Yup.object().shape({
+    username: Yup.string()
+      .max(120, t('fieldMaxChars', { max: 120 }))
+      .required(t('requiredField')),
+  });
