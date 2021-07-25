@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import {
   Button,
   Link,
@@ -179,5 +179,5 @@ export default function RegisterScreen({ navigation }) {
 }
 
 RegisterScreen.propTypes = {
-  navigation: PropTypes.object
+  navigation: PropTypes.object,
 };

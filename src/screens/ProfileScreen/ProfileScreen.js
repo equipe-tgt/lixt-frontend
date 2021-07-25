@@ -92,7 +92,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
 ProfileScreen.propTypes = {
-  navigation: PropTypes.object
+  navigation: PropTypes.object,
 };
