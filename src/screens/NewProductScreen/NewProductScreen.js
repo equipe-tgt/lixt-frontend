@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native';
 
 import { useTranslation } from 'react-i18next';
 
-import { screenBasicStyle as style } from '../styles/style';
+import { screenBasicStyle as style } from '../../styles/style';
 
 import {
   Button,
@@ -17,17 +17,17 @@ import {
   Text,
 } from 'native-base';
 
-import LixtInput from '../components/LixtInput';
+import LixtInput from '../../components/LixtInput';
 
 // Validação do formulário
 import { useFormik } from 'formik';
-import { ProductSchema } from '../validationSchemas';
-import MEASURE_TYPES from '../utils/measureTypes';
+import { ProductSchema } from '../../validationSchemas';
+import MEASURE_TYPES from '../../utils/measureTypes';
 
-import ProductService from '../services/ProductService';
-import CategoryService from '../services/CategoryService';
+import ProductService from '../../services/ProductService';
+import CategoryService from '../../services/CategoryService';
 
-import { AuthContext } from '../context/AuthProvider';
+import { AuthContext } from '../../context/AuthProvider';
 
 export default function NewProductScreen(props) {
   const [loading, setLoading] = useState(false);
