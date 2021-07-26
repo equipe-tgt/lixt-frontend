@@ -60,7 +60,7 @@ export default function ListScreen(props) {
       // Caso a tela de nova lista tenha enviado uma lista nova, inclui na lista das listas
       // e seleciona ela automaticamente
       if (props.route.params.newList) {
-        const newList = props.route.params.newList;
+        const newList = Object.assign({}, props.route.params.newList);
         setLists([...lists, newList]);
         setSelectedList(newList);
         props.route.params.newList = null;
@@ -309,7 +309,7 @@ export default function ListScreen(props) {
             {t('listInfo')}
           </Menu.Item>
 
-          {selectedList?.id && selectedList.listMembers.length > 0 ? (
+          {selectedList?.id && selectedList?.listMembers && selectedList.listMembers.length > 0 ? (
             <Menu.Item
               onPress={() => {
                 props.navigation.navigate('Members', {
