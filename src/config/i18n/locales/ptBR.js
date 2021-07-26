@@ -102,4 +102,6 @@ export default {
   products: 'Produtos',
   guest: 'Convidado',
   you: 'Você',
+
+  selectAnOption: 'Selecione uma opção',
 };
