@@ -9,6 +9,8 @@ export default {
   emailAlreadyTaken: 'Este e-mail já está cadastrado na plataforma',
   usernameAlreadyTaken: 'Este nome de usuário já está cadastrado na plataforma',
 
+  createdList: 'Lista criada com sucesso!',
+
   forgotPassword: 'Esqueci minha senha',
   signIn: 'Cadastre-se',
   dontHaveAccount: 'Não tem login?',
