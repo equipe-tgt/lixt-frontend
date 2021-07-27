@@ -103,4 +103,7 @@ export default {
   you: 'You',
 
   selectAnOption: 'Select an option',
+
+  commentaries: 'Commentaries',
+  comment: 'Comment'
 };

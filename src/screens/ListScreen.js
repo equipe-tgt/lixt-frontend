@@ -20,7 +20,7 @@ import {
   Heading,
   Center,
 } from 'native-base';
-import ProductItem from '../components/ProductItem';
+import LixtProductItem from '../components/LixtProductItem';
 import { Ionicons } from '@expo/vector-icons';
 import { screenBasicStyle as style } from '../styles/style';
 
@@ -42,6 +42,7 @@ export default function ListScreen(props) {
   const [selectedList, setSelectedList] = useState({
     productsOfList: [],
     listMembers: [],
+    comments: [],
     id: null,
   });
   const [productName, setProductName] = useState('');
@@ -309,7 +310,9 @@ export default function ListScreen(props) {
             {t('listInfo')}
           </Menu.Item>
 
-          {selectedList?.id && selectedList?.listMembers && selectedList.listMembers.length > 0 ? (
+          {selectedList?.id &&
+          selectedList?.listMembers &&
+          selectedList.listMembers.length > 0 ? (
             <Menu.Item
               onPress={() => {
                 props.navigation.navigate('Members', {
@@ -431,9 +434,10 @@ export default function ListScreen(props) {
 
                       {/* Mostra todos os produtos pertencentes àquela categoria */}
                       {listItemsByCategory()[category].map((p) => (
-                        <ProductItem
+                        <LixtProductItem
                           key={p.id}
                           product={p}
+                          idSelectedList={selectedList.id}
                           deleteFromList={deleteProductOfList}
                           navigate={props.navigation.navigate}
                         />
