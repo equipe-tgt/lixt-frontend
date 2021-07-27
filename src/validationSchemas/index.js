@@ -65,14 +65,16 @@ export const ProductOfListSchema = Yup.object().shape({
   ),
 });
 
-export const ProductSchema = Yup.object().shape({
-  name: Yup.string()
-    .max(45, 'Este campo deve possuir até 45 caracteres')
-    .required('Este campo é obrigatório'),
-  measureValue: Yup.string().matches(
-    /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/
-  ),
-});
+export const ProductSchema = (t) =>
+  Yup.object().shape({
+    name: Yup.string()
+      .max(45, t('fieldMaxChars', { max: 45 }))
+      .required(t('requiredField')),
+    measureValue: Yup.string().matches(
+      /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/
+    ),
+    categoryId: Yup.number().required(t('selectAnOption')),
+  });
 
 export const InviteSchema = (t) =>
   Yup.object().shape({

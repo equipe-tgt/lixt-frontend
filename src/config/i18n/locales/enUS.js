@@ -103,4 +103,6 @@ export default {
   products: 'Products',
   guest: 'Guest',
   you: 'You',
+
+  selectAnOption: 'Select an option',
 };

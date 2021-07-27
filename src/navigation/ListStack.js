@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import ListScreen from '../screens/ListScreen';
 import NewListScreen from '../screens/NewListScreen/NewListScreen';
-import NewProductScreen from '../screens/NewProductScreen';
+import NewProductScreen from '../screens/NewProductScreen/NewProductScreen';
 import ProductOfListDetails from '../screens/ProductOfListDetails';
 import SendInvitationScreen from '../screens/SendInvitationScreen/SendInvitationScreen';
 import ListDetailsScreen from '../screens/ListDetailsScreen';
