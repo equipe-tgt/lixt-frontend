@@ -1,6 +1,9 @@
 import React, { useState, useContext } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
 import moment from 'moment';
+import { useFocusEffect } from '@react-navigation/native';
+import { formatRelative } from 'date-fns';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { enUS, ptBR } from 'date-fns/locale';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -20,27 +23,28 @@ import { Ionicons } from '@expo/vector-icons';
 
 import CommentaryService from '../../services/CommentaryService';
 import { AuthContext } from '../../context/AuthProvider';
-import { ListContext } from '../../context/ListProvider';
 import { useTranslation } from 'react-i18next';
 
 export default function CommentaryScreen(props) {
   const { user } = useContext(AuthContext);
-  const { lists, setLists } = useContext(ListContext);
   const { t } = useTranslation();
   const toast = useToast();
 
   const [product] = useState(props.route.params.product);
+  const [language, setLanguage] = useState(enUS);
   const [commentaries, setCommentaries] = useState(product.comments);
   const [newCommentary, setNewCommentary] = useState('');
   const [loading, setLoading] = useState(false);
 
   useFocusEffect(() => {
     sortCommentaries();
+    getCurrentLanguage();
   });
 
   const addCommentary = async () => {
     if (newCommentary.length === 0) return;
 
+    // Constrói objeto de comentário para inserir
     const comment = {
       content: newCommentary,
       userId: user.id,
@@ -77,8 +81,14 @@ export default function CommentaryScreen(props) {
     }
   };
 
+  // Organiza comentários por data de envio
   const sortCommentaries = () => {
-    commentaries.sort((a, b) => moment(b.date) - moment(a.date));
+    commentaries.sort((a, b) => new Date(b.date) > new Date(a.date));
+  };
+
+  const getCurrentLanguage = async () => {
+    const language = await AsyncStorage.getItem('language');
+    setLanguage(language === 'pt_BR' ? ptBR : enUS);
   };
 
   return (
@@ -102,7 +112,9 @@ export default function CommentaryScreen(props) {
 
               <Text mt={2}>{c.content}</Text>
               <Text fontSize="sm" mt={2}>
-                {moment(c.date).format('DD/MM/YYYY HH:mm')}
+                {formatRelative(moment(c.date).toDate(), new Date(), {
+                  locale: language,
+                })}
               </Text>
             </Box>
           </HStack>
