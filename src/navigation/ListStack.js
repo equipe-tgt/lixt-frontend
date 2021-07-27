@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import ListScreen from '../screens/ListScreen';
-import NewListScreen from '../screens/NewListScreen';
+import NewListScreen from '../screens/NewListScreen/NewListScreen';
 import NewProductScreen from '../screens/NewProductScreen';
 import ProductOfListDetails from '../screens/ProductOfListDetails';
 import SendInvitationScreen from '../screens/SendInvitationScreen/SendInvitationScreen';

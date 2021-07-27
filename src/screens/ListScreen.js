@@ -307,7 +307,7 @@ export default function ListScreen(props) {
             {t('listInfo')}
           </Menu.Item>
 
-          {selectedList?.id && selectedList.listMembers.length > 0 ? (
+          {selectedList?.id && selectedList.listMembers?.length > 0 ? (
             <Menu.Item
               onPress={() => {
                 props.navigation.navigate('Members', {
