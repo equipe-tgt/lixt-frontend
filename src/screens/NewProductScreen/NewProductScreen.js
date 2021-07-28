@@ -37,56 +37,6 @@ export default function NewProductScreen(props) {
   const { user } = useContext(AuthContext);
   const toast = useToast();
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const { data } = await CategoryService.getCategories(user);
-      setCategories([...data]);
-    } catch (error) {
-      console.log({ error });
-      toast.show({
-        title: 'Não foi possível buscar as categorias',
-        status: 'error',
-      });
-    }
-  };
-
-  const addProduct = async () => {
-    setLoading(true);
-
-    let status;
-    let title;
-
-    try {
-      const product = {
-        categoryId: values.categoryId,
-        name: values.name,
-        userId: user.id,
-      };
-
-      product.measureType =
-        values.measureType === 'UN' ? 'UNITY' : values.measureType;
-
-      await ProductService.createProduct(product, user);
-
-      title = `Produto "${product.name}" adicionado com sucesso!`;
-      status = 'success';
-    } catch (error) {
-      title = 'Não foi possível adicionar o produto';
-      status = 'warning';
-    } finally {
-      toast.show({
-        status,
-        title,
-      });
-
-      setLoading(false);
-    }
-  };
-
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
     initialValues: {
@@ -102,6 +52,58 @@ export default function NewProductScreen(props) {
       addProduct();
     },
   });
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = () => {
+    CategoryService.getCategories(user)
+      .then(data => {
+        setCategories([...data]);
+      })
+      .catch(() => {
+        toast.show({
+          title: 'Não foi possível buscar as categorias',
+          status: 'error',
+        });
+      });
+  };
+
+  const addProduct = async () => {
+    setLoading(true);
+
+    let status;
+    let title;
+
+    const product = {
+      categoryId: values.categoryId,
+      name: values.name,
+      userId: user.id,
+    };
+
+    product.measureType =
+      values.measureType === 'UN' ? 'UNITY' : values.measureType;
+
+    ProductService.createProduct(product, user)
+      .then(() => {
+        title = `Produto "${product.name}" adicionado com sucesso!`;
+        status = 'success';
+      })
+      .catch(() => {
+        title = 'Não foi possível adicionar o produto';
+        status = 'warning';
+      })
+      .finally(() => {
+        toast.show({
+          status,
+          title,
+        });
+  
+        setLoading(false);
+      });
+  };
+
   return (
     <SafeAreaView style={style.container}>
       <Center width="90%" mx="auto">
@@ -146,17 +148,19 @@ export default function NewProductScreen(props) {
             error={errors.categoryId}
             selectedValue={values.categoryId}
             onValueChange={handleChange('categoryId')}
+            testID="category-select"
           >
             {categories.map((c) => (
               <Select.Item key={c.id} value={String(c.id)} label={c.name} />
             ))}
           </Select>
           <View style={{ height: 20 }}>
-            <Text color="rose.600" fontSize="sm">
+            <Text color="rose.600" fontSize="sm" testID="error-category-select">
               {errors.categoryId}
             </Text>
           </View>
         </FormControl>
+
         <Button
           paddingX={20}
           paddingY={4}
@@ -164,6 +168,7 @@ export default function NewProductScreen(props) {
           isLoadingText={t('creating')}
           marginTop={5}
           onPress={handleSubmit}
+          testID="create-product-button"
         >
           {t('add')}
         </Button>
