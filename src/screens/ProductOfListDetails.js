@@ -13,6 +13,7 @@ import {
 
 import { useTranslation } from 'react-i18next';
 import { screenBasicStyle as style } from '../styles/style';
+import { Ionicons } from '@expo/vector-icons';
 
 // Validação do formulário
 import MEASURE_TYPES, { getMeasureType } from '../utils/measureTypes';
@@ -85,6 +86,19 @@ export default function ProductOfListDetails(props) {
         <Heading>
           {`${t('editing')} ${props.route.params.product.product.name}`}
         </Heading>
+        <Button
+          px={0}
+          mr="auto"
+          variant="ghost"
+          startIcon={
+            <Ionicons name="chatbox-outline" size={35} color="#06b6d4" />
+          }
+          onPress={() => {
+            props.navigation.navigate('Commentaries', { product });
+          }}
+        >
+          {t('comment')}
+        </Button>
 
         <FormControl my={3}>
           <FormControl.Label>{t('price')}</FormControl.Label>

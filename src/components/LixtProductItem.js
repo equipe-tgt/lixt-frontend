@@ -5,7 +5,12 @@ import { Pressable, Box, Menu, Text } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-const ProductItem = ({ product, navigate, deleteFromList }) => {
+const LixtProductItem = ({
+  product,
+  navigate,
+  idSelectedList,
+  deleteFromList,
+}) => {
   const { t } = useTranslation();
 
   return (
@@ -29,6 +34,21 @@ const ProductItem = ({ product, navigate, deleteFromList }) => {
         <Text>{product.price ? `R$ ${product.price}` : 'R$ 0,00'}</Text>
       </Box>
 
+      {product.amountComment ? (
+        <Pressable
+          accessibilityLabel={t('commentaries')}
+          onPress={() => {
+            navigate('Commentaries', { product });
+          }}
+          p={2}
+          flexDirection="row"
+          justifyContent="space-around"
+        >
+          <Text mr={2}>{product.amountComment}</Text>
+          <Ionicons name="chatbox-outline" size={24} color="#27272a" />
+        </Pressable>
+      ) : null}
+
       <Menu
         trigger={(triggerProps) => {
           return (
@@ -38,6 +58,13 @@ const ProductItem = ({ product, navigate, deleteFromList }) => {
           );
         }}
       >
+        <Menu.Item
+          onPress={() => {
+            navigate('Commentaries', { product, idSelectedList });
+          }}
+        >
+          {t('comment')}
+        </Menu.Item>
         <Menu.Item
           onPress={() => {
             deleteFromList(product.id);
@@ -50,10 +77,11 @@ const ProductItem = ({ product, navigate, deleteFromList }) => {
   );
 };
 
-export default ProductItem;
+export default LixtProductItem;
 
-ProductItem.propTypes = {
+LixtProductItem.propTypes = {
   navigate: PropTypes.func,
   deleteFromList: PropTypes.func,
   product: PropTypes.object,
+  idSelectedList: PropTypes.number,
 };
