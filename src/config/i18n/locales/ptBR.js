@@ -108,5 +108,6 @@ export default {
   selectAnOption: 'Selecione uma opção',
 
   commentaries: 'Comentários',
-  comment: 'Comentar'
+  comment: 'Comentar',
+  commentaryPlaceholder: 'Comprar suco no Extra',
 };

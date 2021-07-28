@@ -107,5 +107,6 @@ export default {
   selectAnOption: 'Select an option',
 
   commentaries: 'Commentaries',
-  comment: 'Comment'
+  comment: 'Comment',
+  commentaryPlaceholder: 'Buy it until friday',
 };
