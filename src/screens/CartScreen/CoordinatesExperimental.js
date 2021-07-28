@@ -3,10 +3,13 @@ import { SafeAreaView, Text, TouchableOpacity, TextInput } from 'react-native';
 import * as Location from 'expo-location';
 import { useToast, Center } from 'native-base';
 
-import { AuthContext } from '../context/AuthProvider';
-import PurchaseLocalService from '../services/PurchaseLocalService';
+import { AuthContext } from '../../context/AuthProvider';
+import PurchaseLocalService from '../../services/PurchaseLocalService';
 
-export default function CartScreen() {
+/**
+ * Essa tela tem função experimental para uso de coordenadas
+ */
+export default function CoordinatesExperimental() {
   const [name, setName] = useState('');
   const { user } = useContext(AuthContext);
 

@@ -110,4 +110,6 @@ export default {
   commentaries: 'Comentários',
   comment: 'Comentar',
   commentaryPlaceholder: 'Comprar suco no Extra',
+
+  buy: 'Comprar',
 };

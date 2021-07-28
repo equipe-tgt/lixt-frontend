@@ -109,4 +109,6 @@ export default {
   commentaries: 'Commentaries',
   comment: 'Comment',
   commentaryPlaceholder: 'Buy it until friday',
+
+  buy: 'Buy',
 };

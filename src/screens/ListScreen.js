@@ -453,7 +453,7 @@ export default function ListScreen(props) {
           </VStack>
         </ScrollView>
       ) : (
-        <Center w="90%" mx="auto">
+        <Center w="90%" mx="auto" my="50%">
           <Text textAlign="center">{t('noListsFound')}</Text>
           <Button
             onPress={() => {
