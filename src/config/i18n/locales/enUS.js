@@ -9,6 +9,8 @@ export default {
   emailAlreadyTaken: 'This e-mail is already taken',
   usernameAlreadyTaken: 'This username is already taken',
 
+  createdList: 'The list was created successfully!',
+
   forgotPassword: 'Forgot my password',
   signIn: 'Sign In',
   dontHaveAccount: "Don't you have an account?",
