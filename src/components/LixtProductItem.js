@@ -34,7 +34,7 @@ const LixtProductItem = ({
         <Text>{product.price ? `R$ ${product.price}` : 'R$ 0,00'}</Text>
       </Box>
 
-      {product.comments.length > 0 && (
+      {product != null && product?.comments?.length > 0 ? (
         <Pressable
           accessibilityLabel={t('commentaries')}
           onPress={() => {
@@ -44,10 +44,10 @@ const LixtProductItem = ({
           flexDirection="row"
           justifyContent="space-around"
         >
-          <Text mr={2}>{product.comments.length}</Text>
+          <Text mr={2}>{product.comments.length || 0}</Text>
           <Ionicons name="chatbox-outline" size={24} color="#27272a" />
         </Pressable>
-      )}
+      ) : null}
 
       <Menu
         trigger={(triggerProps) => {
