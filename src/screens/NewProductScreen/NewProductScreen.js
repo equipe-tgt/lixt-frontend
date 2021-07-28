@@ -59,8 +59,8 @@ export default function NewProductScreen(props) {
 
   const fetchCategories = () => {
     CategoryService.getCategories(user)
-      .then(data => {
-        setCategories([...data]);
+      .then(resp => {
+        setCategories([...resp.data]);
       })
       .catch(() => {
         toast.show({
