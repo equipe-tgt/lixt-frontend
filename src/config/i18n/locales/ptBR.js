@@ -112,4 +112,5 @@ export default {
   commentaryPlaceholder: 'Comprar suco no Extra',
 
   buy: 'Comprar',
+  markItem: 'Checkbox marcar item'
 };

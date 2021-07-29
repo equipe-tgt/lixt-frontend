@@ -1,7 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import CartScreen from '../screens/CartScreen/CartScreen';
-import NewListScreen from '../screens/NewListScreen/NewListScreen';
+import CommentaryScreen from '../screens/CommentaryScreen/CommentaryScreen';
+import ProductOfListDeatils from '../screens/ProductOfListDetails';
 
 import { useTranslation } from 'react-i18next';
 
@@ -27,9 +28,14 @@ export default function PurchaseStack() {
         component={CartScreen}
       ></Stack.Screen>
       <Stack.Screen
-        name="NewList"
-        options={{ title: t('newList'), headerStyle: stackHeaderStyle }}
-        component={NewListScreen}
+        name="Commentaries"
+        options={{ title: t('commentaries'), headerStyle: stackHeaderStyle }}
+        component={CommentaryScreen}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="ProductOfListDetails"
+        options={{ title: t('edit'), headerStyle: stackHeaderStyle }}
+        component={ProductOfListDeatils}
       ></Stack.Screen>
     </Stack.Navigator>
   );

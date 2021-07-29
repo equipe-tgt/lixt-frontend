@@ -66,6 +66,12 @@ export default function ListScreen(props) {
         setSelectedList(newList);
         props.route.params.newList = null;
       }
+
+      // Caso a tela peça para fazer refresh atualiza as listas
+      if (props.route.params.refresh) {
+        fetchLists();
+        props.route.params.refresh = null;
+      }
     }
   });
 
