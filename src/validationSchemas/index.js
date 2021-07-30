@@ -36,15 +36,13 @@ export const ResetPasswordSchema = (t) =>
       .required('requiredField'),
   });
 
-export const ListSchema = (t) => Yup.object().shape({
-  nameList: Yup.string()
-    .max(45, t('fieldMaxChars', { max: 45 }))
-    .required(t('requiredField')),
-  description: Yup.string().max(
-    200,
-    t('fieldMaxChars', { max: 200 })
-  ),
-});
+export const ListSchema = (t) =>
+  Yup.object().shape({
+    nameList: Yup.string()
+      .max(45, t('fieldMaxChars', { max: 45 }))
+      .required(t('requiredField')),
+    description: Yup.string().max(200, t('fieldMaxChars', { max: 200 })),
+  });
 
 export const UpdatePasswordSchema = (t) =>
   Yup.object().shape({

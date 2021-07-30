@@ -44,7 +44,7 @@ export default function NewListScreen(props) {
           title: t('createdList'),
           status: 'success',
         });
-  
+
         // Retorna para a tela de listas
         props.navigation.navigate('Lists', {
           newList: data,
