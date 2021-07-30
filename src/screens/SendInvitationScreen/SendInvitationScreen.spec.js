@@ -142,7 +142,9 @@ describe('SendInvitationScreen component', () => {
         });
         await waitFor(() => fireEvent.press(sendInvitationButton));
 
-        const toast = getByText('Um convite já foi enviado para "ciclanodetal"');
+        const toast = getByText(
+          'Um convite já foi enviado para "ciclanodetal"'
+        );
         expect(toast).toBeDefined();
       }
     );

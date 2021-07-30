@@ -27,7 +27,7 @@ describe('ProfileScreen component', () => {
 
     user = {
       name: 'Fulano',
-      username: 'fulanodetal'
+      username: 'fulanodetal',
     };
     logoutFn = jest.fn();
 
@@ -39,10 +39,12 @@ describe('ProfileScreen component', () => {
           logout: logoutFn,
         }}
       >
-        <ListContext.Provider value={{
-          lists: [],
-          setLists: () => {}
-        }}>
+        <ListContext.Provider
+          value={{
+            lists: [],
+            setLists: () => {},
+          }}
+        >
           <SafeAreaProvider
             initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
           >

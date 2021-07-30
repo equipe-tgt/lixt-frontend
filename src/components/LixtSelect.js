@@ -8,7 +8,7 @@ const LixtSelect = ({
   selectTestID,
   isDisabled,
   selectedValue,
-  children
+  children,
 }) => {
   const { t } = useTranslation();
   return (
@@ -18,8 +18,9 @@ const LixtSelect = ({
         isDisabled={isDisabled}
         selectedValue={selectedValue}
         onValueChange={onValueChange}
-        testID={selectTestID}>
-        { children }
+        testID={selectTestID}
+      >
+        {children}
       </Select>
     </FormControl>
   );
