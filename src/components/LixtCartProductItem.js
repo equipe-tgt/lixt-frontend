@@ -13,7 +13,7 @@ const LixtCartProductItem = ({
   product,
   navigate,
   idSelectedList,
-  refreshIndividualList,
+  refreshList,
 }) => {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
@@ -38,7 +38,7 @@ const LixtCartProductItem = ({
 
     try {
       await ProductOfListService.editProductOfList(objToEdit, user);
-      refreshIndividualList();
+      refreshList();
     } catch (error) {
       console.log(error);
       toast.show({
@@ -48,7 +48,7 @@ const LixtCartProductItem = ({
     }
   };
 
-  return idSelectedList !== 'view-all' ? (
+  return (
     <Pressable
       flexDirection="row"
       onPress={() => {
@@ -115,10 +115,6 @@ const LixtCartProductItem = ({
         </Pressable>
       ) : null}
     </Pressable>
-  ) : (
-    <Pressable>
-      <Text>colocar item aqui</Text>
-    </Pressable>
   );
 };
 
@@ -129,5 +125,5 @@ LixtCartProductItem.propTypes = {
   product: PropTypes.object,
   isGeneralViewOpen: PropTypes.bool,
   idSelectedList: PropTypes.any,
-  refreshIndividualList: PropTypes.func,
+  refreshList: PropTypes.func,
 };

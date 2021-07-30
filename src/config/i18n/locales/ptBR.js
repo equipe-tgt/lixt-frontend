@@ -113,4 +113,5 @@ export default {
 
   buy: 'Comprar',
   markItem: 'Checkbox marcar item',
+  includedIn: 'Incluso em'
 };

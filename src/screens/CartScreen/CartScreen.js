@@ -1,17 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
-import {
-  Box,
-  Select,
-  Center,
-  Text,
-  ScrollView,
-  Heading,
-  VStack,
-} from 'native-base';
-import LixtCartGeneralView from '../../components/LixtCartGeneralView';
-import LixtCartIndividualList from '../../components/LixtCartIndividualList';
+import { Box, Select, Center, Text, ScrollView } from 'native-base';
+import LixtCartList from '../../components/LixtCartList';
 import ListService from '../../services/ListService';
 
 import { screenBasicStyle as style } from '../../styles/style';
@@ -26,7 +17,7 @@ export default function CartScreen(props) {
   const { user } = useContext(AuthContext);
   const [selectedList, setSelectedList] = useState({
     id: 'view-all',
-    groupedProducts: [],
+    productsOfList: [],
   });
 
   const { t } = useTranslation();
@@ -53,7 +44,7 @@ export default function CartScreen(props) {
 
   useEffect(() => {
     if (selectedList?.id === 'view-all') {
-      setSelectedList({ id: 'view-all', groupedProducts: unifyAllProducts() });
+      setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
     } else {
       setSelectedList(
         lists.find((l) => Number(l.id) === Number(selectedList.id))
@@ -63,7 +54,7 @@ export default function CartScreen(props) {
 
   const handleSelectChange = (listId) => {
     if (listId === 'view-all') {
-      setSelectedList({ id: 'view-all', groupedProducts: unifyAllProducts() });
+      setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
     } else {
       setSelectedList(lists.find((list) => list.id === Number(listId)));
     }
@@ -106,25 +97,41 @@ export default function CartScreen(props) {
           {},
           groupedProducts[groupedProductIndex]
         );
-        groupedProduct.listsIds.push(productOfList.listId);
-        groupedProduct.prices.push(productOfList.price);
+        groupedProduct.inLists.push(
+          getSuperficialListDataById(productOfList.listId)
+        );
+        groupedProduct.priceAndAmounts.push({
+          price: productOfList.price,
+          amount: productOfList.amount,
+        });
+        groupedProduct.markings.push(productOfList.markings);
         groupedProducts[groupedProductIndex] = groupedProduct;
       } else {
         // Caso não tenha achado nenhum objeto com id de produto igual ao id de produto do item
         // cria um objeto novo
         const newGroupedProduct = {
           productId: productOfList.productId,
-          listsIds: [productOfList.listId],
-          prices: [productOfList.price],
+          inLists: [getSuperficialListDataById(productOfList.listId)],
+          priceAndAmounts: [
+            { price: productOfList.price, amount: productOfList.amount },
+          ],
+          markings: [productOfList.isMarked],
           product: productOfList.product,
         };
 
         groupedProducts.push(newGroupedProduct);
       }
     }
-
-    // setSelectedList({ id: 'view-all', groupedProducts });
     return groupedProducts;
+  };
+
+  const getSuperficialListDataById = (id) => {
+    const list = lists.find((l) => l.id === id);
+
+    return {
+      id: id,
+      name: list.nameList,
+    };
   };
 
   return lists.length ? (
@@ -147,16 +154,15 @@ export default function CartScreen(props) {
         </Select>
       </Box>
       <ScrollView>
-        {selectedList?.id && selectedList?.id !== 'view-all' ? (
-          <LixtCartIndividualList
+        {selectedList && (
+          <LixtCartList
             selectedList={selectedList}
             navigate={props.navigation.navigate}
-            refreshIndividualList={refreshIndividualList}
-          />
-        ) : (
-          <LixtCartGeneralView
-            selectedList={selectedList}
-            navigate={props.navigation.navigate}
+            refreshList={
+              selectedList.id === 'view-all'
+                ? refreshIndividualList
+                : refreshIndividualList
+            }
           />
         )}
       </ScrollView>

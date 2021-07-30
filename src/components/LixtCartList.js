@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { VStack, Box, Heading } from 'native-base';
 import LixtCartProductItem from '../components/LixtCartProductItem';
+import LixtCartProductItemGeneral from '../components/LixtCartProductItemGeneral';
 
-export default function LixtCartGeneralView({ selectedList, navigate }) {
+export default function LixtCartList({ selectedList, refreshList, navigate }) {
   const [itemsShownByCategory, setItemsShownByCategory] = useState({});
 
   useEffect(() => {
@@ -11,9 +12,9 @@ export default function LixtCartGeneralView({ selectedList, navigate }) {
   }, [selectedList]);
 
   const listItemsByCategory = () => {
-    if (selectedList && selectedList?.groupedProducts) {
+    if (selectedList && selectedList?.productsOfList) {
       // Agrupa os produtos por categorias
-      const productsByCategory = selectedList.groupedProducts.reduce(
+      const groupedProducts = selectedList.productsOfList.reduce(
         (accumlator, currentProductOfList) => {
           accumlator[currentProductOfList.product.category.name] = [
             ...(accumlator[currentProductOfList.product.category.name] || []),
@@ -23,7 +24,7 @@ export default function LixtCartGeneralView({ selectedList, navigate }) {
         },
         {}
       );
-      setItemsShownByCategory(productsByCategory);
+      setItemsShownByCategory(groupedProducts);
     }
     return {};
   };
@@ -42,15 +43,28 @@ export default function LixtCartGeneralView({ selectedList, navigate }) {
                 >
                   {category}
                 </Heading>
-                {itemsShownByCategory[category].map((p) => (
-                  <LixtCartProductItem
-                    key={p.id}
-                    idSelectedList="view-all"
-                    product={p}
-                    navigate={navigate}
-                    refreshIndividualList={null}
-                  />
-                ))}
+                {itemsShownByCategory[category].map((p) => {
+                  if (selectedList?.id === 'view-all') {
+                    return (
+                      <LixtCartProductItemGeneral
+                        key={p.productId}
+                        navigate={navigate}
+                        refreshList={refreshList}
+                        wrappedProduct={p}
+                      />
+                    );
+                  } else {
+                    return (
+                      <LixtCartProductItem
+                        key={p.id}
+                        idSelectedList={p.listId}
+                        product={p}
+                        navigate={navigate}
+                        refreshList={refreshList}
+                      />
+                    );
+                  }
+                })}
               </Box>
             );
           })
@@ -59,8 +73,8 @@ export default function LixtCartGeneralView({ selectedList, navigate }) {
   );
 }
 
-LixtCartGeneralView.propTypes = {
+LixtCartList.propTypes = {
   navigate: PropTypes.func,
   selectedList: PropTypes.object,
-  refreshIndividualList: PropTypes.func,
+  refreshList: PropTypes.func,
 };
