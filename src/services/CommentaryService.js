@@ -7,7 +7,7 @@ const CommentaryService = {
         Authorization: `Bearer ${user.token}`,
       },
     });
-  }
+  },
 };
 
 export default CommentaryService;

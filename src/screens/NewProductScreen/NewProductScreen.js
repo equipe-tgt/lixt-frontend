@@ -59,7 +59,7 @@ export default function NewProductScreen(props) {
 
   const fetchCategories = () => {
     CategoryService.getCategories(user)
-      .then(resp => {
+      .then((resp) => {
         setCategories([...resp.data]);
       })
       .catch(() => {
@@ -99,7 +99,7 @@ export default function NewProductScreen(props) {
           status,
           title,
         });
-  
+
         setLoading(false);
       });
   };
