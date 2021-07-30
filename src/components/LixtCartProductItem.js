@@ -1,13 +1,13 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getMeasureType } from '../utils/measureTypes';
-import { Pressable, Box, Text, Checkbox, useToast, HStack } from 'native-base';
+import { Pressable, Box, Text, Checkbox, useToast } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AuthContext } from '../context/AuthProvider';
 import ProductOfListService from '../services/ProductOfListService';
 import { useTranslation } from 'react-i18next';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LixtCartProductItem = ({
   product,
@@ -23,15 +23,11 @@ const LixtCartProductItem = ({
   const [isDisabled] = useState(
     product.isMarked && product.userWhoMarkedId !== user.id
   );
-  const [formattedPrice, setFormattedPrice] = useState('');
-
-  useEffect(() => {
-    getPrice();
-  }, []);
-
   const toggleProductFromSingleList = async (isSelected) => {
     // Se o checbox estiver desabilitado nem continua
     if (isDisabled) return;
+
+    product.isMarked = true;
 
     // Edita as propriedades de marcação e quem marcou
     const objToEdit = {
@@ -52,28 +48,19 @@ const LixtCartProductItem = ({
     }
   };
 
-  const getPrice = async () => {
-    const language = await AsyncStorage.getItem('language');
-
-    let price = product.price ? product.price : 0;
-
-    if (product.amount) price *= product.amount;
-
-    const currencyConfig = {
-      country: language === 'pt_BR' ? 'pt-BR' : 'en-US',
-      currency: language === 'pt_BR' ? 'BRL' : 'USD',
-    };
-
-    const formatter = new Intl.NumberFormat(currencyConfig.country, {
-      style: 'currency',
-      currency: currencyConfig.currency,
-    });
-
-    setFormattedPrice(formatter.format(price));
-  };
-
   return idSelectedList !== 'view-all' ? (
-    <HStack key={product.id} my={3} alignItems="center">
+    <Pressable
+      flexDirection="row"
+      onPress={() => {
+        navigate('ProductOfListDetails', {
+          product,
+          origin: 'Cart',
+        });
+      }}
+      key={product.id}
+      my={3}
+      alignItems="center"
+    >
       <Box mr={5}>
         <Checkbox
           isDisabled={isDisabled}
@@ -81,18 +68,11 @@ const LixtCartProductItem = ({
           value={product.isMarked}
           isChecked={product.isMarked}
           onChange={toggleProductFromSingleList}
-          size="sm"
+          size="md"
         />
       </Box>
 
-      <Pressable
-        onPress={() => {
-          navigate('ProductOfListDetails', {
-            product,
-            origin: 'Cart',
-          });
-        }}
-      >
+      <Box>
         <Text strikeThrough={product.isMarked} fontWeight="bold">
           {product.name}
         </Text>
@@ -103,7 +83,7 @@ const LixtCartProductItem = ({
               {product.amounnt || 0} {getMeasureType(product.measureType)}
             </Text>
 
-            <Text>{formattedPrice}</Text>
+            <Text>{product.price ? `R$ ${product.price}` : 'R$ 0,00'}</Text>
           </Box>
         ) : (
           <Box>
@@ -113,10 +93,10 @@ const LixtCartProductItem = ({
               } ${getMeasureType(product.measureType)}`}
             </Text>
 
-            <Text>{formattedPrice}</Text>
+            <Text>{product.price ? `R$ ${product.price}` : 'R$ 0,00'}</Text>
           </Box>
         )}
-      </Pressable>
+      </Box>
 
       {product.amountComment ? (
         <Pressable
@@ -134,9 +114,11 @@ const LixtCartProductItem = ({
           <Ionicons name="chatbox-outline" size={24} color="#27272a" />
         </Pressable>
       ) : null}
-    </HStack>
+    </Pressable>
   ) : (
-    <Pressable></Pressable>
+    <Pressable>
+      <Text>colocar item aqui</Text>
+    </Pressable>
   );
 };
 

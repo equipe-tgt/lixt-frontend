@@ -10,7 +10,8 @@ import {
   Heading,
   VStack,
 } from 'native-base';
-import LixtCartProductItem from '../../components/LixtCartProductItem';
+import LixtCartGeneralView from '../../components/LixtCartGeneralView';
+import LixtCartIndividualList from '../../components/LixtCartIndividualList';
 import ListService from '../../services/ListService';
 
 import { screenBasicStyle as style } from '../../styles/style';
@@ -23,8 +24,10 @@ import { useFocusEffect } from '@react-navigation/native';
 export default function CartScreen(props) {
   const { lists, setLists } = useContext(ListContext);
   const { user } = useContext(AuthContext);
-  const [selectedList, setSelectedList] = useState({ id: 'view-all' });
-  const [itemsShownByCategory, setItemsShownByCategory] = useState({});
+  const [selectedList, setSelectedList] = useState({
+    id: 'view-all',
+    groupedProducts: [],
+  });
 
   const { t } = useTranslation();
 
@@ -49,41 +52,18 @@ export default function CartScreen(props) {
   });
 
   useEffect(() => {
-    if (selectedList?.id !== 'view-all') {
-      listItemsByCategory();
-    }
-  }, [selectedList]);
-
-  useEffect(() => {
-    if (selectedList?.id !== 'view-all') {
+    if (selectedList?.id === 'view-all') {
+      setSelectedList({ id: 'view-all', groupedProducts: unifyAllProducts() });
+    } else {
       setSelectedList(
         lists.find((l) => Number(l.id) === Number(selectedList.id))
       );
-      listItemsByCategory();
     }
   }, [lists]);
 
-  const listItemsByCategory = () => {
-    if (selectedList && selectedList?.productsOfList) {
-      // Agrupa os produtos por categorias
-      const groupedProducts = selectedList.productsOfList.reduce(
-        (accumlator, currentProductOfList) => {
-          accumlator[currentProductOfList.product.category.name] = [
-            ...(accumlator[currentProductOfList.product.category.name] || []),
-            currentProductOfList,
-          ];
-          return accumlator;
-        },
-        {}
-      );
-      setItemsShownByCategory(groupedProducts);
-    }
-    return {};
-  };
-
   const handleSelectChange = (listId) => {
     if (listId === 'view-all') {
-      setSelectedList({ id: 'view-all' });
+      setSelectedList({ id: 'view-all', groupedProducts: unifyAllProducts() });
     } else {
       setSelectedList(lists.find((list) => list.id === Number(listId)));
     }
@@ -101,6 +81,50 @@ export default function CartScreen(props) {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const unifyAllProducts = () => {
+    const allProductsOfLists = [];
+
+    // Pega todos os itens inclusos em todas as listas
+    for (const list of lists) {
+      allProductsOfLists.push(...list.productsOfList);
+    }
+
+    const groupedProducts = [];
+
+    for (const productOfList of allProductsOfLists) {
+      // Tenta encontrar se um mesmo produto de listas diferentes já foi incluso em groupedProducts
+      const groupedProductIndex = groupedProducts.findIndex(
+        (p) => p.productId === productOfList.productId
+      );
+
+      // Caso tenha encontrado um id de produto igual, agrupa no objeto
+      // o id da lista do item atual e o preço do item atual e atualiza a lista do groupedProducts
+      if (groupedProductIndex >= 0) {
+        const groupedProduct = Object.assign(
+          {},
+          groupedProducts[groupedProductIndex]
+        );
+        groupedProduct.listsIds.push(productOfList.listId);
+        groupedProduct.prices.push(productOfList.price);
+        groupedProducts[groupedProductIndex] = groupedProduct;
+      } else {
+        // Caso não tenha achado nenhum objeto com id de produto igual ao id de produto do item
+        // cria um objeto novo
+        const newGroupedProduct = {
+          productId: productOfList.productId,
+          listsIds: [productOfList.listId],
+          prices: [productOfList.price],
+          product: productOfList.product,
+        };
+
+        groupedProducts.push(newGroupedProduct);
+      }
+    }
+
+    // setSelectedList({ id: 'view-all', groupedProducts });
+    return groupedProducts;
   };
 
   return lists.length ? (
@@ -123,33 +147,18 @@ export default function CartScreen(props) {
         </Select>
       </Box>
       <ScrollView>
-        <VStack w="90%" mx="auto">
-          {Object.keys(itemsShownByCategory).length > 0
-            ? Object.keys(itemsShownByCategory).map((category, index) => {
-                return (
-                  <Box key={index} my={3}>
-                    <Heading
-                      style={{ textTransform: 'uppercase', letterSpacing: 4 }}
-                      mb={2}
-                      fontWeight="normal"
-                      size="sm"
-                    >
-                      {category}
-                    </Heading>
-                    {itemsShownByCategory[category].map((p) => (
-                      <LixtCartProductItem
-                        key={p.id}
-                        idSelectedList={p.listId}
-                        product={p}
-                        navigate={props.navigation.navigate}
-                        refreshIndividualList={refreshIndividualList}
-                      />
-                    ))}
-                  </Box>
-                );
-              })
-            : null}
-        </VStack>
+        {selectedList?.id && selectedList?.id !== 'view-all' ? (
+          <LixtCartIndividualList
+            selectedList={selectedList}
+            navigate={props.navigation.navigate}
+            refreshIndividualList={refreshIndividualList}
+          />
+        ) : (
+          <LixtCartGeneralView
+            selectedList={selectedList}
+            navigate={props.navigation.navigate}
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   ) : (
