@@ -19,4 +19,4 @@ cache
 
 #SonarQube scan
 .scannerwork
-
+sonar-project.properties
