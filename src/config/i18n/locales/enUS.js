@@ -111,5 +111,5 @@ export default {
   commentaryPlaceholder: 'Buy it until friday',
 
   buy: 'Buy',
-  markItem: 'Mark item checkbox'
+  markItem: 'Mark item checkbox',
 };
