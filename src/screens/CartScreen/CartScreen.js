@@ -10,7 +10,7 @@ import { screenBasicStyle as style } from '../../styles/style';
 import { useTranslation } from 'react-i18next';
 import { ListContext } from '../../context/ListProvider';
 import { AuthContext } from '../../context/AuthProvider';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 export default function CartScreen(props) {
   const { lists, setLists } = useContext(ListContext);
@@ -21,6 +21,7 @@ export default function CartScreen(props) {
   });
 
   const { t } = useTranslation();
+  const isFocused = useIsFocused();
 
   /**
    * @todo atualizar corretamente lista individual após edição
@@ -43,12 +44,14 @@ export default function CartScreen(props) {
   });
 
   useEffect(() => {
-    if (selectedList?.id === 'view-all') {
-      setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
-    } else {
-      setSelectedList(
-        lists.find((l) => Number(l.id) === Number(selectedList.id))
-      );
+    if (isFocused) {
+      if (selectedList?.id === 'view-all') {
+        setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
+      } else {
+        setSelectedList(
+          lists.find((l) => Number(l.id) === Number(selectedList.id))
+        );
+      }
     }
   }, [lists]);
 
@@ -104,7 +107,7 @@ export default function CartScreen(props) {
           price: productOfList.price,
           amount: productOfList.amount,
         });
-        groupedProduct.markings.push(productOfList.markings);
+        groupedProduct.markings.push(productOfList.isMarked);
         groupedProducts[groupedProductIndex] = groupedProduct;
       } else {
         // Caso não tenha achado nenhum objeto com id de produto igual ao id de produto do item
@@ -154,7 +157,7 @@ export default function CartScreen(props) {
         </Select>
       </Box>
       <ScrollView>
-        {selectedList && (
+        {selectedList && selectedList?.productsOfList.length ? (
           <LixtCartList
             selectedList={selectedList}
             navigate={props.navigation.navigate}
@@ -164,7 +167,7 @@ export default function CartScreen(props) {
                 : refreshIndividualList
             }
           />
-        )}
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   ) : (

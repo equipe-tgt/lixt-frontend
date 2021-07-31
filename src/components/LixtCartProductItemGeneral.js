@@ -23,6 +23,7 @@ const LixtCartProductItemGeneral = ({
     }
 
     if (wrappedProduct?.markings) {
+      console.log(wrappedProduct?.markings);
       setIsChecked(wrappedProduct.markings.every((m) => m));
     }
   }, [wrappedProduct]);
@@ -73,7 +74,7 @@ const LixtCartProductItemGeneral = ({
       </Box>
 
       <Box>
-        <Text strikeThrough={false} fontWeight="bold">
+        <Text strikeThrough={isChecked} fontWeight="bold">
           {wrappedProduct.product.name}
         </Text>
 
