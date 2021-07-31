@@ -82,12 +82,19 @@ export default function CartScreen(props) {
 
     // Pega todos os itens inclusos em todas as listas
     for (const list of lists) {
-      allProductsOfLists.push(...list.productsOfList);
+      // Pega os itens caso productsOfList não seja null e possua itens
+      if (list.productsOfList && list.productsOfList.length > 0) {
+        allProductsOfLists.push(...list.productsOfList);
+      }
     }
 
     const groupedProducts = [];
 
     for (const productOfList of allProductsOfLists) {
+      // Não leva em consideração no agrupamento produtos que foram marcados por outros usuários
+      // uma vez que não será possível manipulá-lo de nenhuma forma
+      if (productOfList.isMarked && productOfList.userWhoMarkedId) continue;
+
       // Tenta encontrar se um mesmo produto de listas diferentes já foi incluso em groupedProducts
       const groupedProductIndex = groupedProducts.findIndex(
         (p) => p.productId === productOfList.productId
@@ -157,7 +164,7 @@ export default function CartScreen(props) {
         </Select>
       </Box>
       <ScrollView>
-        {selectedList && selectedList?.productsOfList.length ? (
+        {selectedList && selectedList?.productsOfList?.length ? (
           <LixtCartList
             selectedList={selectedList}
             navigate={props.navigation.navigate}

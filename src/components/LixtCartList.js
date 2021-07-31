@@ -12,7 +12,7 @@ export default function LixtCartList({ selectedList, refreshList, navigate }) {
   }, [selectedList]);
 
   const listItemsByCategory = () => {
-    if (selectedList && selectedList?.productsOfList) {
+    if (selectedList && selectedList?.productsOfList?.length) {
       // Agrupa os produtos por categorias
       const groupedProducts = selectedList.productsOfList.reduce(
         (accumlator, currentProductOfList) => {
@@ -26,7 +26,6 @@ export default function LixtCartList({ selectedList, refreshList, navigate }) {
       );
       setItemsShownByCategory(groupedProducts);
     }
-    return {};
   };
 
   return (
