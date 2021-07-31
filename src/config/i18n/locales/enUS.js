@@ -11,6 +11,8 @@ export default {
 
   createdList: 'The list was created successfully!',
 
+  memberRemoved: 'The member was removed from the list',
+
   forgotPassword: 'Forgot my password',
   signIn: 'Sign In',
   dontHaveAccount: "Don't you have an account?",
