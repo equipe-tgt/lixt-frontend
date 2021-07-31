@@ -26,6 +26,13 @@ const ProductOfListService = {
       }
     );
   },
+  getProductOfListComments: (id, user) => {
+    return BaseService.get(`/productOfList/${id}/comments`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
 };
 
 export default ProductOfListService;

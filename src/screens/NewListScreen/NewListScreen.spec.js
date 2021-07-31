@@ -24,7 +24,7 @@ describe('NewListScreen component', () => {
     navigationSpy = jest.spyOn(navigation, 'navigate');
 
     const user = {
-      id: 1
+      id: 1,
     };
 
     const renderResults = render(
@@ -63,8 +63,12 @@ describe('NewListScreen component', () => {
     it('should show max length field error when it has more than 45 characters', async () => {
       const nameListInput = getByTestId('new-list-name-list');
 
-      await waitFor(() => fireEvent.changeText(
-        nameListInput, 'Lista muito grande que deve ser maior de 45 caracteres para aparecer um erro'));
+      await waitFor(() =>
+        fireEvent.changeText(
+          nameListInput,
+          'Lista muito grande que deve ser maior de 45 caracteres para aparecer um erro'
+        )
+      );
       await waitFor(() => {
         fireEvent.press(createListButton);
       });
@@ -89,13 +93,17 @@ describe('NewListScreen component', () => {
     it('should show max length field error when it has more than 200 characters', async () => {
       const descriptionInput = getByTestId('new-list-description');
 
-      await waitFor(() => fireEvent.changeText(
-        descriptionInput, `
+      await waitFor(() =>
+        fireEvent.changeText(
+          descriptionInput,
+          `
           Este é uma descrição muito longa mesmo, para isso, ela precisa ter mais de
           200 caracteres, e um erro deve aparecer em letras vermelhas. Essa lista
           é uma lista aleatório de compras de supermercado, para dividir com os amigos
           e todo mundo sair em lucro.
-        `));
+        `
+        )
+      );
       await waitFor(() => {
         fireEvent.press(createListButton);
       });
@@ -107,40 +115,36 @@ describe('NewListScreen component', () => {
 
   describe('when form is properly filled', () => {
     it('should show default server error message when is not possible to create a list', async () => {
-        const listMock = jest.spyOn(ListService, 'createList');
-        listMock.mockReturnValue(
-          Promise.reject()
-        );
+      const listMock = jest.spyOn(ListService, 'createList');
+      listMock.mockReturnValue(Promise.reject());
 
-        await waitFor(() => {
-          fireEvent.changeText(getByTestId('new-list-name-list'), 'Lista 01');
-          fireEvent.changeText(getByTestId('new-list-description'), 'Descrição');
-        });
-        await waitFor(() => fireEvent.press(createListButton));
+      await waitFor(() => {
+        fireEvent.changeText(getByTestId('new-list-name-list'), 'Lista 01');
+        fireEvent.changeText(getByTestId('new-list-description'), 'Descrição');
+      });
+      await waitFor(() => fireEvent.press(createListButton));
 
-        const toast = getByText('errorServerDefault');
-        expect(toast).toBeDefined();
-      }
-    );
+      const toast = getByText('errorServerDefault');
+      expect(toast).toBeDefined();
+    });
 
     it('should show successfull message when creating a new list and redirect to the lists page', async () => {
-        const listMock = jest.spyOn(ListService, 'createList');
-        listMock.mockReturnValue(
-          Promise.resolve({
-            data: {}
-          })
-        );
+      const listMock = jest.spyOn(ListService, 'createList');
+      listMock.mockReturnValue(
+        Promise.resolve({
+          data: {},
+        })
+      );
 
-        await waitFor(() => {
-          fireEvent.changeText(getByTestId('new-list-name-list'), 'Lista #02');
-          fireEvent.changeText(getByTestId('new-list-description'), 'Descrição');
-        });
-        await waitFor(() => fireEvent.press(createListButton));
+      await waitFor(() => {
+        fireEvent.changeText(getByTestId('new-list-name-list'), 'Lista #02');
+        fireEvent.changeText(getByTestId('new-list-description'), 'Descrição');
+      });
+      await waitFor(() => fireEvent.press(createListButton));
 
-        const toast = getByText('createdList');
-        expect(toast).toBeDefined();
-        expect(navigationSpy).toHaveBeenCalledWith('Lists', { newList: {} });
-      }
-    );
+      const toast = getByText('createdList');
+      expect(toast).toBeDefined();
+      expect(navigationSpy).toHaveBeenCalledWith('Lists', { newList: {} });
+    });
   });
 });

@@ -20,7 +20,7 @@ import {
   Heading,
   Center,
 } from 'native-base';
-import ProductItem from '../components/ProductItem';
+import LixtProductItem from '../components/LixtProductItem';
 import { Ionicons } from '@expo/vector-icons';
 import { screenBasicStyle as style } from '../styles/style';
 
@@ -42,6 +42,7 @@ export default function ListScreen(props) {
   const [selectedList, setSelectedList] = useState({
     productsOfList: [],
     listMembers: [],
+    comments: [],
     id: null,
   });
   const [productName, setProductName] = useState('');
@@ -156,7 +157,6 @@ export default function ListScreen(props) {
       try {
         const { data } = await ProductService.getProductByName(value, user);
         setProductsFound(data);
-        console.log(data);
       } catch (error) {
         console.log(error.response);
       }
@@ -187,7 +187,14 @@ export default function ListScreen(props) {
       // Faz uma cópia do objeto original e depois atribui ao state com o produto
       // adicionado
       const objCopy = Object.assign({}, selectedList);
-      objCopy.productsOfList.push(data);
+
+      // Se o atributo 'productsOfList' já existe só insere o produto
+      // caso não, cria um array com o produto já inserido dentro
+      if (objCopy.productsOfList) {
+        objCopy.productsOfList.push(data);
+      } else {
+        objCopy.productsOfList = [data];
+      }
 
       setSelectedList(objCopy);
 
@@ -431,9 +438,10 @@ export default function ListScreen(props) {
 
                       {/* Mostra todos os produtos pertencentes àquela categoria */}
                       {listItemsByCategory()[category].map((p) => (
-                        <ProductItem
+                        <LixtProductItem
                           key={p.id}
                           product={p}
+                          idSelectedList={selectedList.id}
                           deleteFromList={deleteProductOfList}
                           navigate={props.navigation.navigate}
                         />
