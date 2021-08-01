@@ -65,7 +65,6 @@ describe('ManageInvitationsScreen component', () => {
     beforeEach(() => {
       const getInvitationsApy = jest.spyOn(ListMembersService, 'getInvitations');
       getInvitationsApy.mockImplementation((index) => {
-        console.log({ index });
         return new Promise((resolve) => {
           if (index === 0) {
             resolve({
@@ -133,7 +132,6 @@ describe('ManageInvitationsScreen component', () => {
     beforeEach(() => {
       const getInvitationsApy = jest.spyOn(ListMembersService, 'getInvitations');
       getInvitationsApy.mockImplementation((index) => {
-        console.log({ index });
         return new Promise((resolve) => {
           if (index === 0) {
             resolve({
@@ -201,7 +199,6 @@ describe('ManageInvitationsScreen component', () => {
     beforeEach(() => {
       const getInvitationsApy = jest.spyOn(ListMembersService, 'getInvitations');
       getInvitationsApy.mockImplementation((index) => {
-        console.log({ index });
         return new Promise((resolve) => {
           if (index === 0) {
             resolve({
@@ -350,7 +347,6 @@ describe('ManageInvitationsScreen component', () => {
     beforeEach(() => {
       const getInvitationsApy = jest.spyOn(ListMembersService, 'getInvitations');
       getInvitationsApy.mockImplementation((index) => {
-        console.log({ index });
         return new Promise((resolve) => {
           if (index === 0) {
             resolve({
