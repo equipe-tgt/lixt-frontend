@@ -8,6 +8,7 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "test": "jest --verbose --coverage",
+    "test:silent": "jest --silent --verbose --coverage",
     "test:watch": "jest --verbose --watch",
     "coverage": "jest --verbose --coverage && open ./coverage/lcov-report/index.html",
     "lint": "prettier --write . && eslint --cache --fix",

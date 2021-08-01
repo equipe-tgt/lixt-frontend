@@ -27,6 +27,11 @@ export default function SendInvitationScreen(props) {
     lists.length > 0 ? lists[0] : {}
   );
 
+  // Caso o usuário não possuir listas ou não for dono de nenhuma deixa o select e o botão desabilitados
+  const [isDisabled] = useState(
+    lists.length === 0 || lists.every((l) => l.ownerId !== user.id)
+  );
+
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa
     if (props.route.params?.list) {
@@ -95,7 +100,7 @@ export default function SendInvitationScreen(props) {
         <Box mb={5} width="100%">
           <LixtSelect
             labelName="selectList"
-            isDisabled={loading}
+            isDisabled={loading || isDisabled}
             selectedValue={selectedList.id}
             onValueChange={(listId) => {
               setSelectedList(lists.find((list) => list.id === Number(listId)));
@@ -132,6 +137,7 @@ export default function SendInvitationScreen(props) {
           isLoading={loading}
           isLoadingText="Enviando"
           onPress={handleSubmit}
+          isDisabled={isDisabled}
           testID="send-invitation-button"
         >
           {t('sendInvitation')}

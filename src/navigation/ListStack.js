@@ -7,7 +7,7 @@ import NewProductScreen from '../screens/NewProductScreen/NewProductScreen';
 import ProductOfListDetails from '../screens/ProductOfListDetails';
 import SendInvitationScreen from '../screens/SendInvitationScreen/SendInvitationScreen';
 import ListDetailsScreen from '../screens/ListDetailsScreen';
-import MembersListScreen from '../screens/MembersListScreen';
+import MembersListScreen from '../screens/MembersListScreen/MembersListScreen';
 import CommentaryScreen from '../screens/CommentaryScreen/CommentaryScreen';
 
 import { useTranslation } from 'react-i18next';

@@ -11,6 +11,8 @@ export default {
 
   createdList: 'The list was created successfully!',
 
+  memberRemoved: 'The member was removed from the list',
+
   forgotPassword: 'Forgot my password',
   signIn: 'Sign In',
   dontHaveAccount: "Don't you have an account?",
@@ -61,12 +63,14 @@ export default {
     "You don't have any lists, go to the home page and add your first",
 
   createMyFirstList: 'Create my first list!',
+  loadingLists: 'Loading your lists...',
 
   newProduct: 'New product',
   saveList: 'Save list',
   deleteList: 'Delete list',
   listInfo: 'List informations',
   listHasNoDescription: 'This list has no description',
+  productAlreadyOnList: 'The product is already on the list',
 
   edit: 'Edit',
   price: 'Price',

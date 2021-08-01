@@ -9,6 +9,8 @@ export default {
   emailAlreadyTaken: 'Este e-mail já está cadastrado na plataforma',
   usernameAlreadyTaken: 'Este nome de usuário já está cadastrado na plataforma',
 
+  memberRemoved: 'Membro foi removido da lista',
+
   createdList: 'Lista criada com sucesso!',
 
   forgotPassword: 'Esqueci minha senha',
@@ -60,12 +62,14 @@ export default {
   noListsCreateANewOne:
     'Você ainda não possui listas, vá para a página inicial para adicionar uma',
   createMyFirstList: 'Criar minha primeira lista!',
+  loadingLists: 'Carregando suas listas...',
 
   newProduct: 'Novo produto',
   saveList: 'Salvar lista',
   deleteList: 'Deletar lista',
   listInfo: 'Informações da lista',
   listHasNoDescription: 'Não há descrição para esta lista',
+  productAlreadyOnList: 'O produto já está na lista',
 
   edit: 'Editar',
   price: 'Preço',

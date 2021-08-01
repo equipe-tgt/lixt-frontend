@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import { Box, Text, ScrollView, HStack, Button, useToast } from 'native-base';
 import { useFocusEffect } from '@react-navigation/native';
-import { screenBasicStyle as style } from '../styles/style';
+import { screenBasicStyle as style } from '../../styles/style';
 
-import { AuthContext } from '../context/AuthProvider';
+import { AuthContext } from '../../context/AuthProvider';
 import { useTranslation } from 'react-i18next';
-import ListMembersService from '../services/ListMembersService';
+import ListMembersService from '../../services/ListMembersService';
 
 export default function MembersListScreen(props) {
   const { user } = useContext(AuthContext);
@@ -52,12 +52,12 @@ export default function MembersListScreen(props) {
 
       toast.show({
         status: 'success',
-        title: 'Membro foi removido da lista',
+        title: t('memberRemoved'),
       });
     } catch (error) {
       toast.show({
         status: 'warning',
-        title: 'Um erro inesperado ocorreu no servidor',
+        title: t('errorServerDefault'),
       });
     } finally {
       setIdMemberLoading(null);
@@ -68,7 +68,7 @@ export default function MembersListScreen(props) {
     <SafeAreaView style={style.container}>
       <ScrollView>
         <Box ml={5} my={3}>
-          <Text fontSize="lg" fontWeight="bold">
+          <Text fontSize="lg" fontWeight="bold" testID="owner">
             {owner}
           </Text>
           <Text>{t('owner')}</Text>
@@ -85,7 +85,7 @@ export default function MembersListScreen(props) {
                 {lm.user.name}
               </Text>
               {/* Se o usuário for o convidado realça na tela em que posição da lista ele está */}
-              <Text fontSize="md">
+              <Text fontSize="md" testID={'member-' + lm.id}>
                 @{lm.user.username}{' '}
                 {lm.user.id === user.id ? `(${t('you')})` : null}
               </Text>
@@ -99,6 +99,7 @@ export default function MembersListScreen(props) {
                 isLoading={idMemberLoading === lm.id}
                 isLoadingText={t('removing')}
                 variant="link"
+                testID="remove-member"
                 onPress={() => {
                   removeMember(lm.id);
                 }}

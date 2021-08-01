@@ -89,6 +89,7 @@ export default function NewProductScreen(props) {
       .then(() => {
         title = `Produto "${product.name}" adicionado com sucesso!`;
         status = 'success';
+        props.navigation.navigate('Lists');
       })
       .catch(() => {
         title = 'Não foi possível adicionar o produto';
@@ -179,4 +180,5 @@ export default function NewProductScreen(props) {
 
 NewProductScreen.propTypes = {
   route: PropTypes.object,
+  navigation: PropTypes.object,
 };
