@@ -36,16 +36,18 @@ describe('NewProductScreen component', () => {
 
       const categorySpy = jest.spyOn(CategoryService, 'getCategories');
       categorySpy.mockReturnValue(
-        Promise.resolve([
-          {
-            id: 1,
-            name: 'Roupas',
-          },
-          {
-            id: 2,
-            name: 'Peixes',
-          },
-        ])
+        Promise.resolve({
+          data: [
+            {
+              id: 1,
+              name: 'Roupas',
+            },
+            {
+              id: 2,
+              name: 'Peixes',
+            },
+          ]
+        })
       );
 
       const renderResults = render(
