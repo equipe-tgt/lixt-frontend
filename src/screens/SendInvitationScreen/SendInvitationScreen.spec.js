@@ -2,7 +2,7 @@ import React from 'React';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import '@testing-library/jest-dom';
 import { NativeBaseProvider } from 'native-base';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContext } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthContext } from '../../context/AuthProvider';
@@ -14,13 +14,6 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key) => key }),
 }));
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
-
-jest.mock('@react-navigation/native', () => {
-  return {
-    ...jest.requireActual('@react-navigation/native'),
-    useFocusEffect: () => jest.fn(),
-  };
-});
 
 describe('SendInvitationScreen component', () => {
   let getByTestId, getByText;
@@ -36,7 +29,10 @@ describe('SendInvitationScreen component', () => {
 
     const route = {
       params: {
-        list: [],
+        list: {
+          id: 1,
+          nameList: 'Lista 01',
+        },
       },
     };
 
@@ -44,6 +40,12 @@ describe('SendInvitationScreen component', () => {
       name: 'Fulano',
       username: 'fulanodetal',
     };
+
+    const navContext = {
+      isFocused: () => true,
+      // addListener returns an unscubscribe function.
+      addListener: jest.fn(() => jest.fn())
+    }
 
     const renderResults = render(
       <AuthContext.Provider
@@ -72,9 +74,9 @@ describe('SendInvitationScreen component', () => {
           >
             <NativeBaseProvider
               children={
-                <NavigationContainer>
+                <NavigationContext.Provider value={navContext}>
                   <SendInvitationScreen navigation={navigation} route={route} />
-                </NavigationContainer>
+                </NavigationContext.Provider>
               }
             />
           </SafeAreaProvider>

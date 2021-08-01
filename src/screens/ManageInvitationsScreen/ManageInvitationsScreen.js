@@ -12,14 +12,14 @@ import {
   Button,
   Spinner,
 } from 'native-base';
-import { screenBasicStyle as style } from '../styles/style';
+import { screenBasicStyle as style } from '../../styles/style';
 
-import { AuthContext } from '../context/AuthProvider';
+import { AuthContext } from '../../context/AuthProvider';
 import { useTranslation } from 'react-i18next';
 import ListMembersService, {
   INVITATION_TYPES,
   INVITATION_ACTIONS,
-} from '../services/ListMembersService';
+} from '../../services/ListMembersService';
 
 export default function ManageInvitationsScreen() {
   const { user } = useContext(AuthContext);
@@ -36,27 +36,27 @@ export default function ManageInvitationsScreen() {
     getInvitations(1);
   }, []);
 
-  const getInvitations = async (tabIndex) => {
+  const getInvitations = (tabIndex) => {
     const invitationType =
       tabIndex === 0 ? INVITATION_TYPES.SENT : INVITATION_TYPES.RECEIVED;
 
-    try {
-      const { data } = await ListMembersService.getInvitations(
+    ListMembersService.getInvitations(
         invitationType,
         user
-      );
-
-      if (invitationType === INVITATION_TYPES.SENT) {
-        setSentInvitations([...data]);
-      } else {
-        setReceivedInvitations([...data]);
-      }
-    } catch (error) {
-      toast.show({
-        status: 'warning',
-        title: 'Um erro inesperado do servidor ocorreu',
+      )
+      .then(({ data }) => {
+        if (invitationType === INVITATION_TYPES.SENT) {
+          setSentInvitations([...data]);
+        } else {
+          setReceivedInvitations([...data]);
+        }
+      })
+      .catch(() => {
+        toast.show({
+          status: 'warning',
+          title: 'Um erro inesperado do servidor ocorreu',
+        });
       });
-    }
   };
 
   const dealWithInvitation = async (invite, action) => {
@@ -101,10 +101,10 @@ export default function ManageInvitationsScreen() {
   return (
     <SafeAreaView style={style.container}>
       <VStack>
-        <Tabs onChange={getInvitations} isFitted={true}>
+        <Tabs onChange={getInvitations} isFitted>
           <Tabs.Bar>
             <Tabs.Tab>{t('sent')}</Tabs.Tab>
-            <Tabs.Tab>{t('received')}</Tabs.Tab>
+            <Tabs.Tab testID="received-invitations-tab">{t('received')}</Tabs.Tab>
           </Tabs.Bar>
           <Tabs.Views>
             <Tabs.View>
@@ -112,12 +112,12 @@ export default function ManageInvitationsScreen() {
                 <ScrollView>
                   {sentInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
-                      <Text fontSize="lg" fontWeight="bold">
+                      <Text fontSize="lg" fontWeight="bold" testID={'sent-invite-' + invite.id}>
                         {`${t('youInvited')} ${invite.userInvited} ${t(
                           'toJoin'
                         )} ${invite.nameList}`}
                       </Text>
-                      <Text>Status: {getStatus(invite.statusListMember)}</Text>
+                      <Text testID={"sent-invite-status-" + invite.id}>Status: {getStatus(invite.statusListMember)}</Text>
                     </Box>
                   ))}
                 </ScrollView>
@@ -132,7 +132,7 @@ export default function ManageInvitationsScreen() {
                 <ScrollView>
                   {receivedInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
-                      <Text fontSize="lg" fontWeight="bold">
+                      <Text fontSize="lg" fontWeight="bold" testID={"received-invite-" + invite.id}>
                         {`${invite.userWhoInvite} ${t('hasInvitedYou')} ${
                           invite.nameList
                         }`}
@@ -146,6 +146,7 @@ export default function ManageInvitationsScreen() {
                           <Button
                             isDisabled={loadingInvitation}
                             disabled={loadingInvitation}
+                            testID="accept-invitation"
                             onPress={() => {
                               dealWithInvitation(
                                 invite,
@@ -159,6 +160,7 @@ export default function ManageInvitationsScreen() {
                             isDisabled={loadingInvitation}
                             disabled={loadingInvitation}
                             variant="link"
+                            testID="reject-invitation"
                             onPress={() => {
                               dealWithInvitation(
                                 invite,
@@ -174,7 +176,7 @@ export default function ManageInvitationsScreen() {
                           ) : null}
                         </HStack>
                       ) : (
-                        <Text>
+                        <Text testID={"received-invite-status-" + invite.id}>
                           {invite.statusListMember === 'ACCEPT'
                             ? t('youAccepted')
                             : t('youRejected')}

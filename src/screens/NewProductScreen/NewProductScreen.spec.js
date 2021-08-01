@@ -36,16 +36,18 @@ describe('NewProductScreen component', () => {
 
       const categorySpy = jest.spyOn(CategoryService, 'getCategories');
       categorySpy.mockReturnValue(
-        Promise.resolve([
-          {
-            id: 1,
-            name: 'Roupas',
-          },
-          {
-            id: 2,
-            name: 'Peixes',
-          },
-        ])
+        Promise.resolve({
+          data: [
+            {
+              id: 1,
+              name: 'Roupas',
+            },
+            {
+              id: 2,
+              name: 'Peixes',
+            },
+          ]
+        })
       );
 
       const renderResults = render(
@@ -59,7 +61,7 @@ describe('NewProductScreen component', () => {
           <SafeAreaProvider
             initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
           >
-            <NativeBaseProvider children={<NewProductScreen route={route} />} />
+            <NativeBaseProvider children={<NewProductScreen route={route} navigation={navigation} />} />
           </SafeAreaProvider>
         </AuthContext.Provider>
       );
@@ -133,7 +135,7 @@ describe('NewProductScreen component', () => {
     });
 
     describe('when form is properly filled', () => {
-      it('should show success message when creating the product in the backend', async () => {
+      it('should redirect to lists page if a product was created sucessfully', async () => {
         const createProductSpy = jest.spyOn(ProductService, 'createProduct');
         createProductSpy.mockReturnValue(Promise.resolve());
 
@@ -143,8 +145,7 @@ describe('NewProductScreen component', () => {
         });
         await waitFor(() => fireEvent.press(createProductButton));
 
-        const toast = getByText('Produto "Chocolate" adicionado com sucesso!');
-        expect(toast).toBeDefined();
+        expect(navigationSpy).toHaveBeenCalledWith('Lists');
       });
 
       it('should show error message when creating the product in the backend is not possible', async () => {
