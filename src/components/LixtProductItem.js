@@ -29,9 +29,12 @@ const LixtProductItem = ({
       <Box>
         <Text fontWeight="bold">{product.name}</Text>
         <Text>
-          {product.measureValue} {getMeasureType(product.measureType)}
+          {product.amount} x {product.measureValue}{' '}
+          {getMeasureType(product.measureType)}
         </Text>
-        <Text>{product.price ? `R$ ${product.price}` : 'R$ 0,00'}</Text>
+        <Text>
+          {product.price ? `R$ ${product.price * product.amount}` : 'R$ 0,00'}
+        </Text>
       </Box>
 
       {product.amountComment ? (

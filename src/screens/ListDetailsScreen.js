@@ -69,6 +69,17 @@ export default function ListDetailsScreen(props) {
     return list.listMembers.find((listMember) => listMember.userId === user.id);
   };
 
+  const getAmountOfMembers = () => {
+    let amount = 1; // Conta o dono da lista
+
+    // Contabiliza como membro todo usuário que tiver aceito participar da lista
+    amount += list.listMembers.filter(
+      (listMember) => listMember.statusListMember === 'ACCEPT'
+    ).length;
+
+    return amount;
+  };
+
   return list ? (
     <SafeAreaView style={style.container}>
       <VStack mt={5} width="90%" mx="auto">
@@ -97,7 +108,7 @@ export default function ListDetailsScreen(props) {
           </Box>
           <Box>
             <Text fontWeight="bold">{t('members')}</Text>
-            <Text>{list.listMembers.length}</Text>
+            <Text>{getAmountOfMembers()}</Text>
           </Box>
         </HStack>
 

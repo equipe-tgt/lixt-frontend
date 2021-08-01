@@ -73,7 +73,10 @@ export default function ProductOfListDetails(props) {
   const formatValuesForRequest = () => {
     const productOfListEdited = Object.assign({}, props.route.params.product);
     productOfListEdited.price = parseFloat(values.price.replace(',', '.'));
-    productOfListEdited.amount = parseInt(values.amount);
+    productOfListEdited.amount =
+      !values.amount || parseInt(values.amount) <= 0
+        ? 1
+        : parseInt(values.amount);
     productOfListEdited.measureType = getMeasureType(values.measureType, false);
     productOfListEdited.measureValue =
       values.measureType !== 'UN' ? parseInt(values.measureValue) : null;
