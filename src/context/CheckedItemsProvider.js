@@ -12,15 +12,27 @@ export const CheckedItemsProvider = ({ children }) => {
   const [userIdCart, setUserIdCart] = useState(null);
 
   const checkItem = (item, toggleOption) => {
-    const isItemChecked = checkedItems.find((c) => c === item);
+    const isItemChecked = checkedItems.includes(item);
 
+    const copy = [...checkedItems];
     // Se a o usuário passou que quer marcar e o item ainda não existe na lista local
     // então insere
     if (toggleOption && !isItemChecked) {
-      setCheckedItems([...checkedItems, item]);
+      setCheckedItems([...copy, item]);
     } else if (!toggleOption && isItemChecked) {
       // Caso ele queira remover um item e esse item exista na lista local: remova
-      setCheckedItems(checkedItems.filter((c) => c !== item));
+      setCheckedItems(copy.filter((c) => c === item));
+    }
+  };
+
+  const checkMultipleItems = (items, toggleOption) => {
+    const copy = [...checkedItems];
+
+    if (toggleOption) {
+      setCheckedItems([...copy, ...items]);
+    } else {
+      const finalList = copy.filter((i) => !items.includes(i));
+      setCheckedItems(finalList);
     }
   };
 
@@ -47,6 +59,7 @@ export const CheckedItemsProvider = ({ children }) => {
       value={{
         checkedItems,
         checkItem,
+        checkMultipleItems,
         setUserIdCart: setUserIdCart,
       }}
     >

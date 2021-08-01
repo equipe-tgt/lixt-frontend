@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { SafeAreaView, RefreshControl } from 'react-native';
 import { Box, Select, Center, Text, ScrollView, useToast } from 'native-base';
 import LixtCartList from '../../components/LixtCartList';
+import LixtCalculator from '../../components/LixtCalculator';
 import ListService from '../../services/ListService';
 
 import { screenBasicStyle as style } from '../../styles/style';
@@ -41,6 +42,10 @@ export default function CartScreen(props) {
       }
     }
   });
+
+  useEffect(() => {
+    refreshLists();
+  }, [isFocused]);
 
   useEffect(() => {
     if (isFocused) {
@@ -190,7 +195,7 @@ export default function CartScreen(props) {
             <Select.Item
               key="view-all"
               value="view-all"
-              label="Ver todos os itens"
+              label={t('seeAllItems')}
             />
             {lists.map((list) => (
               <Select.Item
@@ -202,6 +207,7 @@ export default function CartScreen(props) {
           </Select>
         </Box>
         <ScrollView
+          contentContainerStyle={{ paddingBottom: 120 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -230,6 +236,11 @@ export default function CartScreen(props) {
             </Center>
           )}
         </ScrollView>
+
+        <LixtCalculator
+          isGeneralView={selectedList?.id === 'view-all'}
+          items={selectedList.productsOfList}
+        />
       </SafeAreaView>
     </CheckedItemsProvider>
   ) : (
