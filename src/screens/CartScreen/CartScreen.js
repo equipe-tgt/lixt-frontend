@@ -51,6 +51,8 @@ export default function CartScreen(props) {
           lists.find((l) => Number(l.id) === Number(selectedList.id))
         );
       }
+    } else {
+      refreshLists();
     }
   }, [lists]);
 

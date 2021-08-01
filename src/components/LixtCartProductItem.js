@@ -118,7 +118,11 @@ const LixtCartProductItem = ({
               {product.amount} {getMeasureType(product.measureType)}
             </Text>
 
-            <Text>{product.price ? `R$ ${product.price}` : 'R$ 0,00'}</Text>
+            <Text>
+              {product.price
+                ? `R$ ${product.price * product.amount}`
+                : 'R$ 0,00'}
+            </Text>
           </Box>
         ) : (
           <Box>
@@ -128,7 +132,11 @@ const LixtCartProductItem = ({
               } ${getMeasureType(product.measureType)}`}
             </Text>
 
-            <Text>{product.price ? `R$ ${product.price}` : 'R$ 0,00'}</Text>
+            <Text>
+              {product.price
+                ? `R$ ${product.price * product.amount}`
+                : 'R$ 0,00'}
+            </Text>
           </Box>
         )}
 

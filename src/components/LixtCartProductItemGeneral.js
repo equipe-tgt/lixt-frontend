@@ -29,7 +29,7 @@ const LixtCartProductItemGeneral = ({
   const [loadingCheckbox, setLoadingCheckbox] = useState(false);
 
   useEffect(() => {
-    if (wrappedProduct?.priceAndAmounts) {
+    if (wrappedProduct?.productsOfLists) {
       setQuantities(getQuantityObject());
     }
 
@@ -40,14 +40,19 @@ const LixtCartProductItemGeneral = ({
     }
   }, [wrappedProduct]);
 
+  useEffect(() => {
+    if (wrappedProduct?.productsOfLists) {
+      setQuantities(getQuantityObject());
+    }
+  }, [checkedItems]);
+
   const toggleProduct = async (isSelecting) => {
     setLoadingCheckbox(true);
-
     // Para cada productOfList que consta dentro de wrappedProduct
     for (const productOfList of wrappedProduct.productsOfLists) {
+      checkItem(productOfList.id, isSelecting);
+
       try {
-        checkItem(productOfList.id, isSelecting);
-        setIsChecked(isSelecting);
         // Se o usuário estiver marcando todos os itens que tiverem o msm id de produto
         // mas já houverem itens que estão atribuídos ao usuário atual não precisa prosseguir
         // com a requisição pra esses
@@ -56,7 +61,7 @@ const LixtCartProductItemGeneral = ({
         // Ou seja, marca e desmarca apenas os itens que precisam
         if (
           (isSelecting && productOfList.assignedUserId === user.id) ||
-          (!isSelecting && !productOfList.assignedUserId === user.id)
+          (!isSelecting && productOfList.assignedUserId !== user.id)
         ) {
           continue;
         }
@@ -66,6 +71,7 @@ const LixtCartProductItemGeneral = ({
           productOfList.id,
           user
         );
+        productOfList.assignedUserId = user.id;
 
         // Se a resposta for 1, quer dizer que o usuário atual está responsável por este item
         // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
@@ -86,42 +92,31 @@ const LixtCartProductItemGeneral = ({
         });
       }
     }
+    setIsChecked(isSelecting);
     setLoadingCheckbox(false);
-  };
-
-  const sumQuantities = (quantityArray) => {
-    let finalValue = 0;
-
-    finalValue = quantityArray.reduce((acc, currentValue) => {
-      return (acc += currentValue);
-    }, 0);
-
-    return finalValue;
   };
 
   const getQuantityObject = () => {
     let finalAmount = 0;
-    let markedAmount = 0;
-    const allPrices = [];
+    let markedProductsAmount = 0;
+    let allPrices = 0;
 
-    for (const { price, amount } of wrappedProduct?.priceAndAmounts) {
-      const amountValue = amount || 1;
-      const priceValue = price || 0;
+    for (const productOfList of wrappedProduct.productsOfLists) {
+      finalAmount += productOfList.amount;
+      allPrices += productOfList.price * productOfList.amount;
 
-      if (amount) finalAmount += amount;
-      markedAmount =
-        wrappedProduct.markings.filter((m) => m.isMarked).length +
-        wrappedProduct.productsOfLists.filter((p) =>
-          checkedItems.includes(p.id)
-        ).length;
-
-      allPrices.push(priceValue * amountValue);
+      console.log(checkedItems);
+      if (checkedItems.includes(productOfList.id)) {
+        markedProductsAmount += productOfList.amount;
+      } else if (productOfList.isMarked) {
+        markedProductsAmount += productOfList.amount;
+      }
     }
 
     return {
-      price: sumQuantities(allPrices),
+      price: allPrices,
       amount: finalAmount,
-      markedAmount,
+      markedProductsAmount,
     };
   };
 
@@ -170,7 +165,7 @@ const LixtCartProductItemGeneral = ({
 
           <Box>
             <Text>
-              {quantities.markedAmount} / {quantities.amount || 0}
+              {quantities.markedProductsAmount} / {quantities.amount}
             </Text>
 
             <Text>
