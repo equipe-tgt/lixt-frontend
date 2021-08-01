@@ -60,12 +60,14 @@ export default {
 
   noListsFound: "You don't have any lists, click to add",
   createMyFirstList: 'Create my first list!',
+  loadingLists: 'Loading your lists...',
 
   newProduct: 'New product',
   saveList: 'Save list',
   deleteList: 'Delete list',
   listInfo: 'List informations',
   listHasNoDescription: 'This list has no description',
+  productAlreadyOnList: 'The product is already on the list',
 
   edit: 'Edit',
   price: 'Price',

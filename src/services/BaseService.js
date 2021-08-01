@@ -6,7 +6,7 @@ import axios from 'axios';
 
 // eslint-disable-next-line no-undef
 const BASE_URL = __DEV__
-  ? 'http://192.168.1.189:8080'
+  ? 'http://192.168.1.183:8080'
   : 'http://ec2co-ecsel-176ys9c8b1dae-319852006.us-east-1.elb.amazonaws.com:8080';
 console.log('BASE_URL: ', BASE_URL);
 

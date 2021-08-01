@@ -19,6 +19,7 @@ import {
   List,
   Heading,
   Center,
+  Spinner,
 } from 'native-base';
 import LixtProductItem from '../components/LixtProductItem';
 import { Ionicons } from '@expo/vector-icons';
@@ -48,6 +49,7 @@ export default function ListScreen(props) {
   const [productName, setProductName] = useState('');
   const [productsFound, setProductsFound] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(true);
 
   // Ao montar o componente busca as listas
   useEffect(() => {
@@ -101,6 +103,7 @@ export default function ListScreen(props) {
       });
     } finally {
       setRefreshing(false);
+      setLoadingScreen(false);
     }
   };
 
@@ -168,6 +171,19 @@ export default function ListScreen(props) {
   const addToList = async (value, list) => {
     const { name, id, measureType, measureValue } = value;
 
+    // Se o produto já estiver na lista não insere novamente
+    if (list?.productsOfList && list?.productsOfList?.length > 0) {
+      if (list.productsOfList.find((p) => p.productId === value.id)) {
+        toast.show({
+          title: t('productAlreadyOnList'),
+          status: 'info',
+        });
+        // Esconde o teclado
+        Keyboard.dismiss();
+        return;
+      }
+    }
+
     const productOfList = {
       listId: list.id,
       productId: id,
@@ -176,6 +192,7 @@ export default function ListScreen(props) {
       measureType,
       measureValue,
       product: value,
+      amount: 1,
     };
 
     try {
@@ -197,6 +214,7 @@ export default function ListScreen(props) {
       }
 
       setSelectedList(objCopy);
+      editOriginalLists(objCopy);
 
       // Esconde o teclado
       Keyboard.dismiss();
@@ -206,6 +224,14 @@ export default function ListScreen(props) {
       setProductName('');
       setProductsFound([]);
     }
+  };
+
+  const editOriginalLists = (editedList) => {
+    const editedLists = lists.map((l) =>
+      l.id === editedList.id ? editedList : l
+    );
+
+    setLists(editedLists);
   };
 
   const deleteProductOfList = async (id) => {
@@ -218,8 +244,8 @@ export default function ListScreen(props) {
       objCopy.productsOfList = objCopy.productsOfList.filter(
         (p) => p.id !== id
       );
-
       setSelectedList(objCopy);
+      editOriginalLists(objCopy);
 
       toast.show({
         title: 'Item foi removido da lista',
@@ -260,7 +286,7 @@ export default function ListScreen(props) {
     }
   };
 
-  return (
+  return !loadingScreen ? (
     <SafeAreaView style={style.container}>
       {/* Header com o select de listas e opções da lista */}
       <StatusBar barStyle="dark-content" />
@@ -298,63 +324,71 @@ export default function ListScreen(props) {
         />
 
         {/* Menu de contexto */}
-        <Menu
-          placement="bottom left"
-          trigger={(triggerProps) => {
-            return (
-              <Pressable {...triggerProps}>
-                <Ionicons size={20} color="#27272a" name="ellipsis-vertical" />
-              </Pressable>
-            );
-          }}
-        >
-          <Menu.Item
-            onPress={() => {
-              props.navigation.navigate('ListDetails', { list: selectedList });
+        {lists.length && selectedList?.id ? (
+          <Menu
+            placement="bottom left"
+            trigger={(triggerProps) => {
+              return (
+                <Pressable {...triggerProps}>
+                  <Ionicons
+                    size={20}
+                    color="#27272a"
+                    name="ellipsis-vertical"
+                  />
+                </Pressable>
+              );
             }}
           >
-            {t('listInfo')}
-          </Menu.Item>
-
-          {selectedList?.id && selectedList?.listMembers?.length > 0 ? (
             <Menu.Item
               onPress={() => {
-                props.navigation.navigate('Members', {
+                props.navigation.navigate('ListDetails', {
                   list: selectedList,
                 });
               }}
             >
-              {t('members')}
+              {t('listInfo')}
             </Menu.Item>
-          ) : null}
 
-          {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista,
-          se ele for convidado mostra a opção de deixar a lista */}
-          {selectedList && selectedList.ownerId === user.id ? (
-            <Box>
+            {selectedList?.id && selectedList?.listMembers?.length > 0 ? (
               <Menu.Item
                 onPress={() => {
-                  props.navigation.navigate('Invite', {
+                  props.navigation.navigate('Members', {
                     list: selectedList,
                   });
                 }}
               >
-                {t('sendInvitation')}
+                {t('members')}
               </Menu.Item>
-              <Menu.Item
-                onPress={() => {
-                  deleteList();
-                }}
-              >
-                {t('deleteList')}
-              </Menu.Item>
-            </Box>
-          ) : (
-            <Box>
-              <Menu.Item onPress={leaveList}>{t('leaveList')}</Menu.Item>
-            </Box>
-          )}
-        </Menu>
+            ) : null}
+
+            {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista,
+          se ele for convidado mostra a opção de deixar a lista */}
+            {selectedList && selectedList.ownerId === user.id ? (
+              <Box>
+                <Menu.Item
+                  onPress={() => {
+                    props.navigation.navigate('Invite', {
+                      list: selectedList,
+                    });
+                  }}
+                >
+                  {t('sendInvitation')}
+                </Menu.Item>
+                <Menu.Item
+                  onPress={() => {
+                    deleteList();
+                  }}
+                >
+                  {t('deleteList')}
+                </Menu.Item>
+              </Box>
+            ) : (
+              <Box>
+                <Menu.Item onPress={leaveList}>{t('leaveList')}</Menu.Item>
+              </Box>
+            )}
+          </Menu>
+        ) : null}
       </HStack>
 
       {/* Se o usuário possuir listas as mostra, caso não mostre um botão para adicionar a primeira lista */}
@@ -415,6 +449,7 @@ export default function ListScreen(props) {
                     props.navigation.navigate('NewProduct', {
                       productName: productName,
                     });
+                    setProductName('');
                   }}
                 >
                   {`${t('add')} "${productName}"`}
@@ -468,6 +503,11 @@ export default function ListScreen(props) {
         </Center>
       )}
     </SafeAreaView>
+  ) : (
+    <Center style={style.container}>
+      <Spinner size="lg" />
+      <Text mt={2}>{t('loadingLists')}</Text>
+    </Center>
   );
 }
 
