@@ -211,7 +211,7 @@ export default function CartScreen(props) {
             />
           }
         >
-          {selectedList && selectedList?.productsOfList?.length ? (
+          {selectedList && selectedList?.productsOfList?.length > 0 ? (
             <LixtCartList
               selectedList={selectedList}
               navigate={props.navigation.navigate}
@@ -222,14 +222,18 @@ export default function CartScreen(props) {
                   : refreshIndividualList
               }
             />
-          ) : null}
+          ) : (
+            <Center width="90%" mx="auto" my="50%">
+              <Text textAlign="center">{t('noProductsFound')}</Text>
+            </Center>
+          )}
         </ScrollView>
       </SafeAreaView>
     </CheckedItemsProvider>
   ) : (
     <SafeAreaView style={style.container}>
       <Center w="90%" mx="auto" my="50%">
-        <Text textAlign="center">{t('noListsFound')}</Text>
+        <Text textAlign="center">{t('noListsCreateANewOne')}</Text>
       </Center>
     </SafeAreaView>
   );
