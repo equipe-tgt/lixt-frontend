@@ -18,35 +18,38 @@ describe('MembersListScreen component', () => {
   describe('when the owner is accessing the list', () => {
     let getByTestId, getByText, getAllByTestId;
     let user;
-    const memberList = [{
-      id: 1,
-      user: {
-        name: 'Fulano',
-        username: 'fulanodetal',
-        id: 1
-      }
-    }, {
-      id: 2,
-      user: {
-        name: 'Ciclano',
-        username: 'ciclanodetal',
-        id: 2
-      }
-    }]
-  
+    const memberList = [
+      {
+        id: 1,
+        user: {
+          name: 'Fulano',
+          username: 'fulanodetal',
+          id: 1,
+        },
+      },
+      {
+        id: 2,
+        user: {
+          name: 'Ciclano',
+          username: 'ciclanodetal',
+          id: 2,
+        },
+      },
+    ];
+
     beforeEach(() => {
       user = {
         id: 1,
         name: 'Fulano',
-        username: 'fulanodetal'
+        username: 'fulanodetal',
       };
-  
+
       const navContext = {
         isFocused: () => true,
         // addListener returns an unscubscribe function.
-        addListener: jest.fn(() => jest.fn())
-      }
-  
+        addListener: jest.fn(() => jest.fn()),
+      };
+
       const renderResults = render(
         <AuthContext.Provider
           value={{
@@ -61,31 +64,33 @@ describe('MembersListScreen component', () => {
             <NativeBaseProvider
               children={
                 <NavigationContext.Provider value={navContext}>
-                  <MembersListScreen route={{
-                    params: {
-                      list: {
-                        listMembers: memberList,
-                        owner: 'fulanodetal',
-                        ownerId: 1
-                      }
-                    }
-                  }} />
+                  <MembersListScreen
+                    route={{
+                      params: {
+                        list: {
+                          listMembers: memberList,
+                          owner: 'fulanodetal',
+                          ownerId: 1,
+                        },
+                      },
+                    }}
+                  />
                 </NavigationContext.Provider>
-                }
-                />
+              }
+            />
           </SafeAreaProvider>
         </AuthContext.Provider>
       );
-  
+
       getByTestId = renderResults.getByTestId;
       getByText = renderResults.getByText;
       getAllByTestId = renderResults.getAllByTestId;
     });
-  
+
     it('should list all members as element', () => {
       const member1 = getByTestId('member-1');
       const member2 = getByTestId('member-2');
-  
+
       expect(member1).toBeDefined();
       expect(member2).toBeDefined();
     });
@@ -94,27 +99,35 @@ describe('MembersListScreen component', () => {
       const ownerName = getByTestId('owner');
       expect(ownerName.props.children).toBe('fulanodetal');
     });
-  
+
     it('should show "you" when member has the same id as user', () => {
       const member1 = getByTestId('member-1');
       const member2 = getByTestId('member-2');
-  
-      expect(member1.props.children).toEqual(["@", "fulanodetal", " ", "(you)"]);
+
+      expect(member1.props.children).toEqual([
+        '@',
+        'fulanodetal',
+        ' ',
+        '(you)',
+      ]);
       expect(member2.props.children).toEqual(['@', 'ciclanodetal', ' ', null]);
     });
 
     it('should have 2 remove buttons to remove 2 users', () => {
       const removeMemberButton = getAllByTestId('remove-member');
-      
+
       expect(removeMemberButton.length).toBe(2);
       expect(removeMemberButton[0]).toBeDefined();
       expect(removeMemberButton[1]).toBeDefined();
     });
 
     it('should remove an user successfully', async () => {
-      const deleteInvitationSpy = jest.spyOn(ListMembersService, 'deleteInvitation');
+      const deleteInvitationSpy = jest.spyOn(
+        ListMembersService,
+        'deleteInvitation'
+      );
       deleteInvitationSpy.mockReturnValue(Promise.resolve());
-    
+
       const removeMember1Button = getAllByTestId('remove-member')[0];
 
       await waitFor(() => {
@@ -129,9 +142,12 @@ describe('MembersListScreen component', () => {
     });
 
     it('should not remove an user due to server error', async () => {
-      const deleteInvitationSpy = jest.spyOn(ListMembersService, 'deleteInvitation');
+      const deleteInvitationSpy = jest.spyOn(
+        ListMembersService,
+        'deleteInvitation'
+      );
       deleteInvitationSpy.mockReturnValue(Promise.reject());
-    
+
       const removeMember1Button = getAllByTestId('remove-member')[0];
 
       await waitFor(() => {
@@ -149,35 +165,38 @@ describe('MembersListScreen component', () => {
   describe('when the owner is not accessing the list', () => {
     let getByTestId, getByText, getAllByTestId;
     let user;
-    const memberList = [{
-      id: 1,
-      user: {
-        name: 'Fulano',
-        username: 'fulanodetal',
-        id: 1
-      }
-    }, {
-      id: 2,
-      user: {
-        name: 'Ciclano',
-        username: 'ciclanodetal',
-        id: 2
-      }
-    }]
-  
+    const memberList = [
+      {
+        id: 1,
+        user: {
+          name: 'Fulano',
+          username: 'fulanodetal',
+          id: 1,
+        },
+      },
+      {
+        id: 2,
+        user: {
+          name: 'Ciclano',
+          username: 'ciclanodetal',
+          id: 2,
+        },
+      },
+    ];
+
     beforeEach(() => {
       user = {
         id: 1,
         name: 'Fulano',
-        username: 'fulanodetal'
+        username: 'fulanodetal',
       };
-  
+
       const navContext = {
         isFocused: () => true,
         // addListener returns an unscubscribe function.
-        addListener: jest.fn(() => jest.fn())
-      }
-  
+        addListener: jest.fn(() => jest.fn()),
+      };
+
       const renderResults = render(
         <AuthContext.Provider
           value={{
@@ -192,22 +211,24 @@ describe('MembersListScreen component', () => {
             <NativeBaseProvider
               children={
                 <NavigationContext.Provider value={navContext}>
-                  <MembersListScreen route={{
-                    params: {
-                      list: {
-                        listMembers: memberList,
-                        owner: 'ciclanodetal',
-                        ownerId: 2
-                      }
-                    }
-                  }} />
+                  <MembersListScreen
+                    route={{
+                      params: {
+                        list: {
+                          listMembers: memberList,
+                          owner: 'ciclanodetal',
+                          ownerId: 2,
+                        },
+                      },
+                    }}
+                  />
                 </NavigationContext.Provider>
-                }
-                />
+              }
+            />
           </SafeAreaProvider>
         </AuthContext.Provider>
       );
-  
+
       getByTestId = renderResults.getByTestId;
       getByText = renderResults.getByText;
       getAllByTestId = renderResults.getAllByTestId;

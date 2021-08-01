@@ -142,7 +142,7 @@ const LixtCartProductItem = ({
 
         {product.assignedUserId && product.assignedUserId !== user.id ? (
           <Text fontSize="sm">
-            atribuído a {getAssignedUserById(product.assignedUserId)}
+            {t('assignedTo')} {getAssignedUserById(product.assignedUserId)}
           </Text>
         ) : null}
       </Box>
