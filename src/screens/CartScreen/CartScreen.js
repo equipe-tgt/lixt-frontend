@@ -26,9 +26,6 @@ export default function CartScreen(props) {
   const isFocused = useIsFocused();
 
   /**
-   * @todo atualizar corretamente lista individual após edição
-   * @todo implementar visão geral
-   * @todo mostrar usuários atribuídos
    * @todo calcular preço total
    */
 
@@ -40,7 +37,6 @@ export default function CartScreen(props) {
         if (selectedList.id !== 'view-all') {
           refreshIndividualList();
         }
-
         props.route.params.refresh = null;
       }
     }
@@ -128,7 +124,7 @@ export default function CartScreen(props) {
       }
 
       // Atributos do produto da lista
-      const { id, listId, productId, price, amount, isMarked, product } =
+      const { listId, productId, price, amount, isMarked, product } =
         productOfList;
 
       // Tenta encontrar se um mesmo produto de listas diferentes já foi incluso em groupedProducts
@@ -144,7 +140,6 @@ export default function CartScreen(props) {
           groupedProducts[groupedProductIndex]
         );
 
-        // groupedProduct.productOfListIds.push(id);
         groupedProduct.productsOfLists.push(productOfList);
         groupedProduct.inLists.push(getSuperficialListDataById(listId));
         groupedProduct.priceAndAmounts.push({
@@ -158,7 +153,6 @@ export default function CartScreen(props) {
         // cria um objeto novo
         const newGroupedProduct = {
           productId: productId,
-          // productOfListIds: [id], quando o endpoint de toggle estiver feito usar dessa forma
           productsOfLists: [productOfList],
           inLists: [getSuperficialListDataById(listId)],
           priceAndAmounts: [{ price: price, amount: amount }],

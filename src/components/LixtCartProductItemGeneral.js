@@ -11,6 +11,7 @@ import {
 } from 'native-base';
 
 import { AuthContext } from '../context/AuthProvider';
+import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 import ProductOfListService from '../services/ProductOfListService';
 import { useTranslation } from 'react-i18next';
 
@@ -21,6 +22,7 @@ const LixtCartProductItemGeneral = ({
 }) => {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
+  const { checkedItems, checkItem } = useContext(CheckedItemsContext);
   const toast = useToast();
   const [quantities, setQuantities] = useState({});
   const [isChecked, setIsChecked] = useState(false);
@@ -34,24 +36,48 @@ const LixtCartProductItemGeneral = ({
     if (wrappedProduct?.markings) {
       // caso o item esteja marcado em todas as listas, então ele aparecerá
       // como marcado aqui também
-      setIsChecked(wrappedProduct.markings.every((m) => m.isMarked));
+      verifyCheckings();
     }
   }, [wrappedProduct]);
 
-  const toggleProduct = async () => {
+  const toggleProduct = async (isSelecting) => {
     setLoadingCheckbox(true);
 
     // Para cada productOfList que consta dentro de wrappedProduct
     for (const productOfList of wrappedProduct.productsOfLists) {
-      // Edita as propriedades de marcação e quem marcou
-      const objToEdit = {
-        ...productOfList,
-        isMarked: !isChecked,
-        userWhoMarkedId: user.id,
-      };
-
       try {
-        await ProductOfListService.editProductOfList(objToEdit, user);
+        checkItem(productOfList.id, isSelecting);
+        setIsChecked(isSelecting);
+        // Se o usuário estiver marcando todos os itens que tiverem o msm id de produto
+        // mas já houverem itens que estão atribuídos ao usuário atual não precisa prosseguir
+        // com a requisição pra esses
+        // ou se o usuário quer desmarcar todos os itens que tiverem o msm id de produto porém
+        // já houverem itens que não estão marcados para o usuário atual não precisa prosseguir
+        // Ou seja, marca e desmarca apenas os itens que precisam
+        if (
+          (isSelecting && productOfList.assignedUserId === user.id) ||
+          (!isSelecting && !productOfList.assignedUserId === user.id)
+        ) {
+          continue;
+        }
+
+        // Esse endpoint atribui ou desatribui um item para o próprio usuário
+        const { data } = await ProductOfListService.assignOrUnassignMyself(
+          productOfList.id,
+          user
+        );
+
+        // Se a resposta for 1, quer dizer que o usuário atual está responsável por este item
+        // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
+        if (data === 0) {
+          toast.show({
+            title: 'Outro usuário se responsabilizou por este item',
+            status: 'warning',
+          });
+
+          // Se outro usuário tiver se responsabilizado pelo item desmarca localmente
+          checkItem(productOfList.id, false);
+        }
       } catch (error) {
         console.log(error);
         toast.show({
@@ -60,8 +86,6 @@ const LixtCartProductItemGeneral = ({
         });
       }
     }
-
-    refreshList();
     setLoadingCheckbox(false);
   };
 
@@ -85,7 +109,11 @@ const LixtCartProductItemGeneral = ({
       const priceValue = price || 0;
 
       if (amount) finalAmount += amount;
-      markedAmount = wrappedProduct.markings.filter((m) => m.isMarked).length;
+      markedAmount =
+        wrappedProduct.markings.filter((m) => m.isMarked).length +
+        wrappedProduct.productsOfLists.filter((p) =>
+          checkedItems.includes(p.id)
+        ).length;
 
       allPrices.push(priceValue * amountValue);
     }
@@ -95,6 +123,22 @@ const LixtCartProductItemGeneral = ({
       amount: finalAmount,
       markedAmount,
     };
+  };
+
+  const verifyCheckings = () => {
+    const markedExternally = wrappedProduct.markings.every((m) => m.isMarked);
+    const markedLocally = wrappedProduct.productsOfLists.every((p) =>
+      checkedItems.includes(p.id)
+    );
+
+    // Caso os produtos estejam marcados como veio do servidor mas não estiver no local
+    // marca o produto na visualização da tela
+    if (markedExternally && !markedLocally) {
+      setIsChecked(true);
+    } else {
+      // caso não, utiliza o valor local para o marcar o item (seja falso ou não)
+      setIsChecked(markedLocally);
+    }
   };
 
   return wrappedProduct ? (

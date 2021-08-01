@@ -115,7 +115,7 @@ const LixtCartProductItem = ({
         {getMeasureType(product.measureType) === 'UN' ? (
           <Box>
             <Text>
-              {product.amounnt || 0} {getMeasureType(product.measureType)}
+              {product.amount} {getMeasureType(product.measureType)}
             </Text>
 
             <Text>{product.price ? `R$ ${product.price}` : 'R$ 0,00'}</Text>
