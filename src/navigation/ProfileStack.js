@@ -5,7 +5,7 @@ import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import UpdatePasswordScreen from '../screens/UpdatePasswordScreen/UpdatePasswordScreen';
 import SendInvitationScreen from '../screens/SendInvitationScreen/SendInvitationScreen';
-import ManageInvitationsScreen from '../screens/ManageInvitationsScreen';
+import ManageInvitationsScreen from '../screens/ManageInvitationsScreen/ManageInvitationsScreen';
 
 import { useTranslation } from 'react-i18next';
 
