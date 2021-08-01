@@ -1,51 +1,86 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { getMeasureType } from '../utils/measureTypes';
 import { Pressable, Box, Text, Checkbox, useToast } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AuthContext } from '../context/AuthProvider';
+import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 import ProductOfListService from '../services/ProductOfListService';
 import { useTranslation } from 'react-i18next';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LixtCartProductItem = ({
   product,
   navigate,
-  idSelectedList,
   refreshList,
+  getAssignedUserById,
 }) => {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
   const toast = useToast();
+  const { checkedItems, checkItem } = useContext(CheckedItemsContext);
+  const [isChecked, setIsChecked] = useState(product.isMarked);
 
-  // Desabilita o checkbox caso já esteja marcado por outro usuário
+  useEffect(() => {
+    const localCheck = verifyIfWasLocallyChecked();
+
+    // Caso o produto esteja marcado no produto que veio do servidor mas não estiver no local
+    // marca o produto na visualização da tela
+    if (product.isMarked && !localCheck) {
+      setIsChecked(true);
+    } else {
+      // caso não, utiliza o valor local para o marcar o item (seja falso ou não)
+      setIsChecked(localCheck);
+    }
+  }, [checkedItems]);
+
+  // Desabilita o checkbox caso já esteja marcado por outro usuário ou esteja atribuído para outro
   const [isDisabled] = useState(
-    product.isMarked && product.userWhoMarkedId !== user.id
+    (product.isMarked && product.userWhoMarkedId !== user.id) ||
+      (product.assignedUserId && product.assignedUserId !== user.id)
   );
+
   const toggleProductFromSingleList = async (isSelected) => {
     // Se o checbox estiver desabilitado nem continua
     if (isDisabled) return;
 
-    product.isMarked = true;
-
-    // Edita as propriedades de marcação e quem marcou
-    const objToEdit = {
-      ...product,
-      isMarked: isSelected,
-      userWhoMarkedId: isSelected ? user.id : null,
-    };
+    // Checa o item localmente
+    checkItem(product.id, isSelected);
 
     try {
-      await ProductOfListService.editProductOfList(objToEdit, user);
-      refreshList();
+      // Esse endpoint atribui ou desatribui um item para o próprio usuário
+      const { data } = await ProductOfListService.assignOrUnassignMyself(
+        product.id,
+        user
+      );
+
+      // Se a resposta for 1, quer dizer que o usuário atual está responsável por este item
+      // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
+      if (data === 0) {
+        toast.show({
+          title: 'Outro usuário se responsabilizou por este item',
+          status: 'warning',
+        });
+
+        // Se outro usuário tiver se responsabilizado pelo item desmarca localmente
+        checkItem(product.id, false);
+        refreshList();
+      }
     } catch (error) {
-      console.log(error);
       toast.show({
-        title: 'Não foi possível marcar o item',
+        title: 'Não foi possível atribuir este item a você',
         status: 'warning',
       });
     }
+  };
+
+  const verifyIfWasLocallyChecked = () => {
+    let checkedLocalValue = false;
+    if (checkedItems && checkedItems.find((i) => i === product.id)) {
+      checkedLocalValue = true;
+    }
+
+    return checkedLocalValue;
   };
 
   return (
@@ -66,7 +101,7 @@ const LixtCartProductItem = ({
           isDisabled={isDisabled}
           accessibilityLabel={t('markItem')}
           value={product.isMarked}
-          isChecked={product.isMarked}
+          isChecked={isChecked}
           onChange={toggleProductFromSingleList}
           size="md"
         />
@@ -96,6 +131,12 @@ const LixtCartProductItem = ({
             <Text>{product.price ? `R$ ${product.price}` : 'R$ 0,00'}</Text>
           </Box>
         )}
+
+        {product.assignedUserId && product.assignedUserId !== user.id ? (
+          <Text fontSize="sm">
+            atribuído a {getAssignedUserById(product.assignedUserId)}
+          </Text>
+        ) : null}
       </Box>
 
       {product.amountComment ? (
@@ -126,4 +167,5 @@ LixtCartProductItem.propTypes = {
   isGeneralViewOpen: PropTypes.bool,
   idSelectedList: PropTypes.any,
   refreshList: PropTypes.func,
+  getAssignedUserById: PropTypes.func,
 };

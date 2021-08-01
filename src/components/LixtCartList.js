@@ -1,15 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { VStack, Box, Heading } from 'native-base';
 import LixtCartProductItem from '../components/LixtCartProductItem';
 import LixtCartProductItemGeneral from '../components/LixtCartProductItemGeneral';
+import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 
-export default function LixtCartList({ selectedList, refreshList, navigate }) {
+export default function LixtCartList({
+  selectedList,
+  refreshList,
+  navigate,
+  userId,
+}) {
   const [itemsShownByCategory, setItemsShownByCategory] = useState({});
+  const { setUserIdCart } = useContext(CheckedItemsContext);
 
   useEffect(() => {
     listItemsByCategory();
   }, [selectedList]);
+
+  useEffect(() => {
+    setUserIdCart(userId);
+  }, []);
 
   const listItemsByCategory = () => {
     if (selectedList && selectedList?.productsOfList?.length) {
@@ -26,6 +37,17 @@ export default function LixtCartList({ selectedList, refreshList, navigate }) {
       );
       setItemsShownByCategory(groupedProducts);
     }
+  };
+
+  const getAssignedUserById = (userId) => {
+    const listMembers = selectedList?.listMembers;
+
+    if (selectedList.ownerId === userId) {
+      return selectedList.owner;
+    }
+
+    const guestUser = listMembers.find((lm) => lm.userId === userId).user;
+    return guestUser.name;
   };
 
   return (
@@ -56,10 +78,10 @@ export default function LixtCartList({ selectedList, refreshList, navigate }) {
                     return (
                       <LixtCartProductItem
                         key={p.id}
-                        idSelectedList={p.listId}
                         product={p}
                         navigate={navigate}
                         refreshList={refreshList}
+                        getAssignedUserById={getAssignedUserById}
                       />
                     );
                   }
@@ -76,4 +98,5 @@ LixtCartList.propTypes = {
   navigate: PropTypes.func,
   selectedList: PropTypes.object,
   refreshList: PropTypes.func,
+  userId: PropTypes.number,
 };

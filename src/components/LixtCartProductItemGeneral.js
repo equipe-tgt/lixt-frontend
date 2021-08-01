@@ -1,6 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, Box, Text, Checkbox, useToast } from 'native-base';
+import {
+  Pressable,
+  Box,
+  Text,
+  Checkbox,
+  useToast,
+  HStack,
+  Spinner,
+} from 'native-base';
 
 import { AuthContext } from '../context/AuthProvider';
 import ProductOfListService from '../services/ProductOfListService';
@@ -16,6 +24,7 @@ const LixtCartProductItemGeneral = ({
   const toast = useToast();
   const [quantities, setQuantities] = useState({});
   const [isChecked, setIsChecked] = useState(false);
+  const [loadingCheckbox, setLoadingCheckbox] = useState(false);
 
   useEffect(() => {
     if (wrappedProduct?.priceAndAmounts) {
@@ -23,16 +32,44 @@ const LixtCartProductItemGeneral = ({
     }
 
     if (wrappedProduct?.markings) {
-      console.log(wrappedProduct?.markings);
-      setIsChecked(wrappedProduct.markings.every((m) => m));
+      // caso o item esteja marcado em todas as listas, então ele aparecerá
+      // como marcado aqui também
+      setIsChecked(wrappedProduct.markings.every((m) => m.isMarked));
     }
   }, [wrappedProduct]);
+
+  const toggleProduct = async () => {
+    setLoadingCheckbox(true);
+
+    // Para cada productOfList que consta dentro de wrappedProduct
+    for (const productOfList of wrappedProduct.productsOfLists) {
+      // Edita as propriedades de marcação e quem marcou
+      const objToEdit = {
+        ...productOfList,
+        isMarked: !isChecked,
+        userWhoMarkedId: user.id,
+      };
+
+      try {
+        await ProductOfListService.editProductOfList(objToEdit, user);
+      } catch (error) {
+        console.log(error);
+        toast.show({
+          title: 'Não foi possível marcar o item',
+          status: 'warning',
+        });
+      }
+    }
+
+    refreshList();
+    setLoadingCheckbox(false);
+  };
 
   const sumQuantities = (quantityArray) => {
     let finalValue = 0;
 
-    finalValue = quantityArray.reduce((acc, currentPrice) => {
-      return (acc += currentPrice);
+    finalValue = quantityArray.reduce((acc, currentValue) => {
+      return (acc += currentValue);
     }, 0);
 
     return finalValue;
@@ -40,6 +77,7 @@ const LixtCartProductItemGeneral = ({
 
   const getQuantityObject = () => {
     let finalAmount = 0;
+    let markedAmount = 0;
     const allPrices = [];
 
     for (const { price, amount } of wrappedProduct?.priceAndAmounts) {
@@ -47,6 +85,7 @@ const LixtCartProductItemGeneral = ({
       const priceValue = price || 0;
 
       if (amount) finalAmount += amount;
+      markedAmount = wrappedProduct.markings.filter((m) => m.isMarked).length;
 
       allPrices.push(priceValue * amountValue);
     }
@@ -54,6 +93,7 @@ const LixtCartProductItemGeneral = ({
     return {
       price: sumQuantities(allPrices),
       amount: finalAmount,
+      markedAmount,
     };
   };
 
@@ -64,34 +104,45 @@ const LixtCartProductItemGeneral = ({
       my={3}
       alignItems="center"
     >
-      <Box mr={5}>
-        <Checkbox
-          accessibilityLabel={t('markItem')}
-          value={isChecked}
-          isChecked={isChecked}
-          size="md"
-        />
-      </Box>
-
-      <Box>
-        <Text strikeThrough={isChecked} fontWeight="bold">
-          {wrappedProduct.product.name}
-        </Text>
-
-        <Box>
-          <Text>qt. {quantities.amount || 0}</Text>
-
-          <Text>{quantities.price ? `R$ ${quantities.price}` : 'R$ 0,00'}</Text>
+      <HStack>
+        <Box mr={5} flexDirection="row" alignItems="center">
+          {!loadingCheckbox ? (
+            <Checkbox
+              accessibilityLabel={t('markItem')}
+              value={isChecked}
+              isChecked={isChecked}
+              size="md"
+              onChange={toggleProduct}
+            />
+          ) : (
+            <Spinner size="sm" />
+          )}
         </Box>
 
-        <Text fontSize="sm">
-          {wrappedProduct && wrappedProduct?.inLists
-            ? `${t('includedIn')} ${wrappedProduct.inLists
-                .map((l) => l.name)
-                .join(', ')}`
-            : null}
-        </Text>
-      </Box>
+        <Box>
+          <Text strikeThrough={isChecked} fontWeight="bold">
+            {wrappedProduct.product.name}
+          </Text>
+
+          <Box>
+            <Text>
+              {quantities.markedAmount} / {quantities.amount || 0}
+            </Text>
+
+            <Text>
+              {quantities.price ? `R$ ${quantities.price}` : 'R$ 0,00'}
+            </Text>
+          </Box>
+
+          <Text width="80%" fontSize="sm">
+            {wrappedProduct && wrappedProduct?.inLists
+              ? `${t('includedIn')} ${wrappedProduct.inLists
+                  .map((l) => l.name)
+                  .join(', ')}`
+              : null}
+          </Text>
+        </Box>
+      </HStack>
     </Pressable>
   ) : null;
 };

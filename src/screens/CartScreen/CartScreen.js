@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { SafeAreaView } from 'react-native';
-import { Box, Select, Center, Text, ScrollView } from 'native-base';
+import { SafeAreaView, RefreshControl } from 'react-native';
+import { Box, Select, Center, Text, ScrollView, useToast } from 'native-base';
 import LixtCartList from '../../components/LixtCartList';
 import ListService from '../../services/ListService';
 
@@ -10,16 +10,18 @@ import { screenBasicStyle as style } from '../../styles/style';
 import { useTranslation } from 'react-i18next';
 import { ListContext } from '../../context/ListProvider';
 import { AuthContext } from '../../context/AuthProvider';
+import { CheckedItemsProvider } from '../../context/CheckedItemsProvider';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 export default function CartScreen(props) {
   const { lists, setLists } = useContext(ListContext);
   const { user } = useContext(AuthContext);
+  const toast = useToast();
   const [selectedList, setSelectedList] = useState({
     id: 'view-all',
     productsOfList: [],
   });
-
+  const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
   const isFocused = useIsFocused();
 
@@ -31,13 +33,14 @@ export default function CartScreen(props) {
    */
 
   useFocusEffect(() => {
-    // Verifica se alguma tela enviou props para essa
+    // Verifica se alguma tela enviou props para essa (até agora a de edição do item manda)
     if (props.route.params) {
       // Caso a tela peça para fazer refresh atualiza as listas
       if (props.route.params.refresh) {
         if (selectedList.id !== 'view-all') {
           refreshIndividualList();
         }
+
         props.route.params.refresh = null;
       }
     }
@@ -64,6 +67,7 @@ export default function CartScreen(props) {
   };
 
   const refreshIndividualList = async () => {
+    setRefreshing(true);
     try {
       const { data } = await ListService.getListById(selectedList.id, user);
 
@@ -74,6 +78,28 @@ export default function CartScreen(props) {
       setLists(editedLists);
     } catch (error) {
       console.log(error);
+      toast.show({
+        title: 'Não foi possível buscar a lista atualizada',
+        status: 'warning',
+      });
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const refreshLists = async () => {
+    setRefreshing(true);
+    try {
+      const { data } = await ListService.getLists(user);
+      setLists(data);
+    } catch (error) {
+      console.log(error);
+      toast.show({
+        title: 'Não foi possível buscar a lista atualizada',
+        status: 'warning',
+      });
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -91,42 +117,53 @@ export default function CartScreen(props) {
     const groupedProducts = [];
 
     for (const productOfList of allProductsOfLists) {
-      // Não leva em consideração no agrupamento produtos que foram marcados por outros usuários
-      // uma vez que não será possível manipulá-lo de nenhuma forma
-      if (productOfList.isMarked && productOfList.userWhoMarkedId) continue;
+      // Não leva em consideração no agrupamento produtos que foram marcados por outros usuários (ou atribuídos para outros usuários)
+      // uma vez que não será possível manipulá-los de nenhuma forma
+      if (
+        (productOfList.isMarked && productOfList.userWhoMarkedId !== user.id) ||
+        (productOfList.assignedUserId &&
+          productOfList.assignedUserId !== user.id)
+      ) {
+        continue;
+      }
+
+      // Atributos do produto da lista
+      const { id, listId, productId, price, amount, isMarked, product } =
+        productOfList;
 
       // Tenta encontrar se um mesmo produto de listas diferentes já foi incluso em groupedProducts
       const groupedProductIndex = groupedProducts.findIndex(
-        (p) => p.productId === productOfList.productId
+        (p) => p.productId === productId
       );
 
-      // Caso tenha encontrado um id de produto igual, agrupa no objeto
-      // o id da lista do item atual e o preço do item atual e atualiza a lista do groupedProducts
+      // Caso tenha encontrado um id de produto igual, agrupa no objeto os atributos de
+      // id da lista do item atual e o preço do item atual e atualiza a lista do groupedProducts
       if (groupedProductIndex >= 0) {
         const groupedProduct = Object.assign(
           {},
           groupedProducts[groupedProductIndex]
         );
-        groupedProduct.inLists.push(
-          getSuperficialListDataById(productOfList.listId)
-        );
+
+        // groupedProduct.productOfListIds.push(id);
+        groupedProduct.productsOfLists.push(productOfList);
+        groupedProduct.inLists.push(getSuperficialListDataById(listId));
         groupedProduct.priceAndAmounts.push({
-          price: productOfList.price,
-          amount: productOfList.amount,
+          price: price,
+          amount: amount,
         });
-        groupedProduct.markings.push(productOfList.isMarked);
+        groupedProduct.markings.push({ isMarked: isMarked, listId: listId });
         groupedProducts[groupedProductIndex] = groupedProduct;
       } else {
         // Caso não tenha achado nenhum objeto com id de produto igual ao id de produto do item
         // cria um objeto novo
         const newGroupedProduct = {
-          productId: productOfList.productId,
-          inLists: [getSuperficialListDataById(productOfList.listId)],
-          priceAndAmounts: [
-            { price: productOfList.price, amount: productOfList.amount },
-          ],
-          markings: [productOfList.isMarked],
-          product: productOfList.product,
+          productId: productId,
+          // productOfListIds: [id], quando o endpoint de toggle estiver feito usar dessa forma
+          productsOfLists: [productOfList],
+          inLists: [getSuperficialListDataById(listId)],
+          priceAndAmounts: [{ price: price, amount: amount }],
+          markings: [{ isMarked: isMarked, listId: listId }],
+          product: product,
         };
 
         groupedProducts.push(newGroupedProduct);
@@ -144,39 +181,57 @@ export default function CartScreen(props) {
     };
   };
 
-  return lists.length ? (
-    <SafeAreaView style={style.container}>
-      <Box w="90%" mx="auto">
-        <Select
-          selectedValue={selectedList?.id}
-          width="70%"
-          onValueChange={handleSelectChange}
-          isDisabled={lists.length === 0}
+  return lists?.length ? (
+    <CheckedItemsProvider>
+      <SafeAreaView style={style.container}>
+        <Box w="90%" mx="auto">
+          <Select
+            selectedValue={selectedList?.id}
+            width="70%"
+            onValueChange={handleSelectChange}
+            isDisabled={lists.length === 0}
+          >
+            <Select.Item
+              key="view-all"
+              value="view-all"
+              label="Ver todos os itens"
+            />
+            {lists.map((list) => (
+              <Select.Item
+                key={list.id}
+                value={list.id}
+                label={list.nameList}
+              />
+            ))}
+          </Select>
+        </Box>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={
+                selectedList.id === 'view-all'
+                  ? refreshLists
+                  : refreshIndividualList
+              }
+            />
+          }
         >
-          <Select.Item
-            key="view-all"
-            value="view-all"
-            label="Ver todos os itens"
-          />
-          {lists.map((list) => (
-            <Select.Item key={list.id} value={list.id} label={list.nameList} />
-          ))}
-        </Select>
-      </Box>
-      <ScrollView>
-        {selectedList && selectedList?.productsOfList?.length ? (
-          <LixtCartList
-            selectedList={selectedList}
-            navigate={props.navigation.navigate}
-            refreshList={
-              selectedList.id === 'view-all'
-                ? refreshIndividualList
-                : refreshIndividualList
-            }
-          />
-        ) : null}
-      </ScrollView>
-    </SafeAreaView>
+          {selectedList && selectedList?.productsOfList?.length ? (
+            <LixtCartList
+              selectedList={selectedList}
+              navigate={props.navigation.navigate}
+              userId={user.id}
+              refreshList={
+                selectedList.id === 'view-all'
+                  ? refreshLists
+                  : refreshIndividualList
+              }
+            />
+          ) : null}
+        </ScrollView>
+      </SafeAreaView>
+    </CheckedItemsProvider>
   ) : (
     <SafeAreaView style={style.container}>
       <Center w="90%" mx="auto" my="50%">
