@@ -46,7 +46,7 @@ describe('NewProductScreen component', () => {
               id: 2,
               name: 'Peixes',
             },
-          ]
+          ],
         })
       );
 
@@ -61,7 +61,11 @@ describe('NewProductScreen component', () => {
           <SafeAreaProvider
             initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
           >
-            <NativeBaseProvider children={<NewProductScreen route={route} navigation={navigation} />} />
+            <NativeBaseProvider
+              children={
+                <NewProductScreen route={route} navigation={navigation} />
+              }
+            />
           </SafeAreaProvider>
         </AuthContext.Provider>
       );
