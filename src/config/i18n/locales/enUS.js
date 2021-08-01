@@ -116,10 +116,13 @@ export default {
   commentaries: 'Commentaries',
   comment: 'Comment',
   commentaryPlaceholder: 'Buy it until friday',
+  seeAllItems: 'All items',
 
   buy: 'Buy',
   markItem: 'Mark item checkbox',
+  assignedTo: 'assigned to',
   includedIn: 'Included in',
   noProductsFound:
     "You don't have products on your list. \nWhen you add products they're going to be shown here",
+  savePurchase: 'Save purchase',
 };

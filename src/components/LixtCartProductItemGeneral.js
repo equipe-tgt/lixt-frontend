@@ -15,14 +15,10 @@ import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 import ProductOfListService from '../services/ProductOfListService';
 import { useTranslation } from 'react-i18next';
 
-const LixtCartProductItemGeneral = ({
-  wrappedProduct,
-  navigate,
-  refreshList,
-}) => {
+const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
-  const { checkedItems, checkItem } = useContext(CheckedItemsContext);
+  const { checkedItems, checkMultipleItems } = useContext(CheckedItemsContext);
   const toast = useToast();
   const [quantities, setQuantities] = useState({});
   const [isChecked, setIsChecked] = useState(false);
@@ -48,9 +44,11 @@ const LixtCartProductItemGeneral = ({
 
   const toggleProduct = async (isSelecting) => {
     setLoadingCheckbox(true);
+    let modified = [];
+
     // Para cada productOfList que consta dentro de wrappedProduct
     for (const productOfList of wrappedProduct.productsOfLists) {
-      checkItem(productOfList.id, isSelecting);
+      modified.push(productOfList.id);
 
       try {
         // Se o usuário estiver marcando todos os itens que tiverem o msm id de produto
@@ -61,7 +59,9 @@ const LixtCartProductItemGeneral = ({
         // Ou seja, marca e desmarca apenas os itens que precisam
         if (
           (isSelecting && productOfList.assignedUserId === user.id) ||
-          (!isSelecting && productOfList.assignedUserId !== user.id)
+          (!isSelecting &&
+            !!productOfList.assignedUserId &&
+            productOfList.assignedUserId !== user.id)
         ) {
           continue;
         }
@@ -71,7 +71,8 @@ const LixtCartProductItemGeneral = ({
           productOfList.id,
           user
         );
-        productOfList.assignedUserId = user.id;
+
+        productOfList.assignedUserId = data.assignedUserId;
 
         // Se a resposta for 1, quer dizer que o usuário atual está responsável por este item
         // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
@@ -82,7 +83,7 @@ const LixtCartProductItemGeneral = ({
           });
 
           // Se outro usuário tiver se responsabilizado pelo item desmarca localmente
-          checkItem(productOfList.id, false);
+          modified = modified.filter((m) => m === productOfList.id);
         }
       } catch (error) {
         console.log(error);
@@ -92,6 +93,7 @@ const LixtCartProductItemGeneral = ({
         });
       }
     }
+    checkMultipleItems(modified, isSelecting);
     setIsChecked(isSelecting);
     setLoadingCheckbox(false);
   };
@@ -105,7 +107,6 @@ const LixtCartProductItemGeneral = ({
       finalAmount += productOfList.amount;
       allPrices += productOfList.price * productOfList.amount;
 
-      console.log(checkedItems);
       if (checkedItems.includes(productOfList.id)) {
         markedProductsAmount += productOfList.amount;
       } else if (productOfList.isMarked) {
@@ -189,7 +190,5 @@ const LixtCartProductItemGeneral = ({
 export default LixtCartProductItemGeneral;
 
 LixtCartProductItemGeneral.propTypes = {
-  navigate: PropTypes.func,
   wrappedProduct: PropTypes.object,
-  refreshList: PropTypes.func,
 };

@@ -73,9 +73,11 @@ export default function ListDetailsScreen(props) {
     let amount = 1; // Conta o dono da lista
 
     // Contabiliza como membro todo usuário que tiver aceito participar da lista
-    amount += list.listMembers.filter(
-      (listMember) => listMember.statusListMember === 'ACCEPT'
-    ).length;
+    if (list?.listMembers?.length) {
+      amount += list.listMembers.filter(
+        (listMember) => listMember.statusListMember === 'ACCEPT'
+      ).length;
+    }
 
     return amount;
   };
@@ -104,7 +106,7 @@ export default function ListDetailsScreen(props) {
         <HStack justifyContent="space-between" width="70%" mb={3}>
           <Box>
             <Text fontWeight="bold">{t('products')}</Text>
-            <Text>{list.productsOfList.length}</Text>
+            <Text>{list?.productsOfList?.length || 0}</Text>
           </Box>
           <Box>
             <Text fontWeight="bold">{t('members')}</Text>

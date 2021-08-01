@@ -14,6 +14,11 @@ export const nativeBaseTheme = extendTheme({
       baseStyle: {
         _checkbox: {
           borderRadius: 'full',
+          _disabled: {
+            bg: '#1a1b1c',
+            borderColor: '#1a1b1c',
+            opacity: 0.1,
+          },
         },
       },
     },
