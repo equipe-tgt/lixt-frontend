@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native';
 import { FormControl, Center, Box, Select } from 'native-base';
-import { screenBasicStyle as style } from '../styles/style';
+import { screenBasicStyle as style } from '../../styles/style';
 import { useTranslation } from 'react-i18next';
 
-import { setLanguageApp, getLanguageApp } from '../services/LanguageService';
-import i18n from '../config/i18n/locales/index';
+import { setLanguageApp, getLanguageApp } from '../../services/LanguageService';
+import i18n from '../../config/i18n/locales/index';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();

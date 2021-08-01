@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import SettingsScreen from '../screens/SettingsScreen/SettingsScreen';
 import UpdatePasswordScreen from '../screens/UpdatePasswordScreen/UpdatePasswordScreen';
 import SendInvitationScreen from '../screens/SendInvitationScreen/SendInvitationScreen';
 import ManageInvitationsScreen from '../screens/ManageInvitationsScreen/ManageInvitationsScreen';

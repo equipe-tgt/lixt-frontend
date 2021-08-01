@@ -13,10 +13,10 @@ import {
   useToast,
 } from 'native-base';
 import { useTranslation } from 'react-i18next';
-import { screenBasicStyle as style } from '../styles/style';
-import { AuthContext } from '../context/AuthProvider';
-import { ListContext } from '../context/ListProvider';
-import ListMembersService from '../services/ListMembersService';
+import { screenBasicStyle as style } from '../../styles/style';
+import { AuthContext } from '../../context/AuthProvider';
+import { ListContext } from '../../context/ListProvider';
+import ListMembersService from '../../services/ListMembersService';
 
 export default function ListDetailsScreen(props) {
   const toast = useToast();

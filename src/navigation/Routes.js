@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import SplashScreen from '../screens/SplashScreen';
+import SplashScreen from '../screens/SplashScreen/SplashScreen';
 
 import { AuthContext } from '../context/AuthProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';

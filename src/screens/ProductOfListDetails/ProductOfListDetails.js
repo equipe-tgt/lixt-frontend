@@ -12,16 +12,16 @@ import {
 } from 'native-base';
 
 import { useTranslation } from 'react-i18next';
-import { screenBasicStyle as style } from '../styles/style';
+import { screenBasicStyle as style } from '../../styles/style';
 import { Ionicons } from '@expo/vector-icons';
 
 // Validação do formulário
-import MEASURE_TYPES, { getMeasureType } from '../utils/measureTypes';
-import { ProductOfListSchema } from '../validationSchemas/index';
+import MEASURE_TYPES, { getMeasureType } from '../../utils/measureTypes';
+import { ProductOfListSchema } from '../../validationSchemas/index';
 import { useFormik } from 'formik';
 
-import ProductOfListService from '../services/ProductOfListService';
-import { AuthContext } from '../context/AuthProvider';
+import ProductOfListService from '../../services/ProductOfListService';
+import { AuthContext } from '../../context/AuthProvider';
 
 export default function ProductOfListDetails(props) {
   const { t } = useTranslation();
@@ -88,7 +88,7 @@ export default function ProductOfListDetails(props) {
     <SafeAreaView style={style.container}>
       <ScrollView w="90%" mx="auto">
         <Heading>
-          {`${t('editing')} ${props.route.params.product.product.name}`}
+          {`${t('editing')} ${props.route.params.product.name}`}
         </Heading>
         <Button
           px={0}

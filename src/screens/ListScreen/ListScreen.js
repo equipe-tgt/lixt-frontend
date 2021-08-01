@@ -21,19 +21,19 @@ import {
   Center,
   Spinner,
 } from 'native-base';
-import LixtProductItem from '../components/LixtProductItem';
+import LixtProductItem from '../../components/LixtProductItem';
 import { Ionicons } from '@expo/vector-icons';
-import { screenBasicStyle as style } from '../styles/style';
+import { screenBasicStyle as style } from '../../styles/style';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTranslation } from 'react-i18next';
-import ListService from '../services/ListService';
-import ProductService from '../services/ProductService';
-import ProductOfListService from '../services/ProductOfListService';
-import { AuthContext } from '../context/AuthProvider';
-import { ListContext } from '../context/ListProvider';
-import ListMembersService from '../services/ListMembersService';
+import ListService from '../../services/ListService';
+import ProductService from '../../services/ProductService';
+import ProductOfListService from '../../services/ProductOfListService';
+import { AuthContext } from '../../context/AuthProvider';
+import { ListContext } from '../../context/ListProvider';
+import ListMembersService from '../../services/ListMembersService';
 
 export default function ListScreen(props) {
   const toast = useToast();
