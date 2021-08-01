@@ -2,8 +2,8 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import ListStack from './ListStack';
-import CartScreen from '../screens/CartScreen';
 import ProfileStack from './ProfileStack';
+import PurchaseStack from './PurchaseStack';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -26,7 +26,7 @@ export default function AppTabs() {
         name="Lists"
         component={ListStack}
         options={{
-          tabBarIcon: ({ focused, color, size }) => {
+          tabBarIcon: ({ color, size }) => {
             return <Ionicons name="home" size={size} color={color} />;
           },
           tabBarLabel: () => {
@@ -35,10 +35,11 @@ export default function AppTabs() {
         }}
       />
       <Tabs.Screen
-        name="Carrinho"
-        component={CartScreen}
+        name="Purchase"
+        component={PurchaseStack}
         options={{
-          tabBarIcon: ({ focused, color, size }) => {
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => {
             return <Ionicons name="cart" size={size} color={color} />;
           },
           tabBarLabel: () => {
@@ -48,10 +49,10 @@ export default function AppTabs() {
       />
 
       <Tabs.Screen
-        name="Perfil"
+        name="Profile"
         component={ProfileStack}
         options={{
-          tabBarIcon: ({ focused, color, size }) => {
+          tabBarIcon: ({ color, size }) => {
             return <Ionicons name="person" size={size} color={color} />;
           },
           tabBarLabel: () => {

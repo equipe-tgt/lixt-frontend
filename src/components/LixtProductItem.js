@@ -23,6 +23,7 @@ const LixtProductItem = ({
       onPress={() => {
         navigate('ProductOfListDetails', {
           product,
+          origin: 'Lists',
         });
       }}
     >

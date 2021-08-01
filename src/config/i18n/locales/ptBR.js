@@ -59,6 +59,8 @@ export default {
   errorServerDefault: 'Um erro inesperado ocorreu no servidor',
 
   noListsFound: 'Você ainda não possui listas, clique para adicionar',
+  noListsCreateANewOne:
+    'Você ainda não possui listas, vá para a página inicial para adicionar uma',
   createMyFirstList: 'Criar minha primeira lista!',
   loadingLists: 'Carregando suas listas...',
 
@@ -114,4 +116,10 @@ export default {
   commentaries: 'Comentários',
   comment: 'Comentar',
   commentaryPlaceholder: 'Comprar suco no Extra',
+
+  buy: 'Comprar',
+  markItem: 'Checkbox marcar item',
+  includedIn: 'Incluso em',
+  noProductsFound:
+    'Você não possui produtos na sua lista. \nQuando você adicionar produtos eles aparecerão aqui',
 };

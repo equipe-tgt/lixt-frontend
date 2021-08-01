@@ -59,6 +59,9 @@ export default {
   errorServerDefault: 'An unexpected error has occurred on the server',
 
   noListsFound: "You don't have any lists, click to add",
+  noListsCreateANewOne:
+    "You don't have any lists, go to the home page and add your first",
+
   createMyFirstList: 'Create my first list!',
   loadingLists: 'Loading your lists...',
 
@@ -113,4 +116,10 @@ export default {
   commentaries: 'Commentaries',
   comment: 'Comment',
   commentaryPlaceholder: 'Buy it until friday',
+
+  buy: 'Buy',
+  markItem: 'Mark item checkbox',
+  includedIn: 'Included in',
+  noProductsFound:
+    "You don't have products on your list. \nWhen you add products they're going to be shown here",
 };

@@ -29,6 +29,7 @@ export default function ProductOfListDetails(props) {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const [product] = useState(props.route.params.product);
+  const [origin] = useState(props.route.params.origin);
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, values, errors } = useFormik({
@@ -59,7 +60,7 @@ export default function ProductOfListDetails(props) {
         status: 'success',
       });
       // retorna à lista
-      props.navigation.navigate('Lists');
+      props.navigation.navigate(origin, { refresh: true });
     } catch (error) {
       console.log({ error });
       toast.show({

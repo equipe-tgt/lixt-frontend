@@ -33,6 +33,13 @@ const ProductOfListService = {
       },
     });
   },
+  assignOrUnassignMyself: (id, user) => {
+    return BaseService.get(`/productOfList/${id}/assigned-to-me`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
 };
 
 export default ProductOfListService;

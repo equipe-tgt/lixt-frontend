@@ -68,6 +68,12 @@ export default function ListScreen(props) {
         setSelectedList(newList);
         props.route.params.newList = null;
       }
+
+      // Caso a tela peça para fazer refresh atualiza as listas
+      if (props.route.params.refresh) {
+        fetchLists();
+        props.route.params.refresh = null;
+      }
     }
   });
 
@@ -488,7 +494,7 @@ export default function ListScreen(props) {
           </VStack>
         </ScrollView>
       ) : (
-        <Center w="90%" mx="auto">
+        <Center w="90%" mx="auto" my="50%">
           <Text textAlign="center">{t('noListsFound')}</Text>
           <Button
             onPress={() => {
