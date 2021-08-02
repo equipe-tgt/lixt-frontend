@@ -82,7 +82,7 @@ export default function SendInvitationScreen(props) {
           title = `Usuário "${values.username}" não existe`;
         } else {
           status = 'warning';
-          title = 'Um erro inesperado ocorreu no servidor';
+          title = t('errorServerDefault');
         }
       })
       .finally(() => {
