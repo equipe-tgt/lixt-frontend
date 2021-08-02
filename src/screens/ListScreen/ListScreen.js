@@ -156,7 +156,7 @@ export default function ListScreen(props) {
     } catch (error) {
       toast.show({
         status: 'warning',
-        title: 'Um erro inesperado ocorreu no servidor',
+        title: t('errorServerDefault'),
       });
     }
   };
