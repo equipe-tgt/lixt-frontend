@@ -25,16 +25,19 @@ export default function ReviewPurchaseScreen(props) {
   }, [isFocused]);
 
   useEffect(() => {
-    sortProductsByList();
+    setItemsSortedToPurchase(sortProductsByList());
     sumPrices();
   }, [itemsFromProps]);
 
-  const sortProductsByList = () => {
+  const sortProductsByList = (identifyByName = true) => {
     if (itemsFromProps && itemsFromProps?.length) {
       const groupedProducts = itemsFromProps.reduce(
         (accumlator, currentProduct) => {
-          accumlator[getListNameById(currentProduct.listId)] = [
-            ...(accumlator[getListNameById(currentProduct.listId)] || []),
+
+          const identifier = identifyByName ? getListNameById(currentProduct.listId) : currentProduct.listId;
+
+          accumlator[getListNameById(identifier)] = [
+            ...(accumlator[getListNameById(identifier)] || []),
             currentProduct,
           ];
           return accumlator;
@@ -42,7 +45,7 @@ export default function ReviewPurchaseScreen(props) {
         {}
       );
 
-      setItemsSortedToPurchase(groupedProducts);
+    return groupedProducts;
     }
   };
 
@@ -76,17 +79,25 @@ export default function ReviewPurchaseScreen(props) {
     return foundList ? foundList.nameList : id;
   };
 
-//   const makeNewPurchase = async () => {
-//     try {
-//     } catch (error) {}
-//   };
+    const makeNewPurchase = async () => {
+
+      const listAndItems = sortProductsByList(false);
+
+
+      try {
+
+        
+      } catch (error) {}
+    };
+
+    
 
   return (
     <SafeAreaView style={style.container}>
       <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
         {/* Itera por cada lista que há itens */}
 
-        {Object.keys(itemsSortedToPurchase).length > 0
+        {itemsSortedToPurchase && Object.keys(itemsSortedToPurchase).length > 0
           ? Object.keys(itemsSortedToPurchase).map(
               (listIdentification, index) => {
                 return (

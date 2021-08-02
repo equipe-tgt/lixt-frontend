@@ -20,7 +20,8 @@ export default function LixtReviewItem({ productOfList, modifyItem }) {
 
   const convertCurrencyString = (value) => {
     let parsedValue = value || 0;
-    if (value && value.includes(',')) {
+
+    if (typeof value === 'string' && value.includes(',')) {
       const stringFormatted = value?.replace(',', '.');
       parsedValue = parseFloat(stringFormatted);
     }
