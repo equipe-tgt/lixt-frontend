@@ -26,33 +26,33 @@ describe('ListDetailsScreen component', () => {
       nameList: 'Lista #01',
       owner: 'fulanodetal',
       ownerId: 1,
-      description: 'Olar'
-    }
-  
+      description: 'Olar',
+    };
+
     beforeEach(() => {
       const navigation = {
         navigate: jest.fn((path) => path),
       };
       navigationSpy = jest.spyOn(navigation, 'navigate');
-  
+
       const route = {
         params: {
-          list
-        }
-      }
-  
+          list,
+        },
+      };
+
       const navContext = {
         isFocused: () => true,
         // addListener returns an unscubscribe function.
-        addListener: jest.fn(() => jest.fn())
-      }
-  
+        addListener: jest.fn(() => jest.fn()),
+      };
+
       user = {
         id: 1,
         name: 'Fulano',
         username: 'fulanodetal',
       };
-  
+
       const renderResults = render(
         <AuthContext.Provider
           value={{
@@ -81,7 +81,7 @@ describe('ListDetailsScreen component', () => {
           </ListContext.Provider>
         </AuthContext.Provider>
       );
-  
+
       getByTestId = renderResults.getByTestId;
       getByText = renderResults.getByText;
     });
@@ -96,18 +96,18 @@ describe('ListDetailsScreen component', () => {
 
       expect(text).toBeDefined();
     });
-  
+
     it('should redirect to invite page when clicking invite link', async () => {
-      const inviteButton = getByTestId('invite-button')
+      const inviteButton = getByTestId('invite-button');
 
       await waitFor(() => {
-        fireEvent.press(inviteButton)
-      })
+        fireEvent.press(inviteButton);
+      });
 
       expect(navigationSpy).toHaveBeenCalledWith('Invite', {
-        list
-      })
-    })
+        list,
+      });
+    });
   });
 
   describe('when the user is not the owner of the list', () => {
@@ -115,45 +115,47 @@ describe('ListDetailsScreen component', () => {
     let navigationSpy;
     let user;
     let list;
-  
+
     beforeEach(() => {
       list = {
         id: 1,
-        listMembers: [{
-          userId: 1,
-          name: 'Fulano',
-          username: 'fulanodetal',
-          statusListMember: 'ACCEPT'
-        }],
+        listMembers: [
+          {
+            userId: 1,
+            name: 'Fulano',
+            username: 'fulanodetal',
+            statusListMember: 'ACCEPT',
+          },
+        ],
         productOfList: [],
         nameList: 'Lista #01',
         owner: 'ciclanodetal',
         ownerId: 2,
-        description: 'Olar'
-      }
+        description: 'Olar',
+      };
       const navigation = {
         navigate: jest.fn((path) => path),
       };
       navigationSpy = jest.spyOn(navigation, 'navigate');
-  
+
       const route = {
         params: {
-          list
-        }
-      }
-  
+          list,
+        },
+      };
+
       const navContext = {
         isFocused: () => true,
         // addListener returns an unscubscribe function.
-        addListener: jest.fn(() => jest.fn())
-      }
-  
+        addListener: jest.fn(() => jest.fn()),
+      };
+
       user = {
         id: 1,
         name: 'Fulano',
         username: 'fulanodetal',
       };
-  
+
       const renderResults = render(
         <AuthContext.Provider
           value={{
@@ -168,17 +170,19 @@ describe('ListDetailsScreen component', () => {
                 list,
                 {
                   id: 2,
-                  listMembers: [{
-                    userId: 1,
-                    name: 'Fulano',
-                    username: 'fulanodetal',
-                  }],
+                  listMembers: [
+                    {
+                      userId: 1,
+                      name: 'Fulano',
+                      username: 'fulanodetal',
+                    },
+                  ],
                   productOfList: [],
                   nameList: 'Lista #02',
                   owner: 'ciclanodetal',
                   ownerId: 2,
-                  description: 'Olar 2'
-                }
+                  description: 'Olar 2',
+                },
               ],
               setLists: () => {},
             }}
@@ -197,7 +201,7 @@ describe('ListDetailsScreen component', () => {
           </ListContext.Provider>
         </AuthContext.Provider>
       );
-  
+
       getByTestId = renderResults.getByTestId;
       getByText = renderResults.getByText;
     });
@@ -212,32 +216,34 @@ describe('ListDetailsScreen component', () => {
 
       expect(text).toBeDefined();
     });
-  
+
     it('should leave the list successfully and redirect to the Lists page', async () => {
-      jest.spyOn(ListMembersService, 'deleteInvitation')
+      jest
+        .spyOn(ListMembersService, 'deleteInvitation')
         .mockReturnValue(Promise.resolve());
 
-      const leaveListButton = getByTestId('leave-list')
+      const leaveListButton = getByTestId('leave-list');
 
       await waitFor(() => {
-        fireEvent.press(leaveListButton)
-      })
+        fireEvent.press(leaveListButton);
+      });
 
       expect(navigationSpy).toHaveBeenCalledWith('Lists');
-    })
+    });
 
     it('should not leave the list if server returns an error', async () => {
-      jest.spyOn(ListMembersService, 'deleteInvitation')
+      jest
+        .spyOn(ListMembersService, 'deleteInvitation')
         .mockReturnValue(Promise.reject());
 
-      const leaveListButton = getByTestId('leave-list')
+      const leaveListButton = getByTestId('leave-list');
 
       await waitFor(() => {
-        fireEvent.press(leaveListButton)
-      })
+        fireEvent.press(leaveListButton);
+      });
 
-      const toast = getByText('errorServerDefault')
+      const toast = getByText('errorServerDefault');
       expect(toast).toBeDefined();
-    })
+    });
   });
 });

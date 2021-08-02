@@ -10,19 +10,18 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key) => key }),
   initReactI18next: {
     type: 'logger',
-    init: () => {}
-  }
+    init: () => {},
+  },
 }));
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
-
 
 jest.mock('../../services/LanguageService', () => {
   let language = 'pt_BR';
   return {
     getLanguageApp: () => language,
-    setLanguageApp: (lang) => language = lang
-  }
-})
+    setLanguageApp: (lang) => (language = lang),
+  };
+});
 
 describe('SettingsScreen component', () => {
   let getByTestId, getByText;
@@ -32,11 +31,7 @@ describe('SettingsScreen component', () => {
       <SafeAreaProvider
         initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
       >
-        <NativeBaseProvider
-          children={
-            <Settings />
-          }
-        />
+        <NativeBaseProvider children={<Settings />} />
       </SafeAreaProvider>
     );
 
@@ -58,5 +53,5 @@ describe('SettingsScreen component', () => {
     });
 
     expect(selectLanguage.props.value).toBe('portuguese');
-  })
+  });
 });

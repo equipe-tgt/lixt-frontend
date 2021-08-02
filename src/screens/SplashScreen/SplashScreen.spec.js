@@ -16,11 +16,7 @@ describe('SplashScreen component', () => {
       <SafeAreaProvider
         initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
       >
-        <NativeBaseProvider
-          children={
-            <Splash />
-          }
-        />
+        <NativeBaseProvider children={<Splash />} />
       </SafeAreaProvider>
     );
 
@@ -30,5 +26,5 @@ describe('SplashScreen component', () => {
 
   it('should', () => {
     expect(true).toBe(true);
-  })
+  });
 });

@@ -28,15 +28,15 @@ describe('ListScreen component', () => {
 
     const route = {
       params: {
-        newList: null
-      }
-    }
+        newList: null,
+      },
+    };
 
     const navContext = {
       isFocused: () => true,
       // addListener returns an unscubscribe function.
-      addListener: jest.fn(() => jest.fn())
-    }
+      addListener: jest.fn(() => jest.fn()),
+    };
 
     user = {
       name: 'Fulano',
@@ -78,5 +78,5 @@ describe('ListScreen component', () => {
 
   it('should', () => {
     expect(true).toBe(true);
-  })
+  });
 });

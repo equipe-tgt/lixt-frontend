@@ -27,9 +27,9 @@ describe('ProductOfListDetailsScreen component', () => {
 
     const route = {
       params: {
-        product: {}
-      }
-    }
+        product: {},
+      },
+    };
 
     user = {
       name: 'Fulano',
@@ -69,5 +69,5 @@ describe('ProductOfListDetailsScreen component', () => {
 
   it('should', () => {
     expect(true).toBe(true);
-  })
+  });
 });

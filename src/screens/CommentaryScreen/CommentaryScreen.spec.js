@@ -21,9 +21,9 @@ describe('CommentaryScreen component', () => {
   beforeEach(() => {
     const route = {
       params: {
-        product: ''
-      }
-    }
+        product: '',
+      },
+    };
 
     user = {
       name: 'Fulano',
@@ -33,8 +33,8 @@ describe('CommentaryScreen component', () => {
     const navContext = {
       isFocused: () => true,
       // addListener returns an unscubscribe function.
-      addListener: jest.fn(() => jest.fn())
-    }
+      addListener: jest.fn(() => jest.fn()),
+    };
 
     const renderResults = render(
       <AuthContext.Provider
@@ -71,5 +71,5 @@ describe('CommentaryScreen component', () => {
 
   it('', () => {
     expect(true).toBe(true);
-  })
+  });
 });
