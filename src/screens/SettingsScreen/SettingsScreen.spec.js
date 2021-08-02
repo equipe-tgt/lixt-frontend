@@ -15,6 +15,15 @@ jest.mock('react-i18next', () => ({
 }));
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
+
+jest.mock('../../services/LanguageService', () => {
+  let language = 'pt_BR';
+  return {
+    getLanguageApp: () => language,
+    setLanguageApp: (lang) => language = lang
+  }
+})
+
 describe('SettingsScreen component', () => {
   let getByTestId, getByText;
 
@@ -35,7 +44,19 @@ describe('SettingsScreen component', () => {
     getByText = renderResults.getByText;
   });
 
-  it('should', () => {
-    expect(true).toBe(true);
+  it('should change app language when selecting a value in the dropdown', async () => {
+    const selectLanguage = getByTestId('select-language');
+
+    await waitFor(() => {
+      fireEvent(selectLanguage, 'valueChange', 'en_US');
+    });
+
+    expect(selectLanguage.props.value).toBe('english');
+
+    await waitFor(() => {
+      fireEvent(selectLanguage, 'valueChange', 'pt_BR');
+    });
+
+    expect(selectLanguage.props.value).toBe('portuguese');
   })
 });

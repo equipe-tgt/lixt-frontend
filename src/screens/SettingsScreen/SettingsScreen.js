@@ -30,6 +30,7 @@ export default function SettingsScreen() {
             <Select
               selectedValue={language}
               onValueChange={(value) => changeLanguage(value)}
+              testID="select-language"
             >
               <Select.Item label={t('portuguese')} value="pt_BR" />
               <Select.Item label={t('english')} value="en_US" />

@@ -41,8 +41,8 @@ export default function ListDetailsScreen(props) {
       setLoading(true);
 
       // Pega o id do convite atual e faz a deleção do convite
-      const { id } = getCurrentInvitation();
-      await ListMembersService.deleteInvitation(id, user);
+      const { userId } = getCurrentInvitation();
+      await ListMembersService.deleteInvitation(userId, user);
 
       // Após se desvincular da lista, filtra as listas do usuário de forma
       // que a lista da qual ele se desvinculou não apareça mais
@@ -58,7 +58,7 @@ export default function ListDetailsScreen(props) {
     } catch (error) {
       toast.show({
         status: 'warning',
-        title: 'Um erro inesperado ocorreu no servidor',
+        title: t('errorServerDefault'),
       });
     } finally {
       setLoading(false);
@@ -110,15 +110,16 @@ export default function ListDetailsScreen(props) {
           </Box>
           <Box>
             <Text fontWeight="bold">{t('members')}</Text>
-            <Text>{getAmountOfMembers()}</Text>
+            <Text testID="amount-members">{getAmountOfMembers()}</Text>
           </Box>
         </HStack>
 
         {user.id === list.ownerId ? (
           <Button
+            testID="invite-button"
             onPress={() => {
               props.navigation.navigate('Invite', {
-                list: list,
+                list,
               });
             }}
             mt={5}
@@ -130,6 +131,7 @@ export default function ListDetailsScreen(props) {
             isLoading={loading}
             isLoadingText="Saindo"
             onPress={leaveList}
+            testID="leave-list"
             mt={5}
             variant="outline"
           >
