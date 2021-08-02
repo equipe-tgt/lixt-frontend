@@ -240,6 +240,7 @@ export default function CartScreen(props) {
         <LixtCalculator
           isGeneralView={selectedList?.id === 'view-all'}
           items={selectedList.productsOfList}
+          navigate={props.navigation.navigate}
         />
       </SafeAreaView>
     </CheckedItemsProvider>

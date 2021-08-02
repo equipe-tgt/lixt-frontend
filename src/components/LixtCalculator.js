@@ -5,11 +5,13 @@ import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 import { AuthContext } from '../context/AuthProvider';
 import { useTranslation } from 'react-i18next';
 
-export default function LixtCalculator({ items, isGeneralView }) {
-  const [totalPrice, setTotalPrice] = useState(0);
+export default function LixtCalculator({ items, isGeneralView, navigate }) {
   const { t } = useTranslation();
   const { checkedItems } = useContext(CheckedItemsContext);
   const { user } = useContext(AuthContext);
+
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [checkedProductsOfList, setCheckedProductsOfList] = useState([]);
 
   const getTotalPrice = () => {
     if (items && items.length > 0) {
@@ -21,8 +23,20 @@ export default function LixtCalculator({ items, isGeneralView }) {
         productsToCount.push(...items.map((item) => item.productsOfLists));
         productsToCount = productsToCount.flat();
       } else {
+        // caso não, é só passar os itens da lista mesmo
         productsToCount = items;
       }
+
+      // exclui produtos que tenham sido atribuídos ou marcados para/por outros
+      // eslint-disable-next-line array-callback-return
+      productsToCount = productsToCount.filter((p) => {
+        if (
+          (!p.assignedUserId || p.assignedUserId === user.id) &&
+          (!p.userWhoMarkedId || p.userWhoMarkedId === user.id)
+        ) {
+          return p;
+        }
+      });
 
       for (const productToCount of productsToCount) {
         // se está marcado localmente
@@ -44,6 +58,7 @@ export default function LixtCalculator({ items, isGeneralView }) {
         }
       }
       setTotalPrice(finalPrice);
+      setCheckedProductsOfList(productsToCount);
     }
   };
 
@@ -79,7 +94,9 @@ export default function LixtCalculator({ items, isGeneralView }) {
         </Box>
         <Button
           onPress={() => {
-            // navigate('ReviewPurchase');
+            navigate('ReviewPurchase', {
+              productsToPurchase: checkedProductsOfList,
+            });
           }}
           isDisabled={items.length === 0}
           variant="outline"
@@ -94,4 +111,5 @@ export default function LixtCalculator({ items, isGeneralView }) {
 LixtCalculator.propTypes = {
   items: PropTypes.array,
   isGeneralView: PropTypes.bool,
+  navigate: PropTypes.func,
 };

@@ -125,4 +125,5 @@ export default {
   noProductsFound:
     "You don't have products on your list. \nWhen you add products they're going to be shown here",
   savePurchase: 'Save purchase',
+  reviewPurchase: 'Review purchase',
 };
