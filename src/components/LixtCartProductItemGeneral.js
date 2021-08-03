@@ -170,7 +170,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
             </Text>
 
             <Text>
-              {quantities.price ? `R$ ${quantities.price}` : 'R$ 0,00'}
+              {quantities.price ? `$ ${quantities.price}` : '$ 0,00'}
             </Text>
           </Box>
 

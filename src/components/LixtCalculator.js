@@ -74,7 +74,7 @@ export default function LixtCalculator({ items, isGeneralView }) {
             Total
           </Text>
           <Text fontSize="lg" ml={2}>
-            R$ {totalPrice}
+            $ {totalPrice}
           </Text>
         </Box>
         <Button

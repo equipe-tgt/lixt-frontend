@@ -120,8 +120,8 @@ const LixtCartProductItem = ({
 
             <Text>
               {product.price
-                ? `R$ ${product.price * product.amount}`
-                : 'R$ 0,00'}
+                ? `$ ${product.price * product.amount}`
+                : '$ 0,00'}
             </Text>
           </Box>
         ) : (
@@ -134,8 +134,8 @@ const LixtCartProductItem = ({
 
             <Text>
               {product.price
-                ? `R$ ${product.price * product.amount}`
-                : 'R$ 0,00'}
+                ? `$ ${product.price * product.amount}`
+                : '$ 0,00'}
             </Text>
           </Box>
         )}
