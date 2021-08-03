@@ -80,11 +80,15 @@ export default {
   measureType: 'Measure type',
   measureValue: 'Measure value',
   editing: 'Editing',
+  editedSuccess: 'Edited with success',
 
   creating: 'Creating',
   add: 'Add',
   remove: 'Remove',
   removing: 'Removing',
+  removedList: 'Removed list',
+  itemRemoved: 'The item was removed from list',
+  createdWithSuccess: 'created with success',
 
   sendInvitation: 'Invite',
   selectList: 'Select a list',
@@ -110,6 +114,7 @@ export default {
   products: 'Products',
   guest: 'Guest',
   you: 'You',
+  youLeft: 'You left the list',
 
   selectAnOption: 'Select an option',
 
@@ -117,6 +122,7 @@ export default {
   comment: 'Comment',
   commentaryPlaceholder: 'Buy it until friday',
   seeAllItems: 'All items',
+  commentaryAdded: 'Added commentary',
 
   buy: 'Buy',
   markItem: 'Mark item checkbox',
@@ -125,4 +131,20 @@ export default {
   noProductsFound:
     "You don't have products on your list. \nWhen you add products they're going to be shown here",
   savePurchase: 'Save purchase',
+
+  wasntPossibleToAssign: "It wasn't possible to assign this item to you",
+  anotherUserTookResponsability:
+    'Another user took responsability for this item',
+  wasntPossibleToMark: "It wasn't possible to mark this item",
+  wasntPossibleToRetrieveLists: "It wasn't possible to retrieve your lists",
+  wasntPossibleToDeleteList: "It wasn't possible to delete this list",
+  wasntPossibleToRemoveItem: "It wasn't possible to remove this item",
+  wasntPossibleToEdit: "It wasn't possible to edit",
+  wasntPossibleToRetrieveUpdatedList:
+    "It wasn't possible to retrieve updated list",
+  wasntPossibleToRetrieveComments: "It wasn't possible to retrieve comments",
+  wasntPossibleToAddCommentary: "It wasn't possible to add commentary",
+  wasntPossibleToRetrieveCategories:
+    "It wasn't possible to retrieve categories",
+  wasntPossibleToAddProduct: "It wasn't possible to add product",
 };

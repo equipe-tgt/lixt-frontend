@@ -58,7 +58,7 @@ const LixtCartProductItem = ({
       // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
       if (data === 0) {
         toast.show({
-          title: 'Outro usuário se responsabilizou por este item',
+          title: t('anotherUserTookResponsability'),
           status: 'warning',
         });
 
@@ -68,7 +68,7 @@ const LixtCartProductItem = ({
       }
     } catch (error) {
       toast.show({
-        title: 'Não foi possível atribuir este item a você',
+        title: t('wasntPossibleToAssign'),
         status: 'warning',
       });
     }
@@ -119,9 +119,7 @@ const LixtCartProductItem = ({
             </Text>
 
             <Text>
-              {product.price
-                ? `R$ ${product.price * product.amount}`
-                : 'R$ 0,00'}
+              {product.price ? `$ ${product.price * product.amount}` : '$ 0,00'}
             </Text>
           </Box>
         ) : (
@@ -133,9 +131,7 @@ const LixtCartProductItem = ({
             </Text>
 
             <Text>
-              {product.price
-                ? `R$ ${product.price * product.amount}`
-                : 'R$ 0,00'}
+              {product.price ? `$ ${product.price * product.amount}` : '$ 0,00'}
             </Text>
           </Box>
         )}

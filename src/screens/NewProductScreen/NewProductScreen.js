@@ -64,7 +64,7 @@ export default function NewProductScreen(props) {
       })
       .catch(() => {
         toast.show({
-          title: 'Não foi possível buscar as categorias',
+          title: t('wasntPossibleToRetrieveCategories'),
           status: 'error',
         });
       });
@@ -87,12 +87,12 @@ export default function NewProductScreen(props) {
 
     ProductService.createProduct(product, user)
       .then(() => {
-        title = `Produto "${product.name}" adicionado com sucesso!`;
+        title = `"${product.name}" ${t('createdWithSuccess')}`;
         status = 'success';
         props.navigation.navigate('Lists');
       })
       .catch(() => {
-        title = 'Não foi possível adicionar o produto';
+        title = t('wasntPossibleToAddProduct');
         status = 'warning';
       })
       .finally(() => {

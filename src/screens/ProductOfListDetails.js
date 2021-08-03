@@ -56,7 +56,7 @@ export default function ProductOfListDetails(props) {
       await ProductOfListService.editProductOfList(productOfListEdited, user);
 
       toast.show({
-        title: 'Produto editado com sucesso',
+        title: t('editedSuccess'),
         status: 'success',
       });
       // retorna à lista
@@ -64,7 +64,7 @@ export default function ProductOfListDetails(props) {
     } catch (error) {
       console.log({ error });
       toast.show({
-        title: 'Não foi possível editar o produto',
+        title: t('wasntPossibleToEdit'),
         status: 'warning',
       });
       setLoading(false);

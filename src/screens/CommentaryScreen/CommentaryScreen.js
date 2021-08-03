@@ -59,7 +59,7 @@ export default function CommentaryScreen(props) {
       setCommentaries(data);
     } catch (error) {
       toast.show({
-        title: 'Não foi possível buscar os comentários',
+        title: t('wasntPossibleToRetrieveComments'),
         status: 'warning',
       });
     } finally {
@@ -91,11 +91,11 @@ export default function CommentaryScreen(props) {
       setCommentaries(commentariesCopy);
 
       status = 'success';
-      title = 'Comentário adicionado';
+      title = t('commentaryAdded');
     } catch (error) {
       console.log(error);
       status = 'warning';
-      title = 'Não foi possível adicionar o comentário';
+      title = t('wasntPossibleToAddCommentary');
     } finally {
       toast.show({
         title,

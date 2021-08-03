@@ -74,10 +74,10 @@ export default function LixtCalculator({ items, isGeneralView }) {
             Total
           </Text>
           <Text fontSize="lg" ml={2}>
-            R$ {totalPrice}
+            $ {totalPrice}
           </Text>
         </Box>
-        <Button
+        {/* <Button
           onPress={() => {
             // navigate('ReviewPurchase');
           }}
@@ -85,7 +85,7 @@ export default function LixtCalculator({ items, isGeneralView }) {
           variant="outline"
         >
           {t('savePurchase')}
-        </Button>
+        </Button> */}
       </HStack>
     </Box>
   );

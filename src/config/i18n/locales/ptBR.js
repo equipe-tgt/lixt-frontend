@@ -79,11 +79,15 @@ export default {
   measureType: 'Unidade de medida',
   measureValue: 'Valor da medida',
   editing: 'Editando',
+  editedSuccess: 'Editado com sucesso',
 
   creating: 'Criando',
   add: 'Adicionar',
   remove: 'Remover',
   removing: 'Removendo',
+  removedList: 'Lista removida',
+  itemRemoved: 'Item removido da lista',
+  createdWithSuccess: 'Criado com successo',
 
   sendInvitation: 'Convidar',
   selectList: 'Selecione uma lista',
@@ -101,6 +105,7 @@ export default {
   youAccepted: 'Você aceitou este convite',
   youRejected: 'Você rejeitou este convite',
   noInvitationsFound: 'Nenhum convite foi encontrado',
+  youLeft: 'Você saiu da lista',
 
   isTheListOwner: 'é o proprietário da lista',
   youAreTheListOwner: 'você é o proprietário da lista',
@@ -117,6 +122,7 @@ export default {
   comment: 'Comentar',
   commentaryPlaceholder: 'Comprar suco no Extra',
   seeAllItems: 'Ver todos os itens',
+  commentaryAdded: 'Comentário adicionado',
 
   buy: 'Comprar',
   markItem: 'Checkbox marcar item',
@@ -125,4 +131,19 @@ export default {
   noProductsFound:
     'Você não possui produtos na sua lista. \nQuando você adicionar produtos eles aparecerão aqui',
   savePurchase: 'Salvar compra',
+
+  wasntPossibleToAssign: 'Não foi possível atribuir este item a você',
+  anotherUserTookResponsability:
+    'Outro usuário se responsabilizou por esse item',
+  wasntPossibleToMark: 'Não foi possível marcar o item',
+  wasntPossibleToRetrieveLists: 'Não foi possível buscar suas listas',
+  wasntPossibleToDeleteList: 'Não foi possível deletar esta lista',
+  wasntPossibleToRemoveItem: 'Não foi possível remover o item da lista',
+  wasntPossibleToEdit: 'Não foi possível editar',
+  wasntPossibleToRetrieveUpdatedList:
+    'Não foi possível buscar a lista atualizada',
+  wasntPossibleToRetrieveComments: 'Não foi possível buscar os comentários',
+  wasntPossibleToAddCommentary: 'Não foi possível adicionar o comentário',
+  wasntPossibleToRetrieveCategories: 'Não foi possível buscar as categorias',
+  wasntPossibleToAddProduct: 'Não foi possível adicionar o produto',
 };

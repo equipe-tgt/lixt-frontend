@@ -78,7 +78,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
         // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
         if (data === 0) {
           toast.show({
-            title: 'Outro usuário se responsabilizou por este item',
+            title: t('anotherUserTookResponsability'),
             status: 'warning',
           });
 
@@ -88,7 +88,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
       } catch (error) {
         console.log(error);
         toast.show({
-          title: 'Não foi possível marcar o item',
+          title: t('wasntPossibleToMark'),
           status: 'warning',
         });
       }
@@ -169,9 +169,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
               {quantities.markedProductsAmount} / {quantities.amount}
             </Text>
 
-            <Text>
-              {quantities.price ? `R$ ${quantities.price}` : 'R$ 0,00'}
-            </Text>
+            <Text>{quantities.price ? `$ ${quantities.price}` : '$ 0,00'}</Text>
           </Box>
 
           <Text width="80%" fontSize="sm">

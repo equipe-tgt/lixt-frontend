@@ -34,7 +34,7 @@ const LixtProductItem = ({
           {getMeasureType(product.measureType)}
         </Text>
         <Text>
-          {product.price ? `R$ ${product.price * product.amount}` : 'R$ 0,00'}
+          {product.price ? `$ ${product.price * product.amount}` : '$ 0,00'}
         </Text>
       </Box>
 

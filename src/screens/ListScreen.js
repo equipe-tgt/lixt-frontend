@@ -56,6 +56,10 @@ export default function ListScreen(props) {
     fetchLists();
   }, []);
 
+  useEffect(() => {
+    fetchLists();
+  }, [lists]);
+
   // Hook que dispara toda vez que esta tela for focada
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa
@@ -104,7 +108,7 @@ export default function ListScreen(props) {
       }
     } catch (error) {
       toast.show({
-        title: 'Não foi possível buscar suas listas',
+        title: t('wasntPossibleToRetrieveLists'),
         status: 'warning',
       });
     } finally {
@@ -124,12 +128,12 @@ export default function ListScreen(props) {
       setSelectedList(lists[0]);
 
       toast.show({
-        title: 'Lista removida',
+        title: t('removedList'),
         status: 'info',
       });
     } catch (error) {
       toast.show({
-        title: 'Não foi possível deletar esta lista',
+        title: t('wasntPossibleToDeleteList'),
         status: 'warning',
       });
     }
@@ -151,12 +155,12 @@ export default function ListScreen(props) {
 
       toast.show({
         status: 'success',
-        title: 'Você saiu da lista',
+        title: t('youLeft'),
       });
     } catch (error) {
       toast.show({
         status: 'warning',
-        title: 'Um erro inesperado ocorreu no servidor',
+        title: t('errorServerDefault'),
       });
     }
   };
@@ -254,13 +258,13 @@ export default function ListScreen(props) {
       editOriginalLists(objCopy);
 
       toast.show({
-        title: 'Item foi removido da lista',
+        title: t('itemRemoved'),
         status: 'info',
       });
     } catch (error) {
       console.log({ error });
       toast.show({
-        title: 'Não foi possível remover o item da lista',
+        title: t('wasntPossibleToRemoveItem'),
         status: 'warning',
       });
     }

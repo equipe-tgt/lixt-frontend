@@ -26,10 +26,6 @@ export default function CartScreen(props) {
   const { t } = useTranslation();
   const isFocused = useIsFocused();
 
-  /**
-   * @todo calcular preço total
-   */
-
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (até agora a de edição do item manda)
     if (props.route.params) {
@@ -82,7 +78,7 @@ export default function CartScreen(props) {
     } catch (error) {
       console.log(error);
       toast.show({
-        title: 'Não foi possível buscar a lista atualizada',
+        title: t('wasntPossibleToRetrieveUpdatedList'),
         status: 'warning',
       });
     } finally {
@@ -98,7 +94,7 @@ export default function CartScreen(props) {
     } catch (error) {
       console.log(error);
       toast.show({
-        title: 'Não foi possível buscar a lista atualizada',
+        title: t('wasntPossibleToRetrieveUpdatedList'),
         status: 'warning',
       });
     } finally {
