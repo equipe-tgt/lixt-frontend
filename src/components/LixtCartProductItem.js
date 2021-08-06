@@ -75,12 +75,10 @@ const LixtCartProductItem = ({
   };
 
   const verifyIfWasLocallyChecked = () => {
-    let checkedLocalValue = false;
     if (checkedItems && checkedItems.find((i) => i === product.id)) {
-      checkedLocalValue = true;
+      return true;
     }
-
-    return checkedLocalValue;
+    return false;
   };
 
   return (
@@ -119,9 +117,7 @@ const LixtCartProductItem = ({
             </Text>
 
             <Text>
-              {product.price
-                ? `R$ ${product.price * product.amount}`
-                : 'R$ 0,00'}
+              {product.price ? `$ ${product.price * product.amount}` : '$ 0,00'}
             </Text>
           </Box>
         ) : (
@@ -133,9 +129,7 @@ const LixtCartProductItem = ({
             </Text>
 
             <Text>
-              {product.price
-                ? `R$ ${product.price * product.amount}`
-                : 'R$ 0,00'}
+              {product.price ? `$ ${product.price * product.amount}` : '$ 0,00'}
             </Text>
           </Box>
         )}
