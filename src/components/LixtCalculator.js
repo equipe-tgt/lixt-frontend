@@ -78,9 +78,7 @@ export default function LixtCalculator({ items, isGeneralView }) {
           </Text>
         </Box>
         <Button
-          onPress={() => {
-            // navigate('ReviewPurchase');
-          }}
+          onPress={() => {}}
           isDisabled={items.length === 0}
           variant="outline"
         >
