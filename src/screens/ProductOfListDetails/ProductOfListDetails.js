@@ -12,16 +12,19 @@ import {
 } from 'native-base';
 
 import { useTranslation } from 'react-i18next';
-import { screenBasicStyle as style } from '../styles/style';
+import { screenBasicStyle as style } from '../../styles/style';
 import { Ionicons } from '@expo/vector-icons';
 
 // Validação do formulário
-import MEASURE_TYPES, { getMeasureType } from '../utils/measureTypes';
-import { ProductOfListSchema } from '../validationSchemas/index';
+import MEASURE_TYPES, {
+  getMeasureType,
+  getMeasureValueByLabel,
+} from '../../utils/measureTypes';
+import { ProductOfListSchema } from '../../validationSchemas/index';
 import { useFormik } from 'formik';
 
-import ProductOfListService from '../services/ProductOfListService';
-import { AuthContext } from '../context/AuthProvider';
+import ProductOfListService from '../../services/ProductOfListService';
+import { AuthContext } from '../../context/AuthProvider';
 
 export default function ProductOfListDetails(props) {
   const { t } = useTranslation();
@@ -38,7 +41,7 @@ export default function ProductOfListDetails(props) {
       amount: product.amount ? String(product.amount) : '',
       measureType: product.measureType
         ? getMeasureType(product.measureType)
-        : '',
+        : 'un',
       measureValue: product.measureValue ? String(product.measureValue) : '',
     },
     validateOnChange: false,
@@ -78,9 +81,13 @@ export default function ProductOfListDetails(props) {
       !values.amount || parseInt(values.amount) <= 0
         ? 1
         : parseInt(values.amount);
-    productOfListEdited.measureType = getMeasureType(values.measureType, false);
+    productOfListEdited.measureType = getMeasureValueByLabel(
+      values.measureType
+    );
     productOfListEdited.measureValue =
-      values.measureType !== 'UN' ? parseInt(values.measureValue) : null;
+      values.measureType !== 'un' ? parseInt(values.measureValue) : null;
+
+    console.log(productOfListEdited);
     return productOfListEdited;
   };
 
@@ -88,7 +95,7 @@ export default function ProductOfListDetails(props) {
     <SafeAreaView style={style.container}>
       <ScrollView w="90%" mx="auto">
         <Heading>
-          {`${t('editing')} ${props.route.params.product.product.name}`}
+          {`${t('editing')} ${props.route.params.product.name}`}
         </Heading>
         <Button
           px={0}
@@ -131,12 +138,12 @@ export default function ProductOfListDetails(props) {
             {Object.keys(MEASURE_TYPES).map((measure) => {
               return (
                 <Radio
-                  key={measure}
-                  accessibilityLabel={measure}
-                  value={measure}
+                  key={MEASURE_TYPES[measure].value}
+                  accessibilityLabel={MEASURE_TYPES[measure].label}
+                  value={MEASURE_TYPES[measure].label}
                   my={1}
                 >
-                  {measure}
+                  {MEASURE_TYPES[measure].label}
                 </Radio>
               );
             })}
@@ -146,7 +153,7 @@ export default function ProductOfListDetails(props) {
         {/* Se a unidade de medida do produto não for do tipo "unidade" questiona o valor de mensura,
         Ex.: Produto: Arroz, unidade de medida: KG, valor da mensura: 5 = Arroz 5KG
         */}
-        {values.measureType !== 'UN' ? (
+        {values.measureType !== 'un' ? (
           <FormControl my={3}>
             <FormControl.Label>{t('measureValue')}</FormControl.Label>
             <Input

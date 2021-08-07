@@ -89,15 +89,11 @@ export default function LixtCalculator({ items, isGeneralView, navigate }) {
             Total
           </Text>
           <Text fontSize="lg" ml={2}>
-            R$ {totalPrice}
+            {t('currency')} {totalPrice}
           </Text>
         </Box>
         <Button
-          onPress={() => {
-            navigate('ReviewPurchase', {
-              productsToPurchase: checkedProductsOfList,
-            });
-          }}
+          onPress={() => {}}
           isDisabled={items.length === 0}
           variant="outline"
         >

@@ -21,7 +21,7 @@ export const CheckedItemsProvider = ({ children }) => {
       setCheckedItems([...copy, item]);
     } else if (!toggleOption && isItemChecked) {
       // Caso ele queira remover um item e esse item exista na lista local: remova
-      setCheckedItems(copy.filter((c) => c === item));
+      setCheckedItems(copy.filter((c) => c !== item));
     }
   };
 

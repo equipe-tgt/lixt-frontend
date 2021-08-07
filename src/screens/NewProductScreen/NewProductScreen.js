@@ -22,7 +22,9 @@ import LixtInput from '../../components/LixtInput';
 // Validação do formulário
 import { useFormik } from 'formik';
 import { ProductSchema } from '../../validationSchemas';
-import MEASURE_TYPES from '../../utils/measureTypes';
+import MEASURE_TYPES, {
+  getMeasureValueByLabel,
+} from '../../utils/measureTypes';
 
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
@@ -42,7 +44,7 @@ export default function NewProductScreen(props) {
     initialValues: {
       name: props.route.params.productName,
       categoryId: '',
-      measureType: 'UN',
+      measureType: 'un',
       measureValue: '',
     },
     validateOnChange: false,
@@ -80,10 +82,8 @@ export default function NewProductScreen(props) {
       categoryId: values.categoryId,
       name: values.name,
       userId: user.id,
+      measureType: getMeasureValueByLabel(values.measureType),
     };
-
-    product.measureType =
-      values.measureType === 'UN' ? 'UNITY' : values.measureType;
 
     ProductService.createProduct(product, user)
       .then(() => {
@@ -131,12 +131,12 @@ export default function NewProductScreen(props) {
             {Object.keys(MEASURE_TYPES).map((measure) => {
               return (
                 <Radio
-                  key={measure}
-                  accessibilityLabel={measure}
-                  value={measure}
+                  key={MEASURE_TYPES[measure].value}
+                  accessibilityLabel={MEASURE_TYPES[measure].label}
+                  value={MEASURE_TYPES[measure].label}
                   my={1}
                 >
-                  {measure}
+                  {MEASURE_TYPES[measure].label}
                 </Radio>
               );
             })}
