@@ -110,26 +110,30 @@ const LixtCartProductItem = ({
           {product.name}
         </Text>
 
-        {getMeasureType(product.measureType) === 'UN' ? (
+        {product.measureType === 'UNITY' ? (
           <Box>
             <Text>
               {product.amount} {getMeasureType(product.measureType)}
             </Text>
 
             <Text>
-              {product.price ? `${t('currency')} ${product.price * product.amount}` : '$ 0,00'}
+              {product.price
+                ? `${t('currency')} ${product.price * product.amount}`
+                : `${t('currency')} 0,00`}
             </Text>
           </Box>
         ) : (
           <Box>
             <Text>
               {`${product.amount || 0} x ${
-                product.measureValue
+                product.measureValue || 0
               } ${getMeasureType(product.measureType)}`}
             </Text>
 
             <Text>
-              {product.price ? `${t('currency')} ${product.price * product.amount}` : `${t('currency')} 0,00`}
+              {product.price
+                ? `${t('currency')} ${product.price * product.amount}`
+                : `${t('currency')} 0,00`}
             </Text>
           </Box>
         )}

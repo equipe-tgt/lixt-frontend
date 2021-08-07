@@ -1,17 +1,39 @@
 const MEASURE_TYPES = {
-  L: 1,
-  ML: 2,
-  KG: 3,
-  G: 4,
-  MG: 5,
-  UN: 6,
+  L: {
+    value: 'L',
+    label: 'L',
+  },
+  ML: {
+    value: 'ML',
+    label: 'ml',
+  },
+  KG: {
+    value: 'KG',
+    label: 'Kg',
+  },
+  G: {
+    value: 'G',
+    label: 'g',
+  },
+  MG: {
+    value: 'MG',
+    label: 'mg',
+  },
+  UNITY: {
+    value: 'UNITY',
+    label: 'un',
+  },
 };
 
-export const getMeasureType = (valor, fromServerToFront = true) => {
-  if (fromServerToFront) {
-    return valor === 'UNITY' ? 'UN' : valor;
-  } else {
-    return valor === 'UN' ? 'UNITY' : valor;
+export const getMeasureType = (value) => {
+  return MEASURE_TYPES[value].label;
+};
+
+export const getMeasureValueByLabel = (label) => {
+  for (const key in MEASURE_TYPES) {
+    const element = MEASURE_TYPES[key];
+
+    if (element.label === label) return element.value;
   }
 };
 
