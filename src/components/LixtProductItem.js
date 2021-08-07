@@ -29,13 +29,33 @@ const LixtProductItem = ({
     >
       <Box>
         <Text fontWeight="bold">{product.name}</Text>
-        <Text>
-          {product.amount} x {product.measureValue}{' '}
-          {getMeasureType(product.measureType)}
-        </Text>
-        <Text>
-          {product.price ? `R$ ${product.price * product.amount}` : 'R$ 0,00'}
-        </Text>
+        {product.measureType === 'UNITY' ? (
+          <Box>
+            <Text>
+              {product.amount} {getMeasureType(product.measureType)}
+            </Text>
+
+            <Text>
+              {product.price
+                ? `${t('currency')} ${product.price * product.amount}`
+                : `${t('currency')} 0,00`}
+            </Text>
+          </Box>
+        ) : (
+          <Box>
+            <Text>
+              {`${product.amount || 0} x ${
+                product.measureValue || 0
+              } ${getMeasureType(product.measureType)}`}
+            </Text>
+
+            <Text>
+              {product.price
+                ? `${t('currency')} ${product.price * product.amount}`
+                : `${t('currency')} 0,00`}
+            </Text>
+          </Box>
+        )}
       </Box>
 
       {product.amountComment ? (

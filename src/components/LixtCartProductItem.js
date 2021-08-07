@@ -75,12 +75,10 @@ const LixtCartProductItem = ({
   };
 
   const verifyIfWasLocallyChecked = () => {
-    let checkedLocalValue = false;
     if (checkedItems && checkedItems.find((i) => i === product.id)) {
-      checkedLocalValue = true;
+      return true;
     }
-
-    return checkedLocalValue;
+    return false;
   };
 
   return (
@@ -112,7 +110,7 @@ const LixtCartProductItem = ({
           {product.name}
         </Text>
 
-        {getMeasureType(product.measureType) === 'UN' ? (
+        {product.measureType === 'UNITY' ? (
           <Box>
             <Text>
               {product.amount} {getMeasureType(product.measureType)}
@@ -120,29 +118,29 @@ const LixtCartProductItem = ({
 
             <Text>
               {product.price
-                ? `R$ ${product.price * product.amount}`
-                : 'R$ 0,00'}
+                ? `${t('currency')} ${product.price * product.amount}`
+                : `${t('currency')} 0,00`}
             </Text>
           </Box>
         ) : (
           <Box>
             <Text>
               {`${product.amount || 0} x ${
-                product.measureValue
+                product.measureValue || 0
               } ${getMeasureType(product.measureType)}`}
             </Text>
 
             <Text>
               {product.price
-                ? `R$ ${product.price * product.amount}`
-                : 'R$ 0,00'}
+                ? `${t('currency')} ${product.price * product.amount}`
+                : `${t('currency')} 0,00`}
             </Text>
           </Box>
         )}
 
         {product.assignedUserId && product.assignedUserId !== user.id ? (
           <Text fontSize="sm">
-            atribuído a {getAssignedUserById(product.assignedUserId)}
+            {t('assignedTo')} {getAssignedUserById(product.assignedUserId)}
           </Text>
         ) : null}
       </Box>

@@ -13,10 +13,10 @@ import {
   useToast,
 } from 'native-base';
 import { useTranslation } from 'react-i18next';
-import { screenBasicStyle as style } from '../styles/style';
-import { AuthContext } from '../context/AuthProvider';
-import { ListContext } from '../context/ListProvider';
-import ListMembersService from '../services/ListMembersService';
+import { screenBasicStyle as style } from '../../styles/style';
+import { AuthContext } from '../../context/AuthProvider';
+import { ListContext } from '../../context/ListProvider';
+import ListMembersService from '../../services/ListMembersService';
 
 export default function ListDetailsScreen(props) {
   const toast = useToast();
@@ -41,8 +41,8 @@ export default function ListDetailsScreen(props) {
       setLoading(true);
 
       // Pega o id do convite atual e faz a deleção do convite
-      const { id } = getCurrentInvitation();
-      await ListMembersService.deleteInvitation(id, user);
+      const { userId } = getCurrentInvitation();
+      await ListMembersService.deleteInvitation(userId, user);
 
       // Após se desvincular da lista, filtra as listas do usuário de forma
       // que a lista da qual ele se desvinculou não apareça mais
@@ -58,7 +58,7 @@ export default function ListDetailsScreen(props) {
     } catch (error) {
       toast.show({
         status: 'warning',
-        title: 'Um erro inesperado ocorreu no servidor',
+        title: t('errorServerDefault'),
       });
     } finally {
       setLoading(false);
@@ -73,9 +73,11 @@ export default function ListDetailsScreen(props) {
     let amount = 1; // Conta o dono da lista
 
     // Contabiliza como membro todo usuário que tiver aceito participar da lista
-    amount += list.listMembers.filter(
-      (listMember) => listMember.statusListMember === 'ACCEPT'
-    ).length;
+    if (list?.listMembers?.length) {
+      amount += list.listMembers.filter(
+        (listMember) => listMember.statusListMember === 'ACCEPT'
+      ).length;
+    }
 
     return amount;
   };
@@ -104,19 +106,20 @@ export default function ListDetailsScreen(props) {
         <HStack justifyContent="space-between" width="70%" mb={3}>
           <Box>
             <Text fontWeight="bold">{t('products')}</Text>
-            <Text>{list.productsOfList.length}</Text>
+            <Text>{list?.productsOfList?.length || 0}</Text>
           </Box>
           <Box>
             <Text fontWeight="bold">{t('members')}</Text>
-            <Text>{getAmountOfMembers()}</Text>
+            <Text testID="amount-members">{getAmountOfMembers()}</Text>
           </Box>
         </HStack>
 
         {user.id === list.ownerId ? (
           <Button
+            testID="invite-button"
             onPress={() => {
               props.navigation.navigate('Invite', {
-                list: list,
+                list,
               });
             }}
             mt={5}
@@ -128,6 +131,7 @@ export default function ListDetailsScreen(props) {
             isLoading={loading}
             isLoadingText="Saindo"
             onPress={leaveList}
+            testID="leave-list"
             mt={5}
             variant="outline"
           >

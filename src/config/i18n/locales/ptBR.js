@@ -116,10 +116,15 @@ export default {
   commentaries: 'Comentários',
   comment: 'Comentar',
   commentaryPlaceholder: 'Comprar suco no Extra',
+  seeAllItems: 'Ver todos os itens',
 
   buy: 'Comprar',
   markItem: 'Checkbox marcar item',
+  assignedTo: 'atribuído a',
   includedIn: 'Incluso em',
   noProductsFound:
     'Você não possui produtos na sua lista. \nQuando você adicionar produtos eles aparecerão aqui',
+  savePurchase: 'Salvar compra',
+
+  currency: 'R$',
 };

@@ -46,8 +46,8 @@ export default function LixtCartList({
       return selectedList.owner;
     }
 
-    const guestUser = listMembers.find((lm) => lm.userId === userId).user;
-    return guestUser.name;
+    const guestUser = listMembers.find((lm) => lm.userId === userId)?.user;
+    return guestUser?.name || '';
   };
 
   return (
@@ -69,20 +69,20 @@ export default function LixtCartList({
                     return (
                       <LixtCartProductItemGeneral
                         key={p.productId}
-                        navigate={navigate}
-                        refreshList={refreshList}
                         wrappedProduct={p}
                       />
                     );
                   } else {
                     return (
-                      <LixtCartProductItem
-                        key={p.id}
-                        product={p}
-                        navigate={navigate}
-                        refreshList={refreshList}
-                        getAssignedUserById={getAssignedUserById}
-                      />
+                      p.id && (
+                        <LixtCartProductItem
+                          key={p.id}
+                          product={p}
+                          navigate={navigate}
+                          refreshList={refreshList}
+                          getAssignedUserById={getAssignedUserById}
+                        />
+                      )
                     );
                   }
                 })}

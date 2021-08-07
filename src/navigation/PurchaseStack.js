@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import CartScreen from '../screens/CartScreen/CartScreen';
 import CommentaryScreen from '../screens/CommentaryScreen/CommentaryScreen';
-import ProductOfListDeatils from '../screens/ProductOfListDetails';
+import ProductOfListDeatils from '../screens/ProductOfListDetails/ProductOfListDetails';
 
 import { useTranslation } from 'react-i18next';
 
