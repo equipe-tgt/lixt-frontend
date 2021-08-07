@@ -40,10 +40,7 @@ export default function ManageInvitationsScreen() {
     const invitationType =
       tabIndex === 0 ? INVITATION_TYPES.SENT : INVITATION_TYPES.RECEIVED;
 
-    ListMembersService.getInvitations(
-        invitationType,
-        user
-      )
+    ListMembersService.getInvitations(invitationType, user)
       .then(({ data }) => {
         if (invitationType === INVITATION_TYPES.SENT) {
           setSentInvitations([...data]);
@@ -104,7 +101,9 @@ export default function ManageInvitationsScreen() {
         <Tabs onChange={getInvitations} isFitted>
           <Tabs.Bar>
             <Tabs.Tab>{t('sent')}</Tabs.Tab>
-            <Tabs.Tab testID="received-invitations-tab">{t('received')}</Tabs.Tab>
+            <Tabs.Tab testID="received-invitations-tab">
+              {t('received')}
+            </Tabs.Tab>
           </Tabs.Bar>
           <Tabs.Views>
             <Tabs.View>
@@ -112,12 +111,18 @@ export default function ManageInvitationsScreen() {
                 <ScrollView>
                   {sentInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
-                      <Text fontSize="lg" fontWeight="bold" testID={'sent-invite-' + invite.id}>
+                      <Text
+                        fontSize="lg"
+                        fontWeight="bold"
+                        testID={'sent-invite-' + invite.id}
+                      >
                         {`${t('youInvited')} ${invite.userInvited} ${t(
                           'toJoin'
                         )} ${invite.nameList}`}
                       </Text>
-                      <Text testID={"sent-invite-status-" + invite.id}>Status: {getStatus(invite.statusListMember)}</Text>
+                      <Text testID={'sent-invite-status-' + invite.id}>
+                        Status: {getStatus(invite.statusListMember)}
+                      </Text>
                     </Box>
                   ))}
                 </ScrollView>
@@ -132,7 +137,11 @@ export default function ManageInvitationsScreen() {
                 <ScrollView>
                   {receivedInvitations.map((invite) => (
                     <Box ml={2} py={3} key={invite.id}>
-                      <Text fontSize="lg" fontWeight="bold" testID={"received-invite-" + invite.id}>
+                      <Text
+                        fontSize="lg"
+                        fontWeight="bold"
+                        testID={'received-invite-' + invite.id}
+                      >
                         {`${invite.userWhoInvite} ${t('hasInvitedYou')} ${
                           invite.nameList
                         }`}
@@ -176,7 +185,7 @@ export default function ManageInvitationsScreen() {
                           ) : null}
                         </HStack>
                       ) : (
-                        <Text testID={"received-invite-status-" + invite.id}>
+                        <Text testID={'received-invite-status-' + invite.id}>
                           {invite.statusListMember === 'ACCEPT'
                             ? t('youAccepted')
                             : t('youRejected')}

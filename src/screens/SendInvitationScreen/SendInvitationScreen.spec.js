@@ -44,8 +44,8 @@ describe('SendInvitationScreen component', () => {
     const navContext = {
       isFocused: () => true,
       // addListener returns an unscubscribe function.
-      addListener: jest.fn(() => jest.fn())
-    }
+      addListener: jest.fn(() => jest.fn()),
+    };
 
     const renderResults = render(
       <AuthContext.Provider
