@@ -5,6 +5,7 @@ import { Box, Select, Center, Text, ScrollView, useToast } from 'native-base';
 import LixtCartList from '../../components/LixtCartList';
 import LixtCalculator from '../../components/LixtCalculator';
 import ListService from '../../services/ListService';
+import PurchaseLocalModal from '../../components/PurchaseLocalModal';
 
 import { screenBasicStyle as style } from '../../styles/style';
 
@@ -16,6 +17,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 export default function CartScreen(props) {
   const { lists, setLists } = useContext(ListContext);
+  const [showModal, setShowModal] = useState(false);
   const { user } = useContext(AuthContext);
   const toast = useToast();
   const [selectedList, setSelectedList] = useState({
@@ -25,10 +27,6 @@ export default function CartScreen(props) {
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
   const isFocused = useIsFocused();
-
-  /**
-   * @todo calcular preço total
-   */
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (até agora a de edição do item manda)
@@ -182,6 +180,39 @@ export default function CartScreen(props) {
     };
   };
 
+  const savePurchase = () => {
+    // {
+    //     "id": null,
+    //     "purchaseDate": null,
+    //     "purchaseLists": [
+    //         {
+    //             "id": null,
+    //             "itemsOfPurchase": [
+    //                 {
+    //                     "amount": 1,
+    //                     "id": null,
+    //                     "measureType": "KG",
+    //                     "measureValue": 1,
+    //                     "name": "Feijão",
+    //                     "price": 0,
+    //                     "product": null,
+    //                     "productId": 1,
+    //                     "purcharseListId": null,
+    //                     "productOfListId": 1
+    //                 }
+    //             ],
+    //             "listId": 1,
+    //             "partialPurchasePrice": 0,
+    //             "purchaseId": null
+    //         }
+    //     ],
+    //     "purchaseLocal": null,
+    //     "purchaseLocalId": 1,
+    //     "purchasePrice": 0,
+    //     "userId": null
+    // }
+  };
+
   return lists?.length ? (
     <CheckedItemsProvider>
       <SafeAreaView style={style.container}>
@@ -240,7 +271,17 @@ export default function CartScreen(props) {
         <LixtCalculator
           isGeneralView={selectedList?.id === 'view-all'}
           items={selectedList.productsOfList}
-          navigate={props.navigation.navigate}
+          openPurchaseLocal={() => {
+            setShowModal(true);
+          }}
+        />
+
+        <PurchaseLocalModal
+          showModal={showModal}
+          closeModal={(value) => {
+            console.log(value);
+            setShowModal(false);
+          }}
         />
       </SafeAreaView>
     </CheckedItemsProvider>

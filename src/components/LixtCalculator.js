@@ -5,7 +5,7 @@ import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 import { AuthContext } from '../context/AuthProvider';
 import { useTranslation } from 'react-i18next';
 
-export default function LixtCalculator({ items, isGeneralView, navigate }) {
+export default function LixtCalculator({ items, isGeneralView, openPurchaseLocal }) {
   const { t } = useTranslation();
   const { checkedItems } = useContext(CheckedItemsContext);
   const { user } = useContext(AuthContext);
@@ -13,30 +13,33 @@ export default function LixtCalculator({ items, isGeneralView, navigate }) {
   const [totalPrice, setTotalPrice] = useState(0);
   const [checkedProductsOfList, setCheckedProductsOfList] = useState([]);
 
+  const getMyCheckedProducts = () => {
+    let productsToCount = [];
+    if (isGeneralView) {
+      // se a pessoa estiver na visão geral pega todos os productsOfList que estão aglutinados
+      productsToCount.push(...items.map((item) => item.productsOfLists));
+      productsToCount = productsToCount.flat();
+    } else {
+      // caso não, é só passar os itens da lista mesmo
+      productsToCount = items;
+    }
+
+    // eslint-disable-next-line array-callback-return
+    productsToCount = productsToCount.filter((p) => {
+      if (
+        (!p.assignedUserId || p.assignedUserId === user.id) &&
+        (!p.userWhoMarkedId || p.userWhoMarkedId === user.id)
+      ) {
+        return p;
+      }
+    });
+    return productsToCount;
+  };
+
   const getTotalPrice = () => {
     if (items && items.length > 0) {
-      let productsToCount = [];
+      const productsToCount = getMyCheckedProducts();
       let finalPrice = 0;
-
-      if (isGeneralView) {
-        // se a pessoa estiver na visão geral pega todos os productsOfList que estão aglutinados
-        productsToCount.push(...items.map((item) => item.productsOfLists));
-        productsToCount = productsToCount.flat();
-      } else {
-        // caso não, é só passar os itens da lista mesmo
-        productsToCount = items;
-      }
-
-      // exclui produtos que tenham sido atribuídos ou marcados para/por outros
-      // eslint-disable-next-line array-callback-return
-      productsToCount = productsToCount.filter((p) => {
-        if (
-          (!p.assignedUserId || p.assignedUserId === user.id) &&
-          (!p.userWhoMarkedId || p.userWhoMarkedId === user.id)
-        ) {
-          return p;
-        }
-      });
 
       for (const productToCount of productsToCount) {
         // se está marcado localmente
@@ -60,6 +63,11 @@ export default function LixtCalculator({ items, isGeneralView, navigate }) {
       setTotalPrice(finalPrice);
       setCheckedProductsOfList(productsToCount);
     }
+  };
+
+  const showEveryCheckedProduct = () => {
+    const productsToCount = getMyCheckedProducts();
+    console.log(productsToCount);
   };
 
   useEffect(() => {
@@ -93,7 +101,7 @@ export default function LixtCalculator({ items, isGeneralView, navigate }) {
           </Text>
         </Box>
         <Button
-          onPress={() => {}}
+          onPress={openPurchaseLocal}
           isDisabled={items.length === 0}
           variant="outline"
         >
@@ -107,5 +115,4 @@ export default function LixtCalculator({ items, isGeneralView, navigate }) {
 LixtCalculator.propTypes = {
   items: PropTypes.array,
   isGeneralView: PropTypes.bool,
-  navigate: PropTypes.func,
 };
