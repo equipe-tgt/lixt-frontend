@@ -51,7 +51,7 @@ export default function ManageInvitationsScreen() {
       .catch(() => {
         toast.show({
           status: 'warning',
-          title: 'Um erro inesperado do servidor ocorreu',
+          title: 'errorServerDefault',
         });
       });
   };
@@ -74,7 +74,7 @@ export default function ManageInvitationsScreen() {
     } catch (error) {
       toast.show({
         status: 'warning',
-        title: 'Um erro inesperado do servidor ocorreu',
+        title: 'errorServerDefault',
       });
     } finally {
       setLoadingInvitation(false);

@@ -84,14 +84,6 @@ describe('ProfileScreen component', () => {
     expect(navigationSpy).toHaveBeenCalledWith('Invite');
   });
 
-  it('should go to Invite page when clicking on the invite link', async () => {
-    const inviteLink = getByText('sendInvitation');
-
-    await waitFor(() => fireEvent.press(inviteLink));
-
-    expect(navigationSpy).toHaveBeenCalledWith('Invite');
-  });
-
   it('should go to UpdatePassword page when clicking on the update password link', async () => {
     const updatePasswordLink = getByText('updatePassword');
 
