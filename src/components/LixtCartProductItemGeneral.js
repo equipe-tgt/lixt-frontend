@@ -67,16 +67,27 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
         }
 
         // Esse endpoint atribui ou desatribui um item para o próprio usuário
-        const { data } = await ProductOfListService.assignOrUnassignMyself(
+        // const { data } = await ProductOfListService.assignOrUnassignMyself(
+        //   productOfList.id,
+        //   user
+        // );
+
+        const { data } = await ProductOfListService.toggleItem(
           productOfList.id,
+          isSelecting,
           user
         );
 
-        productOfList.assignedUserId = data.assignedUserId;
+        if (data === 1) {
+          productOfList.userWhoMarkedId = isSelecting ? user.id : null;
+          productOfList.isMarked = isSelecting;
+          setIsChecked(isSelecting);
+        }
+        // productOfList.assignedUserId = data.assignedUserId;
 
         // Se a resposta for 1, quer dizer que o usuário atual está responsável por este item
         // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
-        if (data === 0) {
+        else if (data === 0) {
           toast.show({
             title: 'Outro usuário se responsabilizou por este item',
             status: 'warning',
@@ -93,8 +104,8 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
         });
       }
     }
-    checkMultipleItems(modified, isSelecting);
-    setIsChecked(isSelecting);
+    // checkMultipleItems(modified, isSelecting);
+    // setIsChecked(isSelecting);
     setLoadingCheckbox(false);
   };
 
@@ -107,11 +118,15 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
       finalAmount += productOfList.amount;
       allPrices += productOfList.price * productOfList.amount;
 
-      if (checkedItems.includes(productOfList.id)) {
-        markedProductsAmount += productOfList.amount;
-      } else if (productOfList.isMarked) {
+      if (productOfList.isMarked && productOfList.userWhoMarkedId === user.id) {
         markedProductsAmount += productOfList.amount;
       }
+
+      // if (checkedItems.includes(productOfList.id)) {
+      //   markedProductsAmount += productOfList.amount;
+      // } else if (productOfList.isMarked) {
+      //   markedProductsAmount += productOfList.amount;
+      // }
     }
 
     return {
@@ -123,18 +138,20 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
 
   const verifyCheckings = () => {
     const markedExternally = wrappedProduct.markings.every((m) => m.isMarked);
-    const markedLocally = wrappedProduct.productsOfLists.every((p) =>
-      checkedItems.includes(p.id)
-    );
 
-    // Caso os produtos estejam marcados como veio do servidor mas não estiver no local
-    // marca o produto na visualização da tela
-    if (markedExternally && !markedLocally) {
-      setIsChecked(true);
-    } else {
-      // caso não, utiliza o valor local para o marcar o item (seja falso ou não)
-      setIsChecked(markedLocally);
-    }
+    setIsChecked(markedExternally);
+    // const markedLocally = wrappedProduct.productsOfLists.every((p) =>
+    //   checkedItems.includes(p.id)
+    // );
+
+    // // Caso os produtos estejam marcados como veio do servidor mas não estiver no local
+    // // marca o produto na visualização da tela
+    // if (markedExternally && !markedLocally) {
+    //   setIsChecked(true);
+    // } else {
+    //   // caso não, utiliza o valor local para o marcar o item (seja falso ou não)
+    //   setIsChecked(markedLocally);
+    // }
   };
 
   return wrappedProduct ? (
@@ -170,7 +187,9 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
             </Text>
 
             <Text>
-              {quantities.price ? `${t('currency')} ${quantities.price}` : `${t('currency')} 0,00`}
+              {quantities.price
+                ? `${t('currency')} ${quantities.price}`
+                : `${t('currency')} 0,00`}
             </Text>
           </Box>
 

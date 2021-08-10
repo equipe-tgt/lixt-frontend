@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import PropTypes from 'prop-types';
 
 export const CheckedItemsContext = React.createContext({
-  userIdCart: null,
+  // userIdCart: null,
   checkedItems: [],
 });
 
 export const CheckedItemsProvider = ({ children }) => {
   const [checkedItems, setCheckedItems] = useState([]);
-  const [userIdCart, setUserIdCart] = useState(null);
+  // const [userIdCart, setUserIdCart] = useState(null);
 
   const checkItem = (item, toggleOption) => {
     const isItemChecked = checkedItems.includes(item);
@@ -25,34 +25,52 @@ export const CheckedItemsProvider = ({ children }) => {
     }
   };
 
+  // const checkMultipleItems = (items, toggleOption) => {
+  //   const copy = [...checkedItems];
+
+  //   if (toggleOption) {
+  //     setCheckedItems([...copy, ...items]);
+  //   } else {
+  //     const finalList = copy.filter((i) => !items.includes(i));
+  //     setCheckedItems(finalList);
+  //   }
+  // };
   const checkMultipleItems = (items, toggleOption) => {
+
+    console.log("tamanho dos itens", items.length);
     const copy = [...checkedItems];
 
     if (toggleOption) {
-      setCheckedItems([...copy, ...items]);
+      for (const item of items) {
+        if (!copy.find((i) => i.id === item.id)) {
+          copy.push(item);
+        }
+      }
+      setCheckedItems([...copy]);
     } else {
-      const finalList = copy.filter((i) => !items.includes(i));
+      const idsToExclude = items.map((item) => item.id);
+      const finalList = copy.filter(({ id }) => !idsToExclude.includes(id));
       setCheckedItems(finalList);
     }
   };
 
-  // Ao modificar os itens que estão marcados e desmarcados modifica também o storage local
-  useEffect(() => {
-    AsyncStorage.setItem(
-      `checkedItems-${userIdCart}`,
-      JSON.stringify(checkedItems)
-    );
-  }, [checkedItems]);
+  // // Ao modificar os itens que estão marcados e desmarcados modifica também o storage local
+  // useEffect(() => {
+  //   AsyncStorage.setItem(
+  //     `checkedItems-${userIdCart}`,
+  //     JSON.stringify(checkedItems)
+  //   );
+  // }, [checkedItems]);
 
-  // Ao atribuir um usuário, recupera os itens que o usuário marcou no storage local
-  useEffect(() => {
-    if (!userIdCart) return;
-    AsyncStorage.getItem(`checkedItems-${userIdCart}`).then((value) => {
-      if (value) {
-        setCheckedItems(JSON.parse(value));
-      }
-    });
-  }, [userIdCart]);
+  // // Ao atribuir um usuário, recupera os itens que o usuário marcou no storage local
+  // useEffect(() => {
+  //   if (!userIdCart) return;
+  //   AsyncStorage.getItem(`checkedItems-${userIdCart}`).then((value) => {
+  //     if (value) {
+  //       setCheckedItems(JSON.parse(value));
+  //     }
+  //   });
+  // }, [userIdCart]);
 
   return (
     <CheckedItemsContext.Provider
@@ -60,7 +78,8 @@ export const CheckedItemsProvider = ({ children }) => {
         checkedItems,
         checkItem,
         checkMultipleItems,
-        setUserIdCart: setUserIdCart,
+        setCheckedItems
+        // setUserIdCart: setUserIdCart,
       }}
     >
       {children}

@@ -21,49 +21,47 @@ const LixtCartProductItem = ({
   const { checkedItems, checkItem } = useContext(CheckedItemsContext);
   const [isChecked, setIsChecked] = useState(product.isMarked);
 
-  useEffect(() => {
-    const localCheck = verifyIfWasLocallyChecked();
-
-    // Caso o produto esteja marcado no produto que veio do servidor mas não estiver no local
-    // marca o produto na visualização da tela
-    if (product.isMarked && !localCheck) {
-      setIsChecked(true);
-    } else {
-      // caso não, utiliza o valor local para o marcar o item (seja falso ou não)
-      setIsChecked(localCheck);
-    }
-  }, [checkedItems]);
-
   // Desabilita o checkbox caso já esteja marcado por outro usuário ou esteja atribuído para outro
   const [isDisabled] = useState(
     (product.isMarked && product.userWhoMarkedId !== user.id) ||
       (product.assignedUserId && product.assignedUserId !== user.id)
   );
 
+  useEffect(() => {
+    setIsChecked(product.isMarked);
+  }, [product]);
+
   const toggleProductFromSingleList = async (isSelected) => {
     // Se o checbox estiver desabilitado nem continua
     if (isDisabled) return;
 
     // Checa o item localmente
-    checkItem(product.id, isSelected);
+    // checkItem(product.id, isSelected);
 
     try {
       // Esse endpoint atribui ou desatribui um item para o próprio usuário
-      const { data } = await ProductOfListService.assignOrUnassignMyself(
+      const { data } = await ProductOfListService.toggleItem(
         product.id,
+        isSelected,
         user
       );
 
+      console.log(data);
+
       // Se a resposta for 1, quer dizer que o usuário atual está responsável por este item
       // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
-      if (data === 0) {
+      if (data === 1) {
+        setIsChecked(isSelected);
+        product.isMarked = isSelected;
+        product.userWhoMarkedId = isSelected ? user.id : null;
+      } else if (data === 0) {
         toast.show({
           title: 'Outro usuário se responsabilizou por este item',
           status: 'warning',
         });
 
         // Se outro usuário tiver se responsabilizado pelo item desmarca localmente
-        checkItem(product.id, false);
+        // checkItem(product.id, false);
         refreshList();
       }
     } catch (error) {
@@ -74,12 +72,12 @@ const LixtCartProductItem = ({
     }
   };
 
-  const verifyIfWasLocallyChecked = () => {
-    if (checkedItems && checkedItems.find((i) => i === product.id)) {
-      return true;
-    }
-    return false;
-  };
+  // const verifyIfWasLocallyChecked = () => {
+  //   if (checkedItems && checkedItems.find((i) => i === product.id)) {
+  //     return true;
+  //   }
+  //   return false;
+  // };
 
   return (
     <Pressable

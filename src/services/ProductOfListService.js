@@ -40,6 +40,16 @@ const ProductOfListService = {
       },
     });
   },
+
+  toggleItem: (id, operation, user) => {
+    const operationParam = operation ? 'mark' : 'clean';
+
+    return BaseService.get(`/productOfList/${operationParam}/${id}/`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
 };
 
 export default ProductOfListService;

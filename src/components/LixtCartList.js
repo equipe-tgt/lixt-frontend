@@ -12,15 +12,52 @@ export default function LixtCartList({
   userId,
 }) {
   const [itemsShownByCategory, setItemsShownByCategory] = useState({});
-  const { setUserIdCart } = useContext(CheckedItemsContext);
+  const { checkedItems, checkItem, checkMultipleItems, setCheckedItems } =
+    useContext(CheckedItemsContext);
 
   useEffect(() => {
-    listItemsByCategory();
+    // return () => {
+      // getAllTheCheckedItemsOnThisList();
+      listItemsByCategory();
+    // };
   }, [selectedList]);
 
-  useEffect(() => {
-    setUserIdCart(userId);
-  }, []);
+  // useEffect(() => {
+  //   setUserIdCart(userId);
+  // }, []);
+
+  // useEffect(() => {
+  //   return () => {
+  //     getAllTheCheckedItemsOnThisList();
+  //   };
+  // }, [selectedList]);
+
+  const getAllTheCheckedItemsOnThisList = () => {
+    let items = [];
+    if (selectedList?.id === 'view-all') {
+      for (const productOfList of selectedList.productsOfList) {
+        const everyItem = productOfList.productsOfLists
+          .flat()
+          .filter((item) => item.isMarked && item.userWhoMarkedId === userId);
+        items.push(...everyItem);
+      }
+    } else {
+      items = selectedList.productsOfList.filter(
+        (item) => item.isMarked && item.userWhoMarkedId === userId
+      );
+    }
+
+    items = items.map((i) => {
+      return {
+        id: i.id,
+        price: i.price,
+        amount: i.amount,
+        listId: selectedList?.id,
+      };
+    });
+
+    setCheckedItems(items);
+  };
 
   const listItemsByCategory = () => {
     if (selectedList && selectedList?.productsOfList?.length) {
