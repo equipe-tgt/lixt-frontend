@@ -12,15 +12,43 @@ export default function LixtCartList({
   userId,
 }) {
   const [itemsShownByCategory, setItemsShownByCategory] = useState({});
-  const { setUserIdCart } = useContext(CheckedItemsContext);
+  const { setCheckedItems } = useContext(CheckedItemsContext);
 
   useEffect(() => {
+    getAllTheCheckedItemsOnThisList();
     listItemsByCategory();
   }, [selectedList]);
 
-  useEffect(() => {
-    setUserIdCart(userId);
-  }, []);
+  const getAllTheCheckedItemsOnThisList = () => {
+    let items = [];
+    // Se a visão da lista for geral
+    if (selectedList?.id === 'view-all') {
+      // Da lista selecionada, pega cada objeto unificado
+      for (const groupedProduct of selectedList.productsOfList) {
+        // Desse objeto, pegue os itens e apenas pegue os itens
+        // marcados pelo usuário atual
+        const everyItem = groupedProduct.productsOfLists
+          .flat()
+          .filter((item) => item.isMarked && item.userWhoMarkedId === userId);
+        items.push(...everyItem);
+      }
+    } else {
+      items = selectedList.productsOfList.filter(
+        (item) => item.isMarked && item.userWhoMarkedId === userId
+      );
+    }
+
+    items = items.map((i) => {
+      return {
+        id: i.id,
+        price: i.price,
+        amount: i.amount,
+        listId: i.listId,
+      };
+    });
+
+    setCheckedItems(items);
+  };
 
   const listItemsByCategory = () => {
     if (selectedList && selectedList?.productsOfList?.length) {

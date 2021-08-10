@@ -34,6 +34,7 @@ export default function PurchaseLocalModal(props) {
     },
   });
 
+  // Ao abrir o modal busca as localizações próximas
   useEffect(() => {
     if (props.showModal) {
       values.name = '';
@@ -43,8 +44,8 @@ export default function PurchaseLocalModal(props) {
 
   useEffect(() => {
     return () => {
+      // Conforme o usuário digita o nome, filtra a lista de localizações de compra
       if (values.name.length > 0) {
-        console.log(values.name.length);
         const filtered = purchaseLocations.filter((l) =>
           l.name.startsWith(values.name)
         );
@@ -55,6 +56,7 @@ export default function PurchaseLocalModal(props) {
     };
   }, [values.name]);
 
+  // Usuário inserindo um local novo na aplicação
   const savePurchaseLocal = async () => {
     let status;
     let title;
@@ -84,6 +86,8 @@ export default function PurchaseLocalModal(props) {
     }
   };
 
+  // Busca os locais de compra próximos, no momento está com a localização
+  // fixada
   const getPurchaseLocals = async () => {
     let status;
     let title;
@@ -128,7 +132,7 @@ export default function PurchaseLocalModal(props) {
             disabled={loading}
             isInvalid={!!errors.name}
           />
-          {/* Produtos encontrados */}
+          {/* Locais de compra encontrados */}
           {values.name.length > 0 ? (
             <List borderTopColor="transparent" space="md">
               <ScrollView keyboardShouldPersistTaps="always">

@@ -191,7 +191,7 @@ describe('SendInvitationScreen component', () => {
       });
       await waitFor(() => fireEvent.press(sendInvitationButton));
 
-      const toast = getByText('Um erro inesperado ocorreu no servidor');
+      const toast = getByText('errorServerDefault');
       expect(toast).toBeDefined();
     });
 
