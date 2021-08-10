@@ -26,10 +26,6 @@ export default function CartScreen(props) {
   const { t } = useTranslation();
   const isFocused = useIsFocused();
 
-  /**
-   * @todo calcular preço total
-   */
-
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (até agora a de edição do item manda)
     if (props.route.params) {
@@ -106,16 +102,20 @@ export default function CartScreen(props) {
     }
   };
 
-  const unifyAllProducts = () => {
-    const allProductsOfLists = [];
-
+  const getAllItems = () => {
     // Pega todos os itens inclusos em todas as listas
+    const allProductsOfLists = [];
     for (const list of lists) {
       // Pega os itens caso productsOfList não seja null e possua itens
       if (list.productsOfList && list.productsOfList.length > 0) {
         allProductsOfLists.push(...list.productsOfList);
       }
     }
+    return allProductsOfLists;
+  };
+
+  const unifyAllProducts = () => {
+    const allProductsOfLists = getAllItems();
 
     const groupedProducts = [];
 
@@ -153,7 +153,10 @@ export default function CartScreen(props) {
           price: price,
           amount: amount,
         });
-        groupedProduct.markings.push({ isMarked: isMarked, listId: listId });
+        groupedProduct.markings.push({
+          isMarked: isMarked,
+          listId: listId,
+        });
         groupedProducts[groupedProductIndex] = groupedProduct;
       } else {
         // Caso não tenha achado nenhum objeto com id de produto igual ao id de produto do item
@@ -240,6 +243,7 @@ export default function CartScreen(props) {
         <LixtCalculator
           isGeneralView={selectedList?.id === 'view-all'}
           items={selectedList.productsOfList}
+          listId={selectedList.id}
         />
       </SafeAreaView>
     </CheckedItemsProvider>

@@ -44,12 +44,10 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
 
   const toggleProduct = async (isSelecting) => {
     setLoadingCheckbox(true);
-    let modified = [];
+    const modified = [];
 
     // Para cada productOfList que consta dentro de wrappedProduct
     for (const productOfList of wrappedProduct.productsOfLists) {
-      modified.push(productOfList.id);
-
       try {
         // Se o usuário estiver marcando todos os itens que tiverem o msm id de produto
         // mas já houverem itens que estão atribuídos ao usuário atual não precisa prosseguir
@@ -58,32 +56,36 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
         // já houverem itens que não estão marcados para o usuário atual não precisa prosseguir
         // Ou seja, marca e desmarca apenas os itens que precisam
         if (
-          (isSelecting && productOfList.assignedUserId === user.id) ||
-          (!isSelecting &&
-            !!productOfList.assignedUserId &&
-            productOfList.assignedUserId !== user.id)
+          (isSelecting && productOfList.userWhoMarkedId === user.id) ||
+          (!isSelecting && productOfList.userWhoMarkedId !== user.id)
         ) {
           continue;
         }
 
-        // Esse endpoint atribui ou desatribui um item para o próprio usuário
-        const { data } = await ProductOfListService.assignOrUnassignMyself(
+        const { data } = await ProductOfListService.toggleItem(
           productOfList.id,
+          isSelecting,
           user
         );
 
-        productOfList.assignedUserId = data.assignedUserId;
+        if (data === 1) {
+          productOfList.userWhoMarkedId = isSelecting ? user.id : null;
+          productOfList.isMarked = isSelecting;
+          modified.push({
+            id: productOfList.id,
+            price: productOfList.price,
+            amount: productOfList.amount,
+          });
+        }
 
-        // Se a resposta for 1, quer dizer que o usuário atual está responsável por este item
+        // Se a resposta for 1, quer dizer que o usuário atual marcou este item
         // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
-        if (data === 0) {
+        else if (data === 0) {
           toast.show({
-            title: 'Outro usuário se responsabilizou por este item',
+            title:
+              'Outro usuário se responsabilizou por um dos itens, atualize suas listas',
             status: 'warning',
           });
-
-          // Se outro usuário tiver se responsabilizado pelo item desmarca localmente
-          modified = modified.filter((m) => m === productOfList.id);
         }
       } catch (error) {
         console.log(error);
@@ -93,8 +95,12 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
         });
       }
     }
-    checkMultipleItems(modified, isSelecting);
-    setIsChecked(isSelecting);
+
+    if (modified.length) {
+      checkMultipleItems(modified, isSelecting);
+      setIsChecked(isSelecting);
+    }
+
     setLoadingCheckbox(false);
   };
 
@@ -107,9 +113,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
       finalAmount += productOfList.amount;
       allPrices += productOfList.price * productOfList.amount;
 
-      if (checkedItems.includes(productOfList.id)) {
-        markedProductsAmount += productOfList.amount;
-      } else if (productOfList.isMarked) {
+      if (productOfList.isMarked && productOfList.userWhoMarkedId === user.id) {
         markedProductsAmount += productOfList.amount;
       }
     }
@@ -123,18 +127,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
 
   const verifyCheckings = () => {
     const markedExternally = wrappedProduct.markings.every((m) => m.isMarked);
-    const markedLocally = wrappedProduct.productsOfLists.every((p) =>
-      checkedItems.includes(p.id)
-    );
-
-    // Caso os produtos estejam marcados como veio do servidor mas não estiver no local
-    // marca o produto na visualização da tela
-    if (markedExternally && !markedLocally) {
-      setIsChecked(true);
-    } else {
-      // caso não, utiliza o valor local para o marcar o item (seja falso ou não)
-      setIsChecked(markedLocally);
-    }
+    setIsChecked(markedExternally);
   };
 
   return wrappedProduct ? (
@@ -170,7 +163,9 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
             </Text>
 
             <Text>
-              {quantities.price ? `${t('currency')} ${quantities.price}` : `${t('currency')} 0,00`}
+              {quantities.price
+                ? `${t('currency')} ${quantities.price}`
+                : `${t('currency')} 0,00`}
             </Text>
           </Box>
 
