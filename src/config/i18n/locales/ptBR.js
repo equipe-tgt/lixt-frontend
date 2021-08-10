@@ -122,6 +122,7 @@ export default {
 
   buy: 'Comprar',
   markItem: 'Checkbox marcar item',
+  markedBy: 'marcado por',
   assignedTo: 'atribuído a',
   includedIn: 'Incluso em',
   noProductsFound:
@@ -133,4 +134,6 @@ export default {
   purchaseLocal: 'Estabelecimento da compra',
   successfullySaved: 'Salvo com sucesso',
   unsuccessfullySaved: 'Não foi possível salvar',
+
+  purchaseSaved: 'Compra salva!',
 };
