@@ -26,7 +26,8 @@ export default function LixtCartList({
       // Da lista selecionada, pega cada objeto unificado
       for (const groupedProduct of selectedList.productsOfList) {
 
-        // Desse objeto, pegue 
+        // Desse objeto, pegue os itens e apenas pegue os itens 
+        // marcados pelo usuário atual
         const everyItem = groupedProduct.productsOfLists
           .flat()
           .filter((item) => item.isMarked && item.userWhoMarkedId === userId);
