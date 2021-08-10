@@ -8,6 +8,7 @@ export default function LixtCalculator({
   items,
   isGeneralView,
   finishPurchase,
+  loadingPurchase,
 }) {
   const { t } = useTranslation();
   const { checkedItems } = useContext(CheckedItemsContext);
@@ -66,6 +67,7 @@ export default function LixtCalculator({
           onPress={() => {
             finishPurchase(checkedItems, totalPrice);
           }}
+          isLoading={loadingPurchase}
           isDisabled={items.length === 0}
           variant="outline"
         >
@@ -79,5 +81,6 @@ export default function LixtCalculator({
 LixtCalculator.propTypes = {
   items: PropTypes.array,
   isGeneralView: PropTypes.bool,
+  loadingPurchase: PropTypes.bool,
   finishPurchase: PropTypes.func,
 };

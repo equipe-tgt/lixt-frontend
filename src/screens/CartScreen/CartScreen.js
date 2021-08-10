@@ -5,6 +5,7 @@ import { Box, Select, Center, Text, ScrollView, useToast } from 'native-base';
 import LixtCartList from '../../components/LixtCartList';
 import LixtCalculator from '../../components/LixtCalculator';
 import ListService from '../../services/ListService';
+import PurchaseService from '../../services/PurchaseService';
 import PurchaseLocalModal from '../../components/PurchaseLocalModal';
 
 import { screenBasicStyle as style } from '../../styles/style';
@@ -25,6 +26,7 @@ export default function CartScreen(props) {
     productsOfList: [],
   });
   const [refreshing, setRefreshing] = useState(false);
+  const [loadingPurchase, setLoadingPurchase] = useState(false);
   const { t } = useTranslation();
   const isFocused = useIsFocused();
 
@@ -259,8 +261,28 @@ export default function CartScreen(props) {
     };
   };
 
-  const savePurchase = (purchaseLocalId) => {
+  const savePurchase = async (purchaseLocalId) => {
+    setLoadingPurchase(true);
     const purchaseObject = getPurchaseObject(purchaseLocalId);
+
+    let title;
+    let status;
+
+    try {
+      await PurchaseService.createNewPurchase(purchaseObject, user);
+      title = t('purchaseSaved');
+      status = 'success';
+    } catch (error) {
+      console.log(error);
+      title = t('unsuccessfullySaved');
+      status = 'warning';
+    } finally {
+      toast.show({
+        title,
+        status,
+      });
+      setLoadingPurchase(false);
+    }
   };
 
   return lists?.length ? (
@@ -320,6 +342,7 @@ export default function CartScreen(props) {
 
         <LixtCalculator
           isGeneralView={selectedList?.id === 'view-all'}
+          loadingPurchase={loadingPurchase}
           items={selectedList.productsOfList}
           finishPurchase={(checkedItems, totalPrice) => {
             setTotalPriceFromCalculator(totalPrice);

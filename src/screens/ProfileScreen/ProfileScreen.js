@@ -69,8 +69,8 @@ export default function ProfileScreen(props) {
           <Pressable
             style={styles.menuItem}
             onPress={() => {
-              logout();
               setLists([]);
+              logout();
             }}
           >
             <Text fontSize="lg" color="blue.500">

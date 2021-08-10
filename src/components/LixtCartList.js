@@ -33,11 +33,14 @@ export default function LixtCartList({
         items.push(...everyItem);
       }
     } else {
+      // Se a visão for de uma lista só, atribui os itens dessa lista
+      // que foram marcados por esse usuário
       items = selectedList.productsOfList.filter(
         (item) => item.isMarked && item.userWhoMarkedId === userId
       );
     }
 
+    // Cria um objeto simplificado do productOfList
     items = items.map((i) => {
       return {
         id: i.id,
@@ -67,7 +70,7 @@ export default function LixtCartList({
     }
   };
 
-  const getAssignedUserById = (userId) => {
+  const getUserById = (userId) => {
     const listMembers = selectedList?.listMembers;
 
     if (selectedList.ownerId === userId) {
@@ -108,7 +111,7 @@ export default function LixtCartList({
                           product={p}
                           navigate={navigate}
                           refreshList={refreshList}
-                          getAssignedUserById={getAssignedUserById}
+                          getUserById={getUserById}
                         />
                       )
                     );
