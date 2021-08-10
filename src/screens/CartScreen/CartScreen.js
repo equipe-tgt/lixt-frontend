@@ -332,7 +332,9 @@ export default function CartScreen(props) {
           showModal={showModal}
           closeModal={(value) => {
             setShowModal(false);
-            savePurchase(value.id);
+            if (value) {
+              savePurchase(value.id);
+            }
           }}
         />
       </SafeAreaView>

@@ -24,6 +24,7 @@ export default {
     'Ao clicar no botão enviaremos uma senha provisória para o seu email',
 
   emailOrUsername: 'Email ou nome de usuário',
+  checkYourEmail: 'Enviamos um link de ativação \n para o seu email',
 
   portuguese: 'Português',
   english: 'Inglês',
