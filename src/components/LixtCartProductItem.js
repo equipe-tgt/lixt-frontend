@@ -18,7 +18,7 @@ const LixtCartProductItem = ({
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
   const toast = useToast();
-  const { checkedItems, checkItem } = useContext(CheckedItemsContext);
+  const { checkItem } = useContext(CheckedItemsContext);
   const [isChecked, setIsChecked] = useState(product.isMarked);
 
   // Desabilita o checkbox caso já esteja marcado por outro usuário ou esteja atribuído para outro
@@ -35,9 +35,6 @@ const LixtCartProductItem = ({
     // Se o checbox estiver desabilitado nem continua
     if (isDisabled) return;
 
-    // Checa o item localmente
-    // checkItem(product.id, isSelected);
-
     try {
       // Esse endpoint atribui ou desatribui um item para o próprio usuário
       const { data } = await ProductOfListService.toggleItem(
@@ -46,22 +43,24 @@ const LixtCartProductItem = ({
         user
       );
 
-      console.log(data);
-
       // Se a resposta for 1, quer dizer que o usuário atual está responsável por este item
       // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
       if (data === 1) {
         setIsChecked(isSelected);
         product.isMarked = isSelected;
         product.userWhoMarkedId = isSelected ? user.id : null;
+        checkItem(
+          { id: product.id, price: product.price, amount: product.amount },
+          isSelected
+        );
       } else if (data === 0) {
         toast.show({
           title: 'Outro usuário se responsabilizou por este item',
           status: 'warning',
         });
 
-        // Se outro usuário tiver se responsabilizado pelo item desmarca localmente
-        // checkItem(product.id, false);
+        // Se outro usuário tiver se responsabilizado pelo item dê
+        // um refresh na lista para pegar essa atualização
         refreshList();
       }
     } catch (error) {
@@ -71,13 +70,6 @@ const LixtCartProductItem = ({
       });
     }
   };
-
-  // const verifyIfWasLocallyChecked = () => {
-  //   if (checkedItems && checkedItems.find((i) => i === product.id)) {
-  //     return true;
-  //   }
-  //   return false;
-  // };
 
   return (
     <Pressable
@@ -104,7 +96,7 @@ const LixtCartProductItem = ({
       </Box>
 
       <Box>
-        <Text strikeThrough={product.isMarked} fontWeight="bold">
+        <Text strikeThrough={isChecked} fontWeight="bold">
           {product.name}
         </Text>
 

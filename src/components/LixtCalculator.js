@@ -2,79 +2,32 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Box, Text, HStack, Button } from 'native-base';
 import PropTypes from 'prop-types';
 import { CheckedItemsContext } from '../context/CheckedItemsProvider';
-import { AuthContext } from '../context/AuthProvider';
 import { useTranslation } from 'react-i18next';
 
 export default function LixtCalculator({ items, isGeneralView, listId }) {
   const [totalPrice, setTotalPrice] = useState(0);
   const { t } = useTranslation();
   const { checkedItems } = useContext(CheckedItemsContext);
-  const { user } = useContext(AuthContext);
-
-  // const getTotalPrice = () => {
-  //   if (items && items.length > 0) {
-  //     let productsToCount = [];
-  //     let finalPrice = 0;
-
-  //     if (isGeneralView) {
-  //       // se a pessoa estiver na visão geral pega todos os productsOfList que estão aglutinados
-  //       productsToCount.push(...items.map((item) => item.productsOfLists));
-  //       productsToCount = productsToCount.flat();
-  //     } else {
-  //       productsToCount = items;
-  //     }
-
-  //     for (const productToCount of productsToCount) {
-  //       // se está marcado localmente
-  //       // if (checkedItems.includes(productToCount.id)) {
-  //       //   finalPrice += productToCount.price
-  //       //     ? productToCount.price * productToCount.amount
-  //       //     : 0;
-  //       //   continue;
-  //       // }
-
-  //       // se já foi comprado e foi você quem comprou
-  //       if (
-  //         productToCount.isMarked &&
-  //         productToCount.userWhoMarkedId === user.id
-  //       ) {
-  //         finalPrice += productToCount.price
-  //           ? productToCount.price * productToCount.amount
-  //           : 0;
-  //       }
-  //     }
-  //     setTotalPrice(finalPrice);
-  //   }
-  // };
 
   const getTotalPrice = () => {
-    if (checkedItems && checkedItems.length > 0) {
-      let finalPrice = 0;
+    let finalPrice = 0;
 
+    // Se houver itens checados
+    if (checkedItems && checkedItems.length > 0) {
+      // Calcula o preço total do carrinho acumulando preço * quantidade de
+      // todos os itens
       finalPrice = checkedItems.reduce((accumulator, currentItem) => {
         let price = currentItem.price || 0;
         price = price * currentItem.amount;
 
         return price + accumulator;
       }, 0);
-
-      // else {
-      //   finalPrice = checkedItems.reduce((accumulator, currentItem) => {
-      //     console.log('current', currentItem, 'listid', listId);
-      //     if (currentItem.listId !== listId) return 0;
-      //     let price = currentItem.price || 0;
-      //     price = price * currentItem.amount;
-
-      //     return price + accumulator;
-      //   }, 0);
-      // }
-      setTotalPrice(finalPrice);
     }
+    setTotalPrice(finalPrice);
   };
 
+  // Se mudar quais itens estão checados o componente deve recalcular o valor
   useEffect(() => {
-    // console.log('agora q eu quero ver');
-    // console.log(checkedItems);
     getTotalPrice();
   }, [checkedItems]);
 

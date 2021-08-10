@@ -1,18 +1,15 @@
-import React, { useState, useEffect } from 'react';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 export const CheckedItemsContext = React.createContext({
-  // userIdCart: null,
   checkedItems: [],
 });
 
 export const CheckedItemsProvider = ({ children }) => {
   const [checkedItems, setCheckedItems] = useState([]);
-  // const [userIdCart, setUserIdCart] = useState(null);
 
   const checkItem = (item, toggleOption) => {
-    const isItemChecked = checkedItems.includes(item);
+    const isItemChecked = !!checkedItems.find((i) => i.id === item.id);
 
     const copy = [...checkedItems];
     // Se a o usuário passou que quer marcar e o item ainda não existe na lista local
@@ -21,25 +18,14 @@ export const CheckedItemsProvider = ({ children }) => {
       setCheckedItems([...copy, item]);
     } else if (!toggleOption && isItemChecked) {
       // Caso ele queira remover um item e esse item exista na lista local: remova
-      setCheckedItems(copy.filter((c) => c !== item));
+      setCheckedItems(copy.filter((checkedItem) => checkedItem.id !== item.id));
     }
   };
 
-  // const checkMultipleItems = (items, toggleOption) => {
-  //   const copy = [...checkedItems];
-
-  //   if (toggleOption) {
-  //     setCheckedItems([...copy, ...items]);
-  //   } else {
-  //     const finalList = copy.filter((i) => !items.includes(i));
-  //     setCheckedItems(finalList);
-  //   }
-  // };
   const checkMultipleItems = (items, toggleOption) => {
-
-    console.log("tamanho dos itens", items.length);
     const copy = [...checkedItems];
-
+    // Se o usuário passou que quer marcar vários itens, insere os que
+    // não estiverem inseridos já
     if (toggleOption) {
       for (const item of items) {
         if (!copy.find((i) => i.id === item.id)) {
@@ -48,29 +34,13 @@ export const CheckedItemsProvider = ({ children }) => {
       }
       setCheckedItems([...copy]);
     } else {
+      // Se o usuário quer remover vários itens marcados, remove os que ele
+      // passar
       const idsToExclude = items.map((item) => item.id);
       const finalList = copy.filter(({ id }) => !idsToExclude.includes(id));
       setCheckedItems(finalList);
     }
   };
-
-  // // Ao modificar os itens que estão marcados e desmarcados modifica também o storage local
-  // useEffect(() => {
-  //   AsyncStorage.setItem(
-  //     `checkedItems-${userIdCart}`,
-  //     JSON.stringify(checkedItems)
-  //   );
-  // }, [checkedItems]);
-
-  // // Ao atribuir um usuário, recupera os itens que o usuário marcou no storage local
-  // useEffect(() => {
-  //   if (!userIdCart) return;
-  //   AsyncStorage.getItem(`checkedItems-${userIdCart}`).then((value) => {
-  //     if (value) {
-  //       setCheckedItems(JSON.parse(value));
-  //     }
-  //   });
-  // }, [userIdCart]);
 
   return (
     <CheckedItemsContext.Provider
@@ -78,8 +48,7 @@ export const CheckedItemsProvider = ({ children }) => {
         checkedItems,
         checkItem,
         checkMultipleItems,
-        setCheckedItems
-        // setUserIdCart: setUserIdCart,
+        setCheckedItems,
       }}
     >
       {children}

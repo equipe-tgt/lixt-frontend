@@ -26,10 +26,6 @@ export default function CartScreen(props) {
   const { t } = useTranslation();
   const isFocused = useIsFocused();
 
-  /**
-   * @todo calcular preço total
-   */
-
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (até agora a de edição do item manda)
     if (props.route.params) {
@@ -120,14 +116,6 @@ export default function CartScreen(props) {
 
   const unifyAllProducts = () => {
     const allProductsOfLists = getAllItems();
-
-    // // Pega todos os itens inclusos em todas as listas
-    // for (const list of lists) {
-    //   // Pega os itens caso productsOfList não seja null e possua itens
-    //   if (list.productsOfList && list.productsOfList.length > 0) {
-    //     allProductsOfLists.push(...list.productsOfList);
-    //   }
-    // }
 
     const groupedProducts = [];
 

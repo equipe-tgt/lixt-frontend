@@ -12,31 +12,22 @@ export default function LixtCartList({
   userId,
 }) {
   const [itemsShownByCategory, setItemsShownByCategory] = useState({});
-  const { checkedItems, checkItem, checkMultipleItems, setCheckedItems } =
-    useContext(CheckedItemsContext);
+  const { setCheckedItems } = useContext(CheckedItemsContext);
 
   useEffect(() => {
-    // return () => {
-      // getAllTheCheckedItemsOnThisList();
-      listItemsByCategory();
-    // };
+    getAllTheCheckedItemsOnThisList();
+    listItemsByCategory();
   }, [selectedList]);
-
-  // useEffect(() => {
-  //   setUserIdCart(userId);
-  // }, []);
-
-  // useEffect(() => {
-  //   return () => {
-  //     getAllTheCheckedItemsOnThisList();
-  //   };
-  // }, [selectedList]);
 
   const getAllTheCheckedItemsOnThisList = () => {
     let items = [];
+    // Se a visão da lista for geral
     if (selectedList?.id === 'view-all') {
-      for (const productOfList of selectedList.productsOfList) {
-        const everyItem = productOfList.productsOfLists
+      // Da lista selecionada, pega cada objeto unificado
+      for (const groupedProduct of selectedList.productsOfList) {
+
+        // Desse objeto, pegue 
+        const everyItem = groupedProduct.productsOfLists
           .flat()
           .filter((item) => item.isMarked && item.userWhoMarkedId === userId);
         items.push(...everyItem);
