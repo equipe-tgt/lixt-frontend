@@ -24,6 +24,7 @@ export default {
     'Once you click in the button below, you will receive a temporary password in your e-mail box',
 
   emailOrUsername: 'Email or username',
+  checkYourEmail: 'We sent an activation link \n to your email',
 
   portuguese: 'Portuguese',
   english: 'English',

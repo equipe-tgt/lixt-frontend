@@ -46,7 +46,13 @@ export default function RegisterScreen({ navigation }) {
     const { username, password, name, email } = values;
 
     UserService.doRegister({ username, password, name, email })
-      .then(() => navigation.navigate('Login'))
+      .then(() => {
+        toast.show({
+          title: t('checkYourEmail'),
+          status: 'info',
+        });
+        navigation.navigate('Login');
+      })
       .catch((error) => {
         console.log({ error });
 
