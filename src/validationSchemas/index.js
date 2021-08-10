@@ -1,5 +1,4 @@
 import * as Yup from 'yup';
-import MEASURE_TYPES from '../utils/measureTypes';
 
 export const LoginSchema = (t) =>
   Yup.object().shape({
@@ -78,5 +77,12 @@ export const InviteSchema = (t) =>
   Yup.object().shape({
     username: Yup.string()
       .max(120, t('fieldMaxChars', { max: 120 }))
+      .required(t('requiredField')),
+  });
+
+export const PurchaseLocal = (t) =>
+  Yup.object().shape({
+    name: Yup.string()
+      .max(45, t('fieldMaxChars', { max: 45 }))
       .required(t('requiredField')),
   });

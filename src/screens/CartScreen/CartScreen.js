@@ -5,6 +5,7 @@ import { Box, Select, Center, Text, ScrollView, useToast } from 'native-base';
 import LixtCartList from '../../components/LixtCartList';
 import LixtCalculator from '../../components/LixtCalculator';
 import ListService from '../../services/ListService';
+import PurchaseLocalModal from '../../components/PurchaseLocalModal';
 
 import { screenBasicStyle as style } from '../../styles/style';
 
@@ -16,6 +17,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 export default function CartScreen(props) {
   const { lists, setLists } = useContext(ListContext);
+  const [showModal, setShowModal] = useState(false);
   const { user } = useContext(AuthContext);
   const toast = useToast();
   const [selectedList, setSelectedList] = useState({
@@ -25,6 +27,11 @@ export default function CartScreen(props) {
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
   const isFocused = useIsFocused();
+
+  const [checkedItemsFromCalculator, setCheckedItemsFromCalculator] = useState(
+    []
+  );
+  const [totalPriceFromCalculator, setTotalPriceFromCalculator] = useState(0);
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (até agora a de edição do item manda)
@@ -185,6 +192,77 @@ export default function CartScreen(props) {
     };
   };
 
+  const getItemOfPurchase = (productOfListOnPurchase) => {
+    const { productId, id, name, price, amount, measureType, measureValue } =
+      productOfListOnPurchase;
+
+    return {
+      id: null,
+      productOfListId: id,
+      productId,
+      name,
+      price,
+      amount,
+      measureType,
+      measureValue,
+      purchaseListId: null,
+      product: null,
+    };
+  };
+
+  const getPurchaseObject = (purchaseLocalId) => {
+    const allItems = getAllItems();
+
+    const idsToPurchase = checkedItemsFromCalculator.map((ci) => ci.id);
+
+    const itemsOnPurchase = allItems.filter(({ id }) =>
+      idsToPurchase.includes(id)
+    );
+
+    const purchaseLists = {};
+
+    for (const itemOnPurchase of itemsOnPurchase) {
+      const listId = itemOnPurchase.listId;
+      const price = itemOnPurchase.price || 0;
+
+      // Se já houver um objeto de agrupamento de itens de compra de uma mesma
+      // lista, complementa os dados
+      if (purchaseLists[listId]) {
+        purchaseLists[listId].itemsOfPurchase.push(
+          getItemOfPurchase(itemOnPurchase)
+        );
+        purchaseLists[listId].partialPurchasePrice +=
+          price * itemOnPurchase.amount;
+      } else {
+        // Senão, define um novo objeto para ele e atribui os valores
+        purchaseLists[listId] = {};
+        purchaseLists[listId].id = null;
+        purchaseLists[listId].purchaseId = null;
+        purchaseLists[listId].listId = listId;
+        purchaseLists[listId].purchaseId = null;
+        purchaseLists[listId].partialPurchasePrice =
+          price * itemOnPurchase.amount;
+        purchaseLists[listId].itemsOfPurchase = [
+          getItemOfPurchase(itemOnPurchase),
+        ];
+      }
+    }
+
+    return {
+      id: null,
+      purchaseDate: null,
+      purchaseLists: Object.values(purchaseLists),
+      purchaseLocal: null,
+      purchaseLocalId: purchaseLocalId,
+      purchasePrice: totalPriceFromCalculator,
+      userId: null,
+    };
+  };
+
+  const savePurchase = (purchaseLocalId) => {
+    const purchaseObject = getPurchaseObject(purchaseLocalId);
+  };
+
   return lists?.length ? (
     <CheckedItemsProvider>
       <SafeAreaView style={style.container}>
@@ -243,7 +321,19 @@ export default function CartScreen(props) {
         <LixtCalculator
           isGeneralView={selectedList?.id === 'view-all'}
           items={selectedList.productsOfList}
-          listId={selectedList.id}
+          finishPurchase={(checkedItems, totalPrice) => {
+            setTotalPriceFromCalculator(totalPrice);
+            setCheckedItemsFromCalculator(checkedItems);
+            setShowModal(true);
+          }}
+        />
+
+        <PurchaseLocalModal
+          showModal={showModal}
+          closeModal={(value) => {
+            setShowModal(false);
+            savePurchase(value.id);
+          }}
         />
       </SafeAreaView>
     </CheckedItemsProvider>

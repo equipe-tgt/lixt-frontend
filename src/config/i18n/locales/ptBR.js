@@ -66,6 +66,7 @@ export default {
 
   newProduct: 'Novo produto',
   saveList: 'Salvar lista',
+  save: 'Salvar',
   deleteList: 'Deletar lista',
   listInfo: 'Informações da lista',
   listHasNoDescription: 'Não há descrição para esta lista',
@@ -127,4 +128,8 @@ export default {
   savePurchase: 'Salvar compra',
 
   currency: 'R$',
+
+  purchaseLocal: 'Estabelecimento da compra',
+  successfullySaved: 'Salvo com sucesso',
+  unsuccessfullySaved: 'Não foi possível salvar',
 };

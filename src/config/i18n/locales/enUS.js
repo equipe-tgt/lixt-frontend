@@ -14,7 +14,7 @@ export default {
   memberRemoved: 'The member was removed from the list',
 
   forgotPassword: 'Forgot my password',
-  signIn: 'Sign In',
+  signIn: 'Sign Up',
   dontHaveAccount: "Don't you have an account?",
   login: 'Login',
   incorrectData: 'The information you provided is incorrect.',
@@ -83,6 +83,7 @@ export default {
 
   creating: 'Creating',
   add: 'Add',
+  save: 'Save',
   remove: 'Remove',
   removing: 'Removing',
 
@@ -127,4 +128,8 @@ export default {
   savePurchase: 'Save purchase',
 
   currency: '$',
+
+  purchaseLocal: 'Local of purchase',
+  successfullySaved: 'Successfully saved',
+  unsuccessfullySaved: "It wasn't possible to save it",
 };

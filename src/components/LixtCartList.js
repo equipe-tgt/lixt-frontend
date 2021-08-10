@@ -25,8 +25,7 @@ export default function LixtCartList({
     if (selectedList?.id === 'view-all') {
       // Da lista selecionada, pega cada objeto unificado
       for (const groupedProduct of selectedList.productsOfList) {
-
-        // Desse objeto, pegue os itens e apenas pegue os itens 
+        // Desse objeto, pegue os itens e apenas pegue os itens
         // marcados pelo usuário atual
         const everyItem = groupedProduct.productsOfLists
           .flat()
@@ -44,7 +43,7 @@ export default function LixtCartList({
         id: i.id,
         price: i.price,
         amount: i.amount,
-        listId: selectedList?.id,
+        listId: i.listId,
       };
     });
 

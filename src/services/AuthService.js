@@ -1,5 +1,5 @@
 import BaseService from './BaseService';
-import { Base64 } from '../utils/base64';
+import { Base64 } from '../utils/base64Utils';
 
 // Valores de autenticação da API
 const CLIENT_ID = 'client';

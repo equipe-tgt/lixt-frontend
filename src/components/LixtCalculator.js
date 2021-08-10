@@ -4,10 +4,15 @@ import PropTypes from 'prop-types';
 import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 import { useTranslation } from 'react-i18next';
 
-export default function LixtCalculator({ items, isGeneralView, listId }) {
-  const [totalPrice, setTotalPrice] = useState(0);
+export default function LixtCalculator({
+  items,
+  isGeneralView,
+  finishPurchase,
+}) {
   const { t } = useTranslation();
   const { checkedItems } = useContext(CheckedItemsContext);
+
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const getTotalPrice = () => {
     let finalPrice = 0;
@@ -58,7 +63,9 @@ export default function LixtCalculator({ items, isGeneralView, listId }) {
           </Text>
         </Box>
         <Button
-          onPress={() => {}}
+          onPress={() => {
+            finishPurchase(checkedItems, totalPrice);
+          }}
           isDisabled={items.length === 0}
           variant="outline"
         >
@@ -72,5 +79,5 @@ export default function LixtCalculator({ items, isGeneralView, listId }) {
 LixtCalculator.propTypes = {
   items: PropTypes.array,
   isGeneralView: PropTypes.bool,
-  listId: PropTypes.any,
+  finishPurchase: PropTypes.func,
 };
