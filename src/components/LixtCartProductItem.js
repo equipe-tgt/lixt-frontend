@@ -13,7 +13,7 @@ const LixtCartProductItem = ({
   product,
   navigate,
   refreshList,
-  getAssignedUserById,
+  getUserById,
 }) => {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
@@ -130,7 +130,13 @@ const LixtCartProductItem = ({
 
         {product.assignedUserId && product.assignedUserId !== user.id ? (
           <Text fontSize="sm">
-            {t('assignedTo')} {getAssignedUserById(product.assignedUserId)}
+            {t('assignedTo')} {getUserById(product.assignedUserId)}
+          </Text>
+        ) : null}
+
+        {product.isMarked && product.userWhoMarkedId !== user.id ? (
+          <Text fontSize="sm">
+            {t('markedBy')} {getUserById(product.userWhoMarkedId)}
           </Text>
         ) : null}
       </Box>
@@ -163,5 +169,5 @@ LixtCartProductItem.propTypes = {
   isGeneralViewOpen: PropTypes.bool,
   idSelectedList: PropTypes.any,
   refreshList: PropTypes.func,
-  getAssignedUserById: PropTypes.func,
+  getUserById: PropTypes.func,
 };

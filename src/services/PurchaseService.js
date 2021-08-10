@@ -9,3 +9,5 @@ const PurchaseService = {
     });
   },
 };
+
+export default PurchaseService;
