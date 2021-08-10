@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "lixt-frontend",
-    "slug": "lixt-frontend",
+    "name": "lixt",
+    "slug": "lixt",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
