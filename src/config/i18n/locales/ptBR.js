@@ -126,7 +126,7 @@ export default {
   assignTo: 'Atribuir este item para',
   noOne: 'Ninguém em específico',
   assignedTo: 'atribuído a',
-  alreadyChecked: "Este item já foi marcado, você não pode mais atribuí-lo",
+  alreadyChecked: 'Este item já foi marcado, você não pode mais atribuí-lo',
   includedIn: 'Incluso em',
   noProductsFound:
     'Você não possui produtos na sua lista. \nQuando você adicionar produtos eles aparecerão aqui',
