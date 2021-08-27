@@ -10,6 +10,7 @@ import {
   Heading,
   Text,
   Select,
+  Box,
   useToast,
 } from 'native-base';
 import LixtSelect from '../../components/LixtSelect';
@@ -100,8 +101,6 @@ export default function ProductOfListDetails(props) {
     );
     productOfListEdited.measureValue =
       values.measureType !== 'un' ? parseInt(values.measureValue) : null;
-
-    console.log(productOfListEdited);
 
     // Se você for o dono da lista e ela possuir membros, checa pra ver se o item atual
     // está sendo atribuído a alguém
@@ -241,34 +240,39 @@ export default function ProductOfListDetails(props) {
         dá a opção para o usuário atribuir o item à alguém */}
         {currentList.ownerId === user.id &&
         currentList?.listMembers.length > 0 ? (
-          <LixtSelect
-            labelName="assignTo"
-            isDisabled={loading}
-            selectedValue={userBeingAssignedTo?.userId || null}
-            onValueChange={(listMemberUserId) => {
-              if (listMemberUserId) {
-                setUserBeingAssignedTo(
-                  listMembers.find(
-                    (lm) => lm.userId === Number(listMemberUserId)
-                  )
-                );
-              } else {
-                setUserBeingAssignedTo({ id: null });
-              }
-            }}
-            selectTestID="select-list-member"
-          >
-            {/* Item padrão - "Ninguém em específico" */}
-            <Select.Item key={null} value={null} label={t('noOne')} />
+          <Box my={3}>
+            <LixtSelect
+              labelName="assignTo"
+              isDisabled={loading || product.isMarked}
+              selectedValue={userBeingAssignedTo?.userId || null}
+              onValueChange={(listMemberUserId) => {
+                if (listMemberUserId) {
+                  setUserBeingAssignedTo(
+                    listMembers.find(
+                      (lm) => lm.userId === Number(listMemberUserId)
+                    )
+                  );
+                } else {
+                  setUserBeingAssignedTo({ id: null });
+                }
+              }}
+              selectTestID="select-list-member"
+            >
+              {/* Item padrão - "Ninguém em específico" */}
+              <Select.Item key={null} value={null} label={t('noOne')} />
 
-            {listMembers.map((listMember) => (
-              <Select.Item
-                key={listMember.userId}
-                value={listMember.userId}
-                label={listMember.user.name}
-              />
-            ))}
-          </LixtSelect>
+              {listMembers.map((listMember) => (
+                <Select.Item
+                  key={listMember.userId}
+                  value={listMember.userId}
+                  label={listMember.user.name}
+                />
+              ))}
+            </LixtSelect>
+            {product.isMarked && (
+              <Text fontSize="sm">{t('alreadyChecked')}</Text>
+            )}
+          </Box>
         ) : null}
 
         <Button

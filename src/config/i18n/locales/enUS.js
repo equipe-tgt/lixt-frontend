@@ -126,6 +126,7 @@ export default {
   assignTo: 'Assign this item to',
   noOne: 'No one in specific',
   assignedTo: 'assigned to',
+  alreadyChecked: "This item is already checked, you can't assign it anymore",
   includedIn: 'Included in',
   noProductsFound:
     "You don't have products on your list. \nWhen you add products they're going to be shown here",
