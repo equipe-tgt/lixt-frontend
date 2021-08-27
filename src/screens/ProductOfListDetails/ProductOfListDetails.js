@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { SafeAreaView, Text } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import {
   FormControl,
   Input,
@@ -8,8 +8,11 @@ import {
   Radio,
   Button,
   Heading,
+  Text,
+  Select,
   useToast,
 } from 'native-base';
+import LixtSelect from '../../components/LixtSelect';
 
 import { useTranslation } from 'react-i18next';
 import { screenBasicStyle as style } from '../../styles/style';
@@ -25,14 +28,23 @@ import { useFormik } from 'formik';
 
 import ProductOfListService from '../../services/ProductOfListService';
 import { AuthContext } from '../../context/AuthProvider';
+import { ListContext } from '../../context/ListProvider';
 
 export default function ProductOfListDetails(props) {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
+  const { lists } = useContext(ListContext);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const [product] = useState(props.route.params.product);
   const [origin] = useState(props.route.params.origin);
+  const [currentList, setCurrentList] = useState({});
+  const [userBeingAssignedTo, setUserBeingAssignedTo] = useState({ id: null });
+  const [listMembers, setListMembers] = useState([]);
+
+  useEffect(() => {
+    getCurrentList();
+  }, [product]);
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, values, errors } = useFormik({
@@ -76,7 +88,9 @@ export default function ProductOfListDetails(props) {
 
   const formatValuesForRequest = () => {
     const productOfListEdited = Object.assign({}, props.route.params.product);
-    productOfListEdited.price = parseFloat(values.price.replace(',', '.'));
+    productOfListEdited.price = values.price
+      ? parseFloat(values.price.replace(',', '.'))
+      : null;
     productOfListEdited.amount =
       !values.amount || parseInt(values.amount) <= 0
         ? 1
@@ -88,7 +102,46 @@ export default function ProductOfListDetails(props) {
       values.measureType !== 'un' ? parseInt(values.measureValue) : null;
 
     console.log(productOfListEdited);
+
+    // Se você for o dono da lista e ela possuir membros, checa pra ver se o item atual
+    // está sendo atribuído a alguém
+    if (currentList.ownerId === user.id && currentList.listMembers.length > 0) {
+      productOfListEdited.assignedUserId = userBeingAssignedTo?.userId
+        ? userBeingAssignedTo.userId
+        : null;
+    }
     return productOfListEdited;
+  };
+
+  const getCurrentList = () => {
+    if (product) {
+      const list = lists.find((l) => l.id === product.listId);
+      setCurrentList(list);
+
+      if (list.listMembers.length > 0) {
+        // Inclui o dono da lista na lista de membros para que seja possível atribuir
+        // um item para si próprio também
+        const owner = { userId: list.ownerId, user: { name: list.owner } };
+        const allUsers = [...list.listMembers, owner];
+
+        setListMembers(allUsers);
+
+        // Se já houver um usuário atribuído para o item atual busca quem é
+        // a partir do id
+        if (product?.assignedUserId) {
+          setUserBeingAssignedTo(
+            getMemberById(product.assignedUserId, allUsers)
+          );
+        }
+      }
+    }
+  };
+
+  const getMemberById = (userId, members) => {
+    if (members.length) {
+      return members.find((lm) => lm.userId === Number(userId));
+    }
+    return { id: null };
   };
 
   return (
@@ -183,6 +236,40 @@ export default function ProductOfListDetails(props) {
             onChangeText={handleChange('amount')}
           />
         </FormControl>
+
+        {/* Se o usuário logado for o dono da lista e a lista possuir membros
+        dá a opção para o usuário atribuir o item à alguém */}
+        {currentList.ownerId === user.id &&
+        currentList?.listMembers.length > 0 ? (
+          <LixtSelect
+            labelName="assignTo"
+            isDisabled={loading}
+            selectedValue={userBeingAssignedTo?.userId || null}
+            onValueChange={(listMemberUserId) => {
+              if (listMemberUserId) {
+                setUserBeingAssignedTo(
+                  listMembers.find(
+                    (lm) => lm.userId === Number(listMemberUserId)
+                  )
+                );
+              } else {
+                setUserBeingAssignedTo({ id: null });
+              }
+            }}
+            selectTestID="select-list-member"
+          >
+            {/* Item padrão - "Ninguém em específico" */}
+            <Select.Item key={null} value={null} label={t('noOne')} />
+
+            {listMembers.map((listMember) => (
+              <Select.Item
+                key={listMember.userId}
+                value={listMember.userId}
+                label={listMember.user.name}
+              />
+            ))}
+          </LixtSelect>
+        ) : null}
 
         <Button
           isLoading={loading}

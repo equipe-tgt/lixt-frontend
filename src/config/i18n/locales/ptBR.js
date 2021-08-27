@@ -123,6 +123,8 @@ export default {
   buy: 'Comprar',
   markItem: 'Checkbox marcar item',
   markedBy: 'marcado por',
+  assignTo: 'Atribuir este item para',
+  noOne: 'Ninguém em específico',
   assignedTo: 'atribuído a',
   includedIn: 'Incluso em',
   noProductsFound:
