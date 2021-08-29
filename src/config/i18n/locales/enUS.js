@@ -123,7 +123,10 @@ export default {
   buy: 'Buy',
   markItem: 'Mark item checkbox',
   markedBy: 'checked by',
+  assignTo: 'Assign this item to',
+  noOne: 'No one in specific',
   assignedTo: 'assigned to',
+  alreadyChecked: "This item is already checked, you can't assign it anymore",
   includedIn: 'Included in',
   noProductsFound:
     "You don't have products on your list. \nWhen you add products they're going to be shown here",
@@ -135,5 +138,5 @@ export default {
   successfullySaved: 'Successfully saved',
   unsuccessfullySaved: "It wasn't possible to save it",
 
-  purchaseSaved: 'Purchase saved!'
+  purchaseSaved: 'Purchase saved!',
 };

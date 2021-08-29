@@ -4,6 +4,7 @@ import { VStack, Box, Heading } from 'native-base';
 import LixtCartProductItem from '../components/LixtCartProductItem';
 import LixtCartProductItemGeneral from '../components/LixtCartProductItemGeneral';
 import { CheckedItemsContext } from '../context/CheckedItemsProvider';
+import { useTranslation } from 'react-i18next';
 
 export default function LixtCartList({
   selectedList,
@@ -13,6 +14,7 @@ export default function LixtCartList({
 }) {
   const [itemsShownByCategory, setItemsShownByCategory] = useState({});
   const { setCheckedItems } = useContext(CheckedItemsContext);
+  const { t } = useTranslation();
 
   useEffect(() => {
     getAllTheCheckedItemsOnThisList();
@@ -70,14 +72,25 @@ export default function LixtCartList({
     }
   };
 
-  const getUserById = (userId) => {
+  const getUserById = (userToFindId) => {
     const listMembers = selectedList?.listMembers;
 
-    if (selectedList.ownerId === userId) {
+    // se o id do usuário que está sendo procurado for igual ao do
+    // usuário logado retorna o label 'você'
+    if (userToFindId === userId) {
+      return t('you').toLowerCase();
+    }
+
+    // caso o id seja igual ao do dono da lista, retorna o nome dele
+    if (selectedList.ownerId === userToFindId) {
       return selectedList.owner;
     }
 
-    const guestUser = listMembers.find((lm) => lm.userId === userId)?.user;
+    // caso não for nenhuma das alternativas acima, retorna o nome do usuário
+    // que estiver na lsita de convidados
+    const guestUser = listMembers.find(
+      (lm) => lm.userId === userToFindId
+    )?.user;
     return guestUser?.name || '';
   };
 

@@ -20,15 +20,16 @@ const LixtCartProductItem = ({
   const toast = useToast();
   const { checkItem } = useContext(CheckedItemsContext);
   const [isChecked, setIsChecked] = useState(product.isMarked);
-
-  // Desabilita o checkbox caso já esteja marcado por outro usuário ou esteja atribuído para outro
-  const [isDisabled] = useState(
-    (product.isMarked && product.userWhoMarkedId !== user.id) ||
-      (product.assignedUserId && product.assignedUserId !== user.id)
-  );
+  const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
     setIsChecked(product.isMarked);
+
+    // Desabilita o checkbox caso já esteja marcado por outro usuário ou esteja atribuído para outro
+    setIsDisabled(
+      (product.isMarked && product.userWhoMarkedId !== user.id) ||
+        (product.assignedUserId && product.assignedUserId !== user.id)
+    );
   }, [product]);
 
   const toggleProductFromSingleList = async (isSelected) => {
@@ -128,12 +129,16 @@ const LixtCartProductItem = ({
           </Box>
         )}
 
-        {product.assignedUserId && product.assignedUserId !== user.id ? (
+        {/* Se o item estiver atribuído mas não estiver marcado, mostra
+        pra quem ele está atribuído */}
+        {product.assignedUserId && !product.userWhoMarkedId ? (
           <Text fontSize="sm">
             {t('assignedTo')} {getUserById(product.assignedUserId)}
           </Text>
         ) : null}
 
+        {/* Caso ele esteja marcado e o usuário que marcou não seja o usuário logado
+        mostra quem marcou */}
         {product.isMarked && product.userWhoMarkedId !== user.id ? (
           <Text fontSize="sm">
             {t('markedBy')} {getUserById(product.userWhoMarkedId)}
