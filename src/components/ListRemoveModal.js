@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { AlertDialog, Button } from 'native-base';
 import { useTranslation } from 'react-i18next';
 
@@ -41,3 +42,7 @@ export default function ListRemoveModal(props) {
     </AlertDialog>
   );
 }
+
+ListRemoveModal.propTypes = {
+  isOpen: PropTypes.bool,
+};

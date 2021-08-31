@@ -6,12 +6,13 @@ import axios from 'axios';
 
 // eslint-disable-next-line no-undef
 const BASE_URL = __DEV__
-  ? 'http://192.168.1.181:8080'
+  ? 'http://192.168.1.190:8080'
   : 'https://lixt-ws.azurewebsites.net';
 console.log('BASE_URL: ', BASE_URL);
 
-// Para testar o endereço do backe-end em produção mas com o app em desenvolvimento descomente essa linha e comente a linha superior
-// const BASE_URL = "http://ec2co-ecsel-176ys9c8b1dae-319852006.us-east-1.elb.amazonaws.com:8080";
+// Para testar o endereço do backe-end em produção mas com o app em desenvolvimento descomente essa linha e
+// comente as linhas superiores do BASE_URL
+// const BASE_URL = "https://lixt-ws.azurewebsites.net";
 
 /**
  * Cria um objeto customizado do axios para fazer requisições
