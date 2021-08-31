@@ -86,10 +86,19 @@ export default function NewProductScreen(props) {
     };
 
     ProductService.createProduct(product, user)
-      .then(() => {
+      .then((resp) => {
         title = `Produto "${product.name}" adicionado com sucesso!`;
         status = 'success';
-        props.navigation.navigate('Lists');
+
+        const category = {
+          id: product.categoryId,
+          name: categories.find((c) => c.id === Number(product.categoryId))
+            .name,
+        };
+
+        props.navigation.navigate('Lists', {
+          newProduct: { ...resp.data, category },
+        });
       })
       .catch(() => {
         title = 'Não foi possível adicionar o produto';

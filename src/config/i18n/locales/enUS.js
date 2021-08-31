@@ -68,7 +68,9 @@ export default {
 
   newProduct: 'New product',
   saveList: 'Save list',
+
   deleteList: 'Delete list',
+  confirmDeleteList: 'Are you sure you want to delete this list?',
   listInfo: 'List informations',
   listHasNoDescription: 'This list has no description',
   productAlreadyOnList: 'The product is already on the list',
@@ -87,6 +89,7 @@ export default {
   save: 'Save',
   remove: 'Remove',
   removing: 'Removing',
+  cancel: 'Cancel',
 
   sendInvitation: 'Invite',
   selectList: 'Select a list',

@@ -34,6 +34,7 @@ import ProductOfListService from '../../services/ProductOfListService';
 import { AuthContext } from '../../context/AuthProvider';
 import { ListContext } from '../../context/ListProvider';
 import ListMembersService from '../../services/ListMembersService';
+import ListRemoveModal from '../../components/ListRemoveModal';
 
 export default function ListScreen(props) {
   const toast = useToast();
@@ -50,6 +51,8 @@ export default function ListScreen(props) {
   const [productsFound, setProductsFound] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingScreen, setLoadingScreen] = useState(true);
+  const [isListRemoveModalOpen, setIsListRemoveModalOpen] = useState(false);
+  const [confirmRemoval, setConfirmRemoval] = useState(false);
 
   // Ao montar o componente busca as listas
   useEffect(() => {
@@ -69,6 +72,13 @@ export default function ListScreen(props) {
         props.route.params.newList = null;
       }
 
+      // Se o usuário tiver adicionado um novo produto
+      // à plataforma, adiciona automaticamente na lista atual
+      if (props.route.params.newProduct) {
+        addToList(props.route.params.newProduct, selectedList);
+        props.route.params.newProduct = null;
+      }
+
       // Caso a tela peça para fazer refresh atualiza as listas
       if (props.route.params.refresh) {
         fetchLists();
@@ -76,6 +86,15 @@ export default function ListScreen(props) {
       }
     }
   });
+
+  // Ao fechar o modal de confirmação de deleção da lista, verifica se o
+  // usuário confirmou a deleção, caso sim: deleta, do contrário não
+  // dispara nenhum efeito colateral
+  useEffect(() => {
+    if (confirmRemoval) {
+      deleteList();
+    }
+  }, [isListRemoveModalOpen]);
 
   const fetchLists = async () => {
     try {
@@ -267,7 +286,7 @@ export default function ListScreen(props) {
   };
 
   const listItemsByCategory = () => {
-    if (selectedList && selectedList.productsOfList) {
+    if (selectedList && selectedList?.productsOfList) {
       // Agrupa os produtos por categorias
       const groupedProducts = selectedList.productsOfList.reduce(
         (accumlator, currentProductOfList) => {
@@ -382,10 +401,10 @@ export default function ListScreen(props) {
                 </Menu.Item>
                 <Menu.Item
                   onPress={() => {
-                    deleteList();
+                    setIsListRemoveModalOpen(true);
                   }}
                 >
-                  {t('deleteList')}
+                  <Text color="red.500">{t('deleteList')}</Text>
                 </Menu.Item>
               </Box>
             ) : (
@@ -466,30 +485,30 @@ export default function ListScreen(props) {
             {/* Itera por cada categoria dos produtos */}
             {Object.keys(listItemsByCategory()).length > 0
               ? Object.keys(listItemsByCategory()).map((category, index) => {
-                  return (
-                    <Box key={index} my={3}>
-                      <Heading
-                        style={{ textTransform: 'uppercase', letterSpacing: 4 }}
-                        mb={2}
-                        fontWeight="normal"
-                        size="sm"
-                      >
-                        {category}
-                      </Heading>
+                return (
+                  <Box key={index} my={3}>
+                    <Heading
+                      style={{ textTransform: 'uppercase', letterSpacing: 4 }}
+                      mb={2}
+                      fontWeight="normal"
+                      size="sm"
+                    >
+                      {category}
+                    </Heading>
 
-                      {/* Mostra todos os produtos pertencentes àquela categoria */}
-                      {listItemsByCategory()[category].map((p) => (
-                        <LixtProductItem
-                          key={p.id}
-                          product={p}
-                          idSelectedList={selectedList.id}
-                          deleteFromList={deleteProductOfList}
-                          navigate={props.navigation.navigate}
-                        />
-                      ))}
-                    </Box>
-                  );
-                })
+                    {/* Mostra todos os produtos pertencentes àquela categoria */}
+                    {listItemsByCategory()[category].map((p) => (
+                      <LixtProductItem
+                        key={p.id}
+                        product={p}
+                        idSelectedList={selectedList.id}
+                        deleteFromList={deleteProductOfList}
+                        navigate={props.navigation.navigate}
+                      />
+                    ))}
+                  </Box>
+                );
+              })
               : null}
           </VStack>
         </ScrollView>
@@ -507,6 +526,16 @@ export default function ListScreen(props) {
             {t('createMyFirstList')}
           </Button>
         </Center>
+      )}
+
+      {isListRemoveModalOpen && (
+        <ListRemoveModal
+          isOpen={isListRemoveModalOpen}
+          closeModal={(val) => {
+            setConfirmRemoval(val);
+            setIsListRemoveModalOpen(false);
+          }}
+        />
       )}
     </SafeAreaView>
   ) : (
