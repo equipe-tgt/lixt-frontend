@@ -68,7 +68,7 @@ export default {
 
   newProduct: 'New product',
   saveList: 'Save list',
-  
+
   deleteList: 'Delete list',
   confirmDeleteList: 'Are you sure you want to delete this list?',
   listInfo: 'List informations',

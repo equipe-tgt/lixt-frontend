@@ -87,7 +87,7 @@ export default function ListScreen(props) {
     }
   });
 
-  // Ao fechar o modal de confirmação de deleção da lista, verifica se o 
+  // Ao fechar o modal de confirmação de deleção da lista, verifica se o
   // usuário confirmou a deleção, caso sim: deleta, do contrário não
   // dispara nenhum efeito colateral
   useEffect(() => {
@@ -221,9 +221,6 @@ export default function ListScreen(props) {
     };
 
     try {
-
-      console.log(productOfList, user);
-
       const { data } = await ProductOfListService.createProductOfList(
         productOfList,
         user
@@ -404,7 +401,7 @@ export default function ListScreen(props) {
                 </Menu.Item>
                 <Menu.Item
                   onPress={() => {
-                    setIsListRemoveModalOpen(true)
+                    setIsListRemoveModalOpen(true);
                   }}
                 >
                   <Text color="red.500">{t('deleteList')}</Text>
@@ -531,14 +528,15 @@ export default function ListScreen(props) {
         </Center>
       )}
 
-      {isListRemoveModalOpen &&
+      {isListRemoveModalOpen && (
         <ListRemoveModal
           isOpen={isListRemoveModalOpen}
           closeModal={(val) => {
             setConfirmRemoval(val);
             setIsListRemoveModalOpen(false);
-          }} />}
-
+          }}
+        />
+      )}
     </SafeAreaView>
   ) : (
     <Center style={style.container}>

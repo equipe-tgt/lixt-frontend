@@ -72,7 +72,6 @@ export default function NewProductScreen(props) {
       });
   };
 
-
   const addProduct = async () => {
     setLoading(true);
 
@@ -93,10 +92,13 @@ export default function NewProductScreen(props) {
 
         const category = {
           id: product.categoryId,
-          name: categories.find(c => c.id === Number(product.categoryId)).name
-        }
+          name: categories.find((c) => c.id === Number(product.categoryId))
+            .name,
+        };
 
-        props.navigation.navigate('Lists', { newProduct: { ...resp.data, category } });
+        props.navigation.navigate('Lists', {
+          newProduct: { ...resp.data, category },
+        });
       })
       .catch(() => {
         title = 'Não foi possível adicionar o produto';
