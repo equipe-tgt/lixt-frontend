@@ -333,7 +333,7 @@ export default function ListScreen(props) {
             setSelectedList(lists.find((list) => list.id === Number(listId)));
             storeListId(listId);
           }}
-          isDisabled={lists.length === 0}
+          isDisabled={lists?.length === 0}
         >
           {lists.map((list) => (
             <Select.Item key={list.id} value={list.id} label={list.nameList} />
@@ -349,7 +349,7 @@ export default function ListScreen(props) {
         />
 
         {/* Menu de contexto */}
-        {lists.length && selectedList?.id ? (
+        {lists?.length && selectedList?.id ? (
           <Menu
             placement="bottom left"
             trigger={(triggerProps) => {
@@ -417,7 +417,7 @@ export default function ListScreen(props) {
       </HStack>
 
       {/* Se o usuário possuir listas as mostra, caso não mostre um botão para adicionar a primeira lista */}
-      {lists.length > 0 ? (
+      {lists?.length > 0 ? (
         <ScrollView
           keyboardShouldPersistTaps="always"
           refreshControl={
@@ -485,30 +485,30 @@ export default function ListScreen(props) {
             {/* Itera por cada categoria dos produtos */}
             {Object.keys(listItemsByCategory()).length > 0
               ? Object.keys(listItemsByCategory()).map((category, index) => {
-                return (
-                  <Box key={index} my={3}>
-                    <Heading
-                      style={{ textTransform: 'uppercase', letterSpacing: 4 }}
-                      mb={2}
-                      fontWeight="normal"
-                      size="sm"
-                    >
-                      {category}
-                    </Heading>
+                  return (
+                    <Box key={index} my={3}>
+                      <Heading
+                        style={{ textTransform: 'uppercase', letterSpacing: 4 }}
+                        mb={2}
+                        fontWeight="normal"
+                        size="sm"
+                      >
+                        {category}
+                      </Heading>
 
-                    {/* Mostra todos os produtos pertencentes àquela categoria */}
-                    {listItemsByCategory()[category].map((p) => (
-                      <LixtProductItem
-                        key={p.id}
-                        product={p}
-                        idSelectedList={selectedList.id}
-                        deleteFromList={deleteProductOfList}
-                        navigate={props.navigation.navigate}
-                      />
-                    ))}
-                  </Box>
-                );
-              })
+                      {/* Mostra todos os produtos pertencentes àquela categoria */}
+                      {listItemsByCategory()[category].map((p) => (
+                        <LixtProductItem
+                          key={p.id}
+                          product={p}
+                          idSelectedList={selectedList.id}
+                          deleteFromList={deleteProductOfList}
+                          navigate={props.navigation.navigate}
+                        />
+                      ))}
+                    </Box>
+                  );
+                })
               : null}
           </VStack>
         </ScrollView>
