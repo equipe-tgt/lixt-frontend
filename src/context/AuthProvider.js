@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
     // Chama o serviço de autenticação
     const responseAuth = await AuthService.doLogin(username, password);
     const accessToken = responseAuth.data.access_token;
+    const refreshToken = responseAuth.data.refresh_token;
 
     // Chama o serviço de usuário para pegar os detalhes do usuário que acabou de logar
     const responseUser = await UserService.getUser(accessToken);
@@ -29,19 +30,22 @@ export const AuthProvider = ({ children }) => {
       token: accessToken,
     });
 
-    // Adicionar nome e senha no async Storage o que nos permitirá logar o usuário assim que
-    // ele abrir novamente a aplicação
-    await AsyncStorage.setItem('user', JSON.stringify({ username, password }));
+    // Adiciona os tokens (o token atual e o token de renovação após expirar o primeiro) no AsyncStorage
+    // o que nos permitirá setar o usuário assim que ele abrir novamente a aplicação
+    await AsyncStorage.setItem(
+      'tokens',
+      JSON.stringify({ accessToken, refreshToken })
+    );
   };
 
   const logout = () => {
     setUser(null);
-    AsyncStorage.removeItem('user');
+    AsyncStorage.removeItem('tokens');
     AsyncStorage.removeItem('lastSelectedList');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

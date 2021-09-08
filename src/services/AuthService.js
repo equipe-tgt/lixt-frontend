@@ -23,6 +23,21 @@ const AuthService = {
       },
     });
   },
+
+  refreshToken: (refreshToken) => {
+    const dataForRefresh = new FormData();
+    dataForRefresh.append('refresh_token', refreshToken);
+    dataForRefresh.append('grant_type', 'refresh_token');
+
+    return BaseService.post('/oauth/token', dataForRefresh, {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        Authorization: `Basic ${Base64.btoa(STRING_API_AUTH)}`,
+      },
+    });
+  },
 };
 
 export default AuthService;

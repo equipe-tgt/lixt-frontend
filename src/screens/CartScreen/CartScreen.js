@@ -53,7 +53,7 @@ export default function CartScreen(props) {
   }, [isFocused]);
 
   useEffect(() => {
-    if (isFocused) {
+    if (isFocused && lists) {
       if (selectedList?.id === 'view-all') {
         setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
       } else {
@@ -78,12 +78,13 @@ export default function CartScreen(props) {
     setRefreshing(true);
     try {
       const { data } = await ListService.getListById(selectedList.id, user);
+      if (lists?.length) {
+        const editedLists = lists.map((l) =>
+          l.id === selectedList.id ? data : l
+        );
 
-      const editedLists = lists.map((l) =>
-        l.id === selectedList.id ? data : l
-      );
-
-      setLists(editedLists);
+        setLists(editedLists);
+      }
     } catch (error) {
       console.log(error);
       toast.show({
@@ -293,20 +294,21 @@ export default function CartScreen(props) {
             selectedValue={selectedList?.id}
             width="70%"
             onValueChange={handleSelectChange}
-            isDisabled={lists.length === 0}
+            isDisabled={lists?.length === 0}
           >
             <Select.Item
               key="view-all"
               value="view-all"
               label={t('seeAllItems')}
             />
-            {lists.map((list) => (
-              <Select.Item
-                key={list.id}
-                value={list.id}
-                label={list.nameList}
-              />
-            ))}
+            {lists?.length &&
+              lists?.map((list) => (
+                <Select.Item
+                  key={list.id}
+                  value={list.id}
+                  label={list.nameList}
+                />
+              ))}
           </Select>
         </Box>
         <ScrollView
