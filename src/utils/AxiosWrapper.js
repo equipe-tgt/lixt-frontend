@@ -1,5 +1,6 @@
 import { useContext, useMemo } from 'react';
 import BaseService from '../services/BaseService';
+import axios from 'axios';
 import { AuthContext } from '../context/AuthProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthService from '../services/AuthService';
@@ -45,7 +46,15 @@ const WithAxios = ({ children }) => {
               originalReq.headers[
                 'Authorization'
               ] = `Bearer ${data.access_token}`;
-              return resolve(originalReq);
+
+              // Refaz a requisição, agora com o novo token no header de Authorization
+              // e recebe a resposta
+              const originalResponse = await axios(originalReq);
+
+              // Resolve a promise com o valor recebido da resposta
+              // repassando dessa forma à requisição original o valor que ela deveria receber 
+              // caso o token não tivesse expirado
+              return resolve(originalResponse);
             } catch (error) {
               reject(error);
             }

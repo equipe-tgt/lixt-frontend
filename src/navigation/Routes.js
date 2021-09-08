@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import SplashScreen from '../screens/SplashScreen/SplashScreen';
 
 import { useToast } from 'native-base';
-import { useTranslation } from 'react-i18next';
 
 import { AuthContext } from '../context/AuthProvider';
 import UserService from '../services/UserService';
@@ -15,7 +14,6 @@ import AppTabs from './AppTabs';
 export default function Routes() {
   const { user, setUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation();
 
   useEffect(() => {
     gatherUserData();
@@ -58,10 +56,10 @@ export default function Routes() {
       if (error?.response?.status) {
         useToast().show({
           status: 'warning',
-          title: t('errorServerDefault'),
+          title: 'An unexpected error has occurred on the server',
         });
       }
-      // Se for um erro do AsynStorage
+      // Se for um erro do AsyncStorage
       else {
         setUser(null);
       }
@@ -78,6 +76,9 @@ export default function Routes() {
   // caso contrário retorne somente as telas de autenticação
   return !!user ? (
     // O componente WithAxios envolve a parte interna da aplicação, este componente
+    // modifica o BaseService de forma que todas as requisições axios que derem erro 401
+    // são interceptadas e ele tenta renovar o token do usuário: dá o refresh token,
+    // aloca o novo token no AsyncStorage e dá o setUser para o contexto
     <WithAxios>
       <AppTabs />
     </WithAxios>

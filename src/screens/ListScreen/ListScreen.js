@@ -104,7 +104,7 @@ export default function ListScreen(props) {
       // Se o array de listas tiver resultados coloque-os no
       // componente de select e atribua o primeiro resultado para a
       // variável da lista selecionada
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         setLists([...data]);
         try {
           const lastSelectedList = await AsyncStorage.getItem(
@@ -120,6 +120,8 @@ export default function ListScreen(props) {
         } catch (error) {
           console.log({ error });
         }
+      } else {
+        setLists([]);
       }
     } catch (error) {
       toast.show({
@@ -252,11 +254,13 @@ export default function ListScreen(props) {
   };
 
   const editOriginalLists = (editedList) => {
-    const editedLists = lists.map((l) =>
-      l.id === editedList.id ? editedList : l
-    );
+    if (lists?.length) {
+      const editedLists = lists.map((l) =>
+        l.id === editedList.id ? editedList : l
+      );
 
-    setLists(editedLists);
+      setLists(editedLists);
+    }
   };
 
   const deleteProductOfList = async (id) => {
@@ -335,7 +339,7 @@ export default function ListScreen(props) {
           }}
           isDisabled={lists?.length === 0}
         >
-          {lists.map((list) => (
+          {lists?.map((list) => (
             <Select.Item key={list.id} value={list.id} label={list.nameList} />
           ))}
         </Select>
