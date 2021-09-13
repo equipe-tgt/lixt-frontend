@@ -38,10 +38,16 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
-  const logout = () => {
-    setUser(null);
-    AsyncStorage.removeItem('tokens');
-    AsyncStorage.removeItem('lastSelectedList');
+  const logout = async () => {
+    try {
+      await UserService.revokeToken(user.token);
+    } catch (error) {
+      console.log({ error });
+    } finally {
+      setUser(null);
+      AsyncStorage.removeItem('tokens');
+      AsyncStorage.removeItem('lastSelectedList');
+    }
   };
 
   return (

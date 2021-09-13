@@ -5,7 +5,11 @@ const UserService = {
     return BaseService.post('/auth/register', user);
   },
   resetPassword: (email) => {
-    return BaseService.post(`/auth/forget-password/${email}`);
+    return BaseService.post(`/auth/forget-password`, email, {
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
   },
   updatePassword: (password, token) => {
     return BaseService.post('/auth/update-password', password, {
@@ -17,6 +21,13 @@ const UserService = {
   },
   getUser: (token) => {
     return BaseService.get('/auth/data-user', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+  revokeToken: (token) => {
+    return BaseService.get('/auth/revoke-token', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
