@@ -1,27 +1,17 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import {
-  Button,
-  Link,
-  Text,
-  Input,
-  FormControl,
-  Center,
-  Image,
-  Box,
-  useToast,
-} from 'native-base';
+import { Button, Link, Text, Center, Image, Box, useToast } from 'native-base';
 
 import UserService from '../../services/UserService';
 import { useTranslation } from 'react-i18next';
 import LixtInput from '../../components/LixtInput';
+import { ResetPasswordSchema } from '../../validationSchemas/index';
+import { useFormik } from 'formik';
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });
-
-import { ResetPasswordSchema } from '../../validationSchemas/index';
-import { useFormik } from 'formik';
 
 export default function ForgotPasswordScreen(props) {
   const [loading, setLoading] = useState(false);
@@ -46,7 +36,7 @@ export default function ForgotPasswordScreen(props) {
         props.navigation.navigate('Login');
       })
       .catch((error) => {
-        if (error.response.status === 404) {
+        if (error?.response?.status === 404) {
           toast.show({
             title: t('userDoesntExists'),
             status: 'warning',
@@ -111,3 +101,7 @@ export default function ForgotPasswordScreen(props) {
     </SafeAreaView>
   );
 }
+
+ForgotPasswordScreen.propTypes = {
+  navigation: PropTypes.object,
+};
