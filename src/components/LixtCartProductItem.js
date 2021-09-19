@@ -1,11 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { getMeasureType } from '../utils/measureTypes';
-import { Pressable, Box, Text, Checkbox, useToast } from 'native-base';
+import { Pressable, Box, HStack, Text, Checkbox, useToast } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AuthContext } from '../context/AuthProvider';
 import { CheckedItemsContext } from '../context/CheckedItemsProvider';
+import NumberStepperInput from './NumberStepperInput';
 import ProductOfListService from '../services/ProductOfListService';
 import { useTranslation } from 'react-i18next';
 
@@ -21,6 +22,7 @@ const LixtCartProductItem = ({
   const { checkItem } = useContext(CheckedItemsContext);
   const [isChecked, setIsChecked] = useState(product.isMarked);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [markedAmount, setMarkedAmount] = useState(product.markedAmount);
 
   useEffect(() => {
     setIsChecked(product.isMarked);
@@ -72,6 +74,76 @@ const LixtCartProductItem = ({
     }
   };
 
+  const changeMarkedAmount = async (value) => {
+    try {
+      await ProductOfListService.changeMarkedAmount(product.id, value, user);
+    } catch (error) {
+      setMarkedAmount(product.markedAmount);
+      toast.show({
+        title: t('errorServerDefault'),
+        status: 'warning',
+      });
+    }
+  };
+
+  const Amounts = () => {
+    // Exibe as quantidades do item, se o usuário tiver marcado uma
+    // quantidade diferente da planejada exibe a distinção
+    return (
+      <Box mt={1}>
+        {product.measureType === 'UNITY' ? (
+          <Box>
+            <Text>
+              {isChecked && !isDisabled && `${t('planned')}: `}
+              {product.plannedAmount} {getMeasureType(product.measureType)}
+            </Text>
+            {isChecked && !isDisabled && (
+              <Box>
+                <NumberStepperInput
+                  width={125}
+                  labelName="marked"
+                  value={markedAmount}
+                  onChange={(value) => {
+                    setMarkedAmount(value);
+                    changeMarkedAmount(value);
+                  }}
+                  min={1}
+                />
+              </Box>
+            )}
+          </Box>
+        ) : (
+          <Box>
+            <Text>
+              {isChecked && !isDisabled && `${t('planned')}: `}
+              {`${product.plannedAmount || 0} x ${
+                product.measureValue || 0
+              } ${getMeasureType(product.measureType)}`}
+            </Text>
+            {isChecked && !isDisabled && (
+              <HStack alignItems="center" width={150}>
+                <NumberStepperInput
+                  labelName="marked"
+                  width={125}
+                  value={markedAmount}
+                  onChange={(value) => {
+                    setMarkedAmount(value);
+                    changeMarkedAmount(value);
+                  }}
+                  min={1}
+                />
+                <Text mt={5}>
+                  x {product.measureValue || 0}
+                  {getMeasureType(product.measureType)}
+                </Text>
+              </HStack>
+            )}
+          </Box>
+        )}
+      </Box>
+    );
+  };
+
   return (
     <Pressable
       flexDirection="row"
@@ -101,33 +173,13 @@ const LixtCartProductItem = ({
           {product.name}
         </Text>
 
-        {product.measureType === 'UNITY' ? (
-          <Box>
-            <Text>
-              {product.amount} {getMeasureType(product.measureType)}
-            </Text>
+        <Text>
+          {product.price
+            ? `${t('currency')} ${product.price * product.amount}`
+            : `${t('currency')} 0,00`}
+        </Text>
 
-            <Text>
-              {product.price
-                ? `${t('currency')} ${product.price * product.amount}`
-                : `${t('currency')} 0,00`}
-            </Text>
-          </Box>
-        ) : (
-          <Box>
-            <Text>
-              {`${product.amount || 0} x ${
-                product.measureValue || 0
-              } ${getMeasureType(product.measureType)}`}
-            </Text>
-
-            <Text>
-              {product.price
-                ? `${t('currency')} ${product.price * product.amount}`
-                : `${t('currency')} 0,00`}
-            </Text>
-          </Box>
-        )}
+        <Amounts />
 
         {/* Se o item estiver atribuído mas não estiver marcado, mostra
         pra quem ele está atribuído */}

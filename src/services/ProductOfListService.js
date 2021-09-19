@@ -50,6 +50,14 @@ const ProductOfListService = {
       },
     });
   },
+
+  changeMarkedAmount: (id, amount, user) => {
+    return BaseService.put(`/productOfList/${id}/mark-amount/${amount}`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
 };
 
 export default ProductOfListService;

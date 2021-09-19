@@ -51,7 +51,7 @@ export default function ProductOfListDetails(props) {
   const { handleChange, handleSubmit, values, errors } = useFormik({
     initialValues: {
       price: product.price ? String(product.price) : '',
-      amount: product.amount ? String(product.amount) : '',
+      plannedAmount: product.plannedAmount ? String(product.plannedAmount) : '',
       measureType: product.measureType
         ? getMeasureType(product.measureType)
         : 'un',
@@ -92,10 +92,10 @@ export default function ProductOfListDetails(props) {
     productOfListEdited.price = values.price
       ? parseFloat(values.price.replace(',', '.'))
       : null;
-    productOfListEdited.amount =
-      !values.amount || parseInt(values.amount) <= 0
+    productOfListEdited.plannedAmount =
+      !values.plannedAmount || parseInt(values.plannedAmount) <= 0
         ? 1
-        : parseInt(values.amount);
+        : parseInt(values.plannedAmount);
     productOfListEdited.measureType = getMeasureValueByLabel(
       values.measureType
     );
@@ -236,11 +236,11 @@ export default function ProductOfListDetails(props) {
         ) : null}
 
         <FormControl my={3}>
-          <FormControl.Label>{t('amount')}</FormControl.Label>
+          <FormControl.Label>{t('plannedAmount')}</FormControl.Label>
           <Input
             keyboardType="numeric"
-            value={values.amount}
-            onChangeText={handleChange('amount')}
+            value={values.plannedAmount}
+            onChangeText={handleChange('plannedAmount')}
           />
         </FormControl>
 

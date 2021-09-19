@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { getMeasureType } from '../utils/measureTypes';
 import { Pressable, Box, Menu, Text } from 'native-base';
@@ -12,6 +12,49 @@ const LixtProductItem = ({
   deleteFromList,
 }) => {
   const { t } = useTranslation();
+  const [markedAndPlannedDiffer] = useState(
+    product.markedAmount && product.markedAmount !== product.plannedAmount
+  );
+
+  const Amounts = () => {
+    // Exibe as quantidades do item, se o usuário tiver marcado uma
+    // quantidade diferente da planejada exibe a distinção
+    return (
+      <Box mt={1}>
+        {product.measureType === 'UNITY' ? (
+          <Box>
+            <Text>
+              {markedAndPlannedDiffer && `${t('planned')}: `}
+              {product.plannedAmount} {getMeasureType(product.measureType)}
+            </Text>
+            {markedAndPlannedDiffer && (
+              <Text>
+                {`${t('marked')}: `}
+                {product.markedAmount} {getMeasureType(product.measureType)}
+              </Text>
+            )}
+          </Box>
+        ) : (
+          <Box>
+            <Text>
+              {markedAndPlannedDiffer && `${t('planned')}: `}
+              {`${product.plannedAmount || 0} x ${
+                product.measureValue || 0
+              } ${getMeasureType(product.measureType)}`}
+            </Text>
+            {markedAndPlannedDiffer && (
+              <Text>
+                {`${t('marked')}: `}
+                {`${product.markedAmount || 0} x ${
+                  product.measureValue || 0
+                } ${getMeasureType(product.measureType)}`}
+              </Text>
+            )}
+          </Box>
+        )}
+      </Box>
+    );
+  };
 
   return (
     <Pressable
@@ -29,33 +72,14 @@ const LixtProductItem = ({
     >
       <Box>
         <Text fontWeight="bold">{product.name}</Text>
-        {product.measureType === 'UNITY' ? (
-          <Box>
-            <Text>
-              {product.amount} {getMeasureType(product.measureType)}
-            </Text>
 
-            <Text>
-              {product.price
-                ? `${t('currency')} ${product.price * product.amount}`
-                : `${t('currency')} 0,00`}
-            </Text>
-          </Box>
-        ) : (
-          <Box>
-            <Text>
-              {`${product.amount || 0} x ${
-                product.measureValue || 0
-              } ${getMeasureType(product.measureType)}`}
-            </Text>
+        <Amounts />
 
-            <Text>
-              {product.price
-                ? `${t('currency')} ${product.price * product.amount}`
-                : `${t('currency')} 0,00`}
-            </Text>
-          </Box>
-        )}
+        <Text mt={1}>
+          {product.price
+            ? `${t('currency')} ${product.price * product.plannedAmount}`
+            : `${t('currency')} 0,00`}
+        </Text>
       </Box>
 
       {product.amountComment ? (

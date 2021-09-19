@@ -219,7 +219,7 @@ export default function ListScreen(props) {
       measureType,
       measureValue,
       product: value,
-      amount: 1,
+      plannedAmount: 1,
     };
 
     try {
