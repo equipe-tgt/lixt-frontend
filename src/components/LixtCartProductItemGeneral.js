@@ -74,7 +74,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
           modified.push({
             id: productOfList.id,
             price: productOfList.price,
-            amount: productOfList.amount,
+            amount: productOfList.plannedAmount,
           });
         }
 
@@ -110,11 +110,18 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
     let allPrices = 0;
 
     for (const productOfList of wrappedProduct.productsOfLists) {
-      finalAmount += productOfList.amount;
-      allPrices += productOfList.price * productOfList.amount;
+      const { markedAmount, plannedAmount, price, isMarked, userWhoMarkedId } =
+        productOfList;
 
-      if (productOfList.isMarked && productOfList.userWhoMarkedId === user.id) {
-        markedProductsAmount += productOfList.amount;
+      // Se o valor de markedAmount existir ele que é o guia
+      // caso contrário usa o valor de plannedAmount
+      const currentAmount = markedAmount || plannedAmount;
+
+      finalAmount += currentAmount;
+      allPrices += price * currentAmount;
+
+      if (isMarked && userWhoMarkedId === user.id) {
+        markedProductsAmount += markedAmount;
       }
     }
 

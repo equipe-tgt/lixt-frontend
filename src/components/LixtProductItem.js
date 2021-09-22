@@ -77,7 +77,9 @@ const LixtProductItem = ({
 
         <Text mt={1}>
           {product.price
-            ? `${t('currency')} ${product.price * product.plannedAmount}`
+            ? `${t('currency')} ${
+                product.price * (product.markedAmount || product.plannedAmount)
+              }`
             : `${t('currency')} 0,00`}
         </Text>
       </Box>

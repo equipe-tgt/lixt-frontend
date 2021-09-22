@@ -22,11 +22,7 @@ export default function NumberStepperInput({
   return (
     <FormControl>
       <FormControl.Label>{t(labelName) || labelName}</FormControl.Label>
-      <NumberInput
-        onChange={onChange}
-        testID={inputNumberStepperID}
-        {...props}
-      >
+      <NumberInput onChange={onChange} testID={inputNumberStepperID} {...props}>
         <NumberInputField h={12} />
         <NumberInputStepper h={12}>
           <NumberIncrementStepper h={6} />

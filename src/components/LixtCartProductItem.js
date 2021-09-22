@@ -52,8 +52,9 @@ const LixtCartProductItem = ({
         setIsChecked(isSelected);
         product.isMarked = isSelected;
         product.userWhoMarkedId = isSelected ? user.id : null;
+        setMarkedAmount(product.plannedAmount)
         checkItem(
-          { id: product.id, price: product.price, amount: product.amount },
+          { id: product.id, price: product.price, amount: product.plannedAmount },
           isSelected
         );
       } else if (data === 0) {
@@ -77,6 +78,7 @@ const LixtCartProductItem = ({
   const changeMarkedAmount = async (value) => {
     try {
       await ProductOfListService.changeMarkedAmount(product.id, value, user);
+      refreshList();
     } catch (error) {
       setMarkedAmount(product.markedAmount);
       toast.show({
@@ -175,7 +177,9 @@ const LixtCartProductItem = ({
 
         <Text>
           {product.price
-            ? `${t('currency')} ${product.price * product.amount}`
+            ? `${t('currency')} ${
+                product.price * (product.markedAmount || product.plannedAmount)
+              }`
             : `${t('currency')} 0,00`}
         </Text>
 
