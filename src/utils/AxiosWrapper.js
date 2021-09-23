@@ -59,9 +59,14 @@ const WithAxios = ({ children }) => {
             } catch (error) {
               reject(error);
             }
+          } else if (
+            err.response.status === 401 &&
+            err.config &&
+            err.config._retry
+          ) {
+            setUser(null);
           } else {
             reject(err);
-            setUser(null);
           }
         });
       }

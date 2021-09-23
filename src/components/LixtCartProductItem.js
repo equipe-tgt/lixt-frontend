@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { AuthContext } from '../context/AuthProvider';
 import { CheckedItemsContext } from '../context/CheckedItemsProvider';
+import { ListContext } from '../context/ListProvider';
 import NumberStepperInput from './NumberStepperInput';
 import ProductOfListService from '../services/ProductOfListService';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +19,7 @@ const LixtCartProductItem = ({
 }) => {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
+  const { setLists, lists } = useContext(ListContext);
   const toast = useToast();
   const { checkItem } = useContext(CheckedItemsContext);
   const [isChecked, setIsChecked] = useState(product.isMarked);
@@ -52,9 +54,13 @@ const LixtCartProductItem = ({
         setIsChecked(isSelected);
         product.isMarked = isSelected;
         product.userWhoMarkedId = isSelected ? user.id : null;
-        setMarkedAmount(product.plannedAmount)
+        setMarkedAmount(product.plannedAmount);
         checkItem(
-          { id: product.id, price: product.price, amount: product.plannedAmount },
+          {
+            id: product.id,
+            price: product.price,
+            amount: product.plannedAmount,
+          },
           isSelected
         );
       } else if (data === 0) {
@@ -78,7 +84,22 @@ const LixtCartProductItem = ({
   const changeMarkedAmount = async (value) => {
     try {
       await ProductOfListService.changeMarkedAmount(product.id, value, user);
-      refreshList();
+
+      // Depois da requisição edita a lista atual sem usar o refreshList()
+      // para que não seja necessário disparar uma nova requisição
+      const listId = product.listId;
+      const listIndex = lists.findIndex((list) => list.id === listId);
+
+      const editedList = lists[listIndex].productsOfList.map((p) => {
+        if (p.id === product.id) {
+          p.markedAmount = value;
+        }
+        return p;
+      });
+
+      // Substitui a lista atual com a lista editada com os valores alterados
+      setLists(lists.splice(listIndex, 1, editedList));
+
     } catch (error) {
       setMarkedAmount(product.markedAmount);
       toast.show({
