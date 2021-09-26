@@ -135,20 +135,22 @@ const LixtCartProductItem = ({
         {product.measureType === 'UNITY' ? (
           <Box>
             <Text>
-              {isChecked && !isDisabled && `${t('planned')}: `}
+              {isChecked && `${t('planned')}: `}
               {product.plannedAmount} {getMeasureType(product.measureType)}
             </Text>
-            {isChecked && !isDisabled && (
+            {isChecked && (
               <Box>
                 <NumberStepperInput
                   labelName="marked"
                   value={markedAmount}
+                  disabled={isDisabled}
                   skin="square"
                   shadow={false}
                   width={170}
                   min={1}
                   step={1}
-                  color="#0891b2"
+                  color={isDisabled ? '#e6e6e6' : '#0891b2'}
+                  buttonTextColor={isDisabled ? '#8a8a8a' : 'white'}
                   onChange={(value) => {
                     setMarkedAmount(value);
                     changeMarkedAmount(value);
@@ -160,17 +162,18 @@ const LixtCartProductItem = ({
         ) : (
           <Box>
             <Text>
-              {isChecked && !isDisabled && `${t('planned')}: `}
+              {isChecked && `${t('planned')}: `}
               {`${product.plannedAmount || 0} x ${
                 product.measureValue || 0
               } ${getMeasureType(product.measureType)}`}
             </Text>
-            {isChecked && !isDisabled && (
+            {isChecked && (
               <HStack alignItems="center" width={150}>
                 <NumberStepperInput
                   labelName="marked"
                   width={125}
                   value={markedAmount}
+                  color={!isDisabled ? '#0891b2' : '#e6e6e6'}
                   onChange={(value) => {
                     setMarkedAmount(value);
                     changeMarkedAmount(value);
@@ -239,7 +242,7 @@ const LixtCartProductItem = ({
         {/* Caso ele esteja marcado e o usuário que marcou não seja o usuário logado
         mostra quem marcou */}
         {product.isMarked && product.userWhoMarkedId !== user.id ? (
-          <Text fontSize="sm">
+          <Text fontSize="sm" mt={2}>
             {t('markedBy')} {getUserById(product.userWhoMarkedId)}
           </Text>
         ) : null}
