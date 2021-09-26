@@ -12,13 +12,14 @@ const Tabs = createBottomTabNavigator();
 export default function AppTabs() {
   return (
     <Tabs.Navigator
-      tabBarOptions={{
-        style: {
+      screenOptions={{
+        tabBarStyle: {
           height: 60,
           borderTopWidth: 0,
           shadowOpacity: 0,
           elevation: 0,
         },
+        headerShown: false
       }}
       initialRouteName="Lists"
     >

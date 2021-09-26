@@ -141,14 +141,18 @@ const LixtCartProductItem = ({
             {isChecked && !isDisabled && (
               <Box>
                 <NumberStepperInput
-                  width={125}
                   labelName="marked"
                   value={markedAmount}
+                  skin="square"
+                  shadow={false}
+                  width={170}
+                  min={1}
+                  step={1}
+                  color="#0891b2"
                   onChange={(value) => {
                     setMarkedAmount(value);
                     changeMarkedAmount(value);
                   }}
-                  min={1}
                 />
               </Box>
             )}
