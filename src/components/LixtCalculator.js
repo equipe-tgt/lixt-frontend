@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 
 export default function LixtCalculator({
   items,
-  isGeneralView,
   finishPurchase,
   loadingPurchase,
 }) {
@@ -80,7 +79,6 @@ export default function LixtCalculator({
 
 LixtCalculator.propTypes = {
   items: PropTypes.array,
-  isGeneralView: PropTypes.bool,
   loadingPurchase: PropTypes.bool,
   finishPurchase: PropTypes.func,
 };

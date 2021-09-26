@@ -71,6 +71,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
         if (data === 1) {
           productOfList.userWhoMarkedId = isSelecting ? user.id : null;
           productOfList.isMarked = isSelecting;
+
           modified.push({
             id: productOfList.id,
             price: productOfList.price,
@@ -121,7 +122,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
       allPrices += price * currentAmount;
 
       if (isMarked && userWhoMarkedId === user.id) {
-        markedProductsAmount += markedAmount;
+        markedProductsAmount += markedAmount || plannedAmount;
       }
     }
 

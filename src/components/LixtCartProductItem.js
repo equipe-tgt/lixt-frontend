@@ -21,10 +21,10 @@ const LixtCartProductItem = ({
   const { user } = useContext(AuthContext);
   const { setLists, lists } = useContext(ListContext);
   const toast = useToast();
-  const { checkItem } = useContext(CheckedItemsContext);
+  const { checkItem, changeCheckedAmount } = useContext(CheckedItemsContext);
   const [isChecked, setIsChecked] = useState(product.isMarked);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [markedAmount, setMarkedAmount] = useState(product.markedAmount);
+  const [markedAmount, setMarkedAmount] = useState(0);
 
   useEffect(() => {
     setIsChecked(product.isMarked);
@@ -34,6 +34,10 @@ const LixtCartProductItem = ({
       (product.isMarked && product.userWhoMarkedId !== user.id) ||
         (product.assignedUserId && product.assignedUserId !== user.id)
     );
+
+    if (isChecked) {
+      setMarkedAmount(product.markedAmount || product.plannedAmount);
+    }
   }, [product]);
 
   const toggleProductFromSingleList = async (isSelected) => {
@@ -54,6 +58,11 @@ const LixtCartProductItem = ({
         setIsChecked(isSelected);
         product.isMarked = isSelected;
         product.userWhoMarkedId = isSelected ? user.id : null;
+
+        if (!isSelected) {
+          product.markedAmount = null;
+        }
+
         setMarkedAmount(product.plannedAmount);
         checkItem(
           {
@@ -87,10 +96,14 @@ const LixtCartProductItem = ({
 
       // Depois da requisição edita a lista atual sem usar o refreshList()
       // para que não seja necessário disparar uma nova requisição
-      const listId = product.listId;
-      const listIndex = lists.findIndex((list) => list.id === listId);
+      const listIndex = lists.findIndex((list) => list.id === product.listId);
 
-      const editedList = lists[listIndex].productsOfList.map((p) => {
+      // Cria uma cópia da lista atual
+      const editedList = Object.assign({}, lists[listIndex]);
+
+      // Edita os productsOfList que há dentro dessa cópia, alterando o
+      // valor de itens marcados do produto atual
+      editedList.productsOfList = editedList.productsOfList.map((p) => {
         if (p.id === product.id) {
           p.markedAmount = value;
         }
@@ -98,8 +111,13 @@ const LixtCartProductItem = ({
       });
 
       // Substitui a lista atual com a lista editada com os valores alterados
-      setLists(lists.splice(listIndex, 1, editedList));
+      const editedLists = [...lists];
+      editedLists.splice(listIndex, 1, editedList);
 
+      setLists(editedLists);
+
+      // Modifica o valor de itens marcados no context da aplicação
+      changeCheckedAmount(product.id, value);
     } catch (error) {
       setMarkedAmount(product.markedAmount);
       toast.show({
