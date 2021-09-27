@@ -40,7 +40,7 @@ export default function CartScreen(props) {
     if (props.route.params) {
       // Caso a tela peça para fazer refresh atualiza as listas
       if (props.route.params.refresh) {
-        if (selectedList.id !== 'view-all') {
+        if (selectedList?.id !== 'view-all') {
           refreshIndividualList();
         }
         props.route.params.refresh = null;
@@ -54,12 +54,12 @@ export default function CartScreen(props) {
 
   useEffect(() => {
     if (isFocused && lists) {
-      if (selectedList?.id === 'view-all') {
+      if (selectedList && selectedList?.id === 'view-all') {
         setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
       } else {
-        setSelectedList(
-          lists.find((l) => Number(l.id) === Number(selectedList.id))
-        );
+        const idToFind = selectedList?.id;
+
+        setSelectedList(lists.find((l) => Number(l.id) === Number(idToFind)));
       }
     } else {
       refreshLists();
@@ -196,8 +196,15 @@ export default function CartScreen(props) {
   };
 
   const getItemOfPurchase = (productOfListOnPurchase) => {
-    const { productId, id, name, price, amount, measureType, measureValue } =
-      productOfListOnPurchase;
+    const {
+      productId,
+      id,
+      name,
+      price,
+      markedAmount,
+      measureType,
+      measureValue,
+    } = productOfListOnPurchase;
 
     return {
       id: null,
@@ -205,7 +212,7 @@ export default function CartScreen(props) {
       productId,
       name,
       price,
-      amount,
+      amount: markedAmount,
       measureType,
       measureValue,
       purchaseListId: null,
@@ -235,7 +242,7 @@ export default function CartScreen(props) {
           getItemOfPurchase(itemOnPurchase)
         );
         purchaseLists[listId].partialPurchasePrice +=
-          price * itemOnPurchase.amount;
+          price * itemOnPurchase.markedAmount;
       } else {
         // Senão, define um novo objeto para ele e atribui os valores
         purchaseLists[listId] = {};
@@ -244,7 +251,7 @@ export default function CartScreen(props) {
         purchaseLists[listId].listId = listId;
         purchaseLists[listId].purchaseId = null;
         purchaseLists[listId].partialPurchasePrice =
-          price * itemOnPurchase.amount;
+          price * itemOnPurchase.markedAmount;
         purchaseLists[listId].itemsOfPurchase = [
           getItemOfPurchase(itemOnPurchase),
         ];

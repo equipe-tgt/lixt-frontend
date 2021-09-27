@@ -87,9 +87,20 @@ export default function ListScreen(props) {
     }
   });
 
-  // Ao fechar o modal de confirmação de deleção da lista, verifica se o
-  // usuário confirmou a deleção, caso sim: deleta, do contrário não
-  // dispara nenhum efeito colateral
+  // Caso as listas do context tenham alguma atualização, atualiza os dados da lista
+  // selecionada atual.
+  useEffect(() => {
+    if (selectedList) {
+      const updatedList = lists.find((l) => l.id === selectedList?.id);
+      setSelectedList(updatedList);
+    }
+  }, [JSON.stringify(lists)]);
+
+  /**
+   * Ao fechar o modal de confirmação de deleção da lista, verifica se o
+   * usuário confirmou a deleção, caso sim: deleta, do contrário não
+   * dispara nenhum efeito colateral
+   */
   useEffect(() => {
     if (confirmRemoval) {
       deleteList();
@@ -143,6 +154,8 @@ export default function ListScreen(props) {
       // Filtra as listas depois de uma deleção ocorrer
       setLists(lists.filter((list) => list.id !== listIdToDelete));
       setSelectedList(lists[0]);
+
+      setConfirmRemoval(false);
 
       toast.show({
         title: 'Lista removida',
@@ -219,7 +232,7 @@ export default function ListScreen(props) {
       measureType,
       measureValue,
       product: value,
-      amount: 1,
+      plannedAmount: 1,
     };
 
     try {

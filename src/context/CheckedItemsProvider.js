@@ -22,6 +22,18 @@ export const CheckedItemsProvider = ({ children }) => {
     }
   };
 
+  // Altera a quantidade que foi marcado de um determinado item
+  const changeCheckedAmount = (id, amount) => {
+    setCheckedItems(
+      checkedItems.map((item) => {
+        if (item.id === id) {
+          item.amount = amount;
+        }
+        return item;
+      })
+    );
+  };
+
   const checkMultipleItems = (items, toggleOption) => {
     const copy = [...checkedItems];
     // Se o usuário passou que quer marcar vários itens, insere os que
@@ -49,6 +61,7 @@ export const CheckedItemsProvider = ({ children }) => {
         checkItem,
         checkMultipleItems,
         setCheckedItems,
+        changeCheckedAmount,
       }}
     >
       {children}

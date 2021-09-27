@@ -44,10 +44,12 @@ export default function LixtCartList({
 
     // Cria um objeto simplificado do productOfList
     items = items.map((i) => {
+      const currentAmount = i.markedAmount || i.plannedAmount;
+
       return {
         id: i.id,
         price: i.price,
-        amount: i.amount,
+        amount: currentAmount,
         listId: i.listId,
       };
     });

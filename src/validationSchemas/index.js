@@ -56,7 +56,9 @@ export const UpdatePasswordSchema = (t) =>
 
 export const ProductOfListSchema = Yup.object().shape({
   price: Yup.string().matches(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/),
-  amount: Yup.string().matches(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/),
+  plannedAmount: Yup.string().matches(
+    /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/
+  ),
   measureValue: Yup.string().matches(
     /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/
   ),

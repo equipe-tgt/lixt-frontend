@@ -76,7 +76,9 @@ export default {
 
   edit: 'Editar',
   price: 'Preço',
-  amount: 'Quantidade',
+  plannedAmount: 'Quantidade planejada',
+  planned: 'Planejados',
+  marked: 'Marcados',
   category: 'Categoria',
   finish: 'Finalizar',
   measureType: 'Unidade de medida',

@@ -9,7 +9,7 @@ const MEASURE_TYPES = {
   },
   KG: {
     value: 'KG',
-    label: 'Kg',
+    label: 'kg',
   },
   G: {
     value: 'G',

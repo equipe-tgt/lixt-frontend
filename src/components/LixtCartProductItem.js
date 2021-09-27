@@ -1,11 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { getMeasureType } from '../utils/measureTypes';
-import { Pressable, Box, Text, Checkbox, useToast } from 'native-base';
+import { Pressable, Box, HStack, Text, Checkbox, useToast } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AuthContext } from '../context/AuthProvider';
 import { CheckedItemsContext } from '../context/CheckedItemsProvider';
+import { ListContext } from '../context/ListProvider';
+import NumberStepperInput from './NumberStepperInput';
 import ProductOfListService from '../services/ProductOfListService';
 import { useTranslation } from 'react-i18next';
 
@@ -17,10 +19,12 @@ const LixtCartProductItem = ({
 }) => {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
+  const { setLists, lists } = useContext(ListContext);
   const toast = useToast();
-  const { checkItem } = useContext(CheckedItemsContext);
+  const { checkItem, changeCheckedAmount } = useContext(CheckedItemsContext);
   const [isChecked, setIsChecked] = useState(product.isMarked);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [markedAmount, setMarkedAmount] = useState(0);
 
   useEffect(() => {
     setIsChecked(product.isMarked);
@@ -30,6 +34,10 @@ const LixtCartProductItem = ({
       (product.isMarked && product.userWhoMarkedId !== user.id) ||
         (product.assignedUserId && product.assignedUserId !== user.id)
     );
+
+    if (isChecked) {
+      setMarkedAmount(product.markedAmount || product.plannedAmount);
+    }
   }, [product]);
 
   const toggleProductFromSingleList = async (isSelected) => {
@@ -50,8 +58,18 @@ const LixtCartProductItem = ({
         setIsChecked(isSelected);
         product.isMarked = isSelected;
         product.userWhoMarkedId = isSelected ? user.id : null;
+
+        if (!isSelected) {
+          product.markedAmount = null;
+        }
+
+        setMarkedAmount(product.plannedAmount);
         checkItem(
-          { id: product.id, price: product.price, amount: product.amount },
+          {
+            id: product.id,
+            price: product.price,
+            amount: product.plannedAmount,
+          },
           isSelected
         );
       } else if (data === 0) {
@@ -70,6 +88,108 @@ const LixtCartProductItem = ({
         status: 'warning',
       });
     }
+  };
+
+  const changeMarkedAmount = async (value) => {
+    try {
+      await ProductOfListService.changeMarkedAmount(product.id, value, user);
+
+      // Depois da requisição edita a lista atual sem usar o refreshList()
+      // para que não seja necessário disparar uma nova requisição
+      const listIndex = lists.findIndex((list) => list.id === product.listId);
+
+      // Cria uma cópia da lista atual
+      const editedList = Object.assign({}, lists[listIndex]);
+
+      // Edita os productsOfList que há dentro dessa cópia, alterando o
+      // valor de itens marcados do produto atual
+      editedList.productsOfList = editedList.productsOfList.map((p) => {
+        if (p.id === product.id) {
+          p.markedAmount = value;
+        }
+        return p;
+      });
+
+      // Substitui a lista atual com a lista editada com os valores alterados
+      const editedLists = [...lists];
+      editedLists.splice(listIndex, 1, editedList);
+
+      setLists(editedLists);
+
+      // Modifica o valor de itens marcados no context da aplicação
+      changeCheckedAmount(product.id, value);
+    } catch (error) {
+      setMarkedAmount(product.markedAmount);
+      toast.show({
+        title: t('errorServerDefault'),
+        status: 'warning',
+      });
+    }
+  };
+
+  const Amounts = () => {
+    // Exibe as quantidades do item, se o usuário tiver marcado uma
+    // quantidade diferente da planejada exibe a distinção
+    return (
+      <Box mt={1}>
+        {product.measureType === 'UNITY' ? (
+          <Box>
+            <Text>
+              {isChecked && `${t('planned')}: `}
+              {product.plannedAmount} {getMeasureType(product.measureType)}
+            </Text>
+            {isChecked && (
+              <Box>
+                <NumberStepperInput
+                  labelName="marked"
+                  value={markedAmount}
+                  disabled={isDisabled}
+                  skin="square"
+                  shadow={false}
+                  width={170}
+                  min={1}
+                  step={1}
+                  color={isDisabled ? '#e6e6e6' : '#0891b2'}
+                  buttonTextColor={isDisabled ? '#8a8a8a' : 'white'}
+                  onChange={(value) => {
+                    setMarkedAmount(value);
+                    changeMarkedAmount(value);
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
+        ) : (
+          <Box>
+            <Text>
+              {isChecked && `${t('planned')}: `}
+              {`${product.plannedAmount || 0} x ${
+                product.measureValue || 0
+              } ${getMeasureType(product.measureType)}`}
+            </Text>
+            {isChecked && (
+              <HStack alignItems="center" width={150}>
+                <NumberStepperInput
+                  labelName="marked"
+                  width={125}
+                  value={markedAmount}
+                  color={!isDisabled ? '#0891b2' : '#e6e6e6'}
+                  onChange={(value) => {
+                    setMarkedAmount(value);
+                    changeMarkedAmount(value);
+                  }}
+                  min={1}
+                />
+                <Text mt={5}>
+                  x {product.measureValue || 0}
+                  {getMeasureType(product.measureType)}
+                </Text>
+              </HStack>
+            )}
+          </Box>
+        )}
+      </Box>
+    );
   };
 
   return (
@@ -101,33 +221,15 @@ const LixtCartProductItem = ({
           {product.name}
         </Text>
 
-        {product.measureType === 'UNITY' ? (
-          <Box>
-            <Text>
-              {product.amount} {getMeasureType(product.measureType)}
-            </Text>
+        <Text>
+          {product.price
+            ? `${t('currency')} ${
+                product.price * (product.markedAmount || product.plannedAmount)
+              }`
+            : `${t('currency')} 0,00`}
+        </Text>
 
-            <Text>
-              {product.price
-                ? `${t('currency')} ${product.price * product.amount}`
-                : `${t('currency')} 0,00`}
-            </Text>
-          </Box>
-        ) : (
-          <Box>
-            <Text>
-              {`${product.amount || 0} x ${
-                product.measureValue || 0
-              } ${getMeasureType(product.measureType)}`}
-            </Text>
-
-            <Text>
-              {product.price
-                ? `${t('currency')} ${product.price * product.amount}`
-                : `${t('currency')} 0,00`}
-            </Text>
-          </Box>
-        )}
+        <Amounts />
 
         {/* Se o item estiver atribuído mas não estiver marcado, mostra
         pra quem ele está atribuído */}
@@ -140,7 +242,7 @@ const LixtCartProductItem = ({
         {/* Caso ele esteja marcado e o usuário que marcou não seja o usuário logado
         mostra quem marcou */}
         {product.isMarked && product.userWhoMarkedId !== user.id ? (
-          <Text fontSize="sm">
+          <Text fontSize="sm" mt={2}>
             {t('markedBy')} {getUserById(product.userWhoMarkedId)}
           </Text>
         ) : null}

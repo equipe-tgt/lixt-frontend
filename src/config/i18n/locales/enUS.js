@@ -77,7 +77,9 @@ export default {
 
   edit: 'Edit',
   price: 'Price',
-  amount: 'Amount',
+  plannedAmount: 'Planned amount',
+  planned: 'Planned',
+  marked: 'Marked',
   category: 'Category',
   finish: 'Finish',
   measureType: 'Measure type',

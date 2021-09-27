@@ -12,18 +12,19 @@ const Tabs = createBottomTabNavigator();
 export default function AppTabs() {
   return (
     <Tabs.Navigator
-      tabBarOptions={{
-        style: {
+      screenOptions={{
+        tabBarStyle: {
           height: 60,
           borderTopWidth: 0,
           shadowOpacity: 0,
           elevation: 0,
         },
+        headerShown: false,
       }}
-      initialRouteName="Lists"
+      initialRouteName="ListsStack"
     >
       <Tabs.Screen
-        name="Lists"
+        name="ListsStack"
         component={ListStack}
         options={{
           tabBarIcon: ({ color, size }) => {
@@ -35,7 +36,7 @@ export default function AppTabs() {
         }}
       />
       <Tabs.Screen
-        name="Purchase"
+        name="PurchaseStack"
         component={PurchaseStack}
         options={{
           headerShown: false,
@@ -49,7 +50,7 @@ export default function AppTabs() {
       />
 
       <Tabs.Screen
-        name="Profile"
+        name="ProfileStack"
         component={ProfileStack}
         options={{
           tabBarIcon: ({ color, size }) => {
