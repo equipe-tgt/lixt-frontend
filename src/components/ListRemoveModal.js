@@ -8,6 +8,7 @@ export default function ListRemoveModal(props) {
 
   return (
     <AlertDialog
+      testID="remove-list-modal"
       isOpen={props.isOpen}
       onClose={() => {
         props.closeModal(false);
@@ -30,6 +31,7 @@ export default function ListRemoveModal(props) {
           </Button>
           <Button
             colorScheme="red"
+            testID="button-confirm-removal"
             onPress={() => {
               props.closeModal(true);
             }}

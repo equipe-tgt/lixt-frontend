@@ -344,6 +344,7 @@ export default function ListScreen(props) {
       >
         {/* Select de listas no header */}
         <Select
+          testID="select-current-list"
           selectedValue={selectedList?.id}
           width="70%"
           onValueChange={(listId) => {
@@ -358,6 +359,7 @@ export default function ListScreen(props) {
         </Select>
         {/* Botão nova lista */}
         <Button
+          testID="create-list"
           variant="link"
           startIcon={<Ionicons name="add-circle" size={35} color="#06b6d4" />}
           onPress={() => {
@@ -371,7 +373,7 @@ export default function ListScreen(props) {
             placement="bottom left"
             trigger={(triggerProps) => {
               return (
-                <Pressable {...triggerProps}>
+                <Pressable testID="list-options" {...triggerProps}>
                   <Ionicons
                     size={20}
                     color="#27272a"
@@ -417,6 +419,7 @@ export default function ListScreen(props) {
                   {t('sendInvitation')}
                 </Menu.Item>
                 <Menu.Item
+                  testID="delete-option"
                   onPress={() => {
                     setIsListRemoveModalOpen(true);
                   }}
@@ -536,6 +539,7 @@ export default function ListScreen(props) {
             onPress={() => {
               props.navigation.navigate('NewList');
             }}
+            testID="create-first-list"
             marginTop={5}
             paddingX={20}
             paddingY={4}
