@@ -1,15 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInputMask } from 'react-native-masked-text';
-import { FormControl } from 'native-base';
+import { FormControl, Text } from 'native-base';
 import { useTranslation } from 'react-i18next';
 
-export default function LixtNumberInput({ onChangeText, labelName, ...props }) {
+export default function LixtNumberInput({ onChangeText, labelName, hasHelperText, error, ...props }) {
   const { t } = useTranslation();
   return (
     <FormControl>
       <FormControl.Label>{t(labelName) || labelName}</FormControl.Label>
       <TextInputMask
+        {...props}
         style={{
           borderColor: '#e4e4e7',
           borderWidth: 1,
@@ -22,13 +23,25 @@ export default function LixtNumberInput({ onChangeText, labelName, ...props }) {
           paddingVertical: 12,
         }}
         type={'only-numbers'}
-        {...props}
         onChangeText={onChangeText}
       />
+      {
+        hasHelperText ? (
+          <FormControl.HelperText>
+            <Text
+              style={error ? { color: '#fb7185' } : { display: 'none' }}
+            >
+              {error}
+            </Text>
+          </FormControl.HelperText>
+        ) : null
+      }
     </FormControl>
   );
 }
 LixtNumberInput.propTypes = {
+  hasHelperText: PropTypes.bool,
   labelName: PropTypes.string,
+  error: PropTypes.string,
   onChangeText: PropTypes.func,
 };
