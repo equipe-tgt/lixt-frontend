@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import {
   FormControl,
-  Input,
   ScrollView,
   Radio,
   Button,
@@ -30,6 +29,8 @@ import { useFormik } from 'formik';
 import ProductOfListService from '../../services/ProductOfListService';
 import { AuthContext } from '../../context/AuthProvider';
 import { ListContext } from '../../context/ListProvider';
+import LixtMoneyInput from '../../components/LixtMoneyInput';
+import LixtNumberInput from '../../components/LixtNumberInput';
 
 export default function ProductOfListDetails(props) {
   const { t } = useTranslation();
@@ -171,21 +172,14 @@ export default function ProductOfListDetails(props) {
           {t('comment')}
         </Button>
 
-        <FormControl my={3}>
-          <FormControl.Label>{t('price')}</FormControl.Label>
-          <Input
-            keyboardType="numeric"
-            value={values.price}
-            onChangeText={handleChange('price')}
-          />
-          <FormControl.HelperText>
-            <Text
-              style={errors.price ? { color: '#fb7185' } : { display: 'none' }}
-            >
-              {errors.price}
-            </Text>
-          </FormControl.HelperText>
-        </FormControl>
+        <LixtMoneyInput
+          labelName="price"
+          keyboardType="numeric"
+          value={values.price}
+          onChangeText={handleChange('price')}
+          hasHelperText
+          error={errors.price}
+        />
 
         <FormControl my={3}>
           <FormControl.Label>{t('measureType')}</FormControl.Label>
@@ -214,35 +208,26 @@ export default function ProductOfListDetails(props) {
         Ex.: Produto: Arroz, unidade de medida: KG, valor da mensura: 5 = Arroz 5KG
         */}
         {values.measureType !== 'un' ? (
-          <FormControl my={3}>
-            <FormControl.Label>{t('measureValue')}</FormControl.Label>
-            <Input
-              value={values.measureValue}
+          <Box marginY={3}>
+            <LixtNumberInput
+              labelName={t('measureValue')}
               onChangeText={handleChange('measureValue')}
               keyboardType="numeric"
+              value={values.measureValue}
+              hasHelperText
+              error={errors.measureType}
             />
-            <FormControl.HelperText>
-              <Text
-                style={
-                  errors.measureValue
-                    ? { color: '#fb7185' }
-                    : { display: 'none' }
-                }
-              >
-                {errors.measureValue}
-              </Text>
-            </FormControl.HelperText>
-          </FormControl>
+          </Box>
         ) : null}
 
-        <FormControl my={3}>
-          <FormControl.Label>{t('plannedAmount')}</FormControl.Label>
-          <Input
+        <Box marginY={3}>
+          <LixtNumberInput
+            labelName={t('plannedAmount')}
+            onChangeText={handleChange('plannedAmount')}
             keyboardType="numeric"
             value={values.plannedAmount}
-            onChangeText={handleChange('plannedAmount')}
           />
-        </FormControl>
+        </Box>
 
         {/* Se o usuário logado for o dono da lista e a lista possuir membros
         dá a opção para o usuário atribuir o item à alguém */}
