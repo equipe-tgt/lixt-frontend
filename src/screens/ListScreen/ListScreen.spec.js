@@ -2,7 +2,6 @@
 import '@testing-library/jest-dom';
 import React from 'React';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
-// import userEvent from '@testing-library/user-event';
 import { NativeBaseProvider } from 'native-base';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -20,8 +19,8 @@ jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
 describe('ListScreen component', () => {
   let renderResults, getByTestId;
-  let navigationSpy, navContext, navigation, route;
-  let user, logoutFn;
+  let getListsSpy, navContext, navigation, route;
+  let user;
   let lists = [];
 
   beforeEach(() => {
@@ -47,46 +46,49 @@ describe('ListScreen component', () => {
         newList: null,
       },
     };
-
-    renderResults = render(
-      <AuthContext.Provider
-        value={{
-          user,
-          login: () => {},
-          logout: () => {},
-        }}
-      >
-        <ListContext.Provider
-          value={{
-            lists,
-            setLists: (value) => {
-              lists = [...value];
-            },
-          }}
-        >
-          <SafeAreaProvider
-            initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
-          >
-            <NativeBaseProvider>
-              <NavigationContext.Provider value={navContext}>
-                <List navigation={navigation} route={route} />
-              </NavigationContext.Provider>
-            </NativeBaseProvider>
-          </SafeAreaProvider>
-        </ListContext.Provider>
-      </AuthContext.Provider>
-    );
-
-    getByTestId = renderResults.getByTestId;
   });
 
   describe("when the user doesn't have lists", () => {
     it('should show a button to create a new list', async () => {
       lists = [];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [] };
-      });
+      getListsSpy = jest.spyOn(ListService, 'getLists');
+      getListsSpy.mockReturnValue(
+        Promise.resolve({
+          data: [],
+        })
+      );
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
 
       const buttonCreateFirstList = await waitFor(() =>
         getByTestId('create-first-list')
@@ -100,9 +102,43 @@ describe('ListScreen component', () => {
     it('should redirect the application to the "New List" page', async () => {
       lists = [];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [] };
-      });
+      getListsSpy = jest.spyOn(ListService, 'getLists');
+      getListsSpy.mockReturnValue(
+        Promise.resolve({
+          data: [],
+        })
+      );
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
 
       const buttonCreateFirstList = await waitFor(() =>
         getByTestId('create-first-list')
@@ -134,6 +170,37 @@ describe('ListScreen component', () => {
         return { data: [...fabricatedLists] };
       });
 
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
+
       const buttonNewList = await waitFor(() => getByTestId('create-list'));
 
       fireEvent.press(buttonNewList);
@@ -144,7 +211,7 @@ describe('ListScreen component', () => {
 
   describe('when clicks the "Delete list" button', () => {
     it('should show a confirmation dialog', async () => {
-      const renderResultsForDelete = render(
+      renderResults = render(
         <AuthContext.Provider
           value={{
             user,
@@ -183,9 +250,9 @@ describe('ListScreen component', () => {
         </AuthContext.Provider>
       );
 
-      const getByTestIdForDelete = renderResultsForDelete.getByTestId;
+      const getByTestId = renderResults.getByTestId;
 
-      const getListsSpy = jest.spyOn(ListService, 'getLists');
+      getListsSpy = jest.spyOn(ListService, 'getLists');
       getListsSpy.mockReturnValue(
         Promise.resolve({
           data: [
@@ -202,20 +269,96 @@ describe('ListScreen component', () => {
         })
       );
 
-      const options = await waitFor(() => getByTestIdForDelete('list-options'));
+      const options = await waitFor(() => getByTestId('list-options'));
       fireEvent.press(options);
 
-      const deleteOption = await waitFor(() =>
-        getByTestIdForDelete('delete-option')
-      );
+      const deleteOption = await waitFor(() => getByTestId('delete-option'));
 
       await waitFor(() => fireEvent.press(deleteOption));
 
       const listRemoveModal = await waitFor(() =>
-        getByTestIdForDelete('remove-list-modal')
+        getByTestId('remove-list-modal')
       );
 
       expect(listRemoveModal).toBeDefined();
+    });
+
+    it('should remove list when confirmed', async () => {
+      const setListsFn = jest.fn(() => lists.filter((list) => list.id !== 1));
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists: [
+                {
+                  id: 1,
+                  nameList: 'Lista I',
+                  ownerId: 1,
+                  owner: 'Fulano',
+                  description: '',
+                  productsOfList: [],
+                  listMembers: [],
+                },
+              ],
+              setLists: setListsFn,
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      const { getByTestId, getByText } = renderResults;
+
+      getListsSpy = jest.spyOn(ListService, 'getLists');
+      getListsSpy.mockReturnValue(
+        Promise.resolve({
+          data: [
+            {
+              id: 1,
+              nameList: 'Lista I',
+              ownerId: 1,
+              owner: 'Fulano',
+              description: '',
+              productsOfList: [],
+              listMembers: [],
+            },
+          ],
+        })
+      );
+
+      const deleteListSpy = jest.spyOn(ListService, 'deleteList');
+      deleteListSpy.mockReturnValue(Promise.resolve());
+
+      const options = await waitFor(() => getByTestId('list-options'));
+      fireEvent.press(options);
+
+      const deleteOption = await waitFor(() => getByTestId('delete-option'));
+
+      await waitFor(() => fireEvent.press(deleteOption));
+
+      const buttonListRemoval = await waitFor(() =>
+        getByTestId('button-confirm-removal')
+      );
+
+      fireEvent.press(buttonListRemoval);
+
+      expect(setListsFn.length).toBe(0);
     });
   });
 });

@@ -539,10 +539,10 @@ export default function ListScreen(props) {
             onPress={() => {
               props.navigation.navigate('NewList');
             }}
-            testID="create-first-list"
             marginTop={5}
             paddingX={20}
             paddingY={4}
+            testID="create-first-list"
           >
             {t('createMyFirstList')}
           </Button>
