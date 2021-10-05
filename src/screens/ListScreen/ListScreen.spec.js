@@ -323,7 +323,7 @@ describe('ListScreen component', () => {
         </AuthContext.Provider>
       );
 
-      const { getByTestId, getByText } = renderResults;
+      const { getByTestId } = renderResults;
 
       getListsSpy = jest.spyOn(ListService, 'getLists');
       getListsSpy.mockReturnValue(
