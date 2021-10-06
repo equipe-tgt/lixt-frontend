@@ -66,7 +66,6 @@ export default function CommentaryScreen(props) {
       globalCommentsArray.sort((a, b) => new Date(b.date) > new Date(a.date));
       setCommentaries(commentsArray);
       setGlobalCommentaries(globalCommentsArray);
-      console.log({ globalCommentsArray });
     } catch (error) {
       toast.show({
         title: 'Não foi possível buscar os comentários',
