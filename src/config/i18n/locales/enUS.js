@@ -123,6 +123,7 @@ export default {
   commentaries: 'Commentaries',
   comment: 'Comment',
   commentaryPlaceholder: 'Buy it until friday',
+  globalCommentary: "Global commentary?",
   seeAllItems: 'All items',
 
   buy: 'Buy',
