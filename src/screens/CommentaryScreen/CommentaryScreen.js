@@ -103,7 +103,6 @@ export default function CommentaryScreen(props) {
       status = 'success';
       title = 'Comentário adicionado';
     } catch (error) {
-      console.log(error);
       status = 'warning';
       title = 'Não foi possível adicionar o comentário';
     } finally {
@@ -142,7 +141,6 @@ export default function CommentaryScreen(props) {
       status = 'success';
       title = 'Comentário adicionado';
     } catch (error) {
-      console.log(error);
       status = 'warning';
       title = 'Não foi possível adicionar o comentário';
     } finally {
