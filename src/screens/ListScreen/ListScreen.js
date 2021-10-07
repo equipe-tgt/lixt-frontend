@@ -201,7 +201,10 @@ export default function ListScreen(props) {
         const { data } = await ProductService.getProductByName(value, user);
         setProductsFound(data);
       } catch (error) {
-        console.log(error.response);
+        toast.show({
+          title: t('errorServerDefault'),
+          status: 'warning',
+        });
       }
     } else {
       setProductsFound([]);
@@ -453,6 +456,7 @@ export default function ListScreen(props) {
             <FormControl>
               <FormControl.Label>{t('search')}</FormControl.Label>
               <Input
+                testID="input-search-product"
                 value={productName}
                 onChangeText={(value) => {
                   setProductName(value);
@@ -471,6 +475,7 @@ export default function ListScreen(props) {
                 <ScrollView keyboardShouldPersistTaps="always">
                   {productsFound.map((product) => (
                     <List.Item
+                      testID="products-found"
                       py={4}
                       key={product.id}
                       onPress={() => {
@@ -489,6 +494,7 @@ export default function ListScreen(props) {
             {productName.length > 3 && productsFound.length === 0 ? (
               <List borderBottomRadius={3} space="md">
                 <List.Item
+                  testID="option-add-new-product"
                   _pressed={{ bg: 'primary.500' }}
                   onPress={() => {
                     props.navigation.navigate('NewProduct', {
