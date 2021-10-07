@@ -83,7 +83,7 @@ export default function CommentaryScreen(props) {
     const comment = {
       content: newCommentary,
       userId: user.id,
-      productId: product.id
+      productId: product.productId
     }
 
     let title;
