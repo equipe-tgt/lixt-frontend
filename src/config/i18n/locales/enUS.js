@@ -65,6 +65,8 @@ export default {
 
   createMyFirstList: 'Create my first list!',
   loadingLists: 'Loading your lists...',
+  listRemoved: 'List removed',
+  couldntRemoveList: "It wasn't possible to remove the list",
 
   newProduct: 'New product',
   saveList: 'Save list',
@@ -74,6 +76,8 @@ export default {
   listInfo: 'List informations',
   listHasNoDescription: 'This list has no description',
   productAlreadyOnList: 'The product is already on the list',
+  itemWasRemoved: 'Item was removed',
+  couldntRemoveItem: "It wasn't possible to remove the item",
 
   edit: 'Edit',
   price: 'Price',
@@ -109,6 +113,8 @@ export default {
   youAccepted: 'You accepted this invitation',
   youRejected: 'You rejected this invitation',
   noInvitationsFound: 'No invitations were found',
+  youLeft: 'You left the list',
+
   isTheListOwner: 'is the list owner',
   youAreTheListOwner: 'you are the list owner',
   leaveList: 'Leave list',

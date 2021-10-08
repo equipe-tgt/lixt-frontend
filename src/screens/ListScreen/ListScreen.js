@@ -158,12 +158,12 @@ export default function ListScreen(props) {
       setConfirmRemoval(false);
 
       toast.show({
-        title: 'Lista removida',
+        title: t('listRemoved'),
         status: 'info',
       });
     } catch (error) {
       toast.show({
-        title: 'Não foi possível deletar esta lista',
+        title: t('couldntRemoveList'),
         status: 'warning',
       });
     }
@@ -185,7 +185,7 @@ export default function ListScreen(props) {
 
       toast.show({
         status: 'success',
-        title: 'Você saiu da lista',
+        title: t('youLeft'),
       });
     } catch (error) {
       toast.show({
@@ -201,6 +201,7 @@ export default function ListScreen(props) {
         const { data } = await ProductService.getProductByName(value, user);
         setProductsFound(data);
       } catch (error) {
+        console.log({ error });
         toast.show({
           title: t('errorServerDefault'),
           status: 'warning',
@@ -293,13 +294,13 @@ export default function ListScreen(props) {
       editOriginalLists(objCopy);
 
       toast.show({
-        title: 'Item foi removido da lista',
+        title: t('itemWasRemoved'),
         status: 'info',
       });
     } catch (error) {
       console.log({ error });
       toast.show({
-        title: 'Não foi possível remover o item da lista',
+        title: t('couldntRemoveItem'),
         status: 'warning',
       });
     }
@@ -328,6 +329,7 @@ export default function ListScreen(props) {
       await AsyncStorage.setItem('lastSelectedList', String(listId));
     } catch (error) {
       console.log({ error });
+      return null;
     }
   };
 
@@ -432,7 +434,9 @@ export default function ListScreen(props) {
               </Box>
             ) : (
               <Box>
-                <Menu.Item onPress={leaveList}>{t('leaveList')}</Menu.Item>
+                <Menu.Item testID="leave-list-option" onPress={leaveList}>
+                  {t('leaveList')}
+                </Menu.Item>
               </Box>
             )}
           </Menu>

@@ -102,7 +102,11 @@ const LixtProductItem = ({
       <Menu
         trigger={(triggerProps) => {
           return (
-            <Pressable p={3} {...triggerProps}>
+            <Pressable
+              testID="product-item-context-menu"
+              p={3}
+              {...triggerProps}
+            >
               <Ionicons size={18} color="#27272a" name="ellipsis-vertical" />
             </Pressable>
           );
