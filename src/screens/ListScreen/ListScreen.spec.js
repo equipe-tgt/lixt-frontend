@@ -815,15 +815,12 @@ describe('ListScreen component', () => {
       );
 
       getByTestId = renderResults.getByTestId;
-      getByText = renderResults.getByText;
 
       const inputSearchProduct = await waitFor(() =>
         getByTestId('input-search-product')
       );
 
-      await waitFor(() => {
-        fireEvent.changeText(inputSearchProduct, 'Arroz');
-      });
+      await waitFor(() => fireEvent.changeText(inputSearchProduct, 'Arroz'));
     });
   });
 
