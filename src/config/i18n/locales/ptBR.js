@@ -127,6 +127,7 @@ export default {
   commentaries: 'Comentários',
   comment: 'Comentar',
   commentaryPlaceholder: 'Comprar suco no Extra',
+  globalCommentary: "Comentário global?",
   seeAllItems: 'Ver todos os itens',
 
   buy: 'Comprar',
