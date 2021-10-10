@@ -36,7 +36,6 @@ describe('ListScreen component', () => {
     navigation = {
       navigate: jest.fn((path) => path),
     };
-    navigationSpy = jest.spyOn(navigation, 'navigate');
 
     navContext = {
       isFocused: () => true,

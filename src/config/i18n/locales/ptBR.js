@@ -88,6 +88,8 @@ export default {
   measureType: 'Unidade de medida',
   measureValue: 'Valor da medida',
   editing: 'Editando',
+  editedWithSuccess: 'Editado com sucesso',
+  unsuccessfullyEdited: 'Não foi possível editar',
 
   creating: 'Criando',
   add: 'Adicionar',
@@ -127,7 +129,7 @@ export default {
   commentaries: 'Comentários',
   comment: 'Comentar',
   commentaryPlaceholder: 'Comprar suco no Extra',
-  globalCommentary: "Comentário global?",
+  globalCommentary: 'Comentário global?',
   seeAllItems: 'Ver todos os itens',
 
   buy: 'Comprar',

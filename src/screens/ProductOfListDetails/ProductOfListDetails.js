@@ -51,7 +51,7 @@ export default function ProductOfListDetails(props) {
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, values, errors } = useFormik({
     initialValues: {
-      price: product.price ? String(product.price) : '',
+      price: product.price || '',
       plannedAmount: product.plannedAmount ? String(product.plannedAmount) : '',
       measureType: product.measureType
         ? getMeasureType(product.measureType)
@@ -73,7 +73,7 @@ export default function ProductOfListDetails(props) {
       await ProductOfListService.editProductOfList(productOfListEdited, user);
 
       toast.show({
-        title: 'Produto editado com sucesso',
+        title: t('editedWithSuccess'),
         status: 'success',
       });
       // retorna à lista
@@ -81,7 +81,7 @@ export default function ProductOfListDetails(props) {
     } catch (error) {
       console.log({ error });
       toast.show({
-        title: 'Não foi possível editar o produto',
+        title: t('unsuccessfullyEdited'),
         status: 'warning',
       });
       setLoading(false);
@@ -90,16 +90,18 @@ export default function ProductOfListDetails(props) {
 
   const formatValuesForRequest = () => {
     const productOfListEdited = Object.assign({}, props.route.params.product);
-    productOfListEdited.price = values.price
-      ? parseFloat(values.price.replace(',', '.'))
-      : null;
+
+    productOfListEdited.price = values.price || null;
+
     productOfListEdited.plannedAmount =
       !values.plannedAmount || parseInt(values.plannedAmount) <= 0
         ? 1
         : parseInt(values.plannedAmount);
+
     productOfListEdited.measureType = getMeasureValueByLabel(
       values.measureType
     );
+
     productOfListEdited.measureValue =
       values.measureType !== 'un' ? parseInt(values.measureValue) : null;
 
@@ -162,6 +164,7 @@ export default function ProductOfListDetails(props) {
           px={0}
           mr="auto"
           variant="ghost"
+          testID="commentaries-button"
           startIcon={
             <Ionicons name="chatbox-outline" size={35} color="#06b6d4" />
           }
@@ -278,6 +281,7 @@ export default function ProductOfListDetails(props) {
           marginTop={5}
           paddingX={20}
           paddingY={4}
+          testID="button-finish-editing-item"
         >
           {t('finish')}
         </Button>
