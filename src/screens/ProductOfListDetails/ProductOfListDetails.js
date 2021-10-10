@@ -91,7 +91,12 @@ export default function ProductOfListDetails(props) {
   const formatValuesForRequest = () => {
     const productOfListEdited = Object.assign({}, props.route.params.product);
 
-    productOfListEdited.price = values.price || null;
+    if (values.price) {
+      productOfListEdited.price =
+        typeof values.price === 'number'
+          ? values.price
+          : parseFloat(values.price.replace(',', '.'));
+    }
 
     productOfListEdited.plannedAmount =
       !values.plannedAmount || parseInt(values.plannedAmount) <= 0
