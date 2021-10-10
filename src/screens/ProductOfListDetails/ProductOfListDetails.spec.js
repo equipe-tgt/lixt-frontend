@@ -40,7 +40,7 @@ describe('ProductOfListDetailsScreen component', () => {
       productId: 1,
       listId: 1,
       assignedUserId: 10,
-      userWhoMarkedId: null,
+      userWhoMarkedId: 10,
       name: 'Arroz',
       isMarked: true,
       plannedAmount: 10,
@@ -92,7 +92,7 @@ describe('ProductOfListDetailsScreen component', () => {
             listId: 1,
             statusListMember: 'ACCEPT',
             user: {
-              id: 10,
+              id: 12,
               name: 'Shane McCutcheon',
               username: 'shane',
               email: 'alice@gmail.com',
@@ -327,38 +327,85 @@ describe('ProductOfListDetailsScreen component', () => {
   /**
    * @todo assign user test
    */
-  describe('when user select ', () => {
-    it('should', async () => {
-      const { getByTestId } = render(
-        <AuthContext.Provider
-          value={{
-            user,
-            login: () => {},
-            logout: () => {},
-          }}
-        >
-          <ListContext.Provider
+  describe('when user is the owner of the list ', () => {
+    describe('the list has members', () => {
+      it("should be able to assign an item, if it's not marked ", async () => {
+        item = {
+          id: 10,
+          productId: 1,
+          listId: 1,
+          assignedUserId: null,
+          userWhoMarkedId: null,
+          name: 'Arroz',
+          isMarked: false,
+          plannedAmount: 10,
+          markedAmount: null,
+          price: 25.5,
+          measureValue: null,
+          measureType: 'UNITY',
+          product: {
+            id: 1,
+            name: 'Arroz',
+            userId: null,
+            categoryId: 1,
+            barcode: null,
+            measureValue: null,
+            measureType: 'UNITY',
+            category: {
+              id: 1,
+              name: 'Alimentação',
+            },
+          },
+          amountComment: 1,
+        };
+        lists[0].productsOfList = [item];
+
+        route = {
+          params: {
+            product: {
+              ...item,
+            },
+            origin: 'Lists',
+          },
+        };
+
+        const { getByTestId } = render(
+          <AuthContext.Provider
             value={{
-              lists: lists,
-              setLists: (val) => {
-                lists = [...val];
-              },
+              user,
+              login: () => {},
+              logout: () => {},
             }}
           >
-            <SafeAreaProvider
-              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            <ListContext.Provider
+              value={{
+                lists: lists,
+                setLists: (val) => {
+                  lists = [...val];
+                },
+              }}
             >
-              <NativeBaseProvider>
-                <ProductOfListDetails navigation={navigation} route={route} />
-              </NativeBaseProvider>
-            </SafeAreaProvider>
-          </ListContext.Provider>
-        </AuthContext.Provider>
-      );
+              <SafeAreaProvider
+                initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+              >
+                <NativeBaseProvider>
+                  <ProductOfListDetails navigation={navigation} route={route} />
+                </NativeBaseProvider>
+              </SafeAreaProvider>
+            </ListContext.Provider>
+          </AuthContext.Provider>
+        );
 
-      const assigningSelector = await waitFor(() =>
-        getByTestId('select-list-member')
-      );
+        const assigningSelector = await waitFor(() =>
+          getByTestId('select-list-member')
+        );
+
+        await waitFor(() => {
+          fireEvent(assigningSelector, 'valueChange', 12);
+        });
+
+        expect(assigningSelector.props.value).toBe('Shane McCutcheon');
+      });
     });
   });
 });
