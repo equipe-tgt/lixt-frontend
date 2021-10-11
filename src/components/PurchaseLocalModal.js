@@ -111,6 +111,7 @@ export default function PurchaseLocalModal(props) {
 
   return (
     <Modal
+      testID="modal-purchase"
       isOpen={props.showModal}
       onClose={() => {
         values.name = '';
@@ -152,6 +153,7 @@ export default function PurchaseLocalModal(props) {
                 ) : (
                   <List.Item
                     pb={4}
+                    testID="add-purchase-location"
                     onPress={() => {
                       savePurchaseLocal();
                     }}

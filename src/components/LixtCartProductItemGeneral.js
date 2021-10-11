@@ -83,15 +83,14 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
         // caso for 0 quer dizer que algum outro usuário se responsabilizou antes de você atualizar a lista
         else if (data === 0) {
           toast.show({
-            title:
-              'Outro usuário se responsabilizou por um dos itens, atualize suas listas',
+            title: t('anotherUserIsResponsibleForAnItem'),
             status: 'warning',
           });
         }
       } catch (error) {
         console.log(error);
         toast.show({
-          title: 'Não foi possível marcar o item',
+          title: t('errorServerDefault'),
           status: 'warning',
         });
       }
@@ -140,6 +139,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
 
   return wrappedProduct ? (
     <Pressable
+      testID="product-item-general"
       flexDirection="row"
       key={wrappedProduct.productId}
       my={3}

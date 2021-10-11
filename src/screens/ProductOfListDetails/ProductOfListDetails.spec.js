@@ -324,9 +324,6 @@ describe('ProductOfListDetailsScreen component', () => {
     });
   });
 
-  /**
-   * @todo assign user test
-   */
   describe('when user is the owner of the list ', () => {
     describe('the list has members', () => {
       it("should be able to assign an item, if it's not marked ", async () => {

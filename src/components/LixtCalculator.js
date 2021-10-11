@@ -52,17 +52,19 @@ export default function LixtCalculator({
       bgColor="#fff"
       shadow={3}
       justifyContent="center"
+      testID="lixt-calculator"
     >
       <HStack justifyContent="space-around" alignItems="center">
         <Box flexDirection="row" alignItems="center">
           <Text fontWeight="bold" fontSize="lg">
             Total
           </Text>
-          <Text fontSize="lg" ml={2}>
+          <Text testID="total-price-text" fontSize="lg" ml={2}>
             {t('currency')} {totalPrice}
           </Text>
         </Box>
         <Button
+          testID="button-save-purchase"
           onPress={() => {
             finishPurchase(checkedItems, totalPrice);
           }}

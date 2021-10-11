@@ -88,7 +88,7 @@ export default function CartScreen(props) {
     } catch (error) {
       console.log(error);
       toast.show({
-        title: 'Não foi possível buscar a lista atualizada',
+        title: t('errorServerDefault'),
         status: 'warning',
       });
     } finally {
@@ -104,7 +104,7 @@ export default function CartScreen(props) {
     } catch (error) {
       console.log(error);
       toast.show({
-        title: 'Não foi possível buscar a lista atualizada',
+        title: t('errorServerDefault'),
         status: 'warning',
       });
     } finally {
@@ -159,10 +159,6 @@ export default function CartScreen(props) {
 
         groupedProduct.productsOfLists.push(productOfList);
         groupedProduct.inLists.push(getSuperficialListDataById(listId));
-        groupedProduct.priceAndAmounts.push({
-          price: price,
-          amount: amount,
-        });
         groupedProduct.markings.push({
           isMarked: isMarked,
           listId: listId,
@@ -175,7 +171,6 @@ export default function CartScreen(props) {
           productId: productId,
           productsOfLists: [productOfList],
           inLists: [getSuperficialListDataById(listId)],
-          priceAndAmounts: [{ price: price, amount: amount }],
           markings: [{ isMarked: isMarked, listId: listId }],
           product: product,
         };
@@ -302,6 +297,7 @@ export default function CartScreen(props) {
             width="70%"
             onValueChange={handleSelectChange}
             isDisabled={lists?.length === 0}
+            testID="select-visualization-mode"
           >
             <Select.Item
               key="view-all"
@@ -319,6 +315,7 @@ export default function CartScreen(props) {
           </Select>
         </Box>
         <ScrollView
+          testID="cart-refresh-control"
           contentContainerStyle={{ paddingBottom: 120 }}
           refreshControl={
             <RefreshControl
@@ -349,16 +346,18 @@ export default function CartScreen(props) {
           )}
         </ScrollView>
 
-        <LixtCalculator
-          isGeneralView={selectedList?.id === 'view-all'}
-          loadingPurchase={loadingPurchase}
-          items={selectedList.productsOfList}
-          finishPurchase={(checkedItems, totalPrice) => {
-            setTotalPriceFromCalculator(totalPrice);
-            setCheckedItemsFromCalculator(checkedItems);
-            setShowModal(true);
-          }}
-        />
+        {selectedList && selectedList?.productsOfList?.length > 0 && (
+          <LixtCalculator
+            isGeneralView={selectedList?.id === 'view-all'}
+            loadingPurchase={loadingPurchase}
+            items={selectedList.productsOfList}
+            finishPurchase={(checkedItems, totalPrice) => {
+              setTotalPriceFromCalculator(totalPrice);
+              setCheckedItemsFromCalculator(checkedItems);
+              setShowModal(true);
+            }}
+          />
+        )}
 
         <PurchaseLocalModal
           showModal={showModal}

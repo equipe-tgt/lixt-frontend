@@ -135,6 +135,9 @@ export default {
   buy: 'Comprar',
   markItem: 'Checkbox marcar item',
   markedBy: 'marcado por',
+  anotherUserIsResponsible: 'Outro usuário se responsabilizou por este item',
+  anotherUserIsResponsibleForAnItem:
+    'Outro usuário se responsabilizou por um dos itens, atualize suas listas',
   assignTo: 'Atribuir este item para',
   noOne: 'Ninguém em específico',
   assignedTo: 'atribuído a',

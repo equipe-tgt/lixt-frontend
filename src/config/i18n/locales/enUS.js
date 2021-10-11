@@ -137,6 +137,9 @@ export default {
   buy: 'Buy',
   markItem: 'Mark item checkbox',
   markedBy: 'checked by',
+  anotherUserIsResponsible: 'Another user is responsible for this item',
+  anotherUserIsResponsibleForAnItem:
+    'Another user is responsible for onte of the items, refresh your lists',
   assignTo: 'Assign this item to',
   noOne: 'No one in specific',
   assignedTo: 'assigned to',
