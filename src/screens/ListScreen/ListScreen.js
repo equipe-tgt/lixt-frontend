@@ -158,12 +158,12 @@ export default function ListScreen(props) {
       setConfirmRemoval(false);
 
       toast.show({
-        title: 'Lista removida',
+        title: t('listRemoved'),
         status: 'info',
       });
     } catch (error) {
       toast.show({
-        title: 'Não foi possível deletar esta lista',
+        title: t('couldntRemoveList'),
         status: 'warning',
       });
     }
@@ -185,7 +185,7 @@ export default function ListScreen(props) {
 
       toast.show({
         status: 'success',
-        title: 'Você saiu da lista',
+        title: t('youLeft'),
       });
     } catch (error) {
       toast.show({
@@ -201,7 +201,11 @@ export default function ListScreen(props) {
         const { data } = await ProductService.getProductByName(value, user);
         setProductsFound(data);
       } catch (error) {
-        console.log(error.response);
+        console.log({ error });
+        toast.show({
+          title: t('errorServerDefault'),
+          status: 'warning',
+        });
       }
     } else {
       setProductsFound([]);
@@ -290,13 +294,13 @@ export default function ListScreen(props) {
       editOriginalLists(objCopy);
 
       toast.show({
-        title: 'Item foi removido da lista',
+        title: t('itemWasRemoved'),
         status: 'info',
       });
     } catch (error) {
       console.log({ error });
       toast.show({
-        title: 'Não foi possível remover o item da lista',
+        title: t('couldntRemoveItem'),
         status: 'warning',
       });
     }
@@ -325,6 +329,7 @@ export default function ListScreen(props) {
       await AsyncStorage.setItem('lastSelectedList', String(listId));
     } catch (error) {
       console.log({ error });
+      return null;
     }
   };
 
@@ -344,6 +349,7 @@ export default function ListScreen(props) {
       >
         {/* Select de listas no header */}
         <Select
+          testID="select-current-list"
           selectedValue={selectedList?.id}
           width="70%"
           onValueChange={(listId) => {
@@ -358,6 +364,7 @@ export default function ListScreen(props) {
         </Select>
         {/* Botão nova lista */}
         <Button
+          testID="create-list"
           variant="link"
           startIcon={<Ionicons name="add-circle" size={35} color="#06b6d4" />}
           onPress={() => {
@@ -371,7 +378,7 @@ export default function ListScreen(props) {
             placement="bottom left"
             trigger={(triggerProps) => {
               return (
-                <Pressable {...triggerProps}>
+                <Pressable testID="list-options" {...triggerProps}>
                   <Ionicons
                     size={20}
                     color="#27272a"
@@ -417,6 +424,7 @@ export default function ListScreen(props) {
                   {t('sendInvitation')}
                 </Menu.Item>
                 <Menu.Item
+                  testID="delete-option"
                   onPress={() => {
                     setIsListRemoveModalOpen(true);
                   }}
@@ -426,7 +434,9 @@ export default function ListScreen(props) {
               </Box>
             ) : (
               <Box>
-                <Menu.Item onPress={leaveList}>{t('leaveList')}</Menu.Item>
+                <Menu.Item testID="leave-list-option" onPress={leaveList}>
+                  {t('leaveList')}
+                </Menu.Item>
               </Box>
             )}
           </Menu>
@@ -450,6 +460,7 @@ export default function ListScreen(props) {
             <FormControl>
               <FormControl.Label>{t('search')}</FormControl.Label>
               <Input
+                testID="input-search-product"
                 value={productName}
                 onChangeText={(value) => {
                   setProductName(value);
@@ -468,6 +479,7 @@ export default function ListScreen(props) {
                 <ScrollView keyboardShouldPersistTaps="always">
                   {productsFound.map((product) => (
                     <List.Item
+                      testID="products-found"
                       py={4}
                       key={product.id}
                       onPress={() => {
@@ -486,6 +498,7 @@ export default function ListScreen(props) {
             {productName.length > 3 && productsFound.length === 0 ? (
               <List borderBottomRadius={3} space="md">
                 <List.Item
+                  testID="option-add-new-product"
                   _pressed={{ bg: 'primary.500' }}
                   onPress={() => {
                     props.navigation.navigate('NewProduct', {
@@ -539,6 +552,7 @@ export default function ListScreen(props) {
             marginTop={5}
             paddingX={20}
             paddingY={4}
+            testID="create-first-list"
           >
             {t('createMyFirstList')}
           </Button>

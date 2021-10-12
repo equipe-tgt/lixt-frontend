@@ -74,7 +74,7 @@ const LixtCartProductItem = ({
         );
       } else if (data === 0) {
         toast.show({
-          title: 'Outro usuário se responsabilizou por este item',
+          title: t('anotherUserIsResponsible'),
           status: 'warning',
         });
 
@@ -84,7 +84,7 @@ const LixtCartProductItem = ({
       }
     } catch (error) {
       toast.show({
-        title: 'Não foi possível atribuir este item a você',
+        title: t('errorServerDefault'),
         status: 'warning',
       });
     }
@@ -144,6 +144,7 @@ const LixtCartProductItem = ({
                   labelName="marked"
                   value={markedAmount}
                   disabled={isDisabled}
+                  inputNumberStepperID="amount-input"
                   skin="square"
                   shadow={false}
                   width={170}
@@ -174,6 +175,7 @@ const LixtCartProductItem = ({
                   width={125}
                   value={markedAmount}
                   color={!isDisabled ? '#0891b2' : '#e6e6e6'}
+                  inputNumberStepperID="amount-input"
                   onChange={(value) => {
                     setMarkedAmount(value);
                     changeMarkedAmount(value);
@@ -204,6 +206,7 @@ const LixtCartProductItem = ({
       key={product.id}
       my={3}
       alignItems="center"
+      testID="cart-product-item"
     >
       <Box mr={5}>
         <Checkbox
@@ -213,6 +216,7 @@ const LixtCartProductItem = ({
           isChecked={isChecked}
           onChange={toggleProductFromSingleList}
           size="md"
+          testID="cart-product-item-checkbox"
         />
       </Box>
 

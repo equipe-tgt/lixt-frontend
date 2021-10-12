@@ -64,6 +64,8 @@ export default {
     'Você ainda não possui listas, vá para a página inicial para adicionar uma',
   createMyFirstList: 'Criar minha primeira lista!',
   loadingLists: 'Carregando suas listas...',
+  listRemoved: 'Lista excluída',
+  couldntRemoveList: 'Não foi possível remover a lista',
 
   newProduct: 'Novo produto',
   saveList: 'Salvar lista',
@@ -73,6 +75,8 @@ export default {
   listInfo: 'Informações da lista',
   listHasNoDescription: 'Não há descrição para esta lista',
   productAlreadyOnList: 'O produto já está na lista',
+  itemWasRemoved: 'Item foi removido',
+  couldntRemoveItem: 'Não foi possível remover o item',
 
   edit: 'Editar',
   price: 'Preço',
@@ -84,6 +88,8 @@ export default {
   measureType: 'Unidade de medida',
   measureValue: 'Valor da medida',
   editing: 'Editando',
+  editedWithSuccess: 'Editado com sucesso',
+  unsuccessfullyEdited: 'Não foi possível editar',
 
   creating: 'Criando',
   add: 'Adicionar',
@@ -107,6 +113,7 @@ export default {
   youAccepted: 'Você aceitou este convite',
   youRejected: 'Você rejeitou este convite',
   noInvitationsFound: 'Nenhum convite foi encontrado',
+  youLeft: 'Você saiu da lista',
 
   isTheListOwner: 'é o proprietário da lista',
   youAreTheListOwner: 'você é o proprietário da lista',
@@ -122,12 +129,15 @@ export default {
   commentaries: 'Comentários',
   comment: 'Comentar',
   commentaryPlaceholder: 'Comprar suco no Extra',
-  globalCommentary: "Comentário global?",
+  globalCommentary: 'Comentário global?',
   seeAllItems: 'Ver todos os itens',
 
   buy: 'Comprar',
   markItem: 'Checkbox marcar item',
   markedBy: 'marcado por',
+  anotherUserIsResponsible: 'Outro usuário se responsabilizou por este item',
+  anotherUserIsResponsibleForAnItem:
+    'Outro usuário se responsabilizou por um dos itens, atualize suas listas',
   assignTo: 'Atribuir este item para',
   noOne: 'Ninguém em específico',
   assignedTo: 'atribuído a',

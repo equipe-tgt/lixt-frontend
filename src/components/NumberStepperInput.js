@@ -15,7 +15,7 @@ export default function NumberStepperInput({
   const { t } = useTranslation();
 
   return (
-    <FormControl>
+    <FormControl testID={inputNumberStepperID}>
       <FormControl.Label>{t(labelName) || labelName}</FormControl.Label>
       <InputSpinner {...props} onChange={onChange} />
     </FormControl>
