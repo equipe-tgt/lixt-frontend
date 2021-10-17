@@ -21,7 +21,7 @@ export default {
   loging: 'Logando',
 
   sendResetPasswordEmail:
-    'Ao clicar no botão enviaremos uma senha provisória para o seu email',
+    'Ao clicar no botão, um link provisório será enviado para seu email para que a senha seja redefinida',
 
   emailOrUsername: 'Email ou nome de usuário',
   checkYourEmail: 'Enviamos um link de ativação \n para o seu email',
