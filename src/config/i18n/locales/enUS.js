@@ -21,7 +21,7 @@ export default {
   loging: 'Logging',
 
   sendResetPasswordEmail:
-    'Once you click in the button below, you will receive a temporary password in your e-mail box',
+    'Once you click on the button below, a temporary link will be sent to your email box to reset the password',
 
   emailOrUsername: 'Email or username',
   checkYourEmail: 'We sent an activation link \n to your email',
@@ -52,7 +52,7 @@ export default {
   alreadyHaveAnAccount: 'Do you already have an account?',
   newList: 'New list',
   backToLoginScreen: 'Back to login screen',
-  okContinue: 'Ok I wanna continue',
+  okContinue: 'Ok, I wanna continue',
   userDoesntExists: "This user doesn't exists",
   emailSuccessfullySend: 'EEmail successfully sent',
 
