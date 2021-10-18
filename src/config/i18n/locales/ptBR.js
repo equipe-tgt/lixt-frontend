@@ -154,4 +154,7 @@ export default {
   unsuccessfullySaved: 'Não foi possível salvar',
 
   purchaseSaved: 'Compra salva!',
+
+  scanYourBarcode: 'Escaneie o código de barras',
+  fetchingProduct: 'Buscando produto',
 };

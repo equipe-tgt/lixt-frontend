@@ -156,4 +156,7 @@ export default {
   unsuccessfullySaved: "It wasn't possible to save it",
 
   purchaseSaved: 'Purchase saved!',
+
+  scanYourBarcode: 'Scan your barcode',
+  fetchingProduct: 'Fetching product',
 };

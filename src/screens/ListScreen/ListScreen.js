@@ -466,6 +466,18 @@ export default function ListScreen(props) {
                   setProductName(value);
                   searchProducts(value);
                 }}
+                InputRightElement={
+                  <Pressable
+                    mr={5}
+                    onPress={() => props.navigation.navigate('BarcodeReader')}
+                  >
+                    <Ionicons
+                      name="barcode-outline"
+                      size={34}
+                      color="#292524"
+                    />
+                  </Pressable>
+                }
               />
             </FormControl>
 
