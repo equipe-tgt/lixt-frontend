@@ -1,32 +1,85 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { StyleSheet, SafeAreaView } from 'react-native';
-import { Text, Spinner, VStack } from 'native-base';
+import { Text, Spinner, VStack, useToast, Center } from 'native-base';
+import AddProductFromBarcodeModal from '../../components/AddProductFromBarcodeModal';
+
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { AuthContext } from '../../context/AuthProvider';
+
+import ProductService from '../../services/ProductService';
 
 import { useTranslation } from 'react-i18next';
 
-export default function BarcodeScreen(props) {
+export default function BarcodeReaderScreen(props) {
   const { t } = useTranslation();
+  const { user } = useContext(AuthContext);
+  const toast = useToast();
 
   const [loading, setLoading] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [newBarcode, setNewBarcode] = useState(null);
 
-  const handleBarCodeScanned = ({ type, data }) => {
-    setLoading(true);
+  const handleBarCodeScanned = async ({ data }) => {
+    if (!props.route.params?.origin) {
+      setLoading(true);
+
+      try {
+        const response = await ProductService.getProductByBarcode(data, user);
+
+        if (response.data) {
+          toast.show({
+            title: t('foundBarcode'),
+            description: t('addingToList'),
+            status: 'success',
+          });
+          props.navigation.navigate('Lists', {
+            foundProductByBarcode: response.data,
+          });
+        } else {
+          setNewBarcode(data);
+          setModalOpen(true);
+        }
+      } catch (error) {
+        toast.show({
+          title: t('defaultServerError'),
+          status: 'success',
+        });
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      props.navigation.navigate(props.route.params?.origin, { barcode: data });
+    }
   };
 
   useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
+    checkPermissions();
   }, []);
 
+  const checkPermissions = async () => {
+    const { status } = await BarCodeScanner.requestPermissionsAsync();
+    setHasPermission(status === 'granted');
+  };
+
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return (
+      <SafeAreaView style={styles.container}>
+        <Center>
+          <Text>{t('requestForCameraPermission')}</Text>
+        </Center>
+      </SafeAreaView>
+    );
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return (
+      <SafeAreaView style={styles.container}>
+        <Center>
+          <Text>{t('noAccessToCamera')}</Text>
+        </Center>
+      </SafeAreaView>
+    );
   }
 
   return (
@@ -55,6 +108,13 @@ export default function BarcodeScreen(props) {
           </Text>
         </BarCodeScanner>
       )}
+
+      <AddProductFromBarcodeModal
+        barcode={newBarcode}
+        showModal={modalOpen}
+        navigate={props.navigation.navigate}
+        closeModal={() => setModalOpen(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -73,3 +133,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
+
+BarcodeReaderScreen.propTypes = {
+  showModal: PropTypes.bool,
+  closeModal: PropTypes.func,
+  barcode: PropTypes.string,
+  navigation: PropTypes.object,
+  route: PropTypes.object,
+};

@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
-
 import { useTranslation } from 'react-i18next';
-
 import { screenBasicStyle as style } from '../../styles/style';
 
 import {
@@ -15,8 +14,12 @@ import {
   Select,
   View,
   Text,
+  HStack,
+  Box,
+  Link,
 } from 'native-base';
 
+import { Ionicons } from '@expo/vector-icons';
 import LixtInput from '../../components/LixtInput';
 
 // Validação do formulário
@@ -32,17 +35,18 @@ import CategoryService from '../../services/CategoryService';
 import { AuthContext } from '../../context/AuthProvider';
 
 export default function NewProductScreen(props) {
-  const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
   const { t } = useTranslation();
-
   const { user } = useContext(AuthContext);
   const toast = useToast();
+
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [barcode, setBarcode] = useState(null);
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
     initialValues: {
-      name: props.route.params.productName,
+      name: props.route.params?.productName || '',
       categoryId: '',
       measureType: 'un',
       measureValue: '',
@@ -58,6 +62,18 @@ export default function NewProductScreen(props) {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  // Hook que dispara toda vez que esta tela for focada
+  useFocusEffect(() => {
+    // Verifica se alguma tela enviou props para essa
+    if (props.route.params) {
+      // Caso a tela tenha enviado um barcode
+      if (props.route.params.barcode) {
+        setBarcode(props.route.params.barcode);
+        props.route.params.barcode = null;
+      }
+    }
+  });
 
   const fetchCategories = () => {
     CategoryService.getCategories(user)
@@ -83,6 +99,7 @@ export default function NewProductScreen(props) {
       name: values.name,
       userId: user.id,
       measureType: getMeasureValueByLabel(values.measureType),
+      barcode,
     };
 
     ProductService.createProduct(product, user)
@@ -170,6 +187,54 @@ export default function NewProductScreen(props) {
             </Text>
           </View>
         </FormControl>
+
+        {!barcode ? (
+          <Button
+            paddingX={18}
+            paddingY={3}
+            variant="outline"
+            colorScheme="dark"
+            startIcon={
+              <Ionicons name="barcode-outline" size={34} color="#292524" />
+            }
+            onPress={() => {
+              props.navigation.navigate('BarcodeReader', {
+                origin: 'NewProduct',
+              });
+            }}
+          >
+            <Text color="#292524">
+              {t('addBarcode')}: {t('optional')}
+            </Text>
+          </Button>
+        ) : (
+          <HStack justifyContent="space-between" w="100%" alignItems="center">
+            <Box>
+              <Text textAlign="left">{t('readValue')}</Text>
+              <Text textAlign="left">{barcode}</Text>
+            </Box>
+
+            <HStack justifyContent="space-between" alignItems="center">
+              <Button
+                variant="link"
+                onPress={() => {
+                  props.navigation.navigate('BarcodeReader', {
+                    origin: 'NewProduct',
+                  });
+                }}
+              >
+                {t('readAgain')}
+              </Button>
+              <Button
+                onPress={() => {
+                  setBarcode(null);
+                }}
+                variant="link"
+                startIcon={<Ionicons name="close" size={24} color="#777" />}
+              />
+            </HStack>
+          </HStack>
+        )}
 
         <Button
           paddingX={20}

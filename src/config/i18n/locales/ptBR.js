@@ -155,6 +155,18 @@ export default {
 
   purchaseSaved: 'Compra salva!',
 
+  barcodeReader: 'Leitor de código de barras',
+  requestForCameraPermission: 'Requisitando permissão para câmera',
+  noAccessToCamera: 'Sem acesso à câmera',
   scanYourBarcode: 'Escaneie o código de barras',
   fetchingProduct: 'Buscando produto',
+  couldntFindBarcode: 'Nenhum produto encontrado com este código de barras',
+  addNewBarcode:
+    'Deseja adicionar produto de código "{{barcode}}" na plataforma?',
+  addBarcode: 'Adicionar código de barras',
+  optional: '(opcional)',
+  readValue: 'Valor lido',
+  readAgain: 'Ler novamente',
+  foundBarcode: 'Código encontrado',
+  addingToList: 'Adicionando produto à lista',
 };
