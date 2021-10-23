@@ -21,36 +21,45 @@ export default function BarcodeReaderScreen(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [newBarcode, setNewBarcode] = useState(null);
 
-  const handleBarCodeScanned = async ({ data }) => {
-    if (!props.route.params?.origin) {
-      setLoading(true);
+  // Lista de códigos de barra permitidos para leitura, somente o código EAN-13 está listado
+  // do contrário o código QR e outros tipos de códigos de barra que
+  // não são usados em produtos seriam lidos também
+  const allowedBarcodeTypes = [BarCodeScanner.Constants.BarCodeType.ean13];
 
-      try {
-        const response = await ProductService.getProductByBarcode(data, user);
+  const handleBarCodeScanned = async ({ type, data }) => {
+    if (allowedBarcodeTypes.includes(type)) {
+      if (!props.route.params?.origin) {
+        setLoading(true);
 
-        if (response.data) {
+        try {
+          const response = await ProductService.getProductByBarcode(data, user);
+
+          if (response.data) {
+            toast.show({
+              title: t('foundBarcode'),
+              description: t('addingToList'),
+              status: 'success',
+            });
+            props.navigation.navigate('Lists', {
+              foundProductByBarcode: response.data,
+            });
+          } else {
+            setNewBarcode(data);
+            setModalOpen(true);
+          }
+        } catch (error) {
           toast.show({
-            title: t('foundBarcode'),
-            description: t('addingToList'),
+            title: t('errorServerDefault'),
             status: 'success',
           });
-          props.navigation.navigate('Lists', {
-            foundProductByBarcode: response.data,
-          });
-        } else {
-          setNewBarcode(data);
-          setModalOpen(true);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        toast.show({
-          title: t('defaultServerError'),
-          status: 'success',
+      } else {
+        props.navigation.navigate(props.route.params?.origin, {
+          barcode: data,
         });
-      } finally {
-        setLoading(false);
       }
-    } else {
-      props.navigation.navigate(props.route.params?.origin, { barcode: data });
     }
   };
 
@@ -66,8 +75,8 @@ export default function BarcodeReaderScreen(props) {
   if (hasPermission === null) {
     return (
       <SafeAreaView style={styles.container}>
-        <Center>
-          <Text>{t('requestForCameraPermission')}</Text>
+        <Center style={{ flex: 1, justifyContent: 'center' }}>
+          <Text color="white">{t('requestForCameraPermission')}</Text>
         </Center>
       </SafeAreaView>
     );
@@ -75,8 +84,8 @@ export default function BarcodeReaderScreen(props) {
   if (hasPermission === false) {
     return (
       <SafeAreaView style={styles.container}>
-        <Center>
-          <Text>{t('noAccessToCamera')}</Text>
+        <Center style={{ flex: 1, justifyContent: 'center' }}>
+          <Text color="white">{t('noAccessToCamera')}</Text>
         </Center>
       </SafeAreaView>
     );
@@ -95,11 +104,12 @@ export default function BarcodeReaderScreen(props) {
         >
           <Spinner size="lg" />
           <Text mt={2} color="white">
-            Fetching product
+            {t('fetchingProduct')}
           </Text>
         </VStack>
       ) : (
         <BarCodeScanner
+          barCodeTypes={allowedBarcodeTypes}
           style={StyleSheet.absoluteFillObject}
           onBarCodeScanned={loading ? undefined : handleBarCodeScanned}
         >
@@ -124,13 +134,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: 'black',
-  },
-
-  barcode: {
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    width: '85%',
-    borderRadius: 10,
   },
 });
 
