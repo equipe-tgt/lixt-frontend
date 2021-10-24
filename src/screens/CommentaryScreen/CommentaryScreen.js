@@ -59,7 +59,7 @@ export default function CommentaryScreen(props) {
       );
       const {
         commentsDto: commentsArray,
-        globalCommentsDto: globalCommentsArray
+        globalCommentsDto: globalCommentsArray,
       } = data;
       // Organiza comentários por data de envio
       commentsArray.sort((a, b) => new Date(b.date) > new Date(a.date));
@@ -83,15 +83,18 @@ export default function CommentaryScreen(props) {
     const comment = {
       content: newCommentary,
       userId: user.id,
-      productId: product.productId
-    }
+      productId: product.productId,
+    };
 
     let title;
     let status;
 
     setLoadingAdding(true);
     try {
-      const { data } = await CommentaryService.addGlobalCommentary(comment, user);
+      const { data } = await CommentaryService.addGlobalCommentary(
+        comment,
+        user
+      );
       const commentariesCopy = [...globalCommentaries];
 
       data.user = user;
@@ -112,7 +115,7 @@ export default function CommentaryScreen(props) {
       setLoadingAdding(false);
       setNewCommentary('');
     }
-  }
+  };
 
   const addCommentary = async () => {
     if (newCommentary.length === 0) return;
@@ -170,17 +173,15 @@ export default function CommentaryScreen(props) {
         }
       >
         <Box py={3} w="90%" mx="auto">
-          {
-            globalCommentaries.length > 0 ? (
-              <Text
-                fontWeight="normal"
-                marginY={15}
-                style={{ textTransform: 'uppercase', letterSpacing: 4 }}
-              >
-                Comentários Globais
-              </Text>
-            ) : null
-          }
+          {globalCommentaries.length > 0 ? (
+            <Text
+              fontWeight="normal"
+              marginY={15}
+              style={{ textTransform: 'uppercase', letterSpacing: 4 }}
+            >
+              Comentários Globais
+            </Text>
+          ) : null}
           {globalCommentaries.length > 0
             ? globalCommentaries.map((c) => (
                 <HStack
@@ -213,17 +214,15 @@ export default function CommentaryScreen(props) {
               ))
             : null}
 
-          {
-            commentaries.length > 0 ? (
-              <Text
-                fontWeight="normal"
-                marginY={15}
-                style={{ textTransform: 'uppercase', letterSpacing: 4 }}
-              >
-                Comentários da Lista
-              </Text>
-            ) : null
-          }
+          {commentaries.length > 0 ? (
+            <Text
+              fontWeight="normal"
+              marginY={15}
+              style={{ textTransform: 'uppercase', letterSpacing: 4 }}
+            >
+              Comentários da Lista
+            </Text>
+          ) : null}
           {commentaries.length > 0
             ? commentaries.map((c) => (
                 <HStack
@@ -283,7 +282,7 @@ export default function CommentaryScreen(props) {
             onPress={() => {
               if (isGlobalCommentary) {
                 addGlobalCommentary();
-              } else {  
+              } else {
                 addCommentary();
               }
             }}
@@ -310,9 +309,7 @@ export default function CommentaryScreen(props) {
           value="test"
           onChange={(value) => setIsGlobalCommentary(value)}
         >
-          <Text
-            ml={1}
-          >{t('globalCommentary')}</Text>
+          <Text ml={1}>{t('globalCommentary')}</Text>
         </Checkbox>
       </HStack>
     </KeyboardAvoidingView>

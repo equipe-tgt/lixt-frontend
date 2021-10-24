@@ -18,10 +18,10 @@ const CommentaryService = {
   getGlobalCommentaries: (user) => {
     return BaseService.get('/globalComment/all', {
       headers: {
-        Authorization: `Bearer ${user.token}`
-      }
-    })
-  }
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
 };
 
 export default CommentaryService;

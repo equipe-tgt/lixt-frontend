@@ -4,7 +4,13 @@ import { TextInputMask } from 'react-native-masked-text';
 import { FormControl, Text } from 'native-base';
 import { useTranslation, getI18n } from 'react-i18next';
 
-export default function LixtMoneyInput({ onChangeText, labelName, hasHelperText, error, ...props }) {
+export default function LixtMoneyInput({
+  onChangeText,
+  labelName,
+  hasHelperText,
+  error,
+  ...props
+}) {
   const { t } = useTranslation();
   const i18nInstance = getI18n();
 
@@ -16,9 +22,10 @@ export default function LixtMoneyInput({ onChangeText, labelName, hasHelperText,
       case 'en_US': {
         return '.';
       }
-      default: return '';
+      default:
+        return '';
     }
-  }
+  };
 
   const getDelimiter = () => {
     switch (i18nInstance.language) {
@@ -28,9 +35,10 @@ export default function LixtMoneyInput({ onChangeText, labelName, hasHelperText,
       case 'en_US': {
         return ',';
       }
-      default: return '';
+      default:
+        return '';
     }
-  }
+  };
 
   return (
     <FormControl>
@@ -50,24 +58,20 @@ export default function LixtMoneyInput({ onChangeText, labelName, hasHelperText,
         type={'money'}
         options={{
           precision: 2,
-          separator:  getSeparator(),
+          separator: getSeparator(),
           delimiter: getDelimiter(),
           unit: '',
         }}
         onChangeText={onChangeText}
         {...props}
       />
-      {
-        hasHelperText ? (
-          <FormControl.HelperText>
-            <Text
-              style={error ? { color: '#fb7185' } : { display: 'none' }}
-            >
-              {error}
-            </Text>
-          </FormControl.HelperText>
-        ) : null
-      }
+      {hasHelperText ? (
+        <FormControl.HelperText>
+          <Text style={error ? { color: '#fb7185' } : { display: 'none' }}>
+            {error}
+          </Text>
+        </FormControl.HelperText>
+      ) : null}
     </FormControl>
   );
 }
