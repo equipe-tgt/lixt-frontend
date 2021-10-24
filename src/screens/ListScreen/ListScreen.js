@@ -79,6 +79,13 @@ export default function ListScreen(props) {
         props.route.params.newProduct = null;
       }
 
+      // Se o usuário tiver adicionado um produto por
+      // código de barra
+      if (props.route.params.foundProductByBarcode) {
+        addToList(props.route.params.foundProductByBarcode, selectedList);
+        props.route.params.foundProductByBarcode = null;
+      }
+
       // Caso a tela peça para fazer refresh atualiza as listas
       if (props.route.params.refresh) {
         fetchLists();
@@ -466,6 +473,20 @@ export default function ListScreen(props) {
                   setProductName(value);
                   searchProducts(value);
                 }}
+                InputRightElement={
+                  <Pressable
+                    testID="barcode-reader-search"
+                    mr={5}
+                    onPress={() => props.navigation.navigate('BarcodeReader')}
+                    accessibilityLabel={t('barcodeReader')}
+                  >
+                    <Ionicons
+                      name="barcode-outline"
+                      size={34}
+                      color="#292524"
+                    />
+                  </Pressable>
+                }
               />
             </FormControl>
 

@@ -1,7 +1,9 @@
+/* eslint-disable no-undef */
 import React from 'React';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import '@testing-library/jest-dom';
 import { NativeBaseProvider } from 'native-base';
+import { NavigationContext } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthContext } from '../../context/AuthProvider';
 import NewProductScreen from './NewProductScreen';
@@ -15,14 +17,20 @@ jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
 describe('NewProductScreen component', () => {
   describe('when getting categories does not return any error', () => {
-    let getByTestId, getByText;
+    let getByTestId, getByText, navContext, navigation;
     let createProductButton;
 
     beforeEach(() => {
-      const navigation = {
+      navigation = {
         navigate: jest.fn((path) => path),
       };
       navigationSpy = jest.spyOn(navigation, 'navigate');
+
+      navContext = {
+        isFocused: () => true,
+        // addListener returns an unscubscribe function.
+        addListener: jest.fn(() => jest.fn()),
+      };
 
       const user = {
         id: 1,
@@ -61,11 +69,11 @@ describe('NewProductScreen component', () => {
           <SafeAreaProvider
             initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
           >
-            <NativeBaseProvider
-              children={
+            <NativeBaseProvider>
+              <NavigationContext.Provider value={navContext}>
                 <NewProductScreen route={route} navigation={navigation} />
-              }
-            />
+              </NavigationContext.Provider>
+            </NativeBaseProvider>
           </SafeAreaProvider>
         </AuthContext.Provider>
       );
@@ -154,6 +162,7 @@ describe('NewProductScreen component', () => {
 
       it('should show error message when creating the product in the backend is not possible', async () => {
         const createProductSpy = jest.spyOn(ProductService, 'createProduct');
+        // eslint-disable-next-line prefer-promise-reject-errors
         createProductSpy.mockReturnValue(Promise.reject());
 
         await waitFor(() => {
@@ -164,6 +173,20 @@ describe('NewProductScreen component', () => {
 
         const toast = getByText('Não foi possível adicionar o produto');
         expect(toast).toBeDefined();
+      });
+    });
+
+    describe('when the user presses the button to read the barcode', () => {
+      it('should redirect to the barcode reader screen', async () => {
+        const readBarcodeButton = await waitFor(() =>
+          getByTestId('button-new-barcode')
+        );
+
+        await waitFor(() => fireEvent.press(readBarcodeButton));
+
+        expect(navigationSpy).toHaveBeenCalledWith('BarcodeReader', {
+          origin: 'NewProduct',
+        });
       });
     });
   });

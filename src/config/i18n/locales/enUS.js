@@ -156,4 +156,18 @@ export default {
   unsuccessfullySaved: "It wasn't possible to save it",
 
   purchaseSaved: 'Purchase saved!',
+
+  barcodeReader: 'Barcode reader',
+  requestForCameraPermission: 'Requesting for camera permission',
+  noAccessToCamera: 'No access to camera',
+  scanYourBarcode: 'Scan your barcode',
+  fetchingProduct: 'Fetching product',
+  couldntFindBarcode: 'No product was found with this barcode',
+  addNewBarcode: 'Do you want to add the "{{barcode}}" on the plataform?',
+  addBarcode: 'Add barcode',
+  optional: '(optional)',
+  readValue: 'Read value',
+  readAgain: 'Read again',
+  foundBarcode: 'Found barcode',
+  addingToList: 'Adding product to the list',
 };

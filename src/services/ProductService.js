@@ -8,6 +8,13 @@ const ProductService = {
       },
     });
   },
+  getProductByBarcode: (barcode, user) => {
+    return BaseService.get(`/product/by-barcode/${barcode}`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
   createProduct: (product, user) => {
     return BaseService.post('/product', product, {
       headers: {

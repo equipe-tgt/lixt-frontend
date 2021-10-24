@@ -1005,6 +1005,69 @@ describe('ListScreen component', () => {
     });
   });
 
+  describe('when the user presses to search a product by barcode', () => {
+    it('should redirect to the barcode reader screen', async () => {
+      const fabricatedLists = [
+        {
+          id: 1,
+          nameList: 'Lista I',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [],
+          listMembers: [],
+        },
+      ];
+
+      lists = [...fabricatedLists];
+
+      ListService.getLists = jest.fn(() => {
+        return { data: [...fabricatedLists] };
+      });
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
+
+      const barcodeReaderSearch = await waitFor(() =>
+        getByTestId('barcode-reader-search')
+      );
+
+      await waitFor(() => {
+        fireEvent.press(barcodeReaderSearch);
+      });
+
+      expect(navigation.navigate).toHaveBeenCalledWith('BarcodeReader');
+    });
+  });
+
   describe('when the user decides do add a new product to the plataform', () => {
     it('should automatically add the newly registered product to the current list', async () => {
       const fabricatedLists = [
@@ -1076,6 +1139,87 @@ describe('ListScreen component', () => {
               <NativeBaseProvider>
                 <NavigationContext.Provider value={navContext}>
                   <List navigation={navigation} route={routeNewProductAdded} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      expect(ProductOfListService.createProductOfList).toHaveBeenCalled();
+    });
+  });
+
+  describe('when the user successfully reads a product by barcode', () => {
+    it('it should add it to the list', async () => {
+      const fabricatedLists = [
+        {
+          id: 1,
+          nameList: 'Lista I',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [],
+          listMembers: [],
+        },
+      ];
+
+      lists = [...fabricatedLists];
+
+      route = {
+        params: {
+          foundProductByBarcode: {
+            id: 1,
+            productId: 1,
+            listId: 1,
+            name: 'Arroz',
+            price: null,
+            measureValue: null,
+            measureType: 'UNITY',
+          },
+        },
+      };
+
+      ProductOfListService.createProductOfList = jest.fn(
+        (productOfList, user) => {
+          return {
+            id: 1,
+            productId: 1,
+            listId: 1,
+            name: 'Arroz',
+            price: null,
+            measureValue: null,
+            measureType: 'UNITY',
+          };
+        }
+      );
+
+      ListService.getLists = jest.fn(() => {
+        return { data: [...fabricatedLists] };
+      });
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
                 </NavigationContext.Provider>
               </NativeBaseProvider>
             </SafeAreaProvider>

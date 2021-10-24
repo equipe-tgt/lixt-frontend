@@ -9,6 +9,7 @@ import SendInvitationScreen from '../screens/SendInvitationScreen/SendInvitation
 import ListDetailsScreen from '../screens/ListDetailsScreen/ListDetailsScreen';
 import MembersListScreen from '../screens/MembersListScreen/MembersListScreen';
 import CommentaryScreen from '../screens/CommentaryScreen/CommentaryScreen';
+import BarcodeReaderScreen from '../screens/BarcodeScreen/BarcodeReaderScreen';
 
 import { useTranslation } from 'react-i18next';
 
@@ -64,6 +65,11 @@ export default function ListStack() {
         name="Commentaries"
         options={{ title: t('commentaries'), headerStyle: stackHeaderStyle }}
         component={CommentaryScreen}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="BarcodeReader"
+        options={{ title: t('barcodeReader'), headerStyle: stackHeaderStyle }}
+        component={BarcodeReaderScreen}
       ></Stack.Screen>
     </Stack.Navigator>
   );
