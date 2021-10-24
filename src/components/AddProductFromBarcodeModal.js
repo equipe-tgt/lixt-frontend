@@ -8,6 +8,7 @@ export default function AddProductFromBarcodeModal(props) {
 
   return (
     <Modal
+      testID="add-product-from-barcode-modal"
       isOpen={props.showModal}
       onClose={() => props.closeModal()}
       size="lg"

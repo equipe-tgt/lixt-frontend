@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, SafeAreaView } from 'react-native';
-import { Text, Spinner, VStack, useToast, Center } from 'native-base';
+import { Text, Spinner, VStack, useToast, Center, Button } from 'native-base';
 import AddProductFromBarcodeModal from '../../components/AddProductFromBarcodeModal';
 
 import { BarCodeScanner } from 'expo-barcode-scanner';
@@ -85,7 +85,9 @@ export default function BarcodeReaderScreen(props) {
     return (
       <SafeAreaView style={styles.container}>
         <Center style={{ flex: 1, justifyContent: 'center' }}>
-          <Text color="white">{t('noAccessToCamera')}</Text>
+          <Text testID="no-camera-permission-text" color="white">
+            {t('noAccessToCamera')}
+          </Text>
         </Center>
       </SafeAreaView>
     );
@@ -109,6 +111,7 @@ export default function BarcodeReaderScreen(props) {
         </VStack>
       ) : (
         <BarCodeScanner
+          testID="barcode-scanner"
           barCodeTypes={allowedBarcodeTypes}
           style={StyleSheet.absoluteFillObject}
           onBarCodeScanned={loading ? undefined : handleBarCodeScanned}
@@ -116,6 +119,14 @@ export default function BarcodeReaderScreen(props) {
           <Text mt={20} mx="auto" w="70%" textAlign="center" highlight>
             {t('scanYourBarcode')}
           </Text>
+
+          {/* Componente apenas para realização de testes uma vez que o evento
+          de leitura do BarCodeScanner não é lido durante os testes */}
+          <Button
+            testID="barcode-scanner-function"
+            style={{ display: 'none' }}
+            onPress={handleBarCodeScanned}
+          ></Button>
         </BarCodeScanner>
       )}
 

@@ -475,8 +475,10 @@ export default function ListScreen(props) {
                 }}
                 InputRightElement={
                   <Pressable
+                    testID="barcode-reader-search"
                     mr={5}
                     onPress={() => props.navigation.navigate('BarcodeReader')}
+                    accessibilityLabel={t('barcodeReader')}
                   >
                     <Ionicons
                       name="barcode-outline"

@@ -6,7 +6,7 @@ import axios from 'axios';
 
 // eslint-disable-next-line no-undef
 const BASE_URL = __DEV__
-  ? 'http://192.168.1.189:8080'
+  ? 'http://192.168.1.187:8080'
   : 'https://lixt-ws.azurewebsites.net';
 console.log('BASE_URL: ', BASE_URL);
 

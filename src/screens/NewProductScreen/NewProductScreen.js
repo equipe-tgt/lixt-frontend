@@ -190,6 +190,7 @@ export default function NewProductScreen(props) {
 
         {!barcode ? (
           <Button
+            testID="button-new-barcode"
             paddingX={18}
             paddingY={3}
             variant="outline"
