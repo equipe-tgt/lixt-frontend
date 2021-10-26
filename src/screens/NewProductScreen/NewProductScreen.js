@@ -97,7 +97,7 @@ export default function NewProductScreen(props) {
     const product = {
       categoryId: values.categoryId,
       name: values.name,
-      userId: user.id,
+      userId: barcode ? null : user.id,
       measureType: getMeasureValueByLabel(values.measureType),
       barcode,
     };
@@ -117,9 +117,14 @@ export default function NewProductScreen(props) {
           newProduct: { ...resp.data, category },
         });
       })
-      .catch(() => {
-        title = 'Não foi possível adicionar o produto';
-        status = 'warning';
+      .catch((error) => {
+        if (error?.response?.status === 409) {
+          title = 'Este código de barras já foi cadastrado';
+          status = 'warning';
+        } else {
+          title = 'Não foi possível adicionar o produto';
+          status = 'warning';
+        }
       })
       .finally(() => {
         toast.show({
