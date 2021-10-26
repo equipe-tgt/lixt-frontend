@@ -174,6 +174,23 @@ describe('NewProductScreen component', () => {
         const toast = getByText('Não foi possível adicionar o produto');
         expect(toast).toBeDefined();
       });
+
+      it('should show error message when a product with the same barcode already exists', async () => {
+        const createProductSpy = jest.spyOn(ProductService, 'createProduct');
+        createProductSpy.mockReturnValue(
+          // eslint-disable-next-line prefer-promise-reject-errors
+          Promise.reject({ response: { status: 409 } })
+        );
+
+        await waitFor(() => {
+          fireEvent.changeText(getByTestId('new-product-name'), 'Chocolate');
+          fireEvent(getByTestId('category-select'), 'onValueChange', '1');
+        });
+        await waitFor(() => fireEvent.press(createProductButton));
+
+        const toast = getByText('Este código de barras já foi cadastrado');
+        expect(toast).toBeDefined();
+      });
     });
 
     describe('when the user presses the button to read the barcode', () => {
