@@ -171,7 +171,7 @@ describe('NewProductScreen component', () => {
         });
         await waitFor(() => fireEvent.press(createProductButton));
 
-        const toast = getByText('Não foi possível adicionar o produto');
+        const toast = getByText('couldntAddProduct');
         expect(toast).toBeDefined();
       });
 
@@ -188,7 +188,7 @@ describe('NewProductScreen component', () => {
         });
         await waitFor(() => fireEvent.press(createProductButton));
 
-        const toast = getByText('Este código de barras já foi cadastrado');
+        const toast = getByText('barcodeAlreadyRegistered');
         expect(toast).toBeDefined();
       });
     });
