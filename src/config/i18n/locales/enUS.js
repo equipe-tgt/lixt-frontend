@@ -171,7 +171,8 @@ export default {
   foundBarcode: 'Found barcode',
   addingToList: 'Adding product to the list',
   couldntSearchCategories: 'Could not search the categories',
-  addingProductSuccess:'Product {{product.name}} has been succesfully added!',
-  barcodeAlreadyRegistered:'This barcode has already been registered',
-  couldntAddProduct:'Could not add the product'
+  addingProductSuccess: 'Product {{product.name}} has been succesfully added!',
+  barcodeAlreadyRegistered: 'This barcode has already been registered',
+  couldntAddProduct: 'Could not add the product',
+  others: 'Others',
 };

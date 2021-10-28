@@ -170,7 +170,8 @@ export default {
   foundBarcode: 'Código encontrado',
   addingToList: 'Adicionando produto à lista',
   couldntSearchCategories: 'Não foi possível pesquisar as categorias',
-  addingProductSuccess:'Produto {{product.name}} foi adicionado com sucesso!',
-  barcodeAlreadyRegistered:'Esse código de barras já foi cadastrado',
-  couldntAddProduct:'Não foi possível adicionar o produto'
+  addingProductSuccess: 'Produto {{product.name}} foi adicionado com sucesso!',
+  barcodeAlreadyRegistered: 'Esse código de barras já foi cadastrado',
+  couldntAddProduct: 'Não foi possível adicionar o produto',
+  others: 'Outros',
 };
