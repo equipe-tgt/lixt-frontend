@@ -152,8 +152,7 @@ export default function CartScreen(props) {
       }
 
       // Atributos do produto da lista
-      const { listId, productId, price, amount, isMarked, product } =
-        productOfList;
+      const { listId, productId, isMarked, product } = productOfList;
 
       // Tenta encontrar se um mesmo produto de listas diferentes já foi incluso em groupedProducts
       const groupedProductIndex = groupedProducts.findIndex(
@@ -207,6 +206,7 @@ export default function CartScreen(props) {
       id,
       name,
       price,
+      plannedAmount,
       markedAmount,
       measureType,
       measureValue,
@@ -218,7 +218,7 @@ export default function CartScreen(props) {
       productId,
       name,
       price,
-      amount: markedAmount,
+      amount: markedAmount || plannedAmount,
       measureType,
       measureValue,
       purchaseListId: null,
@@ -248,7 +248,7 @@ export default function CartScreen(props) {
           getItemOfPurchase(itemOnPurchase)
         );
         purchaseLists[listId].partialPurchasePrice +=
-          price * itemOnPurchase.markedAmount;
+          price * (itemOnPurchase.markedAmount || itemOnPurchase.plannedAmount);
       } else {
         // Senão, define um novo objeto para ele e atribui os valores
         purchaseLists[listId] = {};
@@ -257,7 +257,7 @@ export default function CartScreen(props) {
         purchaseLists[listId].listId = listId;
         purchaseLists[listId].purchaseId = null;
         purchaseLists[listId].partialPurchasePrice =
-          price * itemOnPurchase.markedAmount;
+          price * (itemOnPurchase.markedAmount || itemOnPurchase.plannedAmount);
         purchaseLists[listId].itemsOfPurchase = [
           getItemOfPurchase(itemOnPurchase),
         ];

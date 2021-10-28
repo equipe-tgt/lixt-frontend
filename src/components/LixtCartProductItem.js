@@ -142,20 +142,17 @@ const LixtCartProductItem = ({
               <Box>
                 <NumberStepperInput
                   labelName="marked"
-                  value={markedAmount}
-                  disabled={isDisabled}
-                  inputNumberStepperID="amount-input"
-                  skin="square"
-                  shadow={false}
                   width={170}
-                  min={1}
-                  step={1}
+                  skin="square"
+                  value={markedAmount}
                   color={isDisabled ? '#e6e6e6' : '#0891b2'}
-                  buttonTextColor={isDisabled ? '#8a8a8a' : 'white'}
+                  inputNumberStepperID="amount-input"
                   onChange={(value) => {
                     setMarkedAmount(value);
                     changeMarkedAmount(value);
                   }}
+                  min={1}
+                  step={1}
                 />
               </Box>
             )}
@@ -169,18 +166,20 @@ const LixtCartProductItem = ({
               } ${getMeasureType(product.measureType)}`}
             </Text>
             {isChecked && (
-              <HStack alignItems="center" width={150}>
+              <HStack alignItems="center" width={200}>
                 <NumberStepperInput
                   labelName="marked"
-                  width={125}
+                  width={170}
+                  skin="square"
                   value={markedAmount}
-                  color={!isDisabled ? '#0891b2' : '#e6e6e6'}
+                  color={isDisabled ? '#e6e6e6' : '#0891b2'}
                   inputNumberStepperID="amount-input"
                   onChange={(value) => {
                     setMarkedAmount(value);
                     changeMarkedAmount(value);
                   }}
                   min={1}
+                  step={1}
                 />
                 <Text mt={5}>
                   x {product.measureValue || 0}
@@ -195,14 +194,8 @@ const LixtCartProductItem = ({
   };
 
   return (
-    <Pressable
+    <Box
       flexDirection="row"
-      onPress={() => {
-        navigate('ProductOfListDetails', {
-          product,
-          origin: 'Cart',
-        });
-      }}
       key={product.id}
       my={3}
       alignItems="center"
@@ -221,19 +214,29 @@ const LixtCartProductItem = ({
       </Box>
 
       <Box>
-        <Text strikeThrough={isChecked} fontWeight="bold">
-          {product.name}
-        </Text>
+        <Pressable
+          onPress={() => {
+            navigate('ProductOfListDetails', {
+              product,
+              origin: 'Cart',
+            });
+          }}
+        >
+          <Text strikeThrough={isChecked} fontWeight="bold">
+            {product.name}
+          </Text>
 
-        <Text>
-          {product.price
-            ? `${t('currency')} ${
-                product.price * (product.markedAmount || product.plannedAmount)
-              }`
-            : `${t('currency')} 0,00`}
-        </Text>
+          <Text>
+            {product.price
+              ? `${t('currency')} ${
+                  product.price *
+                  (product.markedAmount || product.plannedAmount)
+                }`
+              : `${t('currency')} 0,00`}
+          </Text>
 
-        <Amounts />
+          <Amounts />
+        </Pressable>
 
         {/* Se o item estiver atribuído mas não estiver marcado, mostra
         pra quem ele está atribuído */}
@@ -268,7 +271,7 @@ const LixtCartProductItem = ({
           <Ionicons name="chatbox-outline" size={24} color="#27272a" />
         </Pressable>
       ) : null}
-    </Pressable>
+    </Box>
   );
 };
 
