@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import CartScreen from '../screens/CartScreen/CartScreen';
 import CommentaryScreen from '../screens/CommentaryScreen/CommentaryScreen';
 import ProductOfListDeatils from '../screens/ProductOfListDetails/ProductOfListDetails';
+import HistoryScreen from '../screens/HistoryScreen/HistoryScreen';
 
 import { useTranslation } from 'react-i18next';
 
@@ -36,6 +37,11 @@ export default function PurchaseStack() {
         name="ProductOfListDetails"
         options={{ title: t('edit'), headerStyle: stackHeaderStyle }}
         component={ProductOfListDeatils}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="History"
+        options={{ title: t('history'), headerStyle: stackHeaderStyle }}
+        component={HistoryScreen}
       ></Stack.Screen>
     </Stack.Navigator>
   );

@@ -8,6 +8,13 @@ const PurchaseService = {
       },
     });
   },
+  getPurchases: (user) => {
+    return BaseService.get('/purchase/by-user', {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
 };
 
 export default PurchaseService;
