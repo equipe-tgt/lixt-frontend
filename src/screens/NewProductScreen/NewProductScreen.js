@@ -82,7 +82,7 @@ export default function NewProductScreen(props) {
       })
       .catch(() => {
         toast.show({
-          title: 'Não foi possível buscar as categorias',
+          title: t('couldntSearchCategories'),
           status: 'error',
         });
       });
@@ -104,7 +104,7 @@ export default function NewProductScreen(props) {
 
     ProductService.createProduct(product, user)
       .then((resp) => {
-        title = `Produto "${product.name}" adicionado com sucesso!`;
+        title = t('addingProductSuccess', {productName: product.name});
         status = 'success';
 
         const category = {
@@ -119,10 +119,10 @@ export default function NewProductScreen(props) {
       })
       .catch((error) => {
         if (error?.response?.status === 409) {
-          title = 'Este código de barras já foi cadastrado';
+          title = t('barcodeAlreadyRegistered');
           status = 'warning';
         } else {
-          title = 'Não foi possível adicionar o produto';
+          title = t('couldntAddProduct');
           status = 'warning';
         }
       })
