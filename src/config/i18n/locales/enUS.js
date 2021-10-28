@@ -170,4 +170,5 @@ export default {
   readAgain: 'Read again',
   foundBarcode: 'Found barcode',
   addingToList: 'Adding product to the list',
+  others: 'Others',
 };

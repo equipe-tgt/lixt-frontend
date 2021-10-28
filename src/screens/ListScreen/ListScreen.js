@@ -318,8 +318,11 @@ export default function ListScreen(props) {
       // Agrupa os produtos por categorias
       const groupedProducts = selectedList.productsOfList.reduce(
         (accumlator, currentProductOfList) => {
-          accumlator[currentProductOfList.product.category.name] = [
-            ...(accumlator[currentProductOfList.product.category.name] || []),
+          const categoryName =
+            currentProductOfList.product?.category?.name || t('others');
+
+          accumlator[categoryName] = [
+            ...(accumlator[categoryName] || []),
             currentProductOfList,
           ];
           return accumlator;
