@@ -98,6 +98,7 @@ export default {
   remove: 'Remove',
   removing: 'Removing',
   cancel: 'Cancel',
+  yes: 'Yes',
 
   sendInvitation: 'Invite',
   selectList: 'Select a list',
@@ -175,4 +176,7 @@ export default {
   barcodeAlreadyRegistered: 'This barcode has already been registered',
   couldntAddProduct: 'Could not add the product',
   others: 'Others',
+  barcodeRegisteredOn:
+    'The barcode "{{barcode}}" has been already registered in the product "{{product}}"',
+  wisthToAddToList: 'Do you wish to add it to your current list?',
 };

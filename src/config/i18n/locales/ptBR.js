@@ -96,6 +96,7 @@ export default {
   remove: 'Remover',
   removing: 'Removendo',
   cancel: 'Cancelar',
+  yes: 'Sim',
 
   sendInvitation: 'Convidar',
   selectList: 'Selecione uma lista',
@@ -174,4 +175,7 @@ export default {
   barcodeAlreadyRegistered: 'Esse código de barras já foi cadastrado',
   couldntAddProduct: 'Não foi possível adicionar o produto',
   others: 'Outros',
+  barcodeRegisteredOn:
+    'O código "{{barcode}}" já foi cadastrado no produto "{{product}}"',
+  wisthToAddToList: 'Deseja adicioná-lo à lista atual?',
 };
