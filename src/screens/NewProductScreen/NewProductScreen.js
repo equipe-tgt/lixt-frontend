@@ -16,10 +16,9 @@ import {
   Text,
   HStack,
   Box,
-  Link,
 } from 'native-base';
 
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import LixtInput from '../../components/LixtInput';
 
 // Validação do formulário
@@ -32,6 +31,7 @@ import MEASURE_TYPES, {
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
 
+import DuplicatedBarcodeModal from '../../components/DuplicatedBarcodeModal';
 import { AuthContext } from '../../context/AuthProvider';
 
 export default function NewProductScreen(props) {
@@ -42,6 +42,10 @@ export default function NewProductScreen(props) {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [barcode, setBarcode] = useState(null);
+  const [duplicatedModalData, setDuplicatedModalData] = useState({
+    isOpen: false,
+    duplicatedProduct: null,
+  });
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
@@ -104,7 +108,7 @@ export default function NewProductScreen(props) {
 
     ProductService.createProduct(product, user)
       .then((resp) => {
-        title = t('addingProductSuccess', {productName: product.name});
+        title = t('addingProductSuccess', { productName: product.name });
         status = 'success';
 
         const category = {
@@ -118,9 +122,13 @@ export default function NewProductScreen(props) {
         });
       })
       .catch((error) => {
+        // Caso o produto que está sendo cadastrado já exista com o mesmo
+        // código de barras na plataforma
         if (error?.response?.status === 409) {
-          title = t('barcodeAlreadyRegistered');
-          status = 'warning';
+          setDuplicatedModalData({
+            isOpen: true,
+            duplicatedProduct: error?.response?.data,
+          });
         } else {
           title = t('couldntAddProduct');
           status = 'warning';
@@ -201,7 +209,11 @@ export default function NewProductScreen(props) {
             variant="outline"
             colorScheme="dark"
             startIcon={
-              <Ionicons name="barcode-outline" size={34} color="#292524" />
+              <MaterialCommunityIcons
+                name="barcode-scan"
+                size={34}
+                color="#292524"
+              />
             }
             onPress={() => {
               props.navigation.navigate('BarcodeReader', {
@@ -254,6 +266,15 @@ export default function NewProductScreen(props) {
           {t('add')}
         </Button>
       </Center>
+      <DuplicatedBarcodeModal
+        showModal={duplicatedModalData.isOpen}
+        product={duplicatedModalData.duplicatedProduct}
+        barcode={barcode}
+        navigate={props.navigation.navigate}
+        closeModal={() => {
+          setDuplicatedModalData({ isOpen: false, duplicatedProduct: null });
+        }}
+      />
     </SafeAreaView>
   );
 }

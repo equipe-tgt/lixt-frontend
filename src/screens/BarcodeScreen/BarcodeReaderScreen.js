@@ -50,7 +50,7 @@ export default function BarcodeReaderScreen(props) {
         } catch (error) {
           toast.show({
             title: t('errorServerDefault'),
-            status: 'success',
+            status: 'warning',
           });
         } finally {
           setLoading(false);
