@@ -6,6 +6,7 @@ import LixtInput from './LixtInput';
 import { useTranslation } from 'react-i18next';
 import PurchaseLocalService from '../services/PurchaseLocalService';
 import { AuthContext } from '../context/AuthProvider';
+import * as Location from 'expo-location';
 
 // Validação do formulário
 import { useFormik } from 'formik';
@@ -19,6 +20,11 @@ export default function PurchaseLocalModal(props) {
   const [filteredPurchaseLocations, setFilteredPurchaseLocations] = useState(
     []
   );
+  const [coordinates, setCoordinates] = useState({
+    latitude: null,
+    longitude: null,
+  });
+
   const { user } = useContext(AuthContext);
 
   // Instanciando formik para controlar as validações do formulário
@@ -34,11 +40,11 @@ export default function PurchaseLocalModal(props) {
     },
   });
 
-  // Ao abrir o modal busca as localizações próximas
+  // Ao abrir o modal pega as coordenadas do usuário
   useEffect(() => {
     if (props.showModal) {
       values.name = '';
-      getPurchaseLocals();
+      getCoordinates();
     }
   }, [props.showModal]);
 
@@ -56,6 +62,13 @@ export default function PurchaseLocalModal(props) {
     };
   }, [values.name]);
 
+  // Ao possuir as coordenadas passamos a buscar as localizações próximas
+  useEffect(() => {
+    if (coordinates.latitude && coordinates.longitude) {
+      getPurchaseLocals();
+    }
+  }, [coordinates]);
+
   // Usuário inserindo um local novo na aplicação
   const savePurchaseLocal = async () => {
     let status;
@@ -64,14 +77,17 @@ export default function PurchaseLocalModal(props) {
     setLoading(true);
     try {
       const { data } = await PurchaseLocalService.createNewPurchaseLocal(
-        values.name,
+        {
+          name: values.name,
+          ...coordinates,
+        },
         user
       );
       props.closeModal(data);
       title = t('successfullySaved');
       status = 'success';
     } catch (error) {
-      console.log(error);
+      console.log({ error });
       toast.show({
         title: t('unsuccessfullySaved'),
         status: 'warning',
@@ -86,17 +102,16 @@ export default function PurchaseLocalModal(props) {
     }
   };
 
-  // Busca os locais de compra próximos, no momento está com a localização
-  // fixada
+  // Busca os locais de compra próximos
   const getPurchaseLocals = async () => {
     let status;
     let title;
 
     try {
-      const { data } = await PurchaseLocalService.findNearBy(user);
+      const { data } = await PurchaseLocalService.findNearBy(coordinates, user);
       setPurchaseLocations(data);
     } catch (error) {
-      console.log(error);
+      console.log({ error });
       toast.show({
         title: t('unsuccessfullySaved'),
         status: 'warning',
@@ -105,6 +120,34 @@ export default function PurchaseLocalModal(props) {
       toast.show({
         title,
         status,
+      });
+    }
+  };
+
+  const getCoordinates = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+
+    // Verifica se há permissão para obter a localização do dispositivo
+    if (status !== 'granted') {
+      props.closeModal();
+      toast.show({
+        title: 'Precisamos de sua permissão para obter a localização',
+        status: 'warning',
+      });
+
+      return;
+    }
+
+    try {
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setCoordinates({ latitude, longitude });
+    } catch (error) {
+      // Caso haja permissão mas a localização do dispositivo esteja desativada
+      props.closeModal();
+      toast.show({
+        title: 'Ative a localização do dispositivo',
+        status: 'info',
       });
     }
   };
@@ -120,7 +163,7 @@ export default function PurchaseLocalModal(props) {
     >
       <Modal.Content maxWidth="400px">
         <Modal.CloseButton />
-        <Modal.Header>Local da compra</Modal.Header>
+        <Modal.Header>{t('purchaseLocal')}</Modal.Header>
         <Modal.Body mt={5}>
           <LixtInput
             labelName="purchaseLocal"
@@ -159,7 +202,7 @@ export default function PurchaseLocalModal(props) {
                     }}
                     _pressed={{ bg: 'primary.500' }}
                   >
-                    {t('add')} {values.name}
+                    {t('add')} {`"${values.name}"`}
                   </List.Item>
                 )}
               </ScrollView>
