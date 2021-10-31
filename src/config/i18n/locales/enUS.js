@@ -182,5 +182,5 @@ export default {
 
   turnOnDeviceLocation: 'Turn on the device location',
   requestForLocationPermission:
-    'We need your permission to access the location',
+    'We need your permission to obtain the location',
 };
