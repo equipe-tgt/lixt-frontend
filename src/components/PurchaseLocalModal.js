@@ -131,7 +131,7 @@ export default function PurchaseLocalModal(props) {
     if (status !== 'granted') {
       props.closeModal();
       toast.show({
-        title: 'Precisamos de sua permissão para obter a localização',
+        title: t('requestForLocationPermission'),
         status: 'warning',
       });
 
@@ -146,7 +146,7 @@ export default function PurchaseLocalModal(props) {
       // Caso haja permissão mas a localização do dispositivo esteja desativada
       props.closeModal();
       toast.show({
-        title: 'Ative a localização do dispositivo',
+        title: t('turnOnDeviceLocation'),
         status: 'info',
       });
     }
