@@ -171,25 +171,36 @@ describe('NewProductScreen component', () => {
         });
         await waitFor(() => fireEvent.press(createProductButton));
 
-        const toast = getByText('Não foi possível adicionar o produto');
+        const toast = getByText('couldntAddProduct');
         expect(toast).toBeDefined();
       });
 
-      it('should show error message when a product with the same barcode already exists', async () => {
-        const createProductSpy = jest.spyOn(ProductService, 'createProduct');
-        createProductSpy.mockReturnValue(
-          // eslint-disable-next-line prefer-promise-reject-errors
-          Promise.reject({ response: { status: 409 } })
-        );
+      describe('when a product with the same barcode already exists', () => {
+        it('should show a modal with a button to add the found product to the list ', async () => {
+          const createProductSpy = jest.spyOn(ProductService, 'createProduct');
+          createProductSpy.mockReturnValue(
+            // eslint-disable-next-line prefer-promise-reject-errors
+            Promise.reject({ response: { status: 409 } })
+          );
 
-        await waitFor(() => {
-          fireEvent.changeText(getByTestId('new-product-name'), 'Chocolate');
-          fireEvent(getByTestId('category-select'), 'onValueChange', '1');
+          await waitFor(() => {
+            fireEvent.changeText(getByTestId('new-product-name'), 'Chocolate');
+            fireEvent(getByTestId('category-select'), 'onValueChange', '1');
+          });
+          await waitFor(() => fireEvent.press(createProductButton));
+
+          const duplicatedBarcodeModal = await waitFor(() =>
+            getByTestId('duplicated-barcode-modal')
+          );
+
+          expect(duplicatedBarcodeModal).toBeDefined();
+
+          const duplicatedBarcodeButton = await waitFor(() =>
+            getByTestId('duplicated-barcode-button')
+          );
+
+          expect(duplicatedBarcodeButton).toBeDefined();
         });
-        await waitFor(() => fireEvent.press(createProductButton));
-
-        const toast = getByText('Este código de barras já foi cadastrado');
-        expect(toast).toBeDefined();
       });
     });
 

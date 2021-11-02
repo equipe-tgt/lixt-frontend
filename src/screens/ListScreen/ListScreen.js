@@ -22,7 +22,7 @@ import {
   Spinner,
 } from 'native-base';
 import LixtProductItem from '../../components/LixtProductItem';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { screenBasicStyle as style } from '../../styles/style';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -483,10 +483,10 @@ export default function ListScreen(props) {
                     onPress={() => props.navigation.navigate('BarcodeReader')}
                     accessibilityLabel={t('barcodeReader')}
                   >
-                    <Ionicons
-                      name="barcode-outline"
+                    <MaterialCommunityIcons
+                      name="barcode-scan"
                       size={34}
-                      color="#292524"
+                      color="#6b7280"
                     />
                   </Pressable>
                 }

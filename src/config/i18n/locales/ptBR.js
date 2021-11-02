@@ -96,6 +96,7 @@ export default {
   remove: 'Remover',
   removing: 'Removendo',
   cancel: 'Cancelar',
+  yes: 'Sim',
 
   sendInvitation: 'Convidar',
   selectList: 'Selecione uma lista',
@@ -169,5 +170,16 @@ export default {
   readAgain: 'Ler novamente',
   foundBarcode: 'Código encontrado',
   addingToList: 'Adicionando produto à lista',
+  couldntSearchCategories: 'Não foi possível pesquisar as categorias',
+  addingProductSuccess: 'Produto {{product.name}} foi adicionado com sucesso!',
+  barcodeAlreadyRegistered: 'Esse código de barras já foi cadastrado',
+  couldntAddProduct: 'Não foi possível adicionar o produto',
   others: 'Outros',
+  barcodeRegisteredOn:
+    'O código "{{barcode}}" já foi cadastrado no produto "{{product}}"',
+  wisthToAddToList: 'Deseja adicioná-lo à lista atual?',
+
+  turnOnDeviceLocation: 'Ative a localização do dispositivo',
+  requestForLocationPermission:
+    'Precisamos de sua permissão para obter a localização',
 };

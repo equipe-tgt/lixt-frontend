@@ -98,6 +98,7 @@ export default {
   remove: 'Remove',
   removing: 'Removing',
   cancel: 'Cancel',
+  yes: 'Yes',
 
   sendInvitation: 'Invite',
   selectList: 'Select a list',
@@ -170,5 +171,16 @@ export default {
   readAgain: 'Read again',
   foundBarcode: 'Found barcode',
   addingToList: 'Adding product to the list',
+  couldntSearchCategories: 'Could not search the categories',
+  addingProductSuccess: 'Product {{product.name}} has been succesfully added!',
+  barcodeAlreadyRegistered: 'This barcode has already been registered',
+  couldntAddProduct: 'Could not add the product',
   others: 'Others',
+  barcodeRegisteredOn:
+    'The barcode "{{barcode}}" has been already registered in the product "{{product}}"',
+  wisthToAddToList: 'Do you wish to add it to your current list?',
+
+  turnOnDeviceLocation: 'Turn on the device location',
+  requestForLocationPermission:
+    'We need your permission to obtain the location',
 };
