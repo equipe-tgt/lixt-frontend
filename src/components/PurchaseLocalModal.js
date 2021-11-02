@@ -62,7 +62,7 @@ export default function PurchaseLocalModal(props) {
       // Conforme o usuário digita o nome, filtra a lista de localizações de compra
       if (values.name.length > 0) {
         const filtered = purchaseLocations.filter((l) =>
-          l.name.startsWith(values.name)
+          l.name.toLowerCase().startsWith(values.name.toLowerCase())
         );
         setFilteredPurchaseLocations(filtered);
       } else {
@@ -148,10 +148,13 @@ export default function PurchaseLocalModal(props) {
     }
 
     try {
-      const location = await Location.getCurrentPositionAsync({});
+      const location = await Location.getCurrentPositionAsync({
+        enableHighAccuracy: true,
+      });
       const { latitude, longitude } = location.coords;
       setCoordinates({ latitude, longitude });
     } catch (error) {
+      console.log({ error });
       // Caso haja permissão mas a localização do dispositivo esteja desativada
       props.closeModal();
       toast.show({

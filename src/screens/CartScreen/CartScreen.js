@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView, RefreshControl } from 'react-native';
 import {
-  Box,
   Select,
   Center,
   Text,
@@ -331,6 +330,7 @@ export default function CartScreen(props) {
           </Select>
 
           <Menu
+            placement="bottom left"
             trigger={(triggerProps) => {
               return (
                 <Pressable
@@ -352,7 +352,9 @@ export default function CartScreen(props) {
                 props.navigation.navigate('History');
               }}
             >
-              {t('history')}
+              <HStack alignItems="center">
+                <Text ml={2}> {t('history')} </Text>
+              </HStack>
             </Menu.Item>
           </Menu>
         </HStack>

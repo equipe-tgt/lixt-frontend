@@ -182,4 +182,6 @@ export default {
   turnOnDeviceLocation: 'Ative a localização do dispositivo',
   requestForLocationPermission:
     'Precisamos de sua permissão para obter a localização',
+
+  history: 'Histórico',
 };

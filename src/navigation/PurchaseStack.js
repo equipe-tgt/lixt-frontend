@@ -4,6 +4,7 @@ import CartScreen from '../screens/CartScreen/CartScreen';
 import CommentaryScreen from '../screens/CommentaryScreen/CommentaryScreen';
 import ProductOfListDeatils from '../screens/ProductOfListDetails/ProductOfListDetails';
 import HistoryScreen from '../screens/HistoryScreen/HistoryScreen';
+import PurchaseDetailScreen from '../screens/PurchaseDetailScreen/PurchaseDetailScreen';
 
 import { useTranslation } from 'react-i18next';
 
@@ -42,6 +43,11 @@ export default function PurchaseStack() {
         name="History"
         options={{ title: t('history'), headerStyle: stackHeaderStyle }}
         component={HistoryScreen}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="PurchaseDetail"
+        options={{ title: t('purchase'), headerStyle: stackHeaderStyle }}
+        component={PurchaseDetailScreen}
       ></Stack.Screen>
     </Stack.Navigator>
   );
