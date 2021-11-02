@@ -179,4 +179,8 @@ export default {
   barcodeRegisteredOn:
     'The barcode "{{barcode}}" has been already registered in the product "{{product}}"',
   wisthToAddToList: 'Do you wish to add it to your current list?',
+
+  turnOnDeviceLocation: 'Turn on the device location',
+  requestForLocationPermission:
+    'We need your permission to obtain the location',
 };
