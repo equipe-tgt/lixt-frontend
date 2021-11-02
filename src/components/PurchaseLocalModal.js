@@ -1,8 +1,17 @@
 import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, ScrollView, List, useToast } from 'native-base';
+import {
+  Modal,
+  ScrollView,
+  List,
+  useToast,
+  Text,
+  Box,
+  HStack,
+} from 'native-base';
 import LixtInput from './LixtInput';
 
+import { FontAwesome5 } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import PurchaseLocalService from '../services/PurchaseLocalService';
 import { AuthContext } from '../context/AuthProvider';
@@ -70,7 +79,7 @@ export default function PurchaseLocalModal(props) {
   }, [coordinates]);
 
   // Usuário inserindo um local novo na aplicação
-  const savePurchaseLocal = async () => {
+  const savePurchaseLocal = async (name) => {
     let status;
     let title;
 
@@ -78,7 +87,7 @@ export default function PurchaseLocalModal(props) {
     try {
       const { data } = await PurchaseLocalService.createNewPurchaseLocal(
         {
-          name: values.name,
+          name: name,
           ...coordinates,
         },
         user
@@ -184,13 +193,45 @@ export default function PurchaseLocalModal(props) {
                   filteredPurchaseLocations.map((location) => (
                     <List.Item
                       pb={4}
-                      key={location.id}
+                      key={location.name}
                       onPress={() => {
-                        props.closeModal(location);
+                        // Caso o local venha do MapBox, ele não possuirá id e portanto manda salvar
+                        if (!location.id) {
+                          savePurchaseLocal(location.name);
+                        } else {
+                          props.closeModal(location);
+                        }
                       }}
                       _pressed={{ bg: 'primary.500' }}
                     >
-                      {location.name}
+                      {location.name.includes(',') ? (
+                        <Box width="90%">
+                          {/* Caso o nome do local da compra venha do mapbox quebra a visualização da string  */}
+                          <Text> {location.name.split(',')[0]}</Text>
+
+                          <HStack alignItems="center">
+                            <FontAwesome5
+                              name="map-marker-alt"
+                              size={12}
+                              color="black"
+                            />
+                            <Text fontSize="xs" ml={1} mt={1}>
+                              {location.name.slice(
+                                location.name.indexOf(',') + 1
+                              )}
+                            </Text>
+                          </HStack>
+                        </Box>
+                      ) : (
+                        <HStack alignItems="center">
+                          <FontAwesome5
+                            name="map-marker-alt"
+                            size={12}
+                            color="black"
+                          />
+                          <Text ml={1}> {location.name}</Text>
+                        </HStack>
+                      )}
                     </List.Item>
                   ))
                 ) : (
@@ -198,7 +239,7 @@ export default function PurchaseLocalModal(props) {
                     pb={4}
                     testID="add-purchase-location"
                     onPress={() => {
-                      savePurchaseLocal();
+                      savePurchaseLocal(values.name);
                     }}
                     _pressed={{ bg: 'primary.500' }}
                   >
