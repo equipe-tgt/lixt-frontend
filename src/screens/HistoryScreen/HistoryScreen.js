@@ -12,6 +12,7 @@ import {
   HStack,
   Pressable,
   Heading,
+  Box,
 } from 'native-base';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -77,9 +78,11 @@ export default function HistoryScreen(props) {
         data={purchases}
         renderItem={({ item }) => (
           <Pressable
-            onPress={props.navigation.navigate('PurchaseDetail', {
-              purchase: item,
-            })}
+            onPress={() => {
+              props.navigation.navigate('PurchaseDetail', {
+                purchase: item,
+              });
+            }}
             ml={5}
             py={3}
           >
@@ -106,9 +109,9 @@ export default function HistoryScreen(props) {
       />
     </SafeAreaView>
   ) : (
-    <SafeAreaView style={style.container}>
-      <Text>Você não possui compras</Text>
-    </SafeAreaView>
+    <Box alignItems="center" justifyContent="center" style={style.container}>
+      <Text>{t('noPurchasesYet')}</Text>
+    </Box>
   );
 }
 
