@@ -14,7 +14,7 @@ import {
   Heading,
   Box,
 } from 'native-base';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { screenBasicStyle as style } from '../../styles/style';
@@ -52,6 +52,10 @@ export default function HistoryScreen(props) {
   const fetchPurchases = async () => {
     try {
       const { data } = await PurchaseService.getPurchases(user);
+
+      // Ordenando pela compra mais nova
+      data.sort((a, b) => new Date(b.purchaseDate) > new Date(a.purchaseDate));
+
       setPurchases(data);
     } catch (error) {
       toast.show({
@@ -99,7 +103,7 @@ export default function HistoryScreen(props) {
               {item.purchasePrice}
             </Heading>
             <HStack mt={1} alignItems="center">
-              <FontAwesome5 name="map-marker-alt" size={12} color="#4b5563" />
+              <Entypo name="shop" size={18} color="#4b5563" />
               <Text width={250} fontSize="sm" ml={2} color="coolGray.600">
                 {getFormattedPurchaseLocalName(item?.purchaseLocal.name)}
               </Text>

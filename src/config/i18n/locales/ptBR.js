@@ -191,4 +191,5 @@ export default {
   totalAmountItems: 'Total de itens',
   includedLists: 'Listas inclusas',
   purchaseLists: 'Listas de compras',
+  purchasedAmount: 'Qtd. comprada',
 };

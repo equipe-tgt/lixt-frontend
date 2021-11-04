@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5, Entypo } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import moment from 'moment';
 import { enUS, ptBR } from 'date-fns/locale';
 
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native';
-import { Box, Text, HStack, Accordion, ScrollView, Tabs } from 'native-base';
+import { Box, Text, HStack, Accordion, ScrollView } from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
 
 import { useTranslation, getI18n } from 'react-i18next';
@@ -19,11 +19,9 @@ export default function PurchaseDetailScreen(props) {
     purchasePrice: 0,
     purchaseLists: [],
   });
-  const [purchaseItems, setPurchaseItems] = useState([]);
 
   useFocusEffect(() => {
     if (props.route.params.purchase) {
-      console.log(props.route.params.purchase);
       setPurchase(props.route.params.purchase);
     } else {
       props.navigation.navigate('History');
@@ -54,6 +52,7 @@ export default function PurchaseDetailScreen(props) {
   return (
     <SafeAreaView style={style.container}>
       <ScrollView>
+        {/* Dados gerais da compra */}
         <Box mt={5} alignItems="center">
           <Text bold fontSize={42}>
             {t('currency')}
@@ -72,18 +71,18 @@ export default function PurchaseDetailScreen(props) {
           </Text>
 
           <HStack alignItems="center" mt={2}>
-            <FontAwesome5 name="map-marker-alt" size={16} color="#4b5563" />
+            <Entypo name="shop" size={16} color="#4b5563" />
             <Text color="coolGray.600" ml={2}>
               {t('purchaseLocal')}:
             </Text>
           </HStack>
 
-          <Text width="80%" mt={2} textAlign="center">
+          <Text fontSize="sm" width="80%" textAlign="center">
             {purchase?.purchaseLocal?.name}
           </Text>
         </Box>
 
-        <HStack mx="auto" width="90%" justifyContent="space-around" mb={5}>
+        <HStack mx="auto" width="90%" justifyContent="space-around" my={5}>
           <Box>
             <Text textAlign="center">{t('totalAmountItems')}</Text>
             <Text textAlign="center">{getTotalOfItems()}</Text>
@@ -94,6 +93,7 @@ export default function PurchaseDetailScreen(props) {
           </Box>
         </HStack>
 
+        {/* Accordion das listas de itens */}
         <Text bold ml={5}>
           {t('purchaseLists')}
         </Text>
@@ -102,20 +102,32 @@ export default function PurchaseDetailScreen(props) {
             {purchase.purchaseLists.map((purchaseList) => {
               return (
                 <Accordion.Item key={purchaseList.id}>
-                  <Accordion.Summary py={5}>
-                    <Text bold fontSize="lg">
-                      {purchaseList.listId}
-                    </Text>
+                  <Accordion.Summary
+                    _expanded={{ backgroundColor: 'primary.200' }}
+                    py={5}
+                  >
+                    <Box>
+                      <Text bold fontSize={20}>
+                        {purchaseList.nameList}
+                      </Text>
+                      <Text>
+                        {`${t('currency')} ${
+                          purchaseList.partialPurchasePrice || 0
+                        } `}
+                      </Text>
+                    </Box>
                     <Accordion.Icon />
                   </Accordion.Summary>
                   <Accordion.Details>
                     {purchaseList.itemsOfPurchase.map((item) => (
                       <Box my={2} key={item.id}>
                         <Text bold>{item.name}</Text>
-                        <Text>{`${t('amount')} ${item.amount}`}</Text>
-                        <Text>{`${t('price')} ${t('currency')} ${
-                          item.price || 0
+                        <Text color="gray.500">{`${t('purchasedAmount')}: ${
+                          item.amount
                         }`}</Text>
+                        <Text color="gray.500">{`${t('price')}: ${t(
+                          'currency'
+                        )} ${item.price || 0}`}</Text>
                       </Box>
                     ))}
                   </Accordion.Details>
@@ -124,53 +136,6 @@ export default function PurchaseDetailScreen(props) {
             })}
           </Accordion>
         )}
-        {/* <Tabs isFitted>
-          <Tabs.Bar>
-            <Tabs.Tab>Resumo</Tabs.Tab>
-            <Tabs.Tab>Detalhado</Tabs.Tab>
-          </Tabs.Bar>
-          <Tabs.Views>
-            <Tabs.View>
-              <Box>
-                <Text>{t('totalAmount')}</Text>
-                <Text>{getTotalOfItems()}</Text>
-              </Box>
-              <Box>
-                <Text>{t('amountOfLists')}</Text>
-                <Text>{purchase.purchaseLists.length}</Text>
-              </Box>
-            </Tabs.View>
-            <Tabs.View>
-              {purchase.purchaseLists.length > 0 && (
-                <Accordion defaultIndex={[0]} mt={3}>
-                  {purchase.purchaseLists.map((purchaseList) => {
-                    return (
-                      <Accordion.Item key={purchaseList.id}>
-                        <Accordion.Summary py={5}>
-                          <Text bold fontSize="lg">
-                            {purchaseList.listId}
-                          </Text>
-                          <Accordion.Icon />
-                        </Accordion.Summary>
-                        <Accordion.Details>
-                          {purchaseList.itemsOfPurchase.map((item) => (
-                            <Box my={2} key={item.id}>
-                              <Text bold>{item.name}</Text>
-                              <Text>{`${t('amount')} ${item.amount}`}</Text>
-                              <Text>{`${t('price')} ${t('currency')} ${
-                                item.price || 0
-                              }`}</Text>
-                            </Box>
-                          ))}
-                        </Accordion.Details>
-                      </Accordion.Item>
-                    );
-                  })}
-                </Accordion>
-              )}
-            </Tabs.View>
-          </Tabs.Views>
-        </Tabs> */}
       </ScrollView>
     </SafeAreaView>
   );

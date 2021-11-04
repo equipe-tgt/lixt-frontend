@@ -191,4 +191,5 @@ export default {
   totalAmountItems: 'Total of items',
   includedLists: 'Included lists',
   purchaseLists: 'Purchase lists',
+  purchasedAmount: 'Purchased amount',
 };
