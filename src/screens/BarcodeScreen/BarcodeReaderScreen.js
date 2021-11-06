@@ -28,38 +28,50 @@ export default function BarcodeReaderScreen(props) {
 
   const handleBarCodeScanned = async ({ type, data }) => {
     if (allowedBarcodeTypes.includes(type)) {
-      if (!props.route.params?.origin) {
-        setLoading(true);
+      setLoading(true);
 
-        try {
-          const response = await ProductService.getProductByBarcode(data, user);
+      try {
+        const response = await ProductService.getProductByBarcode(data, user);
 
-          if (response.data) {
-            toast.show({
-              title: t('foundBarcode'),
-              description: t('addingToList'),
-              status: 'success',
-            });
-            props.navigation.navigate('Lists', {
-              foundProductByBarcode: response.data,
-            });
-          } else {
-            setNewBarcode(data);
-            setModalOpen(true);
-          }
-        } catch (error) {
-          toast.show({
-            title: t('errorServerDefault'),
-            status: 'warning',
-          });
-        } finally {
-          setLoading(false);
+        // Se a rota de origem for a da tela de novo produto
+        if (props.route.params?.origin) {
+          handleBarcodeForNewProduct(data, response);
         }
-      } else {
-        props.navigation.navigate(props.route.params?.origin, {
-          barcode: data,
+        // Caso for a de listas
+        else {
+          handleBarcodeForLists(data, response);
+        }
+      } catch (error) {
+        toast.show({
+          title: t('errorServerDefault'),
+          status: 'warning',
         });
+      } finally {
+        setLoading(false);
       }
+    }
+  };
+
+  const handleBarcodeForNewProduct = (barcode, response) => {
+    props.navigation.navigate(props.route.params?.origin, {
+      barcode: barcode,
+      foundProductByBarcode: response.data || null, // se o produto já existe no servidor ou não
+    });
+  };
+
+  const handleBarcodeForLists = (barcode, response) => {
+    if (response.data) {
+      toast.show({
+        title: t('foundBarcode'),
+        description: t('addingToList'),
+        status: 'success',
+      });
+      props.navigation.navigate('Lists', {
+        foundProductByBarcode: response.data,
+      });
+    } else {
+      setNewBarcode(barcode);
+      setModalOpen(true);
     }
   };
 

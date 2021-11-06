@@ -175,7 +175,65 @@ describe('NewProductScreen component', () => {
         expect(toast).toBeDefined();
       });
 
-      describe('when a product with the same barcode already exists', () => {
+      describe('when the user reads the barcode of a product that already exists', () => {
+        it('should show a modal with a button to add the found product to the list', async () => {
+          const route = {
+            params: {
+              productName: '',
+              barcode: '7891010973902',
+              foundProductByBarcode: {
+                id: 1,
+                name: 'Arroz',
+                userId: null,
+                categoryId: 1,
+                barcode: '7891010973902',
+                measureValue: null,
+                measureType: 'UNITY',
+                category: {
+                  id: 1,
+                  name: 'Alimentação',
+                },
+              },
+            },
+          };
+
+          const renderResults = render(
+            <AuthContext.Provider
+              value={{
+                user: {
+                  id: 1,
+                },
+                login: () => {},
+                logout: () => {},
+              }}
+            >
+              <SafeAreaProvider
+                initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+              >
+                <NativeBaseProvider>
+                  <NavigationContext.Provider value={navContext}>
+                    <NewProductScreen route={route} navigation={navigation} />
+                  </NavigationContext.Provider>
+                </NativeBaseProvider>
+              </SafeAreaProvider>
+            </AuthContext.Provider>
+          );
+
+          const duplicatedBarcodeModal = await waitFor(() =>
+            renderResults.getByTestId('duplicated-barcode-modal')
+          );
+
+          expect(duplicatedBarcodeModal).toBeDefined();
+
+          const duplicatedBarcodeButton = await waitFor(() =>
+            renderResults.getByTestId('duplicated-barcode-button')
+          );
+
+          expect(duplicatedBarcodeButton).toBeDefined();
+        });
+      });
+
+      describe('when the user tries to register a new product with a barcode that already exists', () => {
         it('should show a modal with a button to add the found product to the list ', async () => {
           const createProductSpy = jest.spyOn(ProductService, 'createProduct');
           createProductSpy.mockReturnValue(

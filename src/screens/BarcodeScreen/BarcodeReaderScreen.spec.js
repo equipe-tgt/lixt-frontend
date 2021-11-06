@@ -266,6 +266,10 @@ describe('BarcodeReaderScreen component', () => {
         )
       );
 
+      ProductService.getProductByBarcode = jest.fn((path) => {
+        return { data: null };
+      });
+
       // Usamos um botão escondido na tela com a funcionalidade do
       // BarCodeScanner porque o componente original não dispara o
       // evento de leitura no ambiente de testes
@@ -282,6 +286,7 @@ describe('BarcodeReaderScreen component', () => {
 
       expect(navigation.navigate).toHaveBeenCalledWith('NewProduct', {
         barcode: '7891010973902',
+        foundProductByBarcode: null,
       });
     });
   });
