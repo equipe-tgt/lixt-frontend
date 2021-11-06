@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import moment from 'moment';
@@ -53,10 +53,14 @@ export default function HistoryScreen(props) {
     try {
       const { data } = await PurchaseService.getPurchases(user);
 
-      // Ordenando pela compra mais nova
-      data.sort((a, b) => new Date(b.purchaseDate) > new Date(a.purchaseDate));
+      if (data && data.length > 0) {
+        // Ordenando pela compra mais nova
+        data.sort(
+          (a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate)
+        );
 
-      setPurchases(data);
+        setPurchases(data);
+      }
     } catch (error) {
       toast.show({
         title: t('errorServerDefault'),
@@ -80,8 +84,10 @@ export default function HistoryScreen(props) {
       <FlatList
         keyExtractor={(item) => String(item.id)}
         data={purchases}
+        testID="purchases-list"
         renderItem={({ item }) => (
           <Pressable
+            testID="purchase-list-item"
             onPress={() => {
               props.navigation.navigate('PurchaseDetail', {
                 purchase: item,
@@ -105,7 +111,7 @@ export default function HistoryScreen(props) {
             <HStack mt={1} alignItems="center">
               <Entypo name="shop" size={18} color="#4b5563" />
               <Text width={250} fontSize="sm" ml={2} color="coolGray.600">
-                {getFormattedPurchaseLocalName(item?.purchaseLocal.name)}
+                {getFormattedPurchaseLocalName(item?.purchaseLocal?.name)}
               </Text>
             </HStack>
           </Pressable>

@@ -54,7 +54,7 @@ export default function PurchaseDetailScreen(props) {
       <ScrollView>
         {/* Dados gerais da compra */}
         <Box mt={5} alignItems="center">
-          <Text bold fontSize={42}>
+          <Text testID="purchase-price-text" bold fontSize={42}>
             {t('currency')}
             {purchase.purchasePrice}
           </Text>
@@ -66,7 +66,7 @@ export default function PurchaseDetailScreen(props) {
             </Text>
           </HStack>
 
-          <Text width="80%" textAlign="center">
+          <Text width="80%" textAlign="center" testID="purchase-date">
             {getFormattedPurchaseDate(purchase.purchaseDate)}
           </Text>
 
@@ -77,19 +77,28 @@ export default function PurchaseDetailScreen(props) {
             </Text>
           </HStack>
 
-          <Text fontSize="sm" width="80%" textAlign="center">
+          <Text
+            testID="purchase-local-text"
+            fontSize="sm"
+            width="80%"
+            textAlign="center"
+          >
             {purchase?.purchaseLocal?.name}
           </Text>
         </Box>
 
         <HStack mx="auto" width="90%" justifyContent="space-around" my={5}>
           <Box>
-            <Text textAlign="center">{t('totalAmountItems')}</Text>
+            <Text testID="purchase-total-items" textAlign="center">
+              {t('totalAmountItems')}
+            </Text>
             <Text textAlign="center">{getTotalOfItems()}</Text>
           </Box>
           <Box>
             <Text textAlign="center">{t('includedLists')}</Text>
-            <Text textAlign="center">{purchase.purchaseLists.length}</Text>
+            <Text testID="purchase-lists" textAlign="center">
+              {purchase.purchaseLists.length}
+            </Text>
           </Box>
         </HStack>
 
@@ -98,7 +107,12 @@ export default function PurchaseDetailScreen(props) {
           {t('purchaseLists')}
         </Text>
         {purchase.purchaseLists.length > 0 && (
-          <Accordion width="95%" mx="auto" mt={3}>
+          <Accordion
+            testID="purchase-lists-details"
+            width="95%"
+            mx="auto"
+            mt={3}
+          >
             {purchase.purchaseLists.map((purchaseList) => {
               return (
                 <Accordion.Item key={purchaseList.id}>
