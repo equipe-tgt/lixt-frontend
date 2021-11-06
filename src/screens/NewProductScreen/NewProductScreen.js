@@ -75,6 +75,15 @@ export default function NewProductScreen(props) {
       if (props.route.params.barcode) {
         setBarcode(props.route.params.barcode);
         props.route.params.barcode = null;
+
+        // Se esse barcode já tiver sido cadastrado anteriormente,
+        // abre o modal de produto duplicado
+        if (props.route.params.foundProductByBarcode) {
+          setDuplicatedModalData({
+            isOpen: true,
+            duplicatedProduct: props.route.params.foundProductByBarcode,
+          });
+        }
       }
     }
   });
