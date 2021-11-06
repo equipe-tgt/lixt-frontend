@@ -81,6 +81,7 @@ export default {
 
   edit: 'Edit',
   price: 'Price',
+  amount: 'Amount',
   plannedAmount: 'Planned amount',
   planned: 'Planned',
   marked: 'Marked',
@@ -151,7 +152,7 @@ export default {
   savePurchase: 'Save purchase',
 
   currency: '$',
-
+  purchase: 'Purchase',
   purchaseLocal: 'Local of purchase',
   successfullySaved: 'Successfully saved',
   unsuccessfullySaved: "It wasn't possible to save it",
@@ -183,4 +184,12 @@ export default {
   turnOnDeviceLocation: 'Turn on the device location',
   requestForLocationPermission:
     'We need your permission to obtain the location',
+
+  history: 'History',
+  noPurchasesYet: "You didn't register any purchases yet",
+  purchaseMadeIn: 'Purchase made in:',
+  totalAmountItems: 'Total of items',
+  includedLists: 'Included lists',
+  purchaseLists: 'Purchase lists',
+  purchasedAmount: 'Purchased amount',
 };

@@ -80,6 +80,7 @@ export default {
 
   edit: 'Editar',
   price: 'Preço',
+  amount: 'Quantidade',
   plannedAmount: 'Quantidade planejada',
   planned: 'Planejados',
   marked: 'Marcados',
@@ -150,6 +151,7 @@ export default {
 
   currency: 'R$',
 
+  purchase: 'Compra',
   purchaseLocal: 'Estabelecimento da compra',
   successfullySaved: 'Salvo com sucesso',
   unsuccessfullySaved: 'Não foi possível salvar',
@@ -182,4 +184,12 @@ export default {
   turnOnDeviceLocation: 'Ative a localização do dispositivo',
   requestForLocationPermission:
     'Precisamos de sua permissão para obter a localização',
+
+  history: 'Histórico',
+  noPurchasesYet: 'Você ainda não registrou nenhuma compra',
+  purchaseMadeIn: 'Compra feita em:',
+  totalAmountItems: 'Total de itens',
+  includedLists: 'Listas inclusas',
+  purchaseLists: 'Listas de compras',
+  purchasedAmount: 'Qtd. comprada',
 };

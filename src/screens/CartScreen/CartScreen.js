@@ -1,7 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView, RefreshControl } from 'react-native';
-import { Box, Select, Center, Text, ScrollView, useToast } from 'native-base';
+import {
+  Select,
+  Center,
+  Text,
+  ScrollView,
+  useToast,
+  Menu,
+  Pressable,
+  HStack,
+} from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
 import LixtCartList from '../../components/LixtCartList';
 import LixtCalculator from '../../components/LixtCalculator';
 import ListService from '../../services/ListService';
@@ -291,7 +301,12 @@ export default function CartScreen(props) {
   return lists?.length ? (
     <CheckedItemsProvider>
       <SafeAreaView style={style.container}>
-        <Box w="90%" mx="auto">
+        <HStack
+          w="90%"
+          mx="auto"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <Select
             selectedValue={selectedList?.id}
             width="70%"
@@ -313,7 +328,36 @@ export default function CartScreen(props) {
                 />
               ))}
           </Select>
-        </Box>
+
+          <Menu
+            placement="bottom left"
+            trigger={(triggerProps) => {
+              return (
+                <Pressable
+                  testID="product-item-context-menu"
+                  p={3}
+                  {...triggerProps}
+                >
+                  <Ionicons
+                    size={20}
+                    color="#27272a"
+                    name="ellipsis-vertical"
+                  />
+                </Pressable>
+              );
+            }}
+          >
+            <Menu.Item
+              onPress={() => {
+                props.navigation.navigate('History');
+              }}
+            >
+              <HStack alignItems="center">
+                <Text ml={2}> {t('history')} </Text>
+              </HStack>
+            </Menu.Item>
+          </Menu>
+        </HStack>
         <ScrollView
           testID="cart-refresh-control"
           contentContainerStyle={{ paddingBottom: 120 }}
