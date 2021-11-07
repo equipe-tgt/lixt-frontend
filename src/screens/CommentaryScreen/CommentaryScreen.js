@@ -196,7 +196,7 @@ export default function CommentaryScreen(props) {
   };
 
   const changeGlobalCommentariesOrder = async (order) => {
-    if (order === "date") {
+    if (globalCommentariesOrder !== "date" && order === "date") {
       try {
         await AuthService.putGlobalCommentsPreference({
           ...user,
@@ -206,7 +206,7 @@ export default function CommentaryScreen(props) {
       finally {
         orderByDate(commentariesList.global, commentariesList.notGlobal);
       }
-    } else if (order === "user") {
+    } else if (globalCommentariesOrder !== "user" && order === "user") {
       try {
         await AuthService.putGlobalCommentsPreference({
           ...user,
@@ -280,13 +280,13 @@ export default function CommentaryScreen(props) {
               <Box display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center" marginY={15}>
                 <Menu
                   trigger={(triggerProps) => (
-                    <Pressable {...triggerProps}>
+                    <Pressable testID="settings-button" {...triggerProps}>
                       <Ionicons name="settings" size={24} color="gray" />
                     </Pressable>
                   )}
                 >
-                  <Menu.Item onPress={() => changeGlobalCommentariesOrder("date")}>{t("orderByDate")}</Menu.Item>
-                  <Menu.Item onPress={() => changeGlobalCommentariesOrder("user")}>{t("orderByUser")}</Menu.Item>
+                  <Menu.Item testID="order-by-date-button" onPress={() => changeGlobalCommentariesOrder("date")}>{t("orderByDate")}</Menu.Item>
+                  <Menu.Item testID="order-by-user-button" onPress={() => changeGlobalCommentariesOrder("user")}>{t("orderByUser")}</Menu.Item>
                 </Menu>
               </Box>
             ) : null
@@ -414,6 +414,7 @@ export default function CommentaryScreen(props) {
         ) : (
           <Pressable
             accessibilityLabel={t('comment')}
+            testID="add-commentary-button"
             onPress={() => {
               if (commentaryInformation.isGlobal) {
                 addGlobalCommentary();
