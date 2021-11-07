@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import moment from 'moment';
-import { useFocusEffect } from '@react-navigation/native';
 import { formatRelative } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { enUS, ptBR } from 'date-fns/locale';
@@ -21,14 +20,18 @@ import {
   Spinner,
   useToast,
   Checkbox,
+  InfoIcon,
+  Tooltip,
+  Menu
 } from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
-import { Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 
 import CommentaryService from '../../services/CommentaryService';
 import ProductOfListService from '../../services/ProductOfListService';
 import { AuthContext } from '../../context/AuthProvider';
 import { useTranslation } from 'react-i18next';
+import AuthService from '../../services/AuthService';
 
 export default function CommentaryScreen(props) {
   const { user } = useContext(AuthContext);
@@ -37,19 +40,45 @@ export default function CommentaryScreen(props) {
 
   const [product] = useState(props.route.params.product);
   const [language, setLanguage] = useState(enUS);
-  const [commentaries, setCommentaries] = useState([]);
-  const [globalCommentaries, setGlobalCommentaries] = useState([]);
-  const [newCommentary, setNewCommentary] = useState('');
-  const [isGlobalCommentary, setIsGlobalCommentary] = useState(false);
+
+  const [commentariesList, setCommentariesList] = useState({
+    global: [],
+    notGlobal: []
+  });
+  const [globalCommentariesOrder, setGlobalCommentariesOrder] = useState();
+  const [commentaryInformation, setCommentaryInformation] = useState({
+    content: "",
+    isGlobal: false,
+    isGlobalPublic: false
+  })
+
   const [loadingScreen, setLoadingScreen] = useState(true);
   const [loadingAdding, setLoadingAdding] = useState(false);
 
-  useFocusEffect(() => {
-    if (loadingScreen) {
+  useEffect(() => {
+    if (loadingScreen) getUserData();
+  }, []);
+
+  useEffect(() => {
+    if (globalCommentariesOrder !== undefined && loadingScreen) {
       getCommentaries();
       getCurrentLanguage();
     }
-  });
+  }, [globalCommentariesOrder])
+  
+  const getUserData = async () => {
+    try {
+      const response = await AuthService.getUserData()
+      const { globalCommentsChronOrder } = response.data;
+      if (globalCommentsChronOrder === true) {
+        setGlobalCommentariesOrder("date");
+      } else if (globalCommentsChronOrder === false) {
+        setGlobalCommentariesOrder("user");
+      }
+    } catch (error) {
+      setGlobalCommentariesOrder("date")
+    }
+  }
 
   const getCommentaries = async () => {
     try {
@@ -61,11 +90,12 @@ export default function CommentaryScreen(props) {
         commentsDto: commentsArray,
         globalCommentsDto: globalCommentsArray,
       } = data;
-      // Organiza comentários por data de envio
-      commentsArray.sort((a, b) => new Date(b.date) > new Date(a.date));
-      globalCommentsArray.sort((a, b) => new Date(b.date) > new Date(a.date));
-      setCommentaries(commentsArray);
-      setGlobalCommentaries(globalCommentsArray);
+
+      if (globalCommentariesOrder === "date") {
+        orderByDate(globalCommentsArray, commentsArray);
+      } else {
+        orderByUserAndDate(globalCommentsArray, commentsArray);
+      }
     } catch (error) {
       toast.show({
         title: 'Não foi possível buscar os comentários',
@@ -77,30 +107,30 @@ export default function CommentaryScreen(props) {
   };
 
   const addGlobalCommentary = async () => {
-    if (newCommentary.length === 0) return;
+    const { content, isGlobalPublic } = commentaryInformation;
+    if (content.trim().length === 0) return;
 
-    // Constrói objeto de comentário para inserir
     const comment = {
-      content: newCommentary,
+      content,
       userId: user.id,
       productId: product.productId,
-    };
+      isPublic: isGlobalPublic
+    }
 
     let title;
     let status;
 
     setLoadingAdding(true);
     try {
-      const { data } = await CommentaryService.addGlobalCommentary(
-        comment,
-        user
-      );
-      const commentariesCopy = [...globalCommentaries];
+      const { data } = await CommentaryService.addGlobalCommentary(comment, user);
+      const globalCommentariesCopy = [...commentariesList.global];
+      globalCommentariesCopy.unshift(data);
 
-      data.user = user;
-
-      commentariesCopy.unshift(data);
-      setGlobalCommentaries(commentariesCopy);
+      if (globalCommentariesOrder === "date") {
+        orderByDate(globalCommentariesCopy, commentariesList.notGlobal);
+      } else {
+        orderByUserAndDate(globalCommentariesCopy, commentariesList.notGlobal);
+      }
 
       status = 'success';
       title = 'Comentário adicionado';
@@ -113,16 +143,20 @@ export default function CommentaryScreen(props) {
         status,
       });
       setLoadingAdding(false);
-      setNewCommentary('');
+      setCommentaryInformation({
+        content: "",
+        isGlobal: false,
+        isGlobalPublic: false
+      });
     }
   };
 
   const addCommentary = async () => {
-    if (newCommentary.length === 0) return;
+    if (commentaryInformation.content.trim().length === 0) return;
 
     // Constrói objeto de comentário para inserir
     const comment = {
-      content: newCommentary,
+      content: commentaryInformation.content,
       userId: user.id,
       productOfListId: product.id,
     };
@@ -133,12 +167,14 @@ export default function CommentaryScreen(props) {
     setLoadingAdding(true);
     try {
       const { data } = await CommentaryService.addCommentary(comment, user);
-      const commentariesCopy = [...commentaries];
-
-      data.user = user;
-
+      const commentariesCopy = [...commentariesList.notGlobal];
       commentariesCopy.unshift(data);
-      setCommentaries(commentariesCopy);
+
+      if (globalCommentariesOrder === "date") {
+        orderByDate(commentariesList.global, commentariesCopy);
+      } else {
+        orderByUserAndDate(commentariesList.global, commentariesCopy);
+      }
 
       status = 'success';
       title = 'Comentário adicionado';
@@ -151,9 +187,75 @@ export default function CommentaryScreen(props) {
         status,
       });
       setLoadingAdding(false);
-      setNewCommentary('');
+      setCommentaryInformation({
+        content: "",
+        isGlobal: false,
+        isGlobalPublic: false
+      });
     }
   };
+
+  const changeGlobalCommentariesOrder = async (order) => {
+    if (order === "date") {
+      try {
+        await AuthService.putGlobalCommentsPreference({
+          ...user,
+          globalCommentsChronOrder: true
+        });
+      } catch (e) {}
+      finally {
+        orderByDate(commentariesList.global, commentariesList.notGlobal);
+      }
+    } else if (order === "user") {
+      try {
+        await AuthService.putGlobalCommentsPreference({
+          ...user,
+          globalCommentsChronOrder: false
+        });
+      } catch (e) {}
+      finally {
+        orderByUserAndDate(commentariesList.global, commentariesList.notGlobal);
+      }
+    }
+  }
+
+  const orderByDate = (globalCommentaries, commentaries) => {
+    const globalCommentariesOrdered = [...globalCommentaries]
+    globalCommentariesOrdered.sort((a, b) => new Date(a.date) - new Date(b.date));
+    const commentariesOrdered = [...commentaries];
+    commentariesOrdered.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    setCommentariesList({
+      global: globalCommentariesOrdered,
+      notGlobal: commentariesOrdered
+    });
+  }
+
+  const orderByUserAndDate = (globalCommentaries, commentaries) => {
+    const globalCommentariesByUserOrdered = globalCommentaries
+      .filter(comment => comment.userId === user.id)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+    const globalCommentariesByMembersOrdered = globalCommentaries
+      .filter(comment => comment.userId !== user.id)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+    const commentariesByUserOrdered = commentaries
+      .filter(comment => comment.userId === user.id)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+    const commentariesByMembersOrdered = commentaries
+      .filter(comment => comment.userId !== user.id)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    setCommentariesList({
+      global: [
+        ...globalCommentariesByUserOrdered,
+        ...globalCommentariesByMembersOrdered
+      ],
+      notGlobal: [
+        ...commentariesByUserOrdered,
+        ...commentariesByMembersOrdered
+      ]
+    });
+  }
 
   const getCurrentLanguage = async () => {
     const language = await AsyncStorage.getItem('language');
@@ -173,38 +275,66 @@ export default function CommentaryScreen(props) {
         }
       >
         <Box py={3} w="90%" mx="auto">
-          {globalCommentaries.length > 0 ? (
-            <Text
-              fontWeight="normal"
-              marginY={15}
-              style={{ textTransform: 'uppercase', letterSpacing: 4 }}
-            >
-              Comentários Globais
-            </Text>
-          ) : null}
-          {globalCommentaries.length > 0
-            ? globalCommentaries.map((c) => (
+          {
+            commentariesList.global.length > 0 || commentariesList.notGlobal.length > 0 ? (
+              <Box display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center" marginY={15}>
+                <Menu
+                  trigger={(triggerProps) => (
+                    <Pressable {...triggerProps}>
+                      <Ionicons name="settings" size={24} color="gray" />
+                    </Pressable>
+                  )}
+                >
+                  <Menu.Item onPress={() => changeGlobalCommentariesOrder("date")}>{t("orderByDate")}</Menu.Item>
+                  <Menu.Item onPress={() => changeGlobalCommentariesOrder("user")}>{t("orderByUser")}</Menu.Item>
+                </Menu>
+              </Box>
+            ) : null
+          }
+          {
+            commentariesList.global.length > 0 ? ( 
+              <Text
+                fontWeight="normal"
+                style={{ textTransform: 'uppercase', letterSpacing: 4 }}
+              >
+                {t('globalCommentaries')}
+              </Text>
+            ) : null
+          }
+          {commentariesList.global.length > 0
+            ? commentariesList.global.map((c, index) => (
                 <HStack
                   key={c.id}
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <Box>
+                  <Box mt={4} width="100%" pb={2} style={{ borderBottom: index < commentariesList.global.length - 1 ? "1px solid #d4d4d4" : "" }}>
                     {user.id === c.userId ? (
-                      <Text fontSize="lg" fontWeight="bold">
-                        {t('you')}
-                      </Text>
+                      <Box display="flex" flexDirection="row">
+                        <Text fontSize="md" mr={2} fontWeight="bold">
+                          {t('you')}
+                        </Text>
+                        {
+                          !c.isPublic ? (
+                            <Tooltip label={t("globalPrivateCommentary")} placement="right">
+                              <Box>
+                                <Icon as={<AntDesign name="lock" />} size="5" mt="0.5" color="muted.500" />
+                              </Box>
+                            </Tooltip>
+                          ) : null
+                        }
+                      </Box>
                     ) : (
                       <Box>
-                        <Text fontSize="lg" fontWeight="bold">
+                        <Text fontSize="md" fontWeight="bold">
                           {c.user.name}
                         </Text>
                         <Text fontSize="sm">{`@${c.user.username}`}</Text>
                       </Box>
                     )}
 
-                    <Text mt={2}>{c.content}</Text>
-                    <Text fontSize="sm" mt={2}>
+                    <Text mt={1}>{c.content}</Text>
+                    <Text fontSize="sm" mt={1} textAlign="right">
                       {formatRelative(moment(c.date).toDate(), new Date(), {
                         locale: language,
                       })}
@@ -214,38 +344,40 @@ export default function CommentaryScreen(props) {
               ))
             : null}
 
-          {commentaries.length > 0 ? (
-            <Text
-              fontWeight="normal"
-              marginY={15}
-              style={{ textTransform: 'uppercase', letterSpacing: 4 }}
-            >
-              Comentários da Lista
-            </Text>
-          ) : null}
-          {commentaries.length > 0
-            ? commentaries.map((c) => (
+          {
+            commentariesList.notGlobal.length > 0 ? (
+              <Text
+                fontWeight="normal"
+                marginY={15}
+                style={{ textTransform: 'uppercase', letterSpacing: 4 }}
+              >
+                {t('nonGlobalCommentaries')}
+              </Text>
+            ) : null
+          }
+          {commentariesList.notGlobal.length > 0
+            ? commentariesList.notGlobal.map((c, index) => (
                 <HStack
                   key={c.id}
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <Box>
+                  <Box mt={4} width="100%" pb={2} style={{ borderBottom: index < commentariesList.global.length - 1 ? "1px solid #d4d4d4" : "" }}>
                     {user.id === c.user.id ? (
-                      <Text fontSize="lg" fontWeight="bold">
+                      <Text fontSize="md" fontWeight="bold">
                         {t('you')}
                       </Text>
                     ) : (
                       <Box>
-                        <Text fontSize="lg" fontWeight="bold">
+                        <Text fontSize="md" fontWeight="bold">
                           {c.user.name}
                         </Text>
                         <Text fontSize="sm">{`@${c.user.username}`}</Text>
                       </Box>
                     )}
 
-                    <Text mt={2}>{c.content}</Text>
-                    <Text fontSize="sm" mt={2}>
+                    <Text mt={1}>{c.content}</Text>
+                    <Text fontSize="sm" mt={1} textAlign="right">
                       {formatRelative(moment(c.date).toDate(), new Date(), {
                         locale: language,
                       })}
@@ -268,8 +400,11 @@ export default function CommentaryScreen(props) {
           isDisabled={loadingAdding}
           maxLength={200}
           totalLines={2}
-          value={newCommentary}
-          onChangeText={setNewCommentary}
+          value={commentaryInformation.content}
+          onChangeText={(value) => setCommentaryInformation({
+            ...commentaryInformation,
+            content: value
+          })}
           flex={2}
           placeholder={t('commentaryPlaceholder')}
         />
@@ -280,7 +415,7 @@ export default function CommentaryScreen(props) {
           <Pressable
             accessibilityLabel={t('comment')}
             onPress={() => {
-              if (isGlobalCommentary) {
+              if (commentaryInformation.isGlobal) {
                 addGlobalCommentary();
               } else {
                 addCommentary();
@@ -306,11 +441,36 @@ export default function CommentaryScreen(props) {
         style={{ backgroundColor: '#fff' }}
       >
         <Checkbox
-          value="test"
-          onChange={(value) => setIsGlobalCommentary(value)}
+          isChecked={commentaryInformation.isGlobal}
+          onChange={(value) => setCommentaryInformation({
+            ...commentaryInformation,
+            isGlobal: value
+          })}
         >
-          <Text ml={1}>{t('globalCommentary')}</Text>
+          <Text ml={1}>{t('isGlobalCommentary')}</Text>
         </Checkbox>
+        {
+          commentaryInformation.isGlobal ? (
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Checkbox
+                isChecked={commentaryInformation.isGlobalPublic}
+                onChange={(value) => setCommentaryInformation({
+                  ...commentaryInformation,
+                  isGlobalPublic: value
+                })}
+                mt={2}
+                mr={2}
+              >
+                <Text ml={1}>{t("isPublic")}</Text>
+              </Checkbox>
+              <Box ml={1}>
+                <Tooltip label={t("isPublicTooltip")} placement="right">
+                  <InfoIcon size="5" mt="0.5" color="muted.500" />
+                </Tooltip>
+              </Box>
+            </Box>
+          ) : null
+        }
       </HStack>
     </KeyboardAvoidingView>
   ) : (
