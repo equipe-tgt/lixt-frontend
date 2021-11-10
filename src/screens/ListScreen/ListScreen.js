@@ -72,6 +72,16 @@ export default function ListScreen(props) {
         props.route.params.newList = null;
       }
 
+      // Caso a tela de edição de lista tenha enviado uma lista, atualiza a lista de listas
+      // e seleciona ela automaticamente
+      if (props.route.params.editList) {
+        const editList = Object.assign({}, props.route.params.editList);
+        const updatedLists = lists.filter(list => list.id !== editList.id);
+        setLists([...updatedLists, editList]);
+        setSelectedList(editList);
+        props.route.params.editList = null;
+      }
+
       // Se o usuário tiver adicionado um novo produto
       // à plataforma, adiciona automaticamente na lista atual
       if (props.route.params.newProduct) {
@@ -398,6 +408,15 @@ export default function ListScreen(props) {
               );
             }}
           >
+            <Menu.Item
+              onPress={() => {
+                props.navigation.navigate('EditList', {
+                  listId: selectedList.id,
+                });
+              }}
+            >
+              {t('editList')}
+            </Menu.Item>
             <Menu.Item
               onPress={() => {
                 props.navigation.navigate('ListDetails', {

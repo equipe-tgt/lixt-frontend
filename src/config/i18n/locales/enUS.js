@@ -10,6 +10,8 @@ export default {
   usernameAlreadyTaken: 'This username is already taken',
 
   createdList: 'The list was created successfully!',
+  editedList: 'The list was edited successfully',
+  editingList: 'Editing',
 
   memberRemoved: 'The member was removed from the list',
 
@@ -73,6 +75,7 @@ export default {
 
   deleteList: 'Delete list',
   confirmDeleteList: 'Are you sure you want to delete this list?',
+  editList: "Edit list information",
   listInfo: 'List informations',
   listHasNoDescription: 'This list has no description',
   productAlreadyOnList: 'The product is already on the list',

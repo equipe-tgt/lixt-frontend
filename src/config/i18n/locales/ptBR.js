@@ -12,6 +12,8 @@ export default {
   memberRemoved: 'Membro foi removido da lista',
 
   createdList: 'Lista criada com sucesso!',
+  editedList: 'Lista editada com sucesso!',
+  editingList: 'Editando',
 
   forgotPassword: 'Esqueci minha senha',
   signIn: 'Cadastre-se',
@@ -72,6 +74,7 @@ export default {
   save: 'Salvar',
   deleteList: 'Excluir lista',
   confirmDeleteList: 'Tem certeza que deseja excluir esta lista?',
+  editList: "Editar informações da lista",
   listInfo: 'Informações da lista',
   listHasNoDescription: 'Não há descrição para esta lista',
   productAlreadyOnList: 'O produto já está na lista',

@@ -25,6 +25,14 @@ const ListService = {
     });
   },
 
+  editList: (list, listId, user) => {
+    return BaseService.put(`/list/${listId}`, list, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
+
   deleteList: (listId, user) => {
     return BaseService.delete(`/list/${listId}`, {
       headers: {
