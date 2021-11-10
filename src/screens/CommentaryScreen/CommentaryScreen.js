@@ -262,6 +262,58 @@ export default function CommentaryScreen(props) {
     setLanguage(language === 'pt_BR' ? ptBR : enUS);
   };
 
+  const removeCommentary = async (commentary) => {
+    let title;
+    let status;
+
+    try {
+      await CommentaryService.removeCommentary(commentary.id, user);
+      const commentariesCopy = commentariesList.notGlobal.filter(c => c.id !== commentary.id);
+
+      setCommentariesList({
+        ...commentariesList,
+        notGlobal: commentariesCopy
+      });
+
+      status = 'success';
+      title = t('removeCommentarySuccess');
+    } catch (error) {
+      status = 'warning';
+      title = t('removeCommentaryFail');
+    } finally {
+      toast.show({
+        title,
+        status,
+      });
+    }
+  }
+
+  const removeGlobalCommentary = async (commentary) => {
+    let title;
+    let status;
+
+    try {
+      await CommentaryService.removeGlobalCommentary(commentary.id, user);
+      const globalCommentariesCopy = commentariesList.global.filter(c => c.id !== commentary.id);
+
+      setCommentariesList({
+        ...commentariesList,
+        global: globalCommentariesCopy
+      });
+
+      status = 'success';
+      title = t('removeGlobalCommentarySuccess');
+    } catch (error) {
+      status = 'warning';
+      title = t('removeGlobalCommentaryFail');
+    } finally {
+      toast.show({
+        title,
+        status,
+      });
+    }
+  }
+
   // Se a lista não estiver carregando renderiza, caso contrário roda um spinner na tela
   return !loadingScreen ? (
     <KeyboardAvoidingView behavior={'padding'} style={style.container}>
@@ -323,6 +375,9 @@ export default function CommentaryScreen(props) {
                             </Tooltip>
                           ) : null
                         }
+                        <Box ml={2}>
+                          <Ionicons name="trash" size={20} color="gray" onPress={() => removeGlobalCommentary(c)} />
+                        </Box>
                       </Box>
                     ) : (
                       <Box>
@@ -362,11 +417,16 @@ export default function CommentaryScreen(props) {
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <Box mt={4} width="100%" pb={2} style={{ borderBottom: index < commentariesList.global.length - 1 ? "1px solid #d4d4d4" : "" }}>
+                  <Box mt={4} width="100%" pb={2} style={{ borderBottom: index < commentariesList.notGlobal.length - 1 ? "1px solid #d4d4d4" : "" }}>
                     {user.id === c.user.id ? (
-                      <Text fontSize="md" fontWeight="bold">
-                        {t('you')}
-                      </Text>
+                      <Box display="flex" flexDirection="row">
+                        <Text fontSize="md" fontWeight="bold">
+                          {t('you')}
+                        </Text>
+                        <Box ml={2}>
+                          <Ionicons name="trash" size={20} color="gray" onPress={() => removeCommentary(c)} />
+                        </Box>
+                      </Box>
                     ) : (
                       <Box>
                         <Text fontSize="md" fontWeight="bold">

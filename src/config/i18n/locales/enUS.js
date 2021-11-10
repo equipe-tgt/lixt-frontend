@@ -141,6 +141,10 @@ export default {
   orderByDate: "Order commentaries by date",
   orderByUser: "Show your comments first",
   globalPrivateCommentary: "Private global commentary",
+  removeCommentarySuccess: "Commentary removed",
+  removeCommentaryFail: "It wasn't possible to remove the commentary",
+  removeGlobalCommentarySuccess: "Global commentary removed",
+  removeGlobalCommentaryFail: "It wasn't possible to remove the global commentary",
   seeAllItems: 'All items',
 
   buy: 'Buy',
