@@ -12,6 +12,7 @@ import CommentaryScreen from '../screens/CommentaryScreen/CommentaryScreen';
 import BarcodeReaderScreen from '../screens/BarcodeScreen/BarcodeReaderScreen';
 
 import { useTranslation } from 'react-i18next';
+import EditListScreen from '../screens/EditListScreen/EditListScreen';
 
 const Stack = createStackNavigator();
 
@@ -51,6 +52,12 @@ export default function ListStack() {
         options={{ title: t('listInfo'), headerStyle: stackHeaderStyle }}
         component={ListDetailsScreen}
       ></Stack.Screen>
+      <Stack.Screen
+        name="EditList"
+        options={{ title: t('editList'), headerStyle: stackHeaderStyle }}
+        component={EditListScreen}
+      >
+      </Stack.Screen>
       <Stack.Screen
         name="Invite"
         options={{ title: t('sendInvitation'), headerStyle: stackHeaderStyle }}
