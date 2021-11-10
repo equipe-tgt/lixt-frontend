@@ -38,6 +38,24 @@ const AuthService = {
       },
     });
   },
+  getUserData: () => {
+    return BaseService.get('/auth/data-user', {
+      headers: {
+        'Content-type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Basic ${Base64.btoa(STRING_API_AUTH)}`,
+      },
+    });
+  },
+  putGlobalCommentsPreference: (userDetails) => {
+    return BaseService.put('/auth/global-comments-preferences', userDetails, {
+      headers: {
+        'Content-type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Basic ${Base64.btoa(STRING_API_AUTH)}`,
+      },
+    });
+  }
 };
 
 export default AuthService;
