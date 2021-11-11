@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView, RefreshControl, Keyboard } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -54,13 +54,8 @@ export default function ListScreen(props) {
   const [isListRemoveModalOpen, setIsListRemoveModalOpen] = useState(false);
   const [confirmRemoval, setConfirmRemoval] = useState(false);
 
-  // Ao montar o componente busca as listas
-  useEffect(() => {
-    fetchLists();
-  }, []);
-
   // Hook que dispara toda vez que esta tela for focada
-  useFocusEffect(() => {
+  useFocusEffect(useCallback(() => {
     // Verifica se alguma tela enviou props para essa
     if (props.route.params) {
       // Caso a tela de nova lista tenha enviado uma lista nova, inclui na lista das listas
@@ -70,16 +65,6 @@ export default function ListScreen(props) {
         setLists([...lists, newList]);
         setSelectedList(newList);
         props.route.params.newList = null;
-      }
-
-      // Caso a tela de edição de lista tenha enviado uma lista, atualiza a lista de listas
-      // e seleciona ela automaticamente
-      if (props.route.params.editList) {
-        const editList = Object.assign({}, props.route.params.editList);
-        const updatedLists = lists.filter(list => list.id !== editList.id);
-        setLists([...updatedLists, editList]);
-        setSelectedList(editList);
-        props.route.params.editList = null;
       }
 
       // Se o usuário tiver adicionado um novo produto
@@ -101,8 +86,10 @@ export default function ListScreen(props) {
         fetchLists();
         props.route.params.refresh = null;
       }
+    } else {
+      fetchLists();
     }
-  });
+  }, [props.route.params]));
 
   // Caso as listas do context tenham alguma atualização, atualiza os dados da lista
   // selecionada atual.
@@ -128,6 +115,7 @@ export default function ListScreen(props) {
     try {
       // Busca todas as listas do usuário
       const { data } = await ListService.getLists(user);
+      console.log({ data });
 
       // Se o array de listas tiver resultados coloque-os no
       // componente de select e atribua o primeiro resultado para a
