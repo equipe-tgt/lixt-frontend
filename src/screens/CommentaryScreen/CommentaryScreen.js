@@ -32,6 +32,7 @@ import ProductOfListService from '../../services/ProductOfListService';
 import { AuthContext } from '../../context/AuthProvider';
 import { useTranslation } from 'react-i18next';
 import AuthService from '../../services/AuthService';
+import RemoveCommentaryModal from '../../components/RemoveCommentaryModal';
 
 export default function CommentaryScreen(props) {
   const { user } = useContext(AuthContext);
@@ -54,6 +55,7 @@ export default function CommentaryScreen(props) {
 
   const [loadingScreen, setLoadingScreen] = useState(true);
   const [loadingAdding, setLoadingAdding] = useState(false);
+  const [commentaryToBeRemoved, setCommentaryToBeRemoved] = useState(null);
 
   useEffect(() => {
     if (loadingScreen) getUserData();
@@ -133,10 +135,10 @@ export default function CommentaryScreen(props) {
       }
 
       status = 'success';
-      title = 'Comentário adicionado';
+      title = t("addGlobalCommentarySuccess");
     } catch (error) {
       status = 'warning';
-      title = 'Não foi possível adicionar o comentário';
+      title = t("addGlobalCommentaryFail");
     } finally {
       toast.show({
         title,
@@ -177,10 +179,10 @@ export default function CommentaryScreen(props) {
       }
 
       status = 'success';
-      title = 'Comentário adicionado';
+      title = t("addCommentarySuccess");
     } catch (error) {
       status = 'warning';
-      title = 'Não foi possível adicionar o comentário';
+      title = t("addCommentaryFail");
     } finally {
       toast.show({
         title,
@@ -314,6 +316,17 @@ export default function CommentaryScreen(props) {
     }
   }
 
+  const onRemoveCommentary = async () => {
+    if (commentaryToBeRemoved) {
+      if (commentaryToBeRemoved.isGlobal) {
+        await removeGlobalCommentary(commentaryToBeRemoved);
+      } else {
+        await removeCommentary(commentaryToBeRemoved);
+      }
+    }
+    setCommentaryToBeRemoved(false);
+  }
+
   // Se a lista não estiver carregando renderiza, caso contrário roda um spinner na tela
   return !loadingScreen ? (
     <KeyboardAvoidingView behavior={'padding'} style={style.container}>
@@ -376,7 +389,10 @@ export default function CommentaryScreen(props) {
                           ) : null
                         }
                         <Box ml={2}>
-                          <Ionicons name="trash" size={20} color="gray" onPress={() => removeGlobalCommentary(c)} />
+                          <Ionicons name="trash" size={20} color="gray" onPress={() => setCommentaryToBeRemoved({
+                            ...c,
+                            isGlobal: true
+                          })} />
                         </Box>
                       </Box>
                     ) : (
@@ -424,7 +440,10 @@ export default function CommentaryScreen(props) {
                           {t('you')}
                         </Text>
                         <Box ml={2}>
-                          <Ionicons name="trash" size={20} color="gray" onPress={() => removeCommentary(c)} />
+                          <Ionicons name="trash" size={20} color="gray" onPress={() => setCommentaryToBeRemoved({
+                            ...c,
+                            isGlobal: false
+                          })} />
                         </Box>
                       </Box>
                     ) : (
@@ -532,6 +551,17 @@ export default function CommentaryScreen(props) {
             </Box>
           ) : null
         }
+
+      <RemoveCommentaryModal
+        isOpen={!!commentaryToBeRemoved}
+        closeModal={(val) => {
+          if (val) {
+            onRemoveCommentary();
+          } else {
+            setCommentaryToBeRemoved(null);
+          }
+        }}
+      />
       </HStack>
     </KeyboardAvoidingView>
   ) : (
