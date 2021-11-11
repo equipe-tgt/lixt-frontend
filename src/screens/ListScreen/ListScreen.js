@@ -55,41 +55,43 @@ export default function ListScreen(props) {
   const [confirmRemoval, setConfirmRemoval] = useState(false);
 
   // Hook que dispara toda vez que esta tela for focada
-  useFocusEffect(useCallback(() => {
-    // Verifica se alguma tela enviou props para essa
-    if (props.route.params) {
-      // Caso a tela de nova lista tenha enviado uma lista nova, inclui na lista das listas
-      // e seleciona ela automaticamente
-      if (props.route.params.newList) {
-        const newList = Object.assign({}, props.route.params.newList);
-        setLists([...lists, newList]);
-        setSelectedList(newList);
-        props.route.params.newList = null;
-      }
+  useFocusEffect(
+    useCallback(() => {
+      // Verifica se alguma tela enviou props para essa
+      if (props.route.params) {
+        // Caso a tela de nova lista tenha enviado uma lista nova, inclui na lista das listas
+        // e seleciona ela automaticamente
+        if (props.route.params.newList) {
+          const newList = Object.assign({}, props.route.params.newList);
+          setLists([...lists, newList]);
+          setSelectedList(newList);
+          props.route.params.newList = null;
+        }
 
-      // Se o usuário tiver adicionado um novo produto
-      // à plataforma, adiciona automaticamente na lista atual
-      if (props.route.params.newProduct) {
-        addToList(props.route.params.newProduct, selectedList);
-        props.route.params.newProduct = null;
-      }
+        // Se o usuário tiver adicionado um novo produto
+        // à plataforma, adiciona automaticamente na lista atual
+        if (props.route.params.newProduct) {
+          addToList(props.route.params.newProduct, selectedList);
+          props.route.params.newProduct = null;
+        }
 
-      // Se o usuário tiver adicionado um produto por
-      // código de barra
-      if (props.route.params.foundProductByBarcode) {
-        addToList(props.route.params.foundProductByBarcode, selectedList);
-        props.route.params.foundProductByBarcode = null;
-      }
+        // Se o usuário tiver adicionado um produto por
+        // código de barra
+        if (props.route.params.foundProductByBarcode) {
+          addToList(props.route.params.foundProductByBarcode, selectedList);
+          props.route.params.foundProductByBarcode = null;
+        }
 
-      // Caso a tela peça para fazer refresh atualiza as listas
-      if (props.route.params.refresh) {
+        // Caso a tela peça para fazer refresh atualiza as listas
+        if (props.route.params.refresh) {
+          fetchLists();
+          props.route.params.refresh = null;
+        }
+      } else {
         fetchLists();
-        props.route.params.refresh = null;
       }
-    } else {
-      fetchLists();
-    }
-  }, [props.route.params]));
+    }, [props.route.params])
+  );
 
   // Caso as listas do context tenham alguma atualização, atualiza os dados da lista
   // selecionada atual.
@@ -115,7 +117,6 @@ export default function ListScreen(props) {
     try {
       // Busca todas as listas do usuário
       const { data } = await ListService.getLists(user);
-      console.log({ data });
 
       // Se o array de listas tiver resultados coloque-os no
       // componente de select e atribua o primeiro resultado para a
