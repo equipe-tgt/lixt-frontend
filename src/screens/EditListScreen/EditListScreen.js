@@ -69,7 +69,7 @@ export default function EditListScreen(props) {
 
         // Retorna para a tela de listas
         props.navigation.navigate('Lists', {
-          editList: data,
+          refresh: true
         });
       })
       .catch(() => {

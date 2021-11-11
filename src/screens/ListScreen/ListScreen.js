@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView, RefreshControl, Keyboard } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -54,55 +54,44 @@ export default function ListScreen(props) {
   const [isListRemoveModalOpen, setIsListRemoveModalOpen] = useState(false);
   const [confirmRemoval, setConfirmRemoval] = useState(false);
 
-  // Ao montar o componente busca as listas
-  useEffect(() => {
-    fetchLists();
-  }, []);
-
   // Hook que dispara toda vez que esta tela for focada
-  useFocusEffect(() => {
-    // Verifica se alguma tela enviou props para essa
-    if (props.route.params) {
-      // Caso a tela de nova lista tenha enviado uma lista nova, inclui na lista das listas
-      // e seleciona ela automaticamente
-      if (props.route.params.newList) {
-        const newList = Object.assign({}, props.route.params.newList);
-        setLists([...lists, newList]);
-        setSelectedList(newList);
-        props.route.params.newList = null;
-      }
+  useFocusEffect(
+    useCallback(() => {
+      // Verifica se alguma tela enviou props para essa
+      if (props.route.params) {
+        // Caso a tela de nova lista tenha enviado uma lista nova, inclui na lista das listas
+        // e seleciona ela automaticamente
+        if (props.route.params.newList) {
+          const newList = Object.assign({}, props.route.params.newList);
+          setLists([...lists, newList]);
+          setSelectedList(newList);
+          props.route.params.newList = null;
+        }
 
-      // Caso a tela de edição de lista tenha enviado uma lista, atualiza a lista de listas
-      // e seleciona ela automaticamente
-      if (props.route.params.editList) {
-        const editList = Object.assign({}, props.route.params.editList);
-        const updatedLists = lists.filter(list => list.id !== editList.id);
-        setLists([...updatedLists, editList]);
-        setSelectedList(editList);
-        props.route.params.editList = null;
-      }
+        // Se o usuário tiver adicionado um novo produto
+        // à plataforma, adiciona automaticamente na lista atual
+        if (props.route.params.newProduct) {
+          addToList(props.route.params.newProduct, selectedList);
+          props.route.params.newProduct = null;
+        }
 
-      // Se o usuário tiver adicionado um novo produto
-      // à plataforma, adiciona automaticamente na lista atual
-      if (props.route.params.newProduct) {
-        addToList(props.route.params.newProduct, selectedList);
-        props.route.params.newProduct = null;
-      }
+        // Se o usuário tiver adicionado um produto por
+        // código de barra
+        if (props.route.params.foundProductByBarcode) {
+          addToList(props.route.params.foundProductByBarcode, selectedList);
+          props.route.params.foundProductByBarcode = null;
+        }
 
-      // Se o usuário tiver adicionado um produto por
-      // código de barra
-      if (props.route.params.foundProductByBarcode) {
-        addToList(props.route.params.foundProductByBarcode, selectedList);
-        props.route.params.foundProductByBarcode = null;
-      }
-
-      // Caso a tela peça para fazer refresh atualiza as listas
-      if (props.route.params.refresh) {
+        // Caso a tela peça para fazer refresh atualiza as listas
+        if (props.route.params.refresh) {
+          fetchLists();
+          props.route.params.refresh = null;
+        }
+      } else {
         fetchLists();
-        props.route.params.refresh = null;
       }
-    }
-  });
+    }, [props.route.params])
+  );
 
   // Caso as listas do context tenham alguma atualização, atualiza os dados da lista
   // selecionada atual.
