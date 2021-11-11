@@ -5,6 +5,7 @@ import CommentaryScreen from '../screens/CommentaryScreen/CommentaryScreen';
 import ProductOfListDeatils from '../screens/ProductOfListDetails/ProductOfListDetails';
 import HistoryScreen from '../screens/HistoryScreen/HistoryScreen';
 import PurchaseDetailScreen from '../screens/PurchaseDetailScreen/PurchaseDetailScreen';
+import StatisticsScreen from '../screens/StatisticsScreen/StatisticsScreen';
 
 import { useTranslation } from 'react-i18next';
 
@@ -48,6 +49,11 @@ export default function PurchaseStack() {
         name="PurchaseDetail"
         options={{ title: t('purchase'), headerStyle: stackHeaderStyle }}
         component={PurchaseDetailScreen}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="Statistics"
+        options={{ title: t('statistics'), headerStyle: stackHeaderStyle }}
+        component={StatisticsScreen}
       ></Stack.Screen>
     </Stack.Navigator>
   );

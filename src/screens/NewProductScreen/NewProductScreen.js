@@ -24,9 +24,7 @@ import LixtInput from '../../components/LixtInput';
 // Validação do formulário
 import { useFormik } from 'formik';
 import { ProductSchema } from '../../validationSchemas';
-import MEASURE_TYPES, {
-  getMeasureValueByLabel,
-} from '../../utils/measureTypes';
+import MeasureTypes, { getMeasureValueByLabel } from '../../utils/measureTypes';
 
 import ProductService from '../../services/ProductService';
 import CategoryService from '../../services/CategoryService';
@@ -176,15 +174,15 @@ export default function NewProductScreen(props) {
             flexDirection="row"
             justifyContent="space-around"
           >
-            {Object.keys(MEASURE_TYPES).map((measure) => {
+            {Object.keys(MeasureTypes).map((measure) => {
               return (
                 <Radio
-                  key={MEASURE_TYPES[measure].value}
-                  accessibilityLabel={MEASURE_TYPES[measure].label}
-                  value={MEASURE_TYPES[measure].label}
+                  key={MeasureTypes[measure].value}
+                  accessibilityLabel={MeasureTypes[measure].label}
+                  value={MeasureTypes[measure].label}
                   my={1}
                 >
-                  {MEASURE_TYPES[measure].label}
+                  {MeasureTypes[measure].label}
                 </Radio>
               );
             })}

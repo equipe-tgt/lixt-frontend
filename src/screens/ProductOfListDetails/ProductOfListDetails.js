@@ -19,7 +19,7 @@ import { screenBasicStyle as style } from '../../styles/style';
 import { Ionicons } from '@expo/vector-icons';
 
 // Validação do formulário
-import MEASURE_TYPES, {
+import MeasureTypes, {
   getMeasureType,
   getMeasureValueByLabel,
 } from '../../utils/measureTypes';
@@ -197,15 +197,15 @@ export default function ProductOfListDetails(props) {
             flexDirection="row"
             justifyContent="space-around"
           >
-            {Object.keys(MEASURE_TYPES).map((measure) => {
+            {Object.keys(MeasureTypes).map((measure) => {
               return (
                 <Radio
-                  key={MEASURE_TYPES[measure].value}
-                  accessibilityLabel={MEASURE_TYPES[measure].label}
-                  value={MEASURE_TYPES[measure].label}
+                  key={MeasureTypes[measure].value}
+                  accessibilityLabel={MeasureTypes[measure].label}
+                  value={MeasureTypes[measure].label}
                   my={1}
                 >
-                  {MEASURE_TYPES[measure].label}
+                  {MeasureTypes[measure].label}
                 </Radio>
               );
             })}

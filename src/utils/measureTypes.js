@@ -1,4 +1,4 @@
-const MEASURE_TYPES = {
+const MeasureTypes = {
   L: {
     value: 'L',
     label: 'L',
@@ -26,15 +26,15 @@ const MEASURE_TYPES = {
 };
 
 export const getMeasureType = (value) => {
-  return MEASURE_TYPES[value].label;
+  return MeasureTypes[value].label;
 };
 
 export const getMeasureValueByLabel = (label) => {
-  for (const key in MEASURE_TYPES) {
-    const element = MEASURE_TYPES[key];
+  for (const key in MeasureTypes) {
+    const element = MeasureTypes[key];
 
     if (element.label === label) return element.value;
   }
 };
 
-export default MEASURE_TYPES;
+export default MeasureTypes;
