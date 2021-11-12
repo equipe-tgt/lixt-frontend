@@ -397,15 +397,19 @@ export default function ListScreen(props) {
               );
             }}
           >
-            <Menu.Item
-              onPress={() => {
-                props.navigation.navigate('EditList', {
-                  listId: selectedList.id,
-                });
-              }}
-            >
-              {t('editList')}
-            </Menu.Item>
+            {
+              selectedList.ownerId === user.id ? (
+                <Menu.Item
+                  onPress={() => {
+                    props.navigation.navigate('EditList', {
+                      listId: selectedList.id,
+                    });
+                  }}
+                >
+                  {t('editList')}
+                </Menu.Item>
+              ) : null
+            }
             <Menu.Item
               onPress={() => {
                 props.navigation.navigate('ListDetails', {

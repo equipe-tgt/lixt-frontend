@@ -70,7 +70,10 @@ export default function ListStack() {
       ></Stack.Screen>
       <Stack.Screen
         name="Commentaries"
-        options={{ title: t('commentaries'), headerStyle: stackHeaderStyle }}
+        options={({ route }) => ({
+          title: `${t('commentaries')} - ${route.params.product.name}`,
+          headerStyle: stackHeaderStyle
+        })}
         component={CommentaryScreen}
       ></Stack.Screen>
       <Stack.Screen
