@@ -11,6 +11,17 @@ const StatisticsService = {
       },
     });
   },
+
+  getPurchaseLocalData: (user) => {
+    return BaseService.get(
+      `/purchaseLocal/all-purchase-local-data/${user.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+  },
 };
 
 export default StatisticsService;

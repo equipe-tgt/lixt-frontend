@@ -14,39 +14,25 @@ import {
   Icon,
 } from 'native-base';
 import moment from 'moment';
-import { enUS, ptBR } from 'date-fns/locale';
 
 import { AuthContext } from '../../context/AuthProvider';
 import StatisticsService from '../../services/StatisticsService';
 import { screenBasicStyle as style } from '../../styles/style';
 import { Ionicons } from '@expo/vector-icons';
 
-import CalendarPicker from 'react-native-calendar-picker';
-import MonthSelectorCalendar from 'react-native-month-selector';
 import { useTranslation, getI18n } from 'react-i18next';
+import DatePicker from '../../components/DatePicker';
 
-const UnityTimes = {
-  DAILY: 'DAILY',
-  WEEKLY: 'WEEKLY',
-  MONTHLY: 'MONTHLY',
-};
-
-const DateParameters = {
-  START: 0,
-  END: 1,
-};
-
-const StatisticsType = {
-  TIME: 'time',
-  PRODUCT: 'product',
-  CATEGORY: 'category',
-  PURCHASE_LOCAL: 'purchaseLocal',
-};
+import {
+  UnityTimes,
+  DateParameters,
+  StatisticsType,
+} from '../../utils/StatisticsUtils';
 
 export default function StatisticsScreen() {
   const [dataFromServer, setdataFromServer] = useState(null);
   const [selectedUnityTime, setSelectedUnityTime] = useState('DAILY');
-  const [selectedStatisticsType, setselectedStatisticsType] = useState(
+  const [selectedStatisticsType, setSelectedStatisticsType] = useState(
     StatisticsType.TIME
   );
   const [dateConfig, setDateConfig] = useState({
@@ -71,19 +57,23 @@ export default function StatisticsScreen() {
 
   const getStatisticsData = async () => {
     try {
-      const periodFilterObject = {
-        startDate: moment(dateConfig.startDate).toISOString(),
-        endDate: moment(dateConfig.endDate).toISOString(),
-        listId: 1,
-        unityTime: selectedUnityTime,
-      };
+      if (selectedStatisticsType === StatisticsType.PURCHASE_LOCAL) {
+        const { data } = await StatisticsService.getPurchaseLocalData(user);
+        console.log(data);
+      } else {
+        const periodFilterObject = {
+          startDate: moment(dateConfig.startDate).toISOString(),
+          endDate: moment(dateConfig.endDate).toISOString(),
+          unityTime: selectedUnityTime,
+        };
 
-      const { data } = await StatisticsService.getExpensesPer(
-        selectedStatisticsType,
-        periodFilterObject,
-        user
-      );
-      console.log(data);
+        const { data } = await StatisticsService.getExpensesPer(
+          selectedStatisticsType,
+          periodFilterObject,
+          user
+        );
+        console.log(data);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -109,7 +99,7 @@ export default function StatisticsScreen() {
     } else {
       setDateConfig({
         ...dateConfig,
-        endDate: moment(date).add(1, 'month').subtract(1, 'day'),
+        endDate: date,
       });
       setIsSelectorOpen(false);
     }
@@ -118,6 +108,7 @@ export default function StatisticsScreen() {
   const handleDateChange = (date, currentParam = null) => {
     switch (selectedUnityTime) {
       case UnityTimes.DAILY:
+      case UnityTimes.WEEKLY:
         handleDailyAndWeeklyChange(date, currentParam);
         break;
 
@@ -127,132 +118,6 @@ export default function StatisticsScreen() {
 
       default:
         break;
-    }
-  };
-
-  const getDatePicker = () => {
-    switch (selectedUnityTime) {
-      case UnityTimes.DAILY:
-        const locale = getI18n().language === 'pt_BR' ? ptBR : enUS;
-
-        const weekdays = [...Array(7).keys()].map((i) =>
-          locale.localize.day(i, { width: 'abbreviated' }).slice(0, 3)
-        );
-        const months = [...Array(31).keys()].map((i) =>
-          locale.localize.month(i)
-        );
-
-        return (
-          <Modal
-            height={450}
-            m="auto"
-            isOpen={isSelectorOpen}
-            closeOnOverlayClick
-          >
-            <Modal.Content>
-              <Modal.Body>
-                <HStack alignItems="center" justifyContent="space-between">
-                  <Text fontWeight="bold">{t('selectInterval')}</Text>
-                  <IconButton
-                    onPress={() => setIsSelectorOpen(false)}
-                    variant="ghost"
-                    icon={
-                      <Icon
-                        size="sm"
-                        as={<Ionicons name="close" />}
-                        color="#333"
-                      />
-                    }
-                  />
-                </HStack>
-                <CalendarPicker
-                  width={350}
-                  allowRangeSelection
-                  maxRangeDuration={31}
-                  disabledDates={(date) => date.isAfter(moment())}
-                  selectedDayColor="#06b6d4"
-                  onDateChange={(value, currentParameter) => {
-                    let current =
-                      currentParameter === 'START_DATE'
-                        ? DateParameters.START
-                        : DateParameters.END;
-                    setCurrentParameter(current);
-                    handleDateChange(value, current);
-                  }}
-                  weekdays={weekdays}
-                  months={months}
-                />
-              </Modal.Body>
-            </Modal.Content>
-          </Modal>
-        );
-
-      case UnityTimes.MONTHLY:
-        return (
-          <Modal background="#fff" isOpen={true} closeOnOverlayClick={true}>
-            <Box width="100%" shadow>
-              <Text bold textAlign="center" mt={5}>
-                {currentParameter === DateParameters.START
-                  ? t('initialDate')
-                  : t('finalDate')}
-              </Text>
-              <MonthSelectorCalendar
-                selectedBackgroundColor="#06b6d4"
-                minDate={getMinMaxDate().minDate}
-                maxDate={getMinMaxDate().maxDate}
-                containerStyle={{
-                  width: '90%',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }}
-                selectedDate={
-                  currentParameter === DateParameters.START
-                    ? dateConfig.startDate || moment()
-                    : dateConfig.endDate || moment()
-                }
-                onMonthTapped={(date) => handleDateChange(date)}
-              />
-            </Box>
-          </Modal>
-        );
-      case UnityTimes.WEEKLY:
-        break;
-
-      default:
-        break;
-    }
-  };
-
-  const getMinMaxDate = () => {
-    if (dateConfig.startDate || dateConfig.endDate) {
-      switch (selectedUnityTime) {
-        case UnityTimes.DAILY:
-          return;
-
-        case UnityTimes.MONTHLY:
-          // eslint-disable-next-line no-case-declarations
-          let limitDate = moment(dateConfig.startDate).add(11, 'months');
-
-          if (limitDate.isAfter(moment())) {
-            limitDate = moment();
-          }
-
-          return {
-            minDate: moment(dateConfig.startDate),
-            maxDate: limitDate,
-          };
-
-        case UnityTimes.WEEKLY:
-          return;
-
-        default:
-          break;
-      }
-    } else {
-      return {
-        minDate: moment('01-01-1900', 'DD-MM-YYYY'),
-        maxDate: moment(),
-      };
     }
   };
 
@@ -376,7 +241,7 @@ export default function StatisticsScreen() {
               {t('selectAnalysisType')}
             </Text>
             <Select
-              onValueChange={setselectedStatisticsType}
+              onValueChange={setSelectedStatisticsType}
               selectedValue={selectedStatisticsType}
             >
               {Object.keys(StatisticsType).map((tipo, index) => (
@@ -425,14 +290,27 @@ export default function StatisticsScreen() {
             )}
 
             <Center>
-              <HStack>{isSelectorOpen && getDatePicker()}</HStack>
+              <HStack>
+                {isSelectorOpen && (
+                  <DatePicker
+                    isSelectorOpen={isSelectorOpen}
+                    setIsSelectorOpen={setIsSelectorOpen}
+                    handleDateChange={handleDateChange}
+                    currentParameter={currentParameter}
+                    setCurrentParameter={setCurrentParameter}
+                    selectedUnityTime={selectedUnityTime}
+                    dateConfig={dateConfig}
+                    translate={t}
+                  />
+                )}
+              </HStack>
             </Center>
           </Modal.Body>
           <Modal.Footer justifyContent="space-between">
             <Button onPress={() => setIsConfigOpen(false)} variant="link">
-              Cancelar
+              {t('cancel')}
             </Button>
-            <Button onPress={getStatisticsData}>Buscar</Button>
+            <Button onPress={getStatisticsData}>{t('search')}</Button>
           </Modal.Footer>
         </Modal.Content>
       </Modal>
