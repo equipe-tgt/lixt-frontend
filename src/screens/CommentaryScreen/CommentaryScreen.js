@@ -25,7 +25,7 @@ import {
   Menu
 } from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 
 import CommentaryService from '../../services/CommentaryService';
 import ProductOfListService from '../../services/ProductOfListService';
@@ -198,7 +198,7 @@ export default function CommentaryScreen(props) {
   };
 
   const changeGlobalCommentariesOrder = async (order) => {
-    if (globalCommentariesOrder !== "date" && order === "date") {
+    if (order === "date") {
       try {
         await AuthService.putGlobalCommentsPreference({
           ...user,
@@ -208,7 +208,7 @@ export default function CommentaryScreen(props) {
       finally {
         orderByDate(commentariesList.global, commentariesList.notGlobal);
       }
-    } else if (globalCommentariesOrder !== "user" && order === "user") {
+    } else if (order === "user") {
       try {
         await AuthService.putGlobalCommentsPreference({
           ...user,
@@ -343,6 +343,17 @@ export default function CommentaryScreen(props) {
           {
             commentariesList.global.length > 0 || commentariesList.notGlobal.length > 0 ? (
               <Box display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center" marginY={15}>
+                <Menu
+                  trigger={(triggerProps) => (
+                    <Pressable testID="sort-button" mr={5} {...triggerProps}>
+                      <FontAwesome name="sort" size={24} color="gray" />
+                    </Pressable>
+                  )}
+                >
+                  <Menu.Item>{t("orderByAsc")}</Menu.Item>
+                  <Menu.Item>{t("orderByDesc")}</Menu.Item>
+                </Menu>
+
                 <Menu
                   trigger={(triggerProps) => (
                     <Pressable testID="settings-button" {...triggerProps}>
@@ -504,7 +515,7 @@ export default function CommentaryScreen(props) {
           >
             <Circle size={50} bg="primary.400">
               <Icon
-                as={<Ionicons name="paper-plane" />}
+                as={<Ionicons name="send" />}
                 color="white"
                 size={5}
               />

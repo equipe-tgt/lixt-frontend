@@ -141,6 +141,8 @@ export default {
   isGlobalCommentary: "Global commentary?",
   isPublic: "Is public?",
   isPublicTooltip: "A public global commentary can be seen by all users who are part of the same list as you.",
+  orderByAsc: "Order by ascending order",
+  orderByDesc: "Order by descending order",
   orderByDate: "Order commentaries by date",
   orderByUser: "Show your comments first",
   addCommentarySuccess: "Commentary added",
