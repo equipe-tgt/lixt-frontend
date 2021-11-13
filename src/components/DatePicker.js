@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Text, HStack, Box, Modal, IconButton, Icon } from 'native-base';
@@ -23,36 +23,39 @@ export default function DatePicker({
   dateConfig,
   translate,
 }) {
+  const [startOfWeek, setStartOfWeek] = useState(undefined);
+  const [endOfWeek, setEndOfWeek] = useState(undefined);
+
   const getMinMaxDate = () => {
     if (dateConfig.startDate || dateConfig.endDate) {
-      switch (selectedUnityTime) {
-        case UnityTimes.DAILY:
-          return;
+      let limitDate = moment(dateConfig.startDate).add(11, 'months');
 
-        case UnityTimes.MONTHLY:
-          // eslint-disable-next-line no-case-declarations
-          let limitDate = moment(dateConfig.startDate).add(11, 'months');
-
-          if (limitDate.isAfter(moment())) {
-            limitDate = moment();
-          }
-
-          return {
-            minDate: moment(dateConfig.startDate),
-            maxDate: limitDate,
-          };
-
-        case UnityTimes.WEEKLY:
-          return;
-
-        default:
-          break;
+      if (limitDate.isAfter(moment())) {
+        limitDate = moment();
       }
+
+      return {
+        minDate: moment(dateConfig.startDate),
+        maxDate: limitDate,
+      };
     } else {
       return {
         minDate: moment('01-01-1900', 'DD-MM-YYYY'),
         maxDate: moment(),
       };
+    }
+  };
+
+  // Se a pessoa selecionar uma data no modo semanal, deve garantir que o usuário vai
+  // pegar a semana inteira (segunda a domingo)
+  const getWeek = (date) => {
+    if (date) {
+      // Pega a data da segunda-feira da semana da data escolhida
+      const start = moment(date).startOf('isoWeek');
+
+      // Define o início da semana até o fim (segunda a domingo)
+      setStartOfWeek(start);
+      setEndOfWeek(moment(start).add(6, 'days'));
     }
   };
 
@@ -114,8 +117,58 @@ export default function DatePicker({
           </Modal>
         );
 
+      // Se a busca for do tipo semanal rendereiza o datePicker de seleção de dias,
+      // mas com configurações diferentes do DAILY
       case UnityTimes.WEEKLY:
-        break;
+        return (
+          <Modal
+            height={450}
+            m="auto"
+            isOpen={isSelectorOpen}
+            closeOnOverlayClick
+          >
+            <Modal.Content>
+              <Modal.Body>
+                <HStack alignItems="center" justifyContent="space-between">
+                  <Text fontWeight="bold">{translate('selectInterval')}</Text>
+                  <IconButton
+                    onPress={() => setIsSelectorOpen(false)}
+                    variant="ghost"
+                    icon={
+                      <Icon
+                        size="sm"
+                        as={<Ionicons name="close" />}
+                        color="#333"
+                      />
+                    }
+                  />
+                </HStack>
+                <CalendarPicker
+                  width={350}
+                  disabledDates={(date) => date.isAfter(moment())}
+                  allowRangeSelection
+                  selectedStartDate={startOfWeek}
+                  selectedEndDate={endOfWeek}
+                  maxRangeDuration={7}
+                  selectedRangeStartStyle={{ backgroundColor: '#06b6d4' }}
+                  selectedRangeEndStyle={{ backgroundColor: '#06b6d4' }}
+                  selectedRangeStyle={{ backgroundColor: '#a5f3fc' }}
+                  selectedDayColor="#06b6d4"
+                  onDateChange={(value) => {
+                    getWeek(value);
+                    // Atrasa o fechamento do modal, somente o suficiente para que o usuário
+                    // consiga ver a semana selecionada
+                    setTimeout(() => {
+                      handleDateChange(value);
+                    }, 250);
+                  }}
+                  weekdays={weekdays}
+                  months={months}
+                />
+              </Modal.Body>
+            </Modal.Content>
+          </Modal>
+        );
 
       // Se a busca for do tipo mensal, renderiza o datePicker de seleção de mês
       case UnityTimes.MONTHLY:

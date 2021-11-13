@@ -12,6 +12,7 @@ import {
   Select,
   IconButton,
   Icon,
+  Alert,
 } from 'native-base';
 import moment from 'moment';
 
@@ -22,6 +23,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useTranslation, getI18n } from 'react-i18next';
 import DatePicker from '../../components/DatePicker';
+import StatisticsDateInput from '../../components/StatisticsDateInput';
 
 import {
   UnityTimes,
@@ -72,7 +74,12 @@ export default function StatisticsScreen() {
           periodFilterObject,
           user
         );
+
         console.log(data);
+        const { time } = data[0];
+        console.log(time.slice(0, 2));
+        const qndEh = moment().day(0).week(time.slice(0, 2));
+        console.log(qndEh);
       }
     } catch (error) {
       console.log(error);
@@ -93,7 +100,7 @@ export default function StatisticsScreen() {
     setIsSelectorOpen(false);
   };
 
-  const handleDailyAndWeeklyChange = (date, currentParam) => {
+  const handleDailyChange = (date, currentParam) => {
     if (currentParam === DateParameters.START) {
       setDateConfig({ ...dateConfig, startDate: date });
     } else {
@@ -105,11 +112,26 @@ export default function StatisticsScreen() {
     }
   };
 
+  const handleWeeklyChange = (date) => {
+    if (currentParameter === DateParameters.START) {
+      setDateConfig({ ...dateConfig, startDate: date });
+    } else {
+      setDateConfig({
+        ...dateConfig,
+        endDate: date,
+      });
+    }
+    setIsSelectorOpen(false);
+  };
+
   const handleDateChange = (date, currentParam = null) => {
     switch (selectedUnityTime) {
       case UnityTimes.DAILY:
+        handleDailyChange(date, currentParam);
+        break;
+
       case UnityTimes.WEEKLY:
-        handleDailyAndWeeklyChange(date, currentParam);
+        handleWeeklyChange(date);
         break;
 
       case UnityTimes.MONTHLY:
@@ -118,19 +140,6 @@ export default function StatisticsScreen() {
 
       default:
         break;
-    }
-  };
-
-  const getSelectedDateText = (date) => {
-    if (date) {
-      if (selectedUnityTime === UnityTimes.MONTHLY) {
-        return <Text>{`${moment(date).format('MM/yyyy')}`}</Text>;
-      } else {
-        const formatString =
-          getI18n().language === 'pt_BR' ? 'DD/MM/yyyy' : 'MM/DD/yyyy';
-
-        return <Text>{`${moment(date).format(formatString)}`}</Text>;
-      }
     }
   };
 
@@ -146,66 +155,6 @@ export default function StatisticsScreen() {
     }
 
     return <Text>{intervalText}</Text>;
-  };
-
-  const getDateInput = () => {
-    if (selectedStatisticsType !== StatisticsType.PURCHASE_LOCAL) {
-      if (selectedUnityTime === UnityTimes.MONTHLY) {
-        return (
-          <HStack justifyContent="space-around" alignItems="center">
-            <Box>
-              <Button
-                variant="outline"
-                onPress={() => {
-                  setCurrentParameter(DateParameters.START);
-                  setIsSelectorOpen(true);
-                }}
-              >
-                {dateConfig.startDate
-                  ? getSelectedDateText(dateConfig.startDate)
-                  : t('initialDate')}
-              </Button>
-            </Box>
-            <Text>{t('until')}</Text>
-            <Box>
-              <Button
-                isDisabled={!dateConfig.startDate}
-                variant="outline"
-                onPress={() => {
-                  setCurrentParameter(DateParameters.END);
-                  setIsSelectorOpen(true);
-                }}
-              >
-                {dateConfig.endDate
-                  ? getSelectedDateText(dateConfig.endDate)
-                  : t('finalDate')}
-              </Button>
-            </Box>
-
-            <IconButton
-              onPress={() => setDateConfig({ startDate: null, endDate: null })}
-              variant="ghost"
-              icon={
-                <Icon size="sm" as={<Ionicons name="close" />} color="white" />
-              }
-            />
-          </HStack>
-        );
-      } else {
-        return (
-          <Button
-            onPress={() => setIsSelectorOpen(true)}
-            startIcon={
-              <Ionicons name="md-calendar-sharp" size={24} color="white" />
-            }
-          >
-            {dateConfig.startDate && dateConfig.endDate
-              ? getDateInterval()
-              : t('selectInterval')}
-          </Button>
-        );
-      }
-    }
   };
 
   return (
@@ -284,11 +233,21 @@ export default function StatisticsScreen() {
                   <Text fontSize={18} bold marginBottom={2}>
                     {t('selectDates')}
                   </Text>
-                  {getDateInput()}
+                  <StatisticsDateInput
+                    getDateInterval={getDateInterval}
+                    dateConfig={dateConfig}
+                    setDateConfig={setDateConfig}
+                    setIsSelectorOpen={setIsSelectorOpen}
+                    translate={t}
+                    setCurrentParameter={setCurrentParameter}
+                    selectedUnityTime={selectedUnityTime}
+                    selectedStatisticsType={selectedStatisticsType}
+                  />
                 </VStack>
               </Box>
             )}
 
+            {/* DatePicker */}
             <Center>
               <HStack>
                 {isSelectorOpen && (
