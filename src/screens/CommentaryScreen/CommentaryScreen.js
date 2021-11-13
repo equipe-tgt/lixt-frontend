@@ -46,7 +46,10 @@ export default function CommentaryScreen(props) {
     global: [],
     notGlobal: []
   });
-  const [globalCommentariesOrder, setGlobalCommentariesOrder] = useState();
+  const [commentariesOrder, setCommentariesOrder] = useState({
+    type: null, // date or user
+    order: null // asc or desc
+  });
   const [commentaryInformation, setCommentaryInformation] = useState({
     content: "",
     isGlobal: false,
@@ -62,50 +65,52 @@ export default function CommentaryScreen(props) {
   }, []);
 
   useEffect(() => {
-    if (globalCommentariesOrder !== undefined && loadingScreen) {
+    if (commentariesOrder.type !== null && commentariesOrder.order !== null && loadingScreen) {
       getCommentaries();
       getCurrentLanguage();
     }
-  }, [globalCommentariesOrder])
+  }, [commentariesOrder])
   
-  const getUserData = async () => {
-    try {
-      const response = await AuthService.getUserData()
-      const { globalCommentsChronOrder } = response.data;
-      if (globalCommentsChronOrder === true) {
-        setGlobalCommentariesOrder("date");
-      } else if (globalCommentsChronOrder === false) {
-        setGlobalCommentariesOrder("user");
-      }
-    } catch (error) {
-      setGlobalCommentariesOrder("date")
-    }
+  const getUserData = () => {
+    AuthService.getUserData()
+      .then(({ data }) => {
+        const { globalCommentsChronOrder, olderCommentsFirst } = data;
+        setCommentariesOrder({
+          type: globalCommentsChronOrder === false ? "user" : "date",
+          order: olderCommentsFirst === true ? "desc" : "asc"
+        });
+      })
+      .catch(error => {
+        setCommentariesOrder({
+          type: "date",
+          order: "asc"
+        });
+      });
   }
 
-  const getCommentaries = async () => {
-    try {
-      const { data } = await ProductOfListService.getProductOfListComments(
-        product.id,
-        user
-      );
-      const {
-        commentsDto: commentsArray,
-        globalCommentsDto: globalCommentsArray,
-      } = data;
-
-      if (globalCommentariesOrder === "date") {
-        orderByDate(globalCommentsArray, commentsArray);
-      } else {
-        orderByUserAndDate(globalCommentsArray, commentsArray);
-      }
-    } catch (error) {
-      toast.show({
-        title: 'Não foi possível buscar os comentários',
-        status: 'warning',
+  const getCommentaries = () => {
+    ProductOfListService.getProductOfListComments(product.id, user)
+      .then(({ data }) => {
+        const {
+          commentsDto: commentsArray,
+          globalCommentsDto: globalCommentsArray,
+        } = data;
+  
+        const isAscOrder = commentariesOrder.order === "asc";
+        if (commentariesOrder.type === "date")
+          orderByDate(isAscOrder, globalCommentsArray, commentsArray);
+        else
+          orderByUserAndDate(isAscOrder, globalCommentsArray, commentsArray);
+      })
+      .catch(error => {
+        toast.show({
+          title: 'Não foi possível buscar os comentários',
+          status: 'warning',
+        });
+      })
+      .finally(() => {
+        setLoadingScreen(false);
       });
-    } finally {
-      setLoadingScreen(false);
-    }
   };
 
   const addGlobalCommentary = async () => {
@@ -128,10 +133,11 @@ export default function CommentaryScreen(props) {
       const globalCommentariesCopy = [...commentariesList.global];
       globalCommentariesCopy.unshift(data);
 
-      if (globalCommentariesOrder === "date") {
-        orderByDate(globalCommentariesCopy, commentariesList.notGlobal);
+      const isAscOrder = commentariesOrder.order === "asc";
+      if (commentariesOrder === "date") {
+        orderByDate(isAscOrder, globalCommentariesCopy, commentariesList.notGlobal);
       } else {
-        orderByUserAndDate(globalCommentariesCopy, commentariesList.notGlobal);
+        orderByUserAndDate(isAscOrder, globalCommentariesCopy, commentariesList.notGlobal);
       }
 
       status = 'success';
@@ -172,10 +178,11 @@ export default function CommentaryScreen(props) {
       const commentariesCopy = [...commentariesList.notGlobal];
       commentariesCopy.unshift(data);
 
-      if (globalCommentariesOrder === "date") {
-        orderByDate(commentariesList.global, commentariesCopy);
+      const isAscOrder = commentariesOrder.order === "asc";
+      if (commentariesOrder === "date") {
+        orderByDate(isAscOrder, commentariesList.global, commentariesCopy);
       } else {
-        orderByUserAndDate(commentariesList.global, commentariesCopy);
+        orderByUserAndDate(isAscOrder, commentariesList.global, commentariesCopy);
       }
 
       status = 'success';
@@ -197,35 +204,41 @@ export default function CommentaryScreen(props) {
     }
   };
 
-  const changeGlobalCommentariesOrder = async (order) => {
-    if (order === "date") {
-      try {
-        await AuthService.putGlobalCommentsPreference({
-          ...user,
-          globalCommentsChronOrder: true
-        });
-      } catch (e) {}
-      finally {
-        orderByDate(commentariesList.global, commentariesList.notGlobal);
-      }
-    } else if (order === "user") {
-      try {
-        await AuthService.putGlobalCommentsPreference({
-          ...user,
-          globalCommentsChronOrder: false
-        });
-      } catch (e) {}
-      finally {
-        orderByUserAndDate(commentariesList.global, commentariesList.notGlobal);
+  const changeCommentariesOrder = async (type, order) => {
+    // type => user or date
+    // order => asc or desc
+    try {
+      await AuthService.putUserPreferences({
+        ...user,
+        globalCommentsChronOrder: type === "date" ? true : false,
+        olderCommentsFirst: order === "desc" ? true : false
+      });
+      setCommentariesOrder({
+        type,
+        order
+      });
+    } catch (e) {}
+    finally {
+      if (type === "date") {
+        orderByDate(order === "asc", commentariesList.global, commentariesList.notGlobal);
+      } else {
+        orderByUserAndDate(order === "asc", commentariesList.global, commentariesList.notGlobal);
       }
     }
   }
 
-  const orderByDate = (globalCommentaries, commentaries) => {
+  const getSortCommentariesCallback = (isAscOrder) => {
+    if (isAscOrder)
+      return (a, b) => new Date(a.date) - new Date(b.date);
+    else
+      return (a, b) => new Date(b.date) - new Date(a.date);
+  }
+
+  const orderByDate = (asc, globalCommentaries, commentaries) => {
     const globalCommentariesOrdered = [...globalCommentaries]
-    globalCommentariesOrdered.sort((a, b) => new Date(a.date) - new Date(b.date));
+    globalCommentariesOrdered.sort(getSortCommentariesCallback(asc));
     const commentariesOrdered = [...commentaries];
-    commentariesOrdered.sort((a, b) => new Date(a.date) - new Date(b.date));
+    commentariesOrdered.sort(getSortCommentariesCallback(asc));
 
     setCommentariesList({
       global: globalCommentariesOrdered,
@@ -233,19 +246,19 @@ export default function CommentaryScreen(props) {
     });
   }
 
-  const orderByUserAndDate = (globalCommentaries, commentaries) => {
+  const orderByUserAndDate = (asc, globalCommentaries, commentaries) => {
     const globalCommentariesByUserOrdered = globalCommentaries
       .filter(comment => comment.userId === user.id)
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
+      .sort(getSortCommentariesCallback(asc));
     const globalCommentariesByMembersOrdered = globalCommentaries
       .filter(comment => comment.userId !== user.id)
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
+      .sort(getSortCommentariesCallback(asc));
     const commentariesByUserOrdered = commentaries
       .filter(comment => comment.userId === user.id)
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
+      .sort(getSortCommentariesCallback(asc));
     const commentariesByMembersOrdered = commentaries
       .filter(comment => comment.userId !== user.id)
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
+      .sort(getSortCommentariesCallback(asc));
 
     setCommentariesList({
       global: [
@@ -318,11 +331,10 @@ export default function CommentaryScreen(props) {
 
   const onRemoveCommentary = async () => {
     if (commentaryToBeRemoved) {
-      if (commentaryToBeRemoved.isGlobal) {
-        await removeGlobalCommentary(commentaryToBeRemoved);
-      } else {
-        await removeCommentary(commentaryToBeRemoved);
-      }
+      if (commentaryToBeRemoved.isGlobal)
+        removeGlobalCommentary(commentaryToBeRemoved);
+      else
+        removeCommentary(commentaryToBeRemoved);
     }
     setCommentaryToBeRemoved(false);
   }
@@ -350,8 +362,8 @@ export default function CommentaryScreen(props) {
                     </Pressable>
                   )}
                 >
-                  <Menu.Item>{t("orderByAsc")}</Menu.Item>
-                  <Menu.Item>{t("orderByDesc")}</Menu.Item>
+                  <Menu.Item testID="order-by-asc-button" onPress={() => changeCommentariesOrder(commentariesOrder.type, "asc")}>{t("orderByAsc")}</Menu.Item>
+                  <Menu.Item testID="order-by-desc-button" onPress={() => changeCommentariesOrder(commentariesOrder.type, "desc")}>{t("orderByDesc")}</Menu.Item>
                 </Menu>
 
                 <Menu
@@ -361,8 +373,8 @@ export default function CommentaryScreen(props) {
                     </Pressable>
                   )}
                 >
-                  <Menu.Item testID="order-by-date-button" onPress={() => changeGlobalCommentariesOrder("date")}>{t("orderByDate")}</Menu.Item>
-                  <Menu.Item testID="order-by-user-button" onPress={() => changeGlobalCommentariesOrder("user")}>{t("orderByUser")}</Menu.Item>
+                  <Menu.Item testID="order-by-date-button" onPress={() => changeCommentariesOrder("date", commentariesOrder.order)}>{t("orderByDate")}</Menu.Item>
+                  <Menu.Item testID="order-by-user-button" onPress={() => changeCommentariesOrder("user", commentariesOrder.order)}>{t("orderByUser")}</Menu.Item>
                 </Menu>
               </Box>
             ) : null
