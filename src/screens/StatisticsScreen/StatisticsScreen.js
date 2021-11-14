@@ -100,13 +100,16 @@ export default function StatisticsScreen() {
     setIsSelectorOpen(false);
   };
 
-  const handleDailyChange = (date, currentParam) => {
-    if (currentParam === DateParameters.START) {
-      setDateConfig({ ...dateConfig, startDate: date });
+  const handleDailyChange = (date, dailyCurrentParameter) => {
+    if (dailyCurrentParameter === DateParameters.START) {
+      setDateConfig({
+        ...dateConfig,
+        startDate: moment(date).startOf('date'), // garante que pegará o dia definido desde às 00h00min00sec
+      });
     } else {
       setDateConfig({
         ...dateConfig,
-        endDate: date,
+        endDate: moment(date).endOf('date'), // garante que pegará o dia definido até as 23h59min59sec
       });
       setIsSelectorOpen(false);
     }
@@ -114,11 +117,14 @@ export default function StatisticsScreen() {
 
   const handleWeeklyChange = (date) => {
     if (currentParameter === DateParameters.START) {
-      setDateConfig({ ...dateConfig, startDate: date });
+      setDateConfig({
+        ...dateConfig,
+        startDate: moment(date).startOf('date'), // garante que pegará o dia definido desde às 00h00min00sec
+      });
     } else {
       setDateConfig({
         ...dateConfig,
-        endDate: date,
+        endDate: moment(date).endOf('date'), // garante que pegará o dia definido até as 23h59min59sec
       });
     }
     setIsSelectorOpen(false);
@@ -242,12 +248,13 @@ export default function StatisticsScreen() {
                     setCurrentParameter={setCurrentParameter}
                     selectedUnityTime={selectedUnityTime}
                     selectedStatisticsType={selectedStatisticsType}
+                    currentParameter={currentParameter}
                   />
                 </VStack>
               </Box>
             )}
 
-            {/* DatePicker */}
+            {/* DatePicker, exibido caso o isSelector seja true */}
             <Center>
               <HStack>
                 {isSelectorOpen && (

@@ -218,4 +218,7 @@ export default {
   MONTHLY: 'Monthly',
   DAILY: 'Daily',
   WEEKLY: 'Weekly',
+  clear: 'Clear',
+  previous: 'Previous',
+  next: 'Next',
 };

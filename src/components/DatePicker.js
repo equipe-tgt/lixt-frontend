@@ -26,6 +26,7 @@ export default function DatePicker({
   const [startOfWeek, setStartOfWeek] = useState(undefined);
   const [endOfWeek, setEndOfWeek] = useState(undefined);
 
+  // Define os limites de seleção de data do calendário
   const getMinMaxDate = () => {
     if (dateConfig.startDate || dateConfig.endDate) {
       let limitDate = moment(dateConfig.startDate).add(11, 'months');
@@ -35,7 +36,13 @@ export default function DatePicker({
       }
 
       return {
-        minDate: moment(dateConfig.startDate),
+        // Os únicos formatos que usam o minMaxDate são o MONTHLY e o WEEKLY, portanto
+        // na hora de pegar a data mínima, se for MONTHLY pega o mês seguinte do definido como data inicial
+        // mas, se for WEEKLY, pega o dia inicial acrescido de 7 dias (ou seja, a data mínima é o primeiro dia da semana seguinte)
+        minDate:
+          selectedUnityTime === UnityTimes.MONTHLY
+            ? moment(dateConfig.startDate).add(1, 'month')
+            : moment(dateConfig.startDate).add(7, 'days'),
         maxDate: limitDate,
       };
     } else {
@@ -77,27 +84,18 @@ export default function DatePicker({
             height={450}
             m="auto"
             isOpen={isSelectorOpen}
+            onClose={() => setIsSelectorOpen(false)}
             closeOnOverlayClick
           >
             <Modal.Content>
+              <Modal.CloseButton />
+              <Modal.Header>{translate('selectInterval')}</Modal.Header>
               <Modal.Body>
-                <HStack alignItems="center" justifyContent="space-between">
-                  <Text fontWeight="bold">{translate('selectInterval')}</Text>
-                  <IconButton
-                    onPress={() => setIsSelectorOpen(false)}
-                    variant="ghost"
-                    icon={
-                      <Icon
-                        size="sm"
-                        as={<Ionicons name="close" />}
-                        color="#333"
-                      />
-                    }
-                  />
-                </HStack>
                 <CalendarPicker
                   width={350}
                   allowRangeSelection
+                  previousTitle={translate('previous')}
+                  nextTitle={translate('next')}
                   maxRangeDuration={31}
                   disabledDates={(date) => date.isAfter(moment())}
                   selectedDayColor="#06b6d4"
@@ -125,28 +123,19 @@ export default function DatePicker({
             height={450}
             m="auto"
             isOpen={isSelectorOpen}
+            onClose={() => setIsSelectorOpen(false)}
             closeOnOverlayClick
           >
             <Modal.Content>
+              <Modal.CloseButton />
+              <Modal.Header>{translate('selectWeek')}</Modal.Header>
               <Modal.Body>
-                <HStack alignItems="center" justifyContent="space-between">
-                  <Text fontWeight="bold">{translate('selectInterval')}</Text>
-                  <IconButton
-                    onPress={() => setIsSelectorOpen(false)}
-                    variant="ghost"
-                    icon={
-                      <Icon
-                        size="sm"
-                        as={<Ionicons name="close" />}
-                        color="#333"
-                      />
-                    }
-                  />
-                </HStack>
                 <CalendarPicker
                   width={350}
                   disabledDates={(date) => date.isAfter(moment())}
                   allowRangeSelection
+                  minDate={getMinMaxDate().minDate}
+                  maxDate={getMinMaxDate().maxDate}
                   selectedStartDate={startOfWeek}
                   selectedEndDate={endOfWeek}
                   maxRangeDuration={7}
@@ -154,13 +143,15 @@ export default function DatePicker({
                   selectedRangeEndStyle={{ backgroundColor: '#06b6d4' }}
                   selectedRangeStyle={{ backgroundColor: '#a5f3fc' }}
                   selectedDayColor="#06b6d4"
+                  previousTitle={translate('previous')}
+                  nextTitle={translate('next')}
                   onDateChange={(value) => {
                     getWeek(value);
                     // Atrasa o fechamento do modal, somente o suficiente para que o usuário
                     // consiga ver a semana selecionada
                     setTimeout(() => {
                       handleDateChange(value);
-                    }, 250);
+                    }, 50);
                   }}
                   weekdays={weekdays}
                   months={months}
@@ -173,30 +164,37 @@ export default function DatePicker({
       // Se a busca for do tipo mensal, renderiza o datePicker de seleção de mês
       case UnityTimes.MONTHLY:
         return (
-          <Modal background="#fff" isOpen={true} closeOnOverlayClick={true}>
-            <Box width="100%" shadow>
-              <Text bold textAlign="center" mt={5}>
+          <Modal
+            isOpen={true}
+            closeOnOverlayClick={true}
+            onClose={() => setIsSelectorOpen(false)}
+          >
+            <Modal.Content>
+              <Modal.CloseButton />
+              <Modal.Header>
                 {currentParameter === DateParameters.START
                   ? translate('initialDate')
                   : translate('finalDate')}
-              </Text>
-              <MonthSelectorCalendar
-                selectedBackgroundColor="#06b6d4"
-                minDate={getMinMaxDate().minDate}
-                maxDate={getMinMaxDate().maxDate}
-                containerStyle={{
-                  width: '90%',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }}
-                selectedDate={
-                  currentParameter === DateParameters.START
-                    ? dateConfig.startDate || moment()
-                    : dateConfig.endDate || moment()
-                }
-                onMonthTapped={(date) => handleDateChange(date)}
-              />
-            </Box>
+              </Modal.Header>
+              <Modal.Body>
+                <MonthSelectorCalendar
+                  prevText={translate('previous')}
+                  nextText={translate('next')}
+                  selectedBackgroundColor="#06b6d4"
+                  minDate={getMinMaxDate().minDate}
+                  maxDate={getMinMaxDate().maxDate}
+                  containerStyle={{
+                    backgroundColor: 'transparent',
+                  }}
+                  selectedDate={
+                    currentParameter === DateParameters.START
+                      ? dateConfig.startDate || moment()
+                      : dateConfig.endDate || moment()
+                  }
+                  onMonthTapped={(date) => handleDateChange(date)}
+                />
+              </Modal.Body>
+            </Modal.Content>
           </Modal>
         );
 

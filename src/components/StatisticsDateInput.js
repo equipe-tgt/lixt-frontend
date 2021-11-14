@@ -1,7 +1,7 @@
 /* eslint-disable no-case-declarations */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Text, Box, Button, VStack, IconButton, Icon } from 'native-base';
+import { Text, Box, Button, VStack, Icon } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 import { getI18n } from 'react-i18next';
@@ -21,7 +21,26 @@ export default function StatisticsDateInput({
   translate,
   setCurrentParameter,
   setDateConfig,
+  currentParameter,
 }) {
+  // Se o usuário modificar a data inicial enquanto já houver selecionado uma data final
+  // e o tipo de data for mensal ou semanal, limpa o parâmetro da data final
+  // isso para evitar a seleção de uma data inicial mais nova que a final
+  // o tipo de data diário não precisa disso pois abre o datepicker uma vez para seleção de intervalo
+  useEffect(() => {
+    if (
+      currentParameter === DateParameters.START &&
+      dateConfig.endDate &&
+      (selectedUnityTime === UnityTimes.WEEKLY ||
+        selectedUnityTime === UnityTimes.MONTHLY)
+    ) {
+      setDateConfig({
+        ...dateConfig,
+        endDate: null,
+      });
+    }
+  }, [dateConfig]);
+
   // Devolve qual o texto será exibido no input de datas
   // baseando-se no tipo de data selecionado
   const getSelectedDateText = (date) => {
@@ -39,6 +58,7 @@ export default function StatisticsDateInput({
             getI18n().language === 'pt_BR' ? 'DD/MM/yyyy' : 'MM/DD/yyyy';
 
           const startOfWeek = moment(date).format(formatString);
+
           const endOfWeek = moment(date).add(6, 'days').format(formatString);
           return `${startOfWeek} - ${endOfWeek}`;
 
@@ -51,22 +71,45 @@ export default function StatisticsDateInput({
     }
   };
 
+  const cleanIntervalButton = () => {
+    if (dateConfig.startDate || dateConfig.endDate) {
+      return (
+        <Button
+          onPress={() => setDateConfig({ startDate: null, endDate: null })}
+          variant="ghost"
+          colorScheme="warmGray"
+          startIcon={<Icon size="sm" as={<Ionicons name="close" />} />}
+        >
+          {translate('clear')}
+        </Button>
+      );
+    }
+  };
+
   const getDateInput = () => {
     if (selectedStatisticsType !== StatisticsType.PURCHASE_LOCAL) {
       switch (selectedUnityTime) {
         // Input único de seleção de intervalo
         case UnityTimes.DAILY:
           return (
-            <Button
-              onPress={() => setIsSelectorOpen(true)}
-              startIcon={
-                <Ionicons name="md-calendar-sharp" size={24} color="white" />
-              }
-            >
-              {dateConfig.startDate && dateConfig.endDate
-                ? getDateInterval()
-                : translate('selectInterval')}
-            </Button>
+            <Box>
+              <Button
+                variant="outline"
+                onPress={() => setIsSelectorOpen(true)}
+                startIcon={
+                  <Ionicons
+                    name="md-calendar-sharp"
+                    size={24}
+                    color="#06b6d4"
+                  />
+                }
+              >
+                {dateConfig.startDate && dateConfig.endDate
+                  ? getDateInterval()
+                  : translate('selectInterval')}
+              </Button>
+              {cleanIntervalButton()}
+            </Box>
           );
 
         // Input composto de seleção de datas
@@ -118,20 +161,7 @@ export default function StatisticsDateInput({
                     : translate('finalWeek')}
                 </Button>
               </Box>
-
-              <IconButton
-                onPress={() =>
-                  setDateConfig({ startDate: null, endDate: null })
-                }
-                variant="ghost"
-                icon={
-                  <Icon
-                    size="sm"
-                    as={<Ionicons name="close" />}
-                    color="white"
-                  />
-                }
-              />
+              {cleanIntervalButton()}
             </VStack>
           );
 
@@ -142,6 +172,13 @@ export default function StatisticsDateInput({
             <VStack>
               <Box>
                 <Button
+                  startIcon={
+                    <Ionicons
+                      name="md-calendar-sharp"
+                      size={20}
+                      color="#06b6d4"
+                    />
+                  }
                   variant="outline"
                   onPress={() => {
                     setCurrentParameter(DateParameters.START);
@@ -160,6 +197,13 @@ export default function StatisticsDateInput({
                 <Button
                   isDisabled={!dateConfig.startDate}
                   variant="outline"
+                  startIcon={
+                    <Ionicons
+                      name="md-calendar-sharp"
+                      size={20}
+                      color={dateConfig.startDate ? '#06b6d4' : '#333'}
+                    />
+                  }
                   onPress={() => {
                     setCurrentParameter(DateParameters.END);
                     setIsSelectorOpen(true);
@@ -171,19 +215,7 @@ export default function StatisticsDateInput({
                 </Button>
               </Box>
 
-              <IconButton
-                onPress={() =>
-                  setDateConfig({ startDate: null, endDate: null })
-                }
-                variant="ghost"
-                icon={
-                  <Icon
-                    size="sm"
-                    as={<Ionicons name="close" />}
-                    color="white"
-                  />
-                }
-              />
+              {cleanIntervalButton()}
             </VStack>
           );
 
@@ -205,4 +237,5 @@ StatisticsDateInput.propTypes = {
   translate: PropTypes.func,
   setCurrentParameter: PropTypes.func,
   setDateConfig: PropTypes.func,
+  currentParameter: PropTypes.number,
 };
