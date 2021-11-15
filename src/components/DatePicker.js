@@ -2,14 +2,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { Text, HStack, Box, Modal, IconButton, Icon } from 'native-base';
+import { Modal } from 'native-base';
 import moment from 'moment';
 import { enUS, ptBR } from 'date-fns/locale';
 
 import CalendarPicker from 'react-native-calendar-picker';
 import MonthSelectorCalendar from 'react-native-month-selector';
 import { getI18n } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
 
 import { UnityTimes, DateParameters } from '../utils/StatisticsUtils';
 
@@ -35,14 +34,31 @@ export default function DatePicker({
         limitDate = moment();
       }
 
-      return {
-        // Os únicos formatos que usam o minMaxDate são o MONTHLY e o WEEKLY, portanto
+      let minDate;
+
+      // Os únicos formatos que usam o minMaxDate são o MONTHLY, WEEKLY e o DEFAULT, portanto
+      switch (selectedUnityTime) {
         // na hora de pegar a data mínima, se for MONTHLY pega o mês seguinte do definido como data inicial
-        // mas, se for WEEKLY, pega o dia inicial acrescido de 7 dias (ou seja, a data mínima é o primeiro dia da semana seguinte)
-        minDate:
-          selectedUnityTime === UnityTimes.MONTHLY
-            ? moment(dateConfig.startDate).add(1, 'month')
-            : moment(dateConfig.startDate).add(7, 'days'),
+        case UnityTimes.MONTHLY:
+          minDate = moment(dateConfig.startDate).add(1, 'month');
+          break;
+
+        // se for WEEKLY, pega o dia inicial acrescido de 7 dias (ou seja, a data mínima é o primeiro dia da semana seguinte)
+        case UnityTimes.WEEKLY:
+          minDate = moment(dateConfig.startDate).add(7, 'days');
+          break;
+
+        // se for o DEFAULT, pega o dia inicial e soma mais um (ou seja, a data mínima de seleção passa a ser o dia seguinte ao da data inicial)
+        case UnityTimes.DEFAULT:
+          minDate = moment(dateConfig.startDate).add(1, 'day');
+          break;
+
+        default:
+          break;
+      }
+
+      return {
+        minDate,
         maxDate: limitDate,
       };
     } else {
@@ -192,6 +208,36 @@ export default function DatePicker({
                       : dateConfig.endDate || moment()
                   }
                   onMonthTapped={(date) => handleDateChange(date)}
+                />
+              </Modal.Body>
+            </Modal.Content>
+          </Modal>
+        );
+
+      // Se a busca for do tipo DEFAULT
+      case UnityTimes.DEFAULT:
+        return (
+          <Modal
+            height={450}
+            m="auto"
+            isOpen={isSelectorOpen}
+            onClose={() => setIsSelectorOpen(false)}
+            closeOnOverlayClick
+          >
+            <Modal.Content>
+              <Modal.CloseButton />
+              <Modal.Header>{translate('selectInterval')}</Modal.Header>
+              <Modal.Body>
+                <CalendarPicker
+                  width={350}
+                  minDate={getMinMaxDate().minDate}
+                  previousTitle={translate('previous')}
+                  nextTitle={translate('next')}
+                  disabledDates={(date) => date.isAfter(moment())}
+                  selectedDayColor="#06b6d4"
+                  onDateChange={handleDateChange}
+                  weekdays={weekdays}
+                  months={months}
                 />
               </Modal.Body>
             </Modal.Content>

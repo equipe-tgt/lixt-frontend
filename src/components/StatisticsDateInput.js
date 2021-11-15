@@ -48,6 +48,7 @@ export default function StatisticsDateInput({
     if (date) {
       switch (selectedUnityTime) {
         case UnityTimes.DAILY:
+        case UnityTimes.DEFAULT:
           formatString =
             getI18n().language === 'pt_BR' ? 'DD/MM/yyyy' : 'MM/DD/yyyy';
 
@@ -168,6 +169,7 @@ export default function StatisticsDateInput({
         // Input composto de seleção de datas
         // (um para a seleção do mês inicial e um para a seleção do mês final)
         case UnityTimes.MONTHLY:
+        case UnityTimes.DEFAULT:
           return (
             <VStack>
               <Box>

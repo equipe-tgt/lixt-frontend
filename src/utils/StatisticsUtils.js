@@ -2,6 +2,7 @@ export const UnityTimes = {
   DAILY: 'DAILY',
   WEEKLY: 'WEEKLY',
   MONTHLY: 'MONTHLY',
+  DEFAULT: 'DEFAULT',
 };
 
 export const DateParameters = {
@@ -10,8 +11,23 @@ export const DateParameters = {
 };
 
 export const StatisticsType = {
+  TIME: 'timeStatistics',
+  LIST: 'listStatistics',
+  PRODUCT: 'productStatistics',
+  CATEGORY: 'categoryStatistics',
+  PURCHASE_LOCAL: 'purchaseLocalStatistics',
+};
+
+const StatistcsTypeUrl = {
   TIME: 'time',
+  LIST: 'time',
   PRODUCT: 'product',
   CATEGORY: 'category',
-  PURCHASE_LOCAL: 'purchaseLocal',
 };
+
+export function getUrl(value) {
+  const key = Object.keys(StatistcsTypeUrl).find(
+    (key) => StatisticsType[key] === value
+  );
+  return StatistcsTypeUrl[key];
+}

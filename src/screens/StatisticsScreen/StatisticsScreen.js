@@ -4,31 +4,32 @@ import { SafeAreaView } from 'react-native';
 import {
   Button,
   Text,
-  Center,
   HStack,
   Box,
   VStack,
-  Modal,
-  Select,
   IconButton,
   Icon,
-  Alert,
+  useToast,
+  View,
 } from 'native-base';
 import moment from 'moment';
 
 import { AuthContext } from '../../context/AuthProvider';
+import { ListContext } from '../../context/ListProvider';
 import StatisticsService from '../../services/StatisticsService';
 import { screenBasicStyle as style } from '../../styles/style';
 import { Ionicons } from '@expo/vector-icons';
+import BarChartWrapper from '../../components/BarChartWrapper';
+import LineChartWrapper from '../../components/LineChartWrapper';
 
-import { useTranslation, getI18n } from 'react-i18next';
-import DatePicker from '../../components/DatePicker';
-import StatisticsDateInput from '../../components/StatisticsDateInput';
+import { useTranslation } from 'react-i18next';
+import StatisticsModal from '../../components/StatisticsModal';
 
 import {
   UnityTimes,
   DateParameters,
   StatisticsType,
+  getUrl,
 } from '../../utils/StatisticsUtils';
 
 export default function StatisticsScreen() {
@@ -44,8 +45,11 @@ export default function StatisticsScreen() {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [currentParameter, setCurrentParameter] = useState(null);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [selectedList, setSelectedList] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { user } = useContext(AuthContext);
+  const { lists } = useContext(ListContext);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -57,44 +61,68 @@ export default function StatisticsScreen() {
     }
   }, [isConfigOpen]);
 
+  // Quando o tipo de estatística selecionada for CATEGORY ou PRODUCT modifica programaticamente
+  // o selectedUnityTime para DEFAULT, pois esses tipos de análises não usam DAILY, WEEKLY nem MONTHLY e
+  // portanto podem utilizar o DatePicker no modo padrão
+  useEffect(() => {
+    if (
+      selectedStatisticsType === StatisticsType.CATEGORY ||
+      selectedStatisticsType === StatisticsType.PRODUCT
+    ) {
+      setSelectedUnityTime(UnityTimes.DEFAULT);
+    }
+  }, [selectedStatisticsType]);
+
   const getStatisticsData = async () => {
     try {
+      setLoading(true);
       if (selectedStatisticsType === StatisticsType.PURCHASE_LOCAL) {
         const { data } = await StatisticsService.getPurchaseLocalData(user);
-        console.log(data);
+        setdataFromServer(data);
       } else {
         const periodFilterObject = {
           startDate: moment(dateConfig.startDate).toISOString(),
           endDate: moment(dateConfig.endDate).toISOString(),
-          unityTime: selectedUnityTime,
         };
 
+        if (selectedUnityTime !== UnityTimes.DEFAULT) {
+          periodFilterObject.unityTime = selectedUnityTime;
+        }
+
+        if (selectedList) {
+          periodFilterObject.listId = selectedList;
+        }
+
         const { data } = await StatisticsService.getExpensesPer(
-          selectedStatisticsType,
+          getUrl(selectedStatisticsType),
           periodFilterObject,
           user
         );
 
         console.log(data);
-        const { time } = data[0];
-        console.log(time.slice(0, 2));
-        const qndEh = moment().day(0).week(time.slice(0, 2));
-        console.log(qndEh);
+        setdataFromServer(data);
       }
     } catch (error) {
-      console.log(error);
+      useToast().show({
+        title: t('errorServerDefault'),
+        status: 'error',
+      });
     } finally {
+      setLoading(false);
       setIsConfigOpen(false);
     }
   };
 
   const handleMonthChange = (date) => {
     if (currentParameter === DateParameters.START) {
-      setDateConfig({ ...dateConfig, startDate: date });
+      setDateConfig({
+        ...dateConfig,
+        startDate: date.startOf('date'), // garante que pegará o dia definido desde às 00h00min00sec
+      });
     } else {
       setDateConfig({
         ...dateConfig,
-        endDate: moment(date).add(1, 'month').subtract(1, 'day'),
+        endDate: moment(date).endOf('date'), // garante que pegará o dia definido até as 23h59min59sec
       });
     }
     setIsSelectorOpen(false);
@@ -115,7 +143,7 @@ export default function StatisticsScreen() {
     }
   };
 
-  const handleWeeklyChange = (date) => {
+  const handleWeeklyAndDefaultChange = (date) => {
     if (currentParameter === DateParameters.START) {
       setDateConfig({
         ...dateConfig,
@@ -137,7 +165,7 @@ export default function StatisticsScreen() {
         break;
 
       case UnityTimes.WEEKLY:
-        handleWeeklyChange(date);
+        handleWeeklyAndDefaultChange(date);
         break;
 
       case UnityTimes.MONTHLY:
@@ -145,13 +173,13 @@ export default function StatisticsScreen() {
         break;
 
       default:
+        handleWeeklyAndDefaultChange(date);
         break;
     }
   };
 
-  const getDateInterval = () => {
+  const renderDateInterval = () => {
     let intervalText;
-
     if (dateConfig.startDate && dateConfig.endDate) {
       intervalText = `${moment(dateConfig.startDate).format('DD/MM/yyyy')} ${t(
         'until'
@@ -163,123 +191,115 @@ export default function StatisticsScreen() {
     return <Text>{intervalText}</Text>;
   };
 
+  const renderChart = () => {
+    switch (selectedStatisticsType) {
+      case StatisticsType.PURCHASE_LOCAL:
+        return;
+      case StatisticsType.TIME:
+      case StatisticsType.LIST:
+        return (
+          <BarChartWrapper
+            selectedUnityTime={selectedUnityTime}
+            monetaryNotation={t('currency')}
+            preFormattedData={dataFromServer}
+            translate={t}
+          />
+        );
+      case StatisticsType.PRODUCT:
+        return <LineChartWrapper />;
+      case StatisticsType.CATEGORY:
+        return <LineChartWrapper />;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <SafeAreaView style={style.container}>
-      <VStack width="90%" mx="auto">
-        <Box>
-          <HStack width={250} mx="auto" alignItems="center">
-            <Text textAlign="center" mr={5}>
-              {getDateInterval()}
-            </Text>
-            <IconButton
-              variant="ghost"
-              onPress={() => setIsConfigOpen(true)}
-              icon={
-                <Icon
-                  size="sm"
-                  as={<Ionicons name="settings" />}
-                  color="light.600"
-                />
-              }
-            />
-          </HStack>
-          <Text textAlign="center">{t(selectedStatisticsType)}</Text>
-        </Box>
-      </VStack>
-      <Modal isOpen={isConfigOpen} onClose={() => setIsConfigOpen(false)}>
-        <Modal.Content>
-          <Modal.CloseButton />
-          <Modal.Header>{t('settings')}</Modal.Header>
-          <Modal.Body>
-            {/* Seletor de tipo de estatísticas */}
-            <Text fontSize={18} bold marginBottom={2}>
-              {t('selectAnalysisType')}
-            </Text>
-            <Select
-              onValueChange={setSelectedStatisticsType}
-              selectedValue={selectedStatisticsType}
-            >
-              {Object.keys(StatisticsType).map((tipo, index) => (
-                <Select.Item
-                  value={StatisticsType[tipo]}
-                  label={t(StatisticsType[tipo])}
-                  key={index}
-                />
-              ))}
-            </Select>
+      <View width="90%" mx="auto">
+        <VStack mb={5}>
+          <Box>
+            <HStack mx="auto" alignItems="center">
+              <VStack mb={2}>
+                <Text fontSize="sm" textAlign="center">
+                  {t('chosenStatistics')}
+                </Text>
+                <Text fontSize="2xl" textAlign="center">
+                  {t(selectedStatisticsType)}
+                </Text>
+              </VStack>
 
-            {/* Se o tipo de busca de estatísticas for o de local da compra, 
-            não mostra as opções de filtragem por data */}
-            {selectedStatisticsType !== StatisticsType.PURCHASE_LOCAL && (
-              <Box>
-                {/* Seletor de tipo de período de análise */}
-                <VStack>
-                  <Text fontSize={18} bold mb={2} mt={4}>
-                    {t('selectPeriodOfAnalysis')}
-                  </Text>
-                  <Select
-                    onValueChange={(val) => {
-                      setSelectedUnityTime(val);
-                      setDateConfig({ startDate: null, endDate: null });
-                    }}
-                    selectedValue={selectedUnityTime}
-                  >
-                    {Object.keys(UnityTimes).map((unityTime, index) => (
-                      <Select.Item
-                        value={UnityTimes[unityTime]}
-                        label={t(unityTime)}
-                        key={index}
-                      />
-                    ))}
-                  </Select>
-                </VStack>
-
-                {/* Seletor de datas */}
-                <VStack mt={2}>
-                  <Text fontSize={18} bold marginBottom={2}>
-                    {t('selectDates')}
-                  </Text>
-                  <StatisticsDateInput
-                    getDateInterval={getDateInterval}
-                    dateConfig={dateConfig}
-                    setDateConfig={setDateConfig}
-                    setIsSelectorOpen={setIsSelectorOpen}
-                    translate={t}
-                    setCurrentParameter={setCurrentParameter}
-                    selectedUnityTime={selectedUnityTime}
-                    selectedStatisticsType={selectedStatisticsType}
-                    currentParameter={currentParameter}
+              <IconButton
+                ml="auto"
+                variant="ghost"
+                onPress={() => setIsConfigOpen(true)}
+                icon={
+                  <Icon
+                    size="sm"
+                    as={<Ionicons name="settings" />}
+                    color="light.600"
                   />
-                </VStack>
+                }
+              />
+            </HStack>
+
+            {/*  Caso o tipo de estatísticas seja uma relacionada com datas (qualquer uma que não seja a PURCHASE_LOCAL)
+            e não houver um intervalo de datas selecionado, mostra uma mensagem indicando isso e um botão
+          */}
+            {selectedStatisticsType !== StatisticsType.PURCHASE_LOCAL &&
+            !dateConfig.startDate &&
+            !dateConfig.endDate ? (
+              <Box mt={3}>
+                <Text fontSize="sm" textAlign="center" mr={5}>
+                  {renderDateInterval()}
+                </Text>
+                <Button mt={2} size="sm" onPress={() => setIsConfigOpen(true)}>
+                  {t('selectOne')}
+                </Button>
               </Box>
-            )}
+            ) : null}
 
-            {/* DatePicker, exibido caso o isSelector seja true */}
-            <Center>
-              <HStack>
-                {isSelectorOpen && (
-                  <DatePicker
-                    isSelectorOpen={isSelectorOpen}
-                    setIsSelectorOpen={setIsSelectorOpen}
-                    handleDateChange={handleDateChange}
-                    currentParameter={currentParameter}
-                    setCurrentParameter={setCurrentParameter}
-                    selectedUnityTime={selectedUnityTime}
-                    dateConfig={dateConfig}
-                    translate={t}
-                  />
-                )}
-              </HStack>
-            </Center>
-          </Modal.Body>
-          <Modal.Footer justifyContent="space-between">
-            <Button onPress={() => setIsConfigOpen(false)} variant="link">
-              {t('cancel')}
-            </Button>
-            <Button onPress={getStatisticsData}>{t('search')}</Button>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
+            {/*  Caso o tipo de estatísticas seja uma relacionada com datas (qualquer uma que não seja a PURCHASE_LOCAL)
+            e tenha o intervalo de datas
+          */}
+            {selectedStatisticsType !== StatisticsType.PURCHASE_LOCAL &&
+            dateConfig.startDate &&
+            dateConfig.endDate ? (
+              <Box>
+                <Text fontSize="sm" textAlign="center" mr={5}>
+                  {renderDateInterval()}
+                </Text>
+              </Box>
+            ) : null}
+          </Box>
+        </VStack>
+
+        {dataFromServer && renderChart()}
+
+        <StatisticsModal
+          isConfigOpen={isConfigOpen}
+          setIsConfigOpen={setIsConfigOpen}
+          setSelectedStatisticsType={setSelectedStatisticsType}
+          selectedStatisticsType={selectedStatisticsType}
+          selectedUnityTime={selectedUnityTime}
+          setSelectedUnityTime={setSelectedUnityTime}
+          setDateConfig={setDateConfig}
+          translate={t}
+          setCurrentParameter={setCurrentParameter}
+          currentParameter={currentParameter}
+          renderDateInterval={renderDateInterval}
+          getStatisticsData={getStatisticsData}
+          handleDateChange={handleDateChange}
+          dateConfig={dateConfig}
+          isSelectorOpen={isSelectorOpen}
+          setIsSelectorOpen={setIsSelectorOpen}
+          selectedList={selectedList}
+          setSelectedList={setSelectedList}
+          lists={lists}
+          loading={loading}
+        />
+      </View>
     </SafeAreaView>
   );
 }
