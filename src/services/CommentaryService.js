@@ -15,8 +15,15 @@ const CommentaryService = {
       },
     });
   },
-  getGlobalCommentaries: (user) => {
-    return BaseService.get('/globalComment/all', {
+  removeCommentary: (commentaryId, user) => {
+    return BaseService.delete(`/comment/${commentaryId}`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
+  removeGlobalCommentary: (commentaryId, user) => {
+    return BaseService.delete(`/globalComment/${commentaryId}`, {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },

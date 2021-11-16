@@ -10,6 +10,8 @@ export default {
   usernameAlreadyTaken: 'This username is already taken',
 
   createdList: 'The list was created successfully!',
+  editedList: 'The list was edited successfully',
+  editingList: 'Editing',
 
   memberRemoved: 'The member was removed from the list',
 
@@ -55,6 +57,7 @@ export default {
   okContinue: 'Ok, I wanna continue',
   userDoesntExists: "This user doesn't exists",
   emailSuccessfullySend: 'EEmail successfully sent',
+  privacyPolicy: 'Privacy policy',
 
   passwordUpdatedSucessfully: 'Password updated successfully',
   errorServerDefault: 'An unexpected error has occurred on the server',
@@ -73,6 +76,7 @@ export default {
 
   deleteList: 'Delete list',
   confirmDeleteList: 'Are you sure you want to delete this list?',
+  editList: 'Edit list information',
   listInfo: 'List informations',
   listHasNoDescription: 'This list has no description',
   productAlreadyOnList: 'The product is already on the list',
@@ -139,9 +143,23 @@ export default {
   isPublic: 'Is public?',
   isPublicTooltip:
     'A public global commentary can be seen by all users who are part of the same list as you.',
+  orderByAsc: 'Order by ascending order',
+  orderByDesc: 'Order by descending order',
   orderByDate: 'Order commentaries by date',
   orderByUser: 'Show your comments first',
+  addCommentarySuccess: 'Commentary added',
+  addCommentaryFail: "It wasn't possible to add the commentary",
+  addGlobalCommentarySuccess: 'Global commentary added',
+  addGlobalCommentaryFail: "It wasn't possible to add the global commentary",
   globalPrivateCommentary: 'Private global commentary',
+  removeCommentarySuccess: 'Commentary removed',
+  removeCommentaryFail: "It wasn't possible to remove the commentary",
+  removeGlobalCommentarySuccess: 'Global commentary removed',
+  removeGlobalCommentaryFail:
+    "It wasn't possible to remove the global commentary",
+  removeCommentaryModal: 'Remove commentary?',
+  removeCommentaryModalOk: 'Remove',
+  confirmRemoveCommentary: 'Are you sure you want to delete this commentary?',
   seeAllItems: 'All items',
 
   buy: 'Buy',

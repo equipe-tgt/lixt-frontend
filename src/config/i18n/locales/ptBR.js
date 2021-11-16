@@ -12,6 +12,8 @@ export default {
   memberRemoved: 'Membro foi removido da lista',
 
   createdList: 'Lista criada com sucesso!',
+  editedList: 'Lista editada com sucesso!',
+  editingList: 'Editando',
 
   forgotPassword: 'Esqueci minha senha',
   signIn: 'Cadastre-se',
@@ -55,6 +57,7 @@ export default {
   okContinue: 'Ok, quero continuar',
   userDoesntExists: 'Este usuário não existe',
   emailSuccessfullySend: 'Email enviado com sucesso',
+  privacyPolicy: 'Política de privacidade',
 
   passwordUpdatedSucessfully: 'Senha atualizada com sucesso!',
   errorServerDefault: 'Um erro inesperado ocorreu no servidor',
@@ -72,6 +75,7 @@ export default {
   save: 'Salvar',
   deleteList: 'Excluir lista',
   confirmDeleteList: 'Tem certeza que deseja excluir esta lista?',
+  editList: 'Editar informações da lista',
   listInfo: 'Informações da lista',
   listHasNoDescription: 'Não há descrição para esta lista',
   productAlreadyOnList: 'O produto já está na lista',
@@ -137,9 +141,23 @@ export default {
   isPublic: 'É público?',
   isPublicTooltip:
     'Um comentário global público pode ser visto por todos os usuários que estão na mesma lista que você.',
+  orderByAsc: 'Ordenar por ordem ascendente',
+  orderByDesc: 'Ordenar por odem descendente',
   orderByDate: 'Ordenar comentários por data',
   orderByUser: 'Mostrar seus comentários primeiro',
+  addCommentarySuccess: 'Comentário adicionado',
+  addCommentaryFail: 'Não foi possível adicionar o comentário',
+  addGlobalCommentarySuccess: 'Comentário global adicionado',
+  addGlobalCommentaryFail: 'Não foi possível adicionar o comentário global',
   globalPrivateCommentary: 'Comentário global privado',
+  removeCommentarySuccess: 'Comentário removido',
+  removeCommentaryFail: 'Não foi possível remover o comentário',
+  removeGlobalCommentarySuccess: 'Comentário global removido',
+  removeGlobalCommentaryFail: 'Não foi possível remover o comentário global',
+  removeCommentaryModal: 'Remover comentário?',
+  removeCommentaryModalOk: 'Remover',
+  confirmRemoveCommentary:
+    'Você tem certeza que deseja remover esse comentário?',
   seeAllItems: 'Ver todos os itens',
 
   buy: 'Comprar',

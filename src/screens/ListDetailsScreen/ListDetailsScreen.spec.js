@@ -16,8 +16,13 @@ jest.mock('react-i18next', () => ({
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
 describe('ListDetailsScreen component', () => {
+  beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+
   describe('when the user is the owner of the list', () => {
-    let getByTestId, getByText;
+    let getByTestId, getByText, queryByTestId;
     let navigationSpy;
     let user;
     const list = {
@@ -83,12 +88,13 @@ describe('ListDetailsScreen component', () => {
       );
 
       getByTestId = renderResults.getByTestId;
+      queryByTestId = renderResults.queryByTestId;
       getByText = renderResults.getByText;
     });
 
     it('should show amount of members in the list', () => {
-      const amountMembers = getByTestId('amount-members');
-      expect(amountMembers.props.children).toBe(1);
+      const listMember1 = queryByTestId('list-member-0');
+      expect(listMember1).toBeNull();
     });
 
     it('should show the user is the owner of the list', () => {
@@ -122,9 +128,12 @@ describe('ListDetailsScreen component', () => {
         listMembers: [
           {
             userId: 1,
-            name: 'Fulano',
-            username: 'fulanodetal',
             statusListMember: 'ACCEPT',
+            user: {
+              id: 1,
+              name: 'Fulano',
+              username: 'fulanodetal',
+            }
           },
         ],
         productOfList: [],
@@ -173,8 +182,11 @@ describe('ListDetailsScreen component', () => {
                   listMembers: [
                     {
                       userId: 1,
-                      name: 'Fulano',
-                      username: 'fulanodetal',
+                      user: {
+                        id: 1,
+                        name: 'Fulano',
+                        username: 'fulanodetal',
+                      }
                     },
                   ],
                   productOfList: [],
@@ -206,9 +218,9 @@ describe('ListDetailsScreen component', () => {
       getByText = renderResults.getByText;
     });
 
-    it('should show amount of members in the list', () => {
-      const amountMembers = getByTestId('amount-members');
-      expect(amountMembers.props.children).toBe(2);
+    it('should show members in the list', () => {
+      const listMember1 = getByTestId('list-member-0');
+      expect(listMember1).toBeDefined();
     });
 
     it('should show the user is not the owner of the list', () => {

@@ -18,6 +18,9 @@ describe('LoginScreen component', () => {
   let loginFn;
 
   beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+
     const navigation = {
       navigate: jest.fn((path) => path),
     };

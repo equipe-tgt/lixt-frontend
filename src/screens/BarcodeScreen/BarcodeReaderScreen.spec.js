@@ -16,7 +16,9 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key) => key }),
 }));
 
-i18.getI18n = jest.fn(() => 'pt_BR');
+i18.getI18n = jest.fn(() => ({
+  language: 'pt_BR'
+}));
 
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
@@ -46,6 +48,9 @@ function getScreenWrapper(screen) {
 
 describe('BarcodeReaderScreen component', () => {
   beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+
     navigation = {
       navigate: jest.fn((path, secondParam) => path),
     };
@@ -213,7 +218,14 @@ describe('BarcodeReaderScreen component', () => {
           getByTestId('add-product-from-barcode-modal')
         );
 
-        expect(newProductFromBarcodeModal).toBeDefined();
+        expect(newProductFromBarcodeModal.props.accessibilityValue).toBe('visible');
+
+        const addProductFromBarcodeModalCloseButton = await waitFor(() =>
+          getByTestId('add-product-from-barcode-modal-close-button')
+        );
+        await waitFor(() => fireEvent.press(addProductFromBarcodeModalCloseButton));
+
+        expect(newProductFromBarcodeModal.props.accessibilityValue).toBe('hidden');
       });
     });
 

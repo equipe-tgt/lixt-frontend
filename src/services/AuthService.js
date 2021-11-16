@@ -47,8 +47,8 @@ const AuthService = {
       },
     });
   },
-  putGlobalCommentsPreference: (userDetails) => {
-    return BaseService.put('/auth/global-comments-preferences', userDetails, {
+  putUserPreferences: (userDetails) => {
+    return BaseService.put('/auth/save-user-preferences', userDetails, {
       headers: {
         'Content-type': 'application/json',
         Accept: 'application/json',

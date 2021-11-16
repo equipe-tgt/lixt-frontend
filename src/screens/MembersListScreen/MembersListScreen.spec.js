@@ -15,6 +15,11 @@ jest.mock('react-i18next', () => ({
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
 describe('MembersListScreen component', () => {
+  beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+
   describe('when the owner is accessing the list', () => {
     let getByTestId, getByText, getAllByTestId;
     let user;

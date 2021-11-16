@@ -96,7 +96,6 @@ export default function PurchaseLocalModal(props) {
       title = t('successfullySaved');
       status = 'success';
     } catch (error) {
-      console.log({ error });
       toast.show({
         title: t('unsuccessfullySaved'),
         status: 'warning',
@@ -120,7 +119,6 @@ export default function PurchaseLocalModal(props) {
       const { data } = await PurchaseLocalService.findNearBy(coordinates, user);
       setPurchaseLocations(data);
     } catch (error) {
-      console.log({ error });
       toast.show({
         title: t('unsuccessfullySaved'),
         status: 'warning',
@@ -154,7 +152,6 @@ export default function PurchaseLocalModal(props) {
       const { latitude, longitude } = location.coords;
       setCoordinates({ latitude, longitude });
     } catch (error) {
-      console.log({ error });
       // Caso haja permissão mas a localização do dispositivo esteja desativada
       props.closeModal();
       toast.show({
