@@ -43,7 +43,7 @@ export default function StatisticsDateInput({
 
   // Devolve qual o texto será exibido no input de datas
   // baseando-se no tipo de data selecionado
-  const getSelectedDateText = (date) => {
+  const getSelectedDateText = (date, param = null) => {
     let formatString;
     if (date) {
       switch (selectedUnityTime) {
@@ -58,9 +58,19 @@ export default function StatisticsDateInput({
           formatString =
             getI18n().language === 'pt_BR' ? 'DD/MM/yyyy' : 'MM/DD/yyyy';
 
-          const startOfWeek = moment(date).format(formatString);
+          let startOfWeek, endOfWeek;
 
-          const endOfWeek = moment(date).add(6, 'days').format(formatString);
+          // Se o texto for da data inicial, define o início da semana a partir da data informada
+          if (param === DateParameters.START) {
+            startOfWeek = moment(date).format(formatString);
+            endOfWeek = moment(date).add(6, 'days').format(formatString);
+          } else {
+            // Se o texto for da data final, define o início da semana dele subtraindo 6 dias do valor
+            // da data informada
+            startOfWeek = moment(date).subtract(6, 'days').format(formatString);
+            endOfWeek = moment(date).format(formatString);
+          }
+
           return `${startOfWeek} - ${endOfWeek}`;
 
         case UnityTimes.MONTHLY:
@@ -134,7 +144,10 @@ export default function StatisticsDateInput({
                   }}
                 >
                   {dateConfig.startDate
-                    ? getSelectedDateText(dateConfig.startDate)
+                    ? getSelectedDateText(
+                        dateConfig.startDate,
+                        DateParameters.START
+                      )
                     : translate('initialWeek')}
                 </Button>
               </Box>
@@ -158,7 +171,10 @@ export default function StatisticsDateInput({
                   }}
                 >
                   {dateConfig.endDate
-                    ? getSelectedDateText(dateConfig.endDate)
+                    ? getSelectedDateText(
+                        dateConfig.endDate,
+                        DateParameters.END
+                      )
                     : translate('finalWeek')}
                 </Button>
               </Box>

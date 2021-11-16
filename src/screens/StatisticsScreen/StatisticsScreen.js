@@ -24,6 +24,7 @@ import LineChartWrapper from '../../components/LineChartWrapper';
 
 import { useTranslation } from 'react-i18next';
 import StatisticsModal from '../../components/StatisticsModal';
+import CategoryService from '../../services/CategoryService';
 
 import {
   UnityTimes,
@@ -46,7 +47,10 @@ export default function StatisticsScreen() {
   const [currentParameter, setCurrentParameter] = useState(null);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [selectedList, setSelectedList] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(false);
 
   const { user } = useContext(AuthContext);
   const { lists } = useContext(ListContext);
@@ -71,38 +75,88 @@ export default function StatisticsScreen() {
     ) {
       setSelectedUnityTime(UnityTimes.DEFAULT);
     }
+
+    if (selectedStatisticsType === StatisticsType.CATEGORY) {
+      getCategories();
+    }
   }, [selectedStatisticsType]);
 
   const getStatisticsData = async () => {
+    let request;
+    let periodFilterObject;
     try {
-      setLoading(true);
-      if (selectedStatisticsType === StatisticsType.PURCHASE_LOCAL) {
-        const { data } = await StatisticsService.getPurchaseLocalData(user);
-        setdataFromServer(data);
-      } else {
-        const periodFilterObject = {
+      if (selectedStatisticsType !== StatisticsType.PURCHASE_LOCAL) {
+        periodFilterObject = {
           startDate: moment(dateConfig.startDate).toISOString(),
           endDate: moment(dateConfig.endDate).toISOString(),
         };
-
-        if (selectedUnityTime !== UnityTimes.DEFAULT) {
-          periodFilterObject.unityTime = selectedUnityTime;
-        }
-
-        if (selectedList) {
-          periodFilterObject.listId = selectedList;
-        }
-
-        const { data } = await StatisticsService.getExpensesPer(
-          getUrl(selectedStatisticsType),
-          periodFilterObject,
-          user
-        );
-
-        console.log(data);
-        setdataFromServer(data);
       }
+
+      console.log(periodFilterObject);
+
+      setLoading(true);
+      switch (selectedStatisticsType) {
+        case StatisticsType.PURCHASE_LOCAL:
+          request = StatisticsService.getPurchaseLocalData(user);
+          break;
+
+        case StatisticsType.TIME:
+          periodFilterObject = {
+            startDate: moment(dateConfig.startDate).toISOString(),
+            endDate: moment(dateConfig.endDate).toISOString(),
+            unityTime: selectedUnityTime,
+          };
+
+          request = StatisticsService.getExpensesPer(
+            getUrl(selectedStatisticsType),
+            periodFilterObject,
+            user
+          );
+          break;
+
+        case StatisticsType.LIST:
+          periodFilterObject = {
+            startDate: moment(dateConfig.startDate).toISOString(),
+            endDate: moment(dateConfig.endDate).toISOString(),
+            unityTime: selectedUnityTime,
+            listId: selectedList,
+          };
+          request = StatisticsService.getExpensesPer(
+            getUrl(selectedStatisticsType),
+            periodFilterObject,
+            user
+          );
+          break;
+
+        case StatisticsType.CATEGORY:
+          periodFilterObject = {
+            minDate: moment(dateConfig.startDate).toISOString(),
+            maxDate: moment(dateConfig.endDate).toISOString(),
+          };
+
+          periodFilterObject.category = categories.find(
+            (cat) => cat.id === selectedCategory
+          )?.name;
+
+          request = StatisticsService.getExpensesPer(
+            getUrl(selectedStatisticsType),
+            periodFilterObject,
+            user
+          );
+          break;
+
+        case StatisticsType.PRODUCT:
+          break;
+
+        default:
+          break;
+      }
+
+      const { data } = await request;
+      console.log(data);
+      setdataFromServer(data);
     } catch (error) {
+      console.log({ error });
       useToast().show({
         title: t('errorServerDefault'),
         status: 'error',
@@ -110,6 +164,22 @@ export default function StatisticsScreen() {
     } finally {
       setLoading(false);
       setIsConfigOpen(false);
+    }
+  };
+
+  const getCategories = async () => {
+    try {
+      setLoadingCategories(true);
+      const { data } = await CategoryService.getCategories(user);
+      setCategories(data);
+    } catch (error) {
+      console.log({ error });
+      useToast().show({
+        title: t('errorServerDefault'),
+        status: 'error',
+      });
+    } finally {
+      setLoadingCategories(false);
     }
   };
 
@@ -143,7 +213,7 @@ export default function StatisticsScreen() {
     }
   };
 
-  const handleWeeklyAndDefaultChange = (date) => {
+  const handleDefaultChange = (date) => {
     if (currentParameter === DateParameters.START) {
       setDateConfig({
         ...dateConfig,
@@ -158,6 +228,21 @@ export default function StatisticsScreen() {
     setIsSelectorOpen(false);
   };
 
+  const handleWeeklyChange = (date) => {
+    if (currentParameter === DateParameters.START) {
+      setDateConfig({
+        ...dateConfig,
+        startDate: moment(date).startOf('date'), // garante que pegará o dia definido desde às 00h00min00sec
+      });
+    } else {
+      setDateConfig({
+        ...dateConfig,
+        endDate: moment(date).endOf('isoWeek').endOf('date'), // garante que pegará o dia definido até as 23h59min59sec
+      });
+    }
+    setIsSelectorOpen(false);
+  };
+
   const handleDateChange = (date, currentParam = null) => {
     switch (selectedUnityTime) {
       case UnityTimes.DAILY:
@@ -165,7 +250,7 @@ export default function StatisticsScreen() {
         break;
 
       case UnityTimes.WEEKLY:
-        handleWeeklyAndDefaultChange(date);
+        handleWeeklyChange(date);
         break;
 
       case UnityTimes.MONTHLY:
@@ -173,7 +258,7 @@ export default function StatisticsScreen() {
         break;
 
       default:
-        handleWeeklyAndDefaultChange(date);
+        handleDefaultChange(date);
         break;
     }
   };
@@ -208,7 +293,13 @@ export default function StatisticsScreen() {
       case StatisticsType.PRODUCT:
         return <LineChartWrapper />;
       case StatisticsType.CATEGORY:
-        return <LineChartWrapper />;
+        return (
+          <LineChartWrapper
+            monetaryNotation={t('currency')}
+            preFormattedData={dataFromServer}
+            selectedUnityTime={UnityTimes.MONTHLY}
+          />
+        );
 
       default:
         break;
@@ -230,11 +321,10 @@ export default function StatisticsScreen() {
                 </Text>
               </VStack>
 
-              <IconButton
-                ml="auto"
+              <Button
                 variant="ghost"
                 onPress={() => setIsConfigOpen(true)}
-                icon={
+                startIcon={
                   <Icon
                     size="sm"
                     as={<Ionicons name="settings" />}
@@ -298,6 +388,10 @@ export default function StatisticsScreen() {
           setSelectedList={setSelectedList}
           lists={lists}
           loading={loading}
+          categories={categories}
+          setSelectedCategory={setSelectedCategory}
+          selectedCategory={selectedCategory}
+          loadingCategories={loadingCategories}
         />
       </View>
     </SafeAreaView>

@@ -9,6 +9,7 @@ import {
   VStack,
   Center,
   HStack,
+  Spinner,
 } from 'native-base';
 
 import DatePicker from './DatePicker';
@@ -35,6 +36,10 @@ export default function StatisticsModal({
   selectedList,
   setSelectedList,
   lists,
+  categories,
+  setSelectedCategory,
+  selectedCategory,
+  loadingCategories,
   loading,
 }) {
   const resetValues = () => {
@@ -145,14 +150,43 @@ export default function StatisticsModal({
             </Box>
           )}
 
-          {/* DateInput para o caso da estatística selecionada ser PRODUCT ou CATEGORY */}
+          {/* Caso seja o tipo produto ou categoria */}
           {selectedStatisticsType === StatisticsType.PRODUCT ||
           selectedStatisticsType === StatisticsType.CATEGORY ? (
             <Box>
+              {/* Se for do tipo categoria, mostra o seletor de categorias */}
+              {selectedStatisticsType === StatisticsType.CATEGORY && (
+                <VStack>
+                  <Text fontSize={18} bold mb={2} mt={4}>
+                    {translate('selectCategory')}
+                  </Text>
+                  <HStack>
+                    <Select
+                      width={loadingCategories ? '90%' : '100%'}
+                      isDisabled={loadingCategories}
+                      selectedValue={selectedCategory}
+                      onValueChange={setSelectedCategory}
+                    >
+                      {categories.map((category) => (
+                        <Select.Item
+                          value={category.id}
+                          label={category.name}
+                          key={category.id}
+                        />
+                      ))}
+                    </Select>
+                    {loadingCategories && (
+                      <Spinner color="primary.400" size="sm" />
+                    )}
+                  </HStack>
+                </VStack>
+              )}
+
               <VStack mt={2}>
                 <Text fontSize={18} bold marginBottom={2}>
                   {translate('selectDates')}
                 </Text>
+                {/* DateInput para o caso da estatística selecionada ser PRODUCT ou CATEGORY */}
                 <StatisticsDateInput
                   getDateInterval={renderDateInterval}
                   dateConfig={dateConfig}
@@ -190,7 +224,11 @@ export default function StatisticsModal({
           <Button onPress={() => setIsConfigOpen(false)} variant="link">
             {translate('cancel')}
           </Button>
-          <Button onPress={getStatisticsData} isLoading={loading}>
+          <Button
+            onPress={getStatisticsData}
+            isLoading={loading}
+            isDisabled={!dateConfig.startDate || !dateConfig.endDate}
+          >
             {translate('search')}
           </Button>
         </Modal.Footer>
@@ -220,4 +258,8 @@ StatisticsModal.propTypes = {
   setSelectedList: PropTypes.func,
   lists: PropTypes.array,
   loading: PropTypes.bool,
+  categories: PropTypes.array,
+  setSelectedCategory: PropTypes.func,
+  selectedCategory: PropTypes.number,
+  loadingCategories: PropTypes.bool,
 };
