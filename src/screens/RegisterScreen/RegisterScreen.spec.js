@@ -18,6 +18,11 @@ describe('RegisterScreen component', () => {
   let navigationSpy;
 
   beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+
+  beforeEach(() => {
     const navigation = {
       navigate: jest.fn((path) => path),
     };

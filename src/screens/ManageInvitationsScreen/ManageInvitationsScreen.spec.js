@@ -14,6 +14,11 @@ jest.mock('react-i18next', () => ({
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
 describe('ManageInvitationsScreen component', () => {
+  beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+
   describe('when server returns default error while getting invitations', () => {
     let getByTestId, getByText, rerender, findByTestId;
     const user = {

@@ -244,6 +244,7 @@ export default function NewProductScreen(props) {
             <HStack justifyContent="space-between" alignItems="center">
               <Button
                 variant="link"
+                testID="read-again-button"
                 onPress={() => {
                   props.navigation.navigate('BarcodeReader', {
                     origin: 'NewProduct',
@@ -253,6 +254,7 @@ export default function NewProductScreen(props) {
                 {t('readAgain')}
               </Button>
               <Button
+                testID="clean-barcode-button"
                 onPress={() => {
                   setBarcode(null);
                 }}

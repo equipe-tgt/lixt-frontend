@@ -25,6 +25,7 @@ export default function DuplicatedBarcodeModal(props) {
       isOpen={props.showModal}
       onClose={() => props.closeModal()}
       size="lg"
+      accessibilityValue={props.showModal ? "visible" : "hidden"}
     >
       <Modal.Content maxWidth="85%">
         <Modal.CloseButton />
@@ -40,7 +41,7 @@ export default function DuplicatedBarcodeModal(props) {
         </Modal.Body>
 
         <Modal.Footer width="95%" justifyContent="space-between">
-          <Button onPress={props.closeModal} variant="ghost">
+          <Button testID="cancel-duplicated-barcode-button" onPress={props.closeModal} variant="ghost">
             {t('cancel')}
           </Button>
           <Button testID="duplicated-barcode-button" onPress={addProductToList}>

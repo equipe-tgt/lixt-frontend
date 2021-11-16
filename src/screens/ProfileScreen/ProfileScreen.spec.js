@@ -20,6 +20,11 @@ describe('ProfileScreen component', () => {
   let logoutFn;
 
   beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+
+  beforeEach(() => {
     const navigation = {
       navigate: jest.fn((path) => path),
     };

@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import '@testing-library/jest-dom';
 import React from 'React';
-import { NativeBaseProvider } from 'native-base';
+import { List, NativeBaseProvider } from 'native-base';
 import { NavigationContext } from '@react-navigation/native';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -20,7 +20,9 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key) => key }),
 }));
 
-i18.getI18n = jest.fn(() => 'pt_BR');
+i18.getI18n = jest.fn(() => ({
+  language: 'pt_BR'
+}));
 
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
@@ -28,6 +30,9 @@ describe('CartScreen component', () => {
   let user, navigation, route, lists, navContext;
 
   beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+
     navigation = {
       navigate: jest.fn((path, product) => path),
     };
@@ -887,5 +892,143 @@ describe('CartScreen component', () => {
         expect(productItemGeneral.length).toBe(1);
       });
     });
+  });
+
+  it('should go to history screen when clicking the correct menu item', async () => {
+    lists = [
+      {
+        id: 1,
+        nameList: 'Lista I',
+        ownerId: 1,
+        owner: 'Fulano',
+        description: '',
+        productsOfList: [],
+        listMembers: [],
+      },
+    ];
+
+    jest
+      .spyOn(ListService, 'getLists')
+      .mockReturnValueOnce(Promise.resolve({
+        data: [...lists]
+      }));
+
+    const { getByTestId } = render(
+      <AuthContext.Provider
+        value={{
+          user,
+          login: () => {},
+          logout: () => {},
+        }}
+      >
+        <ListContext.Provider
+          value={{
+            lists: lists,
+            setLists: (val) => {
+              lists = [...val];
+            },
+          }}
+        >
+          <CheckedItemsProvider>
+            <SafeAreaProvider
+              initialSafeAreaInsets={{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+              }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <CartScreen navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </CheckedItemsProvider>
+        </ListContext.Provider>
+      </AuthContext.Provider>
+    );
+
+    const productItemContextMenu = await waitFor(() =>
+      getByTestId('product-item-context-menu')
+    );
+
+    fireEvent.press(productItemContextMenu);
+
+    const historyMenuItem = await waitFor(() =>
+      getByTestId('history-item-menu')
+    );
+
+    fireEvent.press(historyMenuItem);
+
+    expect(navigation.navigate).toHaveBeenCalledWith('History');
+  });
+
+  it('should refresh lists when refresh param is passed', async () => {
+    lists = [
+      {
+        id: 1,
+        nameList: 'Lista I',
+        ownerId: 1,
+        owner: 'Fulano',
+        description: '',
+        productsOfList: [],
+        listMembers: [],
+      },
+    ];
+
+    jest
+      .spyOn(ListService, 'getLists')
+      .mockReturnValueOnce(Promise.resolve({
+        data: [...lists]
+      }));
+
+    const getListByIdSpy = jest.spyOn(ListService, 'getListById');
+
+    const newRoute = {
+      params: {
+        refresh: true
+      }
+    }
+
+    const { getByTestId } = render(
+      <AuthContext.Provider
+        value={{
+          user,
+          login: () => {},
+          logout: () => {},
+        }}
+      >
+        <ListContext.Provider
+          value={{
+            lists: lists,
+            setLists: (val) => {
+              lists = [...val];
+            },
+          }}
+        >
+          <CheckedItemsProvider>
+            <SafeAreaProvider
+              initialSafeAreaInsets={{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+              }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <CartScreen navigation={navigation} route={newRoute} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </CheckedItemsProvider>
+        </ListContext.Provider>
+      </AuthContext.Provider>
+    );
+
+    expect(getListByIdSpy).toHaveBeenCalledTimes(1);
+
+    getListByIdSpy.mockClear();
   });
 });

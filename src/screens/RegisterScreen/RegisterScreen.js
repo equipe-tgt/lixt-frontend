@@ -54,8 +54,6 @@ export default function RegisterScreen({ navigation }) {
         navigation.navigate('Login');
       })
       .catch((error) => {
-        console.log({ error });
-
         if (error?.response?.data === 'Email já cadastrado na plataforma') {
           toast.show({
             title: t('emailAlreadyTaken'),

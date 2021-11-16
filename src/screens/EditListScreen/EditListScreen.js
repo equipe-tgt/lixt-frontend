@@ -88,8 +88,8 @@ export default function EditListScreen(props) {
           error={errors.nameList}
           onChangeText={handleChange('nameList')}
           onBlur={handleBlur('nameList')}
-          inputTestID="edit-list-name-list"
-          errorTestID="error-edit-list-name-list"
+          inputTestID="edit-list-name"
+          errorTestID="error-edit-list-name"
           type="text"
           value={values.nameList}
           isInvalid={!!errors.nameList}
