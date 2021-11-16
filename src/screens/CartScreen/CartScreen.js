@@ -295,8 +295,6 @@ export default function CartScreen(props) {
     }
   };
 
-  console.log("lists?.length", lists?.length);
-
   return lists?.length ? (
     <CheckedItemsProvider>
       <SafeAreaView style={style.container}>

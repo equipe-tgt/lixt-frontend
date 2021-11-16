@@ -246,7 +246,6 @@ export default function ProductOfListDetails(props) {
               isDisabled={loading || product.isMarked}
               selectedValue={userBeingAssignedTo?.userId || null}
               onValueChange={(listMemberUserId) => {
-                console.log({ listMemberUserId }, !!listMemberUserId);
                 if (listMemberUserId) {
                   setUserBeingAssignedTo(
                     listMembers.find(
