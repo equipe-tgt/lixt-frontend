@@ -8,7 +8,6 @@ import axios from 'axios';
 const BASE_URL = __DEV__
   ? 'http://192.168.1.192:8080'
   : 'https://lixt-ws.azurewebsites.net';
-console.log('BASE_URL: ', BASE_URL);
 
 // Para testar o endereço do backe-end em produção mas com o app em desenvolvimento descomente essa linha e
 // comente as linhas superiores do BASE_URL

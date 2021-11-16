@@ -10,13 +10,14 @@ import { AuthContext } from '../../context/AuthProvider';
 import i18 from 'react-i18next';
 import HistoryScreen from './HistoryScreen';
 import PurchaseService from '../../services/PurchaseService';
-import axios from 'axios';
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key) => key }),
 }));
 
-i18.getI18n = jest.fn(() => 'pt_BR');
+i18.getI18n = jest.fn(() => ({
+  language: 'pt_BR'
+}));
 
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
@@ -46,8 +47,13 @@ function getScreenWrapper(screen) {
 
 describe('HistoryScreen component', () => {
   beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+
+  beforeEach(() => {
     navigation = {
-      navigate: jest.fn((path, secondParam) => path),
+      navigate: jest.fn((path) => path),
     };
 
     navContext = {
@@ -69,8 +75,11 @@ describe('HistoryScreen component', () => {
 
   describe('when the screen is loaded', () => {
     it('must show an error toast if the server returns an error while fetching', async () => {
-      const getError = new Error('fictional error');
-      axios.get = jest.fn().mockRejectedValue(getError);
+      jest
+        .spyOn(PurchaseService, "getPurchases")
+        .mockReturnValue(Promise.reject({
+          data: {}
+        }));
 
       const { getByText } = render(
         getScreenWrapper(
@@ -84,9 +93,11 @@ describe('HistoryScreen component', () => {
     });
 
     it('must fetch all purchases made by that user', () => {
-      PurchaseService.getPurchases = jest.fn((userParam) => {
-        return { data: [] };
-      });
+      jest
+        .spyOn(PurchaseService, "getPurchases")
+        .mockReturnValue(Promise.resolve({
+          data: []
+        }));
 
       render(
         getScreenWrapper(
@@ -121,11 +132,11 @@ describe('HistoryScreen component', () => {
         },
       ];
 
-      PurchaseService.getPurchases = jest.fn((userParam) => {
-        return {
-          data: purchases,
-        };
-      });
+      jest
+        .spyOn(PurchaseService, "getPurchases")
+        .mockReturnValue(Promise.resolve({
+          data: purchases
+        }));
 
       const { getByTestId } = render(
         getScreenWrapper(
@@ -143,11 +154,11 @@ describe('HistoryScreen component', () => {
 
   describe("when the user doesn't have purchases", () => {
     it('should display a message indicating that no purchases were made yet', async () => {
-      PurchaseService.getPurchases = jest.fn((userParam) => {
-        return {
-          data: [],
-        };
-      });
+      jest
+        .spyOn(PurchaseService, "getPurchases")
+        .mockReturnValue(Promise.resolve({
+          data: []
+        }));
 
       const { getByText } = render(
         getScreenWrapper(
@@ -175,11 +186,11 @@ describe('HistoryScreen component', () => {
         },
       ];
 
-      PurchaseService.getPurchases = jest.fn((userParam) => {
-        return {
-          data: purchases,
-        };
-      });
+      jest
+        .spyOn(PurchaseService, "getPurchases")
+        .mockReturnValue(Promise.resolve({
+          data: purchases
+        }));
 
       const { getByTestId } = render(
         getScreenWrapper(

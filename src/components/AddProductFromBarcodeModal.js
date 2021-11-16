@@ -9,12 +9,13 @@ export default function AddProductFromBarcodeModal(props) {
   return (
     <Modal
       testID="add-product-from-barcode-modal"
+      accessibilityValue={props.showModal ? "visible" : "hidden"}
       isOpen={props.showModal}
       onClose={() => props.closeModal()}
       size="lg"
     >
       <Modal.Content maxWidth="85%">
-        <Modal.CloseButton />
+        <Modal.CloseButton testID="add-product-from-barcode-modal-close-button" />
         <Modal.Header>{t('couldntFindBarcode')}</Modal.Header>
         <Modal.Body>
           <Text>{t('addNewBarcode', { barcode: props.barcode })}</Text>

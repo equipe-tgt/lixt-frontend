@@ -25,7 +25,7 @@ import {
   Menu
 } from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
-import { AntDesign, Ionicons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, Ionicons, FontAwesome } from '@expo/vector-icons';
 
 import CommentaryService from '../../services/CommentaryService';
 import ProductOfListService from '../../services/ProductOfListService';
@@ -61,7 +61,7 @@ export default function CommentaryScreen(props) {
   const [commentaryToBeRemoved, setCommentaryToBeRemoved] = useState(null);
 
   useEffect(() => {
-    if (loadingScreen) getUserData();
+    getUserData();
   }, []);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function CommentaryScreen(props) {
       getCommentaries();
       getCurrentLanguage();
     }
-  }, [commentariesOrder])
+  }, [commentariesOrder, loadingScreen])
   
   const getUserData = () => {
     AuthService.getUserData()
@@ -80,7 +80,7 @@ export default function CommentaryScreen(props) {
           order: olderCommentsFirst === true ? "desc" : "asc"
         });
       })
-      .catch(error => {
+      .catch(() => {
         setCommentariesOrder({
           type: "date",
           order: "asc"
@@ -134,7 +134,7 @@ export default function CommentaryScreen(props) {
       globalCommentariesCopy.unshift(data);
 
       const isAscOrder = commentariesOrder.order === "asc";
-      if (commentariesOrder === "date") {
+      if (commentariesOrder.type === "date") {
         orderByDate(isAscOrder, globalCommentariesCopy, commentariesList.notGlobal);
       } else {
         orderByUserAndDate(isAscOrder, globalCommentariesCopy, commentariesList.notGlobal);
@@ -173,13 +173,14 @@ export default function CommentaryScreen(props) {
     let status;
 
     setLoadingAdding(true);
+    
     try {
       const { data } = await CommentaryService.addCommentary(comment, user);
       const commentariesCopy = [...commentariesList.notGlobal];
       commentariesCopy.unshift(data);
 
       const isAscOrder = commentariesOrder.order === "asc";
-      if (commentariesOrder === "date") {
+      if (commentariesOrder.type === "date") {
         orderByDate(isAscOrder, commentariesList.global, commentariesCopy);
       } else {
         orderByUserAndDate(isAscOrder, commentariesList.global, commentariesCopy);
@@ -351,7 +352,7 @@ export default function CommentaryScreen(props) {
           />
         }
       >
-        <Box py={3} w="90%" mx="auto">
+        <Box py={3} w="90%" mx="auto" testID="test">
           {
             commentariesList.global.length > 0 || commentariesList.notGlobal.length > 0 ? (
               <Box display="flex" flexDirection="row" justifyContent="flex-end" alignItems="center" marginY={15}>
@@ -362,8 +363,20 @@ export default function CommentaryScreen(props) {
                     </Pressable>
                   )}
                 >
-                  <Menu.Item testID="order-by-asc-button" onPress={() => changeCommentariesOrder(commentariesOrder.type, "asc")}>{t("orderByAsc")}</Menu.Item>
-                  <Menu.Item testID="order-by-desc-button" onPress={() => changeCommentariesOrder(commentariesOrder.type, "desc")}>{t("orderByDesc")}</Menu.Item>
+                  <Menu.Item
+                    testID="order-by-asc-button"
+                    isDisabled={commentariesOrder.order === "asc"}
+                    onPress={() => changeCommentariesOrder(commentariesOrder.type, "asc")}
+                  >
+                    {t("orderByAsc")}
+                  </Menu.Item>
+                  <Menu.Item
+                    testID="order-by-desc-button"
+                    isDisabled={commentariesOrder.order === "desc"}
+                    onPress={() => changeCommentariesOrder(commentariesOrder.type, "desc")}
+                  >
+                    {t("orderByDesc")}
+                  </Menu.Item>
                 </Menu>
 
                 <Menu
@@ -373,8 +386,20 @@ export default function CommentaryScreen(props) {
                     </Pressable>
                   )}
                 >
-                  <Menu.Item testID="order-by-date-button" onPress={() => changeCommentariesOrder("date", commentariesOrder.order)}>{t("orderByDate")}</Menu.Item>
-                  <Menu.Item testID="order-by-user-button" onPress={() => changeCommentariesOrder("user", commentariesOrder.order)}>{t("orderByUser")}</Menu.Item>
+                  <Menu.Item
+                    testID="order-by-date-button"
+                    isDisabled={commentariesOrder.type === "date"}
+                    onPress={() => changeCommentariesOrder("date", commentariesOrder.order)}
+                  >
+                    {t("orderByDate")}
+                  </Menu.Item>
+                  <Menu.Item
+                    testID="order-by-user-button"
+                    isDisabled={commentariesOrder.type === "user"}
+                    onPress={() => changeCommentariesOrder("user", commentariesOrder.order)}
+                  >
+                    {t("orderByUser")}
+                  </Menu.Item>
                 </Menu>
               </Box>
             ) : null
@@ -412,10 +437,16 @@ export default function CommentaryScreen(props) {
                           ) : null
                         }
                         <Box ml={2}>
-                          <Ionicons name="trash" size={20} color="gray" onPress={() => setCommentaryToBeRemoved({
-                            ...c,
-                            isGlobal: true
-                          })} />
+                          <Ionicons
+                            name="trash"
+                            size={20}
+                            color="gray"
+                            testID={`remove-global-commentary-${c.id}`}
+                            onPress={() => setCommentaryToBeRemoved({
+                              ...c,
+                              isGlobal: true
+                            })}
+                          />
                         </Box>
                       </Box>
                     ) : (
@@ -463,10 +494,16 @@ export default function CommentaryScreen(props) {
                           {t('you')}
                         </Text>
                         <Box ml={2}>
-                          <Ionicons name="trash" size={20} color="gray" onPress={() => setCommentaryToBeRemoved({
-                            ...c,
-                            isGlobal: false
-                          })} />
+                          <Ionicons
+                            name="trash"
+                            size={20}
+                            color="gray"
+                            testID={`remove-commentary-${c.id}`}
+                            onPress={() => setCommentaryToBeRemoved({
+                              ...c,
+                              isGlobal: false
+                            })}
+                          />
                         </Box>
                       </Box>
                     ) : (
@@ -499,6 +536,7 @@ export default function CommentaryScreen(props) {
         style={{ backgroundColor: '#fff' }}
       >
         <TextArea
+          testID="commentary-text-area"
           isDisabled={loadingAdding}
           maxLength={200}
           totalLines={2}
@@ -544,6 +582,7 @@ export default function CommentaryScreen(props) {
         style={{ backgroundColor: '#fff' }}
       >
         <Checkbox
+          testID="change-commentary-type-checkbox"
           isChecked={commentaryInformation.isGlobal}
           onChange={(value) => setCommentaryInformation({
             ...commentaryInformation,
@@ -556,6 +595,7 @@ export default function CommentaryScreen(props) {
           commentaryInformation.isGlobal ? (
             <Box display="flex" flexDirection="row" alignItems="center">
               <Checkbox
+                testID="change-commentary-visibility-checkbox"
                 isChecked={commentaryInformation.isGlobalPublic}
                 onChange={(value) => setCommentaryInformation({
                   ...commentaryInformation,

@@ -20,6 +20,11 @@ describe('UpdatePasswordScreen component', () => {
   let user;
 
   beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+
+  beforeEach(() => {
     const navigation = {
       navigate: jest.fn((path) => path),
     };
@@ -57,7 +62,6 @@ describe('UpdatePasswordScreen component', () => {
       });
 
       const passwordError = getByTestId('error-update-password');
-      console.log('PASSWORDERROR', passwordError.props);
 
       expect(passwordError.props.children).toBe('requiredField');
     });

@@ -88,7 +88,6 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
           });
         }
       } catch (error) {
-        console.log(error);
         toast.show({
           title: t('errorServerDefault'),
           status: 'warning',

@@ -15,7 +15,9 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key) => key }),
 }));
 
-i18.getI18n = jest.fn(() => 'pt_BR');
+i18.getI18n = jest.fn(() => ({
+  language: 'pt_BR'
+}));
 
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
@@ -44,6 +46,11 @@ function getScreenWrapper(screen) {
 }
 
 describe('PurchaseDetailScreen component', () => {
+  beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+
   beforeEach(() => {
     navigation = {
       navigate: jest.fn((path, secondParam) => path),

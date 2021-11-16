@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import moment from 'moment';
@@ -21,6 +21,7 @@ import { screenBasicStyle as style } from '../../styles/style';
 import { AuthContext } from '../../context/AuthProvider';
 import PurchaseService from '../../services/PurchaseService';
 import { useTranslation, getI18n } from 'react-i18next';
+import { useCallback } from 'react';
 
 export default function HistoryScreen(props) {
   const { user } = useContext(AuthContext);
@@ -30,9 +31,9 @@ export default function HistoryScreen(props) {
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useFocusEffect(() => {
+  useFocusEffect(useCallback(() => {
     fetchPurchases();
-  });
+  }, []));
 
   const getFormattedPurchaseDate = (date) => {
     return format(moment(date).toDate(), 'P', {
@@ -49,26 +50,27 @@ export default function HistoryScreen(props) {
     return name;
   };
 
-  const fetchPurchases = async () => {
-    try {
-      const { data } = await PurchaseService.getPurchases(user);
-
-      if (data && data.length > 0) {
-        // Ordenando pela compra mais nova
-        data.sort(
-          (a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate)
-        );
-
-        setPurchases(data);
-      }
-    } catch (error) {
-      toast.show({
-        title: t('errorServerDefault'),
-        status: 'warning',
+  const fetchPurchases = () => {
+    PurchaseService.getPurchases(user)
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          // Ordenando pela compra mais nova
+          data.sort(
+            (a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate)
+          );
+  
+          setPurchases(data);
+        }
+      })
+      .catch((error) => {
+        toast.show({
+          title: t('errorServerDefault'),
+          status: 'warning',
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    } finally {
-      setLoading(false);
-    }
   };
 
   if (loading) {

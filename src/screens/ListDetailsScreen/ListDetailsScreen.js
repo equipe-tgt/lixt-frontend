@@ -100,8 +100,8 @@ export default function ListDetailsScreen(props) {
             {
               list?.listMembers
                 .filter((listMember) => listMember.statusListMember === 'ACCEPT')
-                .map((listMember) => (
-                  <Box mt={4} key={listMember.id}>
+                .map((listMember, index) => (
+                  <Box mt={4} key={listMember.id} testID={`list-member-${index}`}>
                     <Text fontWeight="bold">{listMember.user.name}</Text>
                     <Text fontSize="md">
                       @{listMember.user.username}{' '}

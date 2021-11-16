@@ -14,6 +14,7 @@ import ListService from '../../services/ListService';
 import ProductService from '../../services/ProductService';
 import ProductOfListService from '../../services/ProductOfListService';
 import ListMembersService from '../../services/ListMembersService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key) => key }),
@@ -21,10 +22,15 @@ jest.mock('react-i18next', () => ({
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
 describe('ListScreen component', () => {
-  let renderResults, getByTestId;
+  let renderResults, getByTestId, getByText, rerender;
   let getListsSpy, navContext, navigation, route;
   let user;
   let lists = [];
+
+  beforeEach(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
 
   beforeEach(() => {
     user = {
@@ -50,12 +56,129 @@ describe('ListScreen component', () => {
     };
   });
 
+  describe("when fetching lists", () => {
+    it('should show a toast if server returns an error', async () => {
+      lists = [];
+
+      getListsSpy = jest.spyOn(ListService, 'getLists');
+      getListsSpy.mockReturnValue(
+        Promise.reject("Error")
+      );
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByText = renderResults.getByText;
+
+      const toast = await waitFor(() =>
+        getByText('Não foi possível buscar suas listas')
+      );
+
+      expect(toast).toBeDefined();
+    });
+
+    it('should automatically select a list if the list was saved as latest list selected', async () => {
+      lists = [
+        {
+          id: 1,
+          nameList: 'Lista I',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [],
+          listMembers: [],
+        },
+        {
+          id: 2,
+          nameList: 'Lista II',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [],
+          listMembers: [],
+        },
+      ];
+
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+          Promise.resolve({
+            data: lists
+          })
+        );
+
+      jest.spyOn(AsyncStorage, "getItem")
+        .mockReturnValueOnce(Promise.resolve(2));
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
+
+      const selectCurrentList = await waitFor(() => getByTestId('select-current-list'));
+
+      expect(selectCurrentList.props.value).toBe("Lista II");
+    });
+  });
+
   describe("when the user doesn't have lists", () => {
     it('should show a button to create a new list', async () => {
       lists = [];
 
       getListsSpy = jest.spyOn(ListService, 'getLists');
-      getListsSpy.mockReturnValue(
+      getListsSpy.mockReturnValueOnce(
         Promise.resolve({
           data: [],
         })
@@ -156,9 +279,13 @@ describe('ListScreen component', () => {
     it('should add to the current array of lists', async () => {
       lists = [];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [],
+        })
+      );
 
       const routeNewListAdded = {
         ...route,
@@ -209,6 +336,218 @@ describe('ListScreen component', () => {
       expect(setLists).toBeCalled();
       expect(lists.length).toBe(1);
     });
+
+    it('should be able to go to the list details screen', async () => {
+      const fabricatedLists = [
+        {
+          id: 1,
+          nameList: 'Lista I',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [],
+          listMembers: [],
+        },
+      ];
+
+      lists = [...fabricatedLists];
+
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+          Promise.resolve({
+            data: [...fabricatedLists],
+          })
+        );
+
+      jest.spyOn(AsyncStorage, "getItem")
+        .mockReturnValueOnce(Promise.resolve(1));
+
+      const routeNewListAdded = {
+        params: {},
+      };
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value]
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={routeNewListAdded} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
+
+      const options = await waitFor(() => getByTestId('list-options'));
+      fireEvent.press(options);
+
+      const listDetailsMenuItem = await waitFor(() => getByTestId('list-details-menu-item'));
+      fireEvent.press(listDetailsMenuItem);
+
+      expect(navigation.navigate).toBeCalledWith('ListDetails', { list: fabricatedLists[0] });
+    });
+  });
+
+  describe('when the user is the owner of the list', () => {
+    it('should be able to go to edit list screen', async () => {
+      const fabricatedLists = [
+        {
+          id: 1,
+          nameList: 'Lista I',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [],
+          listMembers: [],
+        },
+      ];
+
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+          Promise.resolve({
+            data: [...fabricatedLists],
+          })
+        );
+
+      const routeNewListAdded = {
+        params: {},
+      };
+
+      jest
+        .spyOn(AsyncStorage, 'getItem')
+        .mockReturnValueOnce(Promise.resolve(0));
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists: [...fabricatedLists],
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={routeNewListAdded} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
+
+      const options = await waitFor(() => getByTestId('list-options'));
+      fireEvent.press(options);
+
+      const editListMenuItem = await waitFor(() => getByTestId('edit-list-menu-item'));
+      fireEvent.press(editListMenuItem);
+
+      expect(navigation.navigate).toBeCalledWith('EditList', { listId: 1 });
+    });
+
+    it('should be able to go to invite screen', async () => {
+      const fabricatedLists = [
+        {
+          id: 1,
+          nameList: 'Lista I',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: 'Descrição',
+          productsOfList: [],
+          listMembers: [],
+        },
+      ];
+
+      lists = [...fabricatedLists];
+
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+          Promise.resolve({
+            data: [...fabricatedLists],
+          })
+        );
+
+      const routeNewListAdded = {
+        params: {},
+      };
+
+      jest
+        .spyOn(AsyncStorage, 'getItem')
+        .mockReturnValueOnce(Promise.resolve(0));
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={routeNewListAdded} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
+
+      const options = await waitFor(() => getByTestId('list-options'));
+      fireEvent.press(options);
+
+      const inviteMenuItem = await waitFor(() => getByTestId('invite-menu-item'));
+      fireEvent.press(inviteMenuItem);
+
+      expect(navigation.navigate).toBeCalledWith('Invite', { list: fabricatedLists[0] });
+    });
   });
 
   describe('when the user clicks the plus sign button', () => {
@@ -227,9 +566,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
       renderResults = render(
         <AuthContext.Provider
@@ -557,9 +900,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
       renderResults = render(
         <AuthContext.Provider
@@ -607,6 +954,154 @@ describe('ListScreen component', () => {
       expect(listSelectValue).toBe('Lista II');
       expect(textProductItem).toBeDefined();
     });
+
+    it("should not store list if AsyncStorage returns an error", async () => {
+      const getItemSpy = jest.spyOn(AsyncStorage, "getItem");
+
+      const fabricatedLists = [
+        {
+          id: 1,
+          nameList: 'Lista I',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [],
+          listMembers: [],
+        },
+        {
+          id: 2,
+          nameList: 'Lista II',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [
+            {
+              id: 1,
+              productId: 1,
+              listId: 2,
+              assignedUserId: 10,
+              userWhoMarkedId: null,
+              name: 'Arroz',
+              isMarked: false,
+              plannedAmount: 1,
+              markedAmount: null,
+              price: 25.0,
+              measureValue: null,
+              measureType: 'UNITY',
+              product: {
+                id: 1,
+                name: 'Arroz',
+                userId: null,
+                categoryId: 1,
+                barcode: null,
+                measureValue: null,
+                measureType: 'UNITY',
+                category: {
+                  id: 1,
+                  name: 'Alimentação',
+                },
+              },
+              amountComment: 1,
+            },
+          ],
+          listMembers: [],
+        },
+      ];
+
+      lists = [...fabricatedLists];
+
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+          Promise.resolve({
+            data: [...fabricatedLists]
+          })
+        );
+
+      jest
+        .spyOn(AsyncStorage, 'setItem')
+        .mockReturnValueOnce(Promise.reject("Error"));
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
+      getByText = renderResults.getByText;
+      rerender = renderResults.rerender;
+
+      const listSelect = await waitFor(() =>
+        getByTestId('select-current-list')
+      );
+
+      await waitFor(() => {
+        fireEvent(listSelect, 'valueChange', 2);
+      });
+
+      getItemSpy.mockReturnValue(Promise.resolve(null));
+
+      rerender(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={{}} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+      
+      const listSelectAfterRerender = await waitFor(() =>
+        getByTestId('select-current-list')
+      );
+      
+      expect(listSelectAfterRerender.props.value).toBe('Lista I');
+      
+      getItemSpy.mockClear();
+    });
   });
 
   describe('when the user selects the same list on the dropdown', () => {
@@ -633,9 +1128,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
       renderResults = render(
         <AuthContext.Provider
@@ -701,9 +1200,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
       const products = [
         {
@@ -721,11 +1224,13 @@ describe('ListScreen component', () => {
         },
       ];
 
-      ProductService.getProductByName = jest.fn((productName) => {
-        return {
-          data: products.filter((p) => p.name.includes(productName)),
-        };
-      });
+      jest
+        .spyOn(ProductService, 'getProductByName')
+        .mockImplementation((productName) =>
+          Promise.resolve({
+            data: products.filter((p) => p.name.includes(productName)),
+        })
+      );
 
       renderResults = render(
         <AuthContext.Provider
@@ -788,9 +1293,15 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
+
+      const getProductByNameSpy = jest.spyOn(ProductService, 'getProductByName').mockClear();
 
       const products = [
         {
@@ -808,11 +1319,13 @@ describe('ListScreen component', () => {
         },
       ];
 
-      ProductService.getProductByName = jest.fn((productName) => {
-        return {
-          data: products.filter((p) => p.name.includes(productName)),
-        };
-      });
+      jest
+        .spyOn(ProductService, 'getProductByName')
+        .mockImplementation((productName) =>
+          Promise.resolve({
+            data: products.filter((p) => p.name.includes(productName)),
+        })
+      );
 
       renderResults = render(
         <AuthContext.Provider
@@ -853,7 +1366,7 @@ describe('ListScreen component', () => {
         fireEvent.changeText(inputSearchProduct, 'A');
       });
 
-      expect(ProductService.getProductByName).not.toBeCalled();
+      expect(getProductByNameSpy).not.toBeCalled();
     });
 
     it('should display an option to add a new product if no product is found', async () => {
@@ -871,15 +1384,21 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
-      ProductService.getProductByName = jest.fn(() => {
-        return {
+      jest
+        .spyOn(ProductService, 'getProductByName')
+        .mockReturnValue(
+        Promise.resolve({
           data: [],
-        };
-      });
+        })
+      );
 
       renderResults = render(
         <AuthContext.Provider
@@ -925,6 +1444,12 @@ describe('ListScreen component', () => {
       });
 
       expect(addNewProductOption).toBeDefined();
+
+      fireEvent.press(addNewProductOption);
+
+      expect(navigation.navigate).toHaveBeenCalledWith('NewProduct', {
+        productName: 'Arroz'
+      });
     });
 
     it('should show error when server returns default error', async () => {
@@ -942,9 +1467,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
       const searchProductNameSpy = jest.spyOn(
         ProductService,
@@ -1021,9 +1550,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
       renderResults = render(
         <AuthContext.Provider
@@ -1084,22 +1617,26 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
-      ProductOfListService.createProductOfList = jest.fn(
-        (productOfList, user) => {
-          return {
-            id: 1,
-            productId: 1,
-            listId: 1,
-            name: 'Arroz',
-            price: null,
-            measureValue: null,
-            measureType: 'UNITY',
-          };
-        }
+      jest
+        .spyOn(ProductOfListService, 'createProductOfList')
+        .mockReturnValue(
+        Promise.resolve({
+          id: 1,
+          productId: 1,
+          listId: 1,
+          name: 'Arroz',
+          price: null,
+          measureValue: null,
+          measureType: 'UNITY',
+        })
       );
 
       const routeNewProductAdded = {
@@ -1180,23 +1717,27 @@ describe('ListScreen component', () => {
         },
       };
 
-      ProductOfListService.createProductOfList = jest.fn(
-        (productOfList, user) => {
-          return {
-            id: 1,
-            productId: 1,
-            listId: 1,
-            name: 'Arroz',
-            price: null,
-            measureValue: null,
-            measureType: 'UNITY',
-          };
-        }
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
       );
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ProductOfListService, 'createProductOfList')
+        .mockReturnValue(
+        Promise.resolve({
+          id: 1,
+          productId: 1,
+          listId: 1,
+          name: 'Arroz',
+          price: null,
+          measureValue: null,
+          measureType: 'UNITY',
+        })
+      );
 
       renderResults = render(
         <AuthContext.Provider
@@ -1276,13 +1817,17 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
-
-      ProductOfListService.createProductOfList = jest.fn(
-        (productOfList, user) => {}
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
       );
+
+      jest
+        .spyOn(ProductOfListService, 'createProductOfList')
+        .mockImplementation(() => {});
 
       const products = [
         {
@@ -1300,11 +1845,13 @@ describe('ListScreen component', () => {
         },
       ];
 
-      ProductService.getProductByName = jest.fn((productName) => {
-        return {
-          data: products.filter((p) => p.name.includes(productName)),
-        };
-      });
+      jest
+        .spyOn(ProductService, 'getProductByName')
+        .mockImplementation((productName) =>
+          Promise.resolve({
+            data: products.filter((p) => p.name.includes(productName)),
+        })
+      );
 
       renderResults = render(
         <AuthContext.Provider
@@ -1404,11 +1951,17 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
-      ProductOfListService.removeProductOfList = jest.fn((id, user) => {});
+      jest
+        .spyOn(ProductOfListService, 'removeProductOfList')
+        .mockImplementation(() => {});
 
       renderResults = render(
         <AuthContext.Provider
@@ -1509,9 +2062,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
       const removeProductOfListSpy = jest.spyOn(
         ProductOfListService,
@@ -1609,11 +2166,17 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
-      ListMembersService.deleteInvitation = jest.fn((id, user) => {});
+      jest
+        .spyOn(ListMembersService, 'deleteInvitation')
+        .mockImplementation(() => {});
 
       renderResults = render(
         <AuthContext.Provider
@@ -1694,9 +2257,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      ListService.getLists = jest.fn(() => {
-        return { data: [...fabricatedLists] };
-      });
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
 
       const deleteInvitationSpy = jest.spyOn(
         ListMembersService,
@@ -1758,6 +2325,199 @@ describe('ListScreen component', () => {
       const toast = await waitFor(() => getByText('errorServerDefault'));
 
       expect(toast).toBeDefined();
+    });
+  });
+
+  describe('when the list has members', () => {
+    it('should be able to see the members screen', async () => {
+      const fabricatedLists = [
+        {
+          id: 1,
+          nameList: 'Lista I do Ciclano',
+          ownerId: 2,
+          owner: 'Ciclano',
+          description: '',
+          productsOfList: [],
+          listMembers: [
+            {
+              id: 1,
+              userId: 1,
+              listId: 1,
+              statusListMember: 'ACCEPT',
+              user: {
+                id: 1,
+                name: 'Fulano',
+                username: 'fulanodetal',
+                password: null,
+              },
+            },
+          ],
+        },
+      ];
+
+      lists = [...fabricatedLists];
+
+      jest
+        .spyOn(ListService, 'getLists')
+        .mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists]
+        })
+      );
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      getByTestId = renderResults.getByTestId;
+      getByText = renderResults.getByText;
+
+      const listOptions = await waitFor(() => getByTestId('list-options'));
+      fireEvent.press(listOptions);
+
+      const membersMenuItem = await waitFor(() => getByTestId('members-menu-item'));
+      fireEvent.press(membersMenuItem);
+
+      expect(navigation.navigate).toHaveBeenCalledWith('Members', { list: fabricatedLists[0] });
+    });
+  });
+
+  describe('when the list is requested to update', () => {
+    it('should fetch list twice', async () => {
+      const getListsSpy = jest.spyOn(ListService, 'getLists');
+      getListsSpy.mockClear();
+
+      const fabricatedLists = [
+        {
+          id: 1,
+          nameList: 'Lista I',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [],
+          listMembers: [],
+        },
+      ];
+
+      lists = [...fabricatedLists];
+
+
+      const refreshRoute = {
+        params: {
+          refresh: true
+        }
+      }
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={refreshRoute} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      expect(getListsSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('when there is no route params', () => {
+    it('should fetch list twice', async () => {
+      const getListsSpy = jest.spyOn(ListService, 'getLists');
+      getListsSpy.mockClear();
+
+      const fabricatedLists = [
+        {
+          id: 1,
+          nameList: 'Lista I',
+          ownerId: 1,
+          owner: 'Fulano',
+          description: '',
+          productsOfList: [],
+          listMembers: [],
+        },
+      ];
+
+      lists = [...fabricatedLists];
+
+
+      const refreshRoute = {}
+
+      renderResults = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists,
+              setLists: (value) => {
+                lists = [...value];
+              },
+            }}
+          >
+            <SafeAreaProvider
+              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <List navigation={navigation} route={refreshRoute} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+
+      expect(getListsSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

@@ -54,6 +54,10 @@ export default function ListScreen(props) {
   const [isListRemoveModalOpen, setIsListRemoveModalOpen] = useState(false);
   const [confirmRemoval, setConfirmRemoval] = useState(false);
 
+  useEffect(() => {
+    fetchLists();
+  }, []);
+
   // Hook que dispara toda vez que esta tela for focada
   useFocusEffect(
     useCallback(() => {
@@ -113,42 +117,38 @@ export default function ListScreen(props) {
     }
   }, [isListRemoveModalOpen]);
 
-  const fetchLists = async () => {
-    try {
-      // Busca todas as listas do usuário
-      const { data } = await ListService.getLists(user);
-
-      // Se o array de listas tiver resultados coloque-os no
-      // componente de select e atribua o primeiro resultado para a
-      // variável da lista selecionada
-      if (data && data.length > 0) {
-        setLists([...data]);
-        try {
-          const lastSelectedList = await AsyncStorage.getItem(
-            'lastSelectedList'
-          );
-          if (lastSelectedList) {
-            setSelectedList(
-              data.find((list) => list.id === Number(lastSelectedList))
-            );
-          } else {
-            setSelectedList(data[0]);
-          }
-        } catch (error) {
-          console.log({ error });
+  const fetchLists = () => {
+    ListService.getLists(user)
+      .then(({ data }) => {
+        // Se o array de listas tiver resultados coloque-os no
+        // componente de select e atribua o primeiro resultado para a
+        // variável da lista selecionada
+        if (data && data.length > 0) {
+          setLists([...data]);
+          AsyncStorage.getItem('lastSelectedList')
+            .then(lastSelectedList => {
+              if (lastSelectedList) {
+                setSelectedList(
+                  data.find((list) => list.id === Number(lastSelectedList))
+                );
+              } else {
+                setSelectedList(data[0]);
+              }
+            });
+        } else {
+          setLists([]);
         }
-      } else {
-        setLists([]);
-      }
-    } catch (error) {
-      toast.show({
-        title: 'Não foi possível buscar suas listas',
-        status: 'warning',
+      })
+      .catch(error => {
+        toast.show({
+          title: 'Não foi possível buscar suas listas',
+          status: 'warning',
+        });
+      })
+      .finally(() => {
+        setRefreshing(false);
+        setLoadingScreen(false);
       });
-    } finally {
-      setRefreshing(false);
-      setLoadingScreen(false);
-    }
   };
 
   const deleteList = async () => {
@@ -207,7 +207,6 @@ export default function ListScreen(props) {
         const { data } = await ProductService.getProductByName(value, user);
         setProductsFound(data);
       } catch (error) {
-        console.log({ error });
         toast.show({
           title: t('errorServerDefault'),
           status: 'warning',
@@ -257,11 +256,7 @@ export default function ListScreen(props) {
 
       // Se o atributo 'productsOfList' já existe só insere o produto
       // caso não, cria um array com o produto já inserido dentro
-      if (objCopy.productsOfList) {
-        objCopy.productsOfList.push(data);
-      } else {
-        objCopy.productsOfList = [data];
-      }
+      objCopy.productsOfList = objCopy.productsOfList ? [...objCopy.productsOfList, data] : objCopy.productsOfList = [data];
 
       setSelectedList(objCopy);
       editOriginalLists(objCopy);
@@ -269,7 +264,6 @@ export default function ListScreen(props) {
       // Esconde o teclado
       Keyboard.dismiss();
     } catch (error) {
-      console.log(error);
     } finally {
       setProductName('');
       setProductsFound([]);
@@ -304,7 +298,6 @@ export default function ListScreen(props) {
         status: 'info',
       });
     } catch (error) {
-      console.log({ error });
       toast.show({
         title: t('couldntRemoveItem'),
         status: 'warning',
@@ -337,7 +330,6 @@ export default function ListScreen(props) {
     try {
       await AsyncStorage.setItem('lastSelectedList', String(listId));
     } catch (error) {
-      console.log({ error });
       return null;
     }
   };
@@ -366,6 +358,7 @@ export default function ListScreen(props) {
             storeListId(listId);
           }}
           isDisabled={lists?.length === 0}
+          accessibilityValue={selectedList?.nameList}
         >
           {lists?.map((list) => (
             <Select.Item key={list.id} value={list.id} label={list.nameList} />
@@ -398,8 +391,9 @@ export default function ListScreen(props) {
             }}
           >
             {
-              selectedList.ownerId === user.id ? (
+              selectedList && selectedList.ownerId === user.id ? (
                 <Menu.Item
+                  testID="edit-list-menu-item"
                   onPress={() => {
                     props.navigation.navigate('EditList', {
                       listId: selectedList.id,
@@ -411,6 +405,7 @@ export default function ListScreen(props) {
               ) : null
             }
             <Menu.Item
+              testID="list-details-menu-item"
               onPress={() => {
                 props.navigation.navigate('ListDetails', {
                   list: selectedList,
@@ -422,6 +417,7 @@ export default function ListScreen(props) {
 
             {selectedList?.id && selectedList?.listMembers?.length > 0 ? (
               <Menu.Item
+                testID="members-menu-item"
                 onPress={() => {
                   props.navigation.navigate('Members', {
                     list: selectedList,
@@ -437,6 +433,7 @@ export default function ListScreen(props) {
             {selectedList && selectedList.ownerId === user.id ? (
               <Box>
                 <Menu.Item
+                  testID="invite-menu-item"
                   onPress={() => {
                     props.navigation.navigate('Invite', {
                       list: selectedList,

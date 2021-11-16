@@ -96,7 +96,6 @@ export default function CartScreen(props) {
         setLists(editedLists);
       }
     } catch (error) {
-      console.log(error);
       toast.show({
         title: t('errorServerDefault'),
         status: 'warning',
@@ -112,7 +111,6 @@ export default function CartScreen(props) {
       const { data } = await ListService.getLists(user);
       setLists(data);
     } catch (error) {
-      console.log(error);
       toast.show({
         title: t('errorServerDefault'),
         status: 'warning',
@@ -286,7 +284,6 @@ export default function CartScreen(props) {
       title = t('purchaseSaved');
       status = 'success';
     } catch (error) {
-      console.log(error);
       title = t('unsuccessfullySaved');
       status = 'warning';
     } finally {
@@ -348,6 +345,7 @@ export default function CartScreen(props) {
             }}
           >
             <Menu.Item
+              testID="history-item-menu"
               onPress={() => {
                 props.navigation.navigate('History');
               }}

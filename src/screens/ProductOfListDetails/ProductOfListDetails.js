@@ -79,7 +79,6 @@ export default function ProductOfListDetails(props) {
       // retorna à lista
       props.navigation.navigate(origin, { refresh: true });
     } catch (error) {
-      console.log({ error });
       toast.show({
         title: t('unsuccessfullyEdited'),
         status: 'warning',
@@ -153,10 +152,7 @@ export default function ProductOfListDetails(props) {
   };
 
   const getMemberById = (userId, members) => {
-    if (members.length) {
-      return members.find((lm) => lm.userId === Number(userId));
-    }
-    return { id: null };
+    return members.find((lm) => lm.userId === Number(userId));
   };
 
   return (

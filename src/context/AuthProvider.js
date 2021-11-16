@@ -42,7 +42,6 @@ export const AuthProvider = ({ children }) => {
     try {
       await UserService.revokeToken(user.token);
     } catch (error) {
-      console.log({ error });
     } finally {
       setUser(null);
       AsyncStorage.removeItem('tokens');
