@@ -55,7 +55,7 @@ const AuthService = {
         Authorization: `Basic ${Base64.btoa(STRING_API_AUTH)}`,
       },
     });
-  }
+  },
 };
 
 export default AuthService;

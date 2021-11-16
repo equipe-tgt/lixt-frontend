@@ -97,19 +97,17 @@ export default function ListDetailsScreen(props) {
           </Box>
           <Box>
             <Text fontWeight="bold">{t('members')}</Text>
-            {
-              list?.listMembers
-                .filter((listMember) => listMember.statusListMember === 'ACCEPT')
-                .map((listMember, index) => (
-                  <Box mt={4} key={listMember.id} testID={`list-member-${index}`}>
-                    <Text fontWeight="bold">{listMember.user.name}</Text>
-                    <Text fontSize="md">
-                      @{listMember.user.username}{' '}
-                      {listMember.user.id === user.id ? `(${t('you')})` : null}
-                    </Text>
-                  </Box>
-                ))
-            }
+            {list?.listMembers
+              .filter((listMember) => listMember.statusListMember === 'ACCEPT')
+              .map((listMember, index) => (
+                <Box mt={4} key={listMember.id} testID={`list-member-${index}`}>
+                  <Text fontWeight="bold">{listMember.user.name}</Text>
+                  <Text fontSize="md">
+                    @{listMember.user.username}{' '}
+                    {listMember.user.id === user.id ? `(${t('you')})` : null}
+                  </Text>
+                </Box>
+              ))}
           </Box>
         </HStack>
 

@@ -16,7 +16,7 @@ jest.mock('react-i18next', () => ({
 }));
 
 i18.getI18n = jest.fn(() => ({
-  language: 'pt_BR'
+  language: 'pt_BR',
 }));
 
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');

@@ -16,7 +16,7 @@ jest.mock('react-i18next', () => ({
 }));
 
 i18.getI18n = jest.fn(() => ({
-  language: 'pt_BR'
+  language: 'pt_BR',
 }));
 
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
@@ -411,7 +411,7 @@ describe('ProductOfListDetailsScreen component', () => {
         expect(assigningSelector.props.value).toBe('Shane McCutcheon');
       });
 
-      it("should not be able to assign an item if selecting an invalid id", async () => {
+      it('should not be able to assign an item if selecting an invalid id', async () => {
         item = {
           id: 10,
           productId: 1,

@@ -27,18 +27,19 @@ export default function EditListScreen(props) {
   const toast = useToast();
   const { t } = useTranslation();
 
-  const { handleChange, handleSubmit, handleBlur, values, errors, resetForm } = useFormik({
-    initialValues: { nameList: '', description: '' },
-    validationSchema: ListSchema(t),
-    onSubmit: () => {
-      editList();
-    },
-    validateOnChange: false,
-  });
+  const { handleChange, handleSubmit, handleBlur, values, errors, resetForm } =
+    useFormik({
+      initialValues: { nameList: '', description: '' },
+      validationSchema: ListSchema(t),
+      onSubmit: () => {
+        editList();
+      },
+      validateOnChange: false,
+    });
 
   React.useEffect(() => {
     getList();
-  }, [])
+  }, []);
 
   const getList = () => {
     setLoading(true);
@@ -48,14 +49,14 @@ export default function EditListScreen(props) {
         resetForm({
           values: {
             nameList: data.nameList,
-            description: data.description
-          }
-        })
+            description: data.description,
+          },
+        });
       })
       .finally(() => {
         setLoading(false);
       });
-  }
+  };
 
   const editList = () => {
     setLoading(true);
@@ -69,7 +70,7 @@ export default function EditListScreen(props) {
 
         // Retorna para a tela de listas
         props.navigation.navigate('Lists', {
-          refresh: true
+          refresh: true,
         });
       })
       .catch(() => {

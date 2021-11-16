@@ -25,8 +25,8 @@ describe('ListDetailsScreen component', () => {
     productOfList: [],
     owner: 'fulanodetal',
     ownerId: 1,
-    nameList: "Lista 01",
-    description: "Descrição"
+    nameList: 'Lista 01',
+    description: 'Descrição',
   };
 
   beforeEach(() => {
@@ -58,11 +58,11 @@ describe('ListDetailsScreen component', () => {
       username: 'fulanodetal',
     };
 
-    jest
-      .spyOn(ListService, 'getListById')
-      .mockReturnValue(Promise.resolve({
-        data: list
-      }));
+    jest.spyOn(ListService, 'getListById').mockReturnValue(
+      Promise.resolve({
+        data: list,
+      })
+    );
 
     const renderResults = render(
       <AuthContext.Provider
@@ -93,18 +93,28 @@ describe('ListDetailsScreen component', () => {
 
   it('should load data from backend into the field', async () => {
     const editListName = await waitFor(() => getByTestId('edit-list-name'));
-    const editListDescription = await waitFor(() => getByTestId('edit-list-description'));
-    
+    const editListDescription = await waitFor(() =>
+      getByTestId('edit-list-description')
+    );
+
     expect(editListName.props.value).toBe('Lista 01');
     expect(editListDescription.props.value).toBe('Descrição');
   });
 
   it('should send the fields data updated to the backend', async () => {
     const editListName = await waitFor(() => getByTestId('edit-list-name'));
-    const editListDescription = await waitFor(() => getByTestId('edit-list-description'));
-    
-    await waitFor(() => fireEvent.changeText(editListName, { target: { value: 'Lista 01 2021' }}));
-    await waitFor(() => fireEvent.changeText(editListDescription, { target:  { value: 'Nova Descrição' }}));
+    const editListDescription = await waitFor(() =>
+      getByTestId('edit-list-description')
+    );
+
+    await waitFor(() =>
+      fireEvent.changeText(editListName, { target: { value: 'Lista 01 2021' } })
+    );
+    await waitFor(() =>
+      fireEvent.changeText(editListDescription, {
+        target: { value: 'Nova Descrição' },
+      })
+    );
 
     const editListSpy = jest.spyOn(ListService, 'editList');
 
@@ -114,25 +124,37 @@ describe('ListDetailsScreen component', () => {
 
     await waitFor(() => fireEvent.press(editListButton));
 
-    expect(editListSpy).toHaveBeenCalledWith({
-      id: 1,
-      listMembers: [],
-      productOfList: [],
-      owner: 'fulanodetal',
-      ownerId: 1,
-      nameList: 'Lista 01 2021',
-      description: 'Nova Descrição'
-    }, 1, user);
+    expect(editListSpy).toHaveBeenCalledWith(
+      {
+        id: 1,
+        listMembers: [],
+        productOfList: [],
+        owner: 'fulanodetal',
+        ownerId: 1,
+        nameList: 'Lista 01 2021',
+        description: 'Nova Descrição',
+      },
+      1,
+      user
+    );
 
-    expect(navigationSpy).toHaveBeenCalledWith('Lists', { refresh: true });    
+    expect(navigationSpy).toHaveBeenCalledWith('Lists', { refresh: true });
   });
 
   it('should send the fields data updated to the backend', async () => {
     const editListName = await waitFor(() => getByTestId('edit-list-name'));
-    const editListDescription = await waitFor(() => getByTestId('edit-list-description'));
-    
-    await waitFor(() => fireEvent.changeText(editListName, { target: { value: 'Lista 01 2021' }}));
-    await waitFor(() => fireEvent.changeText(editListDescription, { target:  { value: 'Nova Descrição' }}));
+    const editListDescription = await waitFor(() =>
+      getByTestId('edit-list-description')
+    );
+
+    await waitFor(() =>
+      fireEvent.changeText(editListName, { target: { value: 'Lista 01 2021' } })
+    );
+    await waitFor(() =>
+      fireEvent.changeText(editListDescription, {
+        target: { value: 'Nova Descrição' },
+      })
+    );
 
     const editListSpy = jest.spyOn(ListService, 'editList');
 

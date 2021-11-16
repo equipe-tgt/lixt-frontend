@@ -154,13 +154,15 @@ describe('NewProductScreen component', () => {
     describe('when form is properly filled', () => {
       it('should redirect to lists page if a product was created sucessfully', async () => {
         const createProductSpy = jest.spyOn(ProductService, 'createProduct');
-        createProductSpy.mockReturnValue(Promise.resolve({
-          data: {
-            product: {
-              name: "Chocolate"
-            }
-          }
-        }));
+        createProductSpy.mockReturnValue(
+          Promise.resolve({
+            data: {
+              product: {
+                name: 'Chocolate',
+              },
+            },
+          })
+        );
 
         await waitFor(() => {
           fireEvent.changeText(getByTestId('new-product-name'), 'Chocolate');
@@ -171,13 +173,13 @@ describe('NewProductScreen component', () => {
         expect(navigationSpy).toHaveBeenCalledWith('Lists', {
           newProduct: {
             product: {
-              name: "Chocolate"
+              name: 'Chocolate',
             },
             category: {
-              id: "1",
-              name: "Roupas"
-            }
-          }
+              id: '1',
+              name: 'Roupas',
+            },
+          },
         });
       });
 
@@ -340,7 +342,7 @@ describe('NewProductScreen component', () => {
           >
             <NativeBaseProvider>
               <NavigationContext.Provider value={navContext}>
-              <NewProductScreen route={route} navigation={navigation} />
+                <NewProductScreen route={route} navigation={navigation} />
               </NavigationContext.Provider>
             </NativeBaseProvider>
           </SafeAreaProvider>
@@ -381,7 +383,7 @@ describe('NewProductScreen component', () => {
       const route = {
         params: {
           productName: '',
-          barcode: '123456'
+          barcode: '123456',
         },
       };
 
@@ -471,7 +473,7 @@ describe('NewProductScreen component', () => {
         params: {
           productName: '',
           barcode: '123456',
-          foundProductByBarcode: true
+          foundProductByBarcode: true,
         },
       };
 
@@ -517,13 +519,19 @@ describe('NewProductScreen component', () => {
     });
 
     it('should close the modal when clicking cancel button', async () => {
-      expect(getByTestId('duplicated-barcode-modal').props.accessibilityValue).toBe("visible");
+      expect(
+        getByTestId('duplicated-barcode-modal').props.accessibilityValue
+      ).toBe('visible');
 
-      const cancelDuplicatedBarcodeModalButton = getByTestId('cancel-duplicated-barcode-button');
+      const cancelDuplicatedBarcodeModalButton = getByTestId(
+        'cancel-duplicated-barcode-button'
+      );
 
       await waitFor(() => fireEvent.press(cancelDuplicatedBarcodeModalButton));
 
-      expect(getByTestId('duplicated-barcode-modal').props.accessibilityValue).toBe("hidden");
+      expect(
+        getByTestId('duplicated-barcode-modal').props.accessibilityValue
+      ).toBe('hidden');
     });
   });
 });
