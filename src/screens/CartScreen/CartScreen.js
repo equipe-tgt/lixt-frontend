@@ -35,7 +35,7 @@ export default function CartScreen(props) {
     id: 'view-all',
     productsOfList: [],
   });
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
   const [loadingPurchase, setLoadingPurchase] = useState(false);
   const { t } = useTranslation();
   const isFocused = useIsFocused();
@@ -382,9 +382,11 @@ export default function CartScreen(props) {
               }
             />
           ) : (
-            <Center width="90%" mx="auto" my="50%">
-              <Text textAlign="center">{t('noProductsFound')}</Text>
-            </Center>
+            !refreshing && (
+              <Center width="90%" mx="auto" my="50%">
+                <Text textAlign="center">{t('noProductsFound')}</Text>
+              </Center>
+            )
           )}
         </ScrollView>
 
