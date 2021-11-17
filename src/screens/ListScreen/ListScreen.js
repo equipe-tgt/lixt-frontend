@@ -415,7 +415,7 @@ export default function ListScreen(props) {
               {t('listInfo')}
             </Menu.Item>
 
-            {selectedList?.id && selectedList?.listMembers?.length > 0 ? (
+            {/* {selectedList?.id && selectedList?.listMembers?.length > 0 ? (
               <Menu.Item
                 testID="members-menu-item"
                 onPress={() => {
@@ -426,7 +426,7 @@ export default function ListScreen(props) {
               >
                 {t('members')}
               </Menu.Item>
-            ) : null}
+            ) : null} */}
 
             {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista,
           se ele for convidado mostra a opção de deixar a lista */}
