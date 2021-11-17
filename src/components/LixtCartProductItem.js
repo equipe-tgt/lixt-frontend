@@ -146,7 +146,7 @@ const LixtCartProductItem = ({
                   skin="square"
                   value={markedAmount}
                   color={isDisabled ? '#e6e6e6' : '#0891b2'}
-                  inputNumberStepperID="amount-input"
+                  inputNumberStepperID={`amount-input-${product.name}`}
                   onChange={(value) => {
                     setMarkedAmount(value);
                     changeMarkedAmount(value);
@@ -173,7 +173,7 @@ const LixtCartProductItem = ({
                   skin="square"
                   value={markedAmount}
                   color={isDisabled ? '#e6e6e6' : '#0891b2'}
-                  inputNumberStepperID="amount-input"
+                  inputNumberStepperID={`amount-input-${product.name}`}
                   onChange={(value) => {
                     setMarkedAmount(value);
                     changeMarkedAmount(value);
