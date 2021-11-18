@@ -243,5 +243,6 @@ export default {
   previous: 'Previous',
   next: 'Next',
   chosenStatistics: 'Chosen statistics',
-  selectOne: 'Select One',
+  selectOne: 'Select one',
+  selectCategory: 'Select category',
 };

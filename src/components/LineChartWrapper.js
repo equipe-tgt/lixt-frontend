@@ -36,7 +36,7 @@ export default function LineChartWrapper({
       datasets: [datasetsItem],
     };
   };
-
+  // console.log(formatChartData());
   const chartData = formatChartData();
 
   return (

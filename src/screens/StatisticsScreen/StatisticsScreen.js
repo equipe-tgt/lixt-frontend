@@ -49,6 +49,7 @@ export default function StatisticsScreen() {
   const [selectedList, setSelectedList] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(false);
 
@@ -146,6 +147,12 @@ export default function StatisticsScreen() {
           break;
 
         case StatisticsType.PRODUCT:
+          periodFilterObject.name = 'Arroz';
+          request = StatisticsService.getExpensesPer(
+            getUrl(selectedStatisticsType),
+            periodFilterObject,
+            user
+          );
           break;
 
         default:
@@ -154,7 +161,7 @@ export default function StatisticsScreen() {
 
       const { data } = await request;
       console.log(data);
-      setdataFromServer(data);
+      // setdataFromServer(data);
     } catch (error) {
       console.log({ error });
       useToast().show({
@@ -291,7 +298,13 @@ export default function StatisticsScreen() {
           />
         );
       case StatisticsType.PRODUCT:
-        return <LineChartWrapper />;
+        return (
+          <LineChartWrapper
+            selectedUnityTime={UnityTimes.DAILY}
+            preFormattedData={dataFromServer}
+            monetaryNotation={t('currency')}
+          />
+        );
       case StatisticsType.CATEGORY:
         return (
           <LineChartWrapper

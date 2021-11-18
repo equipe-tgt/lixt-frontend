@@ -244,4 +244,5 @@ export default {
   next: 'Próximo',
   chosenStatistics: 'Estatísticas escolhidas',
   selectOne: 'Selecione um',
+  selectCategory: 'Selecionar categoria',
 };
