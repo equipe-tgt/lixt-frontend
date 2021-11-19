@@ -246,4 +246,6 @@ export default {
   selectOne: 'Selecione um',
   selectCategory: 'Selecionar categoria',
   noDataFromSelectedPeriod: 'Nenhum dado foi retornado do período selecionado',
+  accessScreen: 'Acessar {{screenName}}',
+  otherPages: 'Outras páginas que podem te interesssar',
 };

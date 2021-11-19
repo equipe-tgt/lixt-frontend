@@ -64,7 +64,7 @@ export default {
 
   noListsFound: "You don't have any lists, click to add",
   noListsCreateANewOne:
-    "You don't have any lists, go to the home page and add your first",
+    "You don't have any lists to shop from, go to the home page and add your first",
 
   createMyFirstList: 'Create my first list!',
   loadingLists: 'Loading your lists...',
@@ -246,4 +246,6 @@ export default {
   selectOne: 'Select one',
   selectCategory: 'Select category',
   noDataFromSelectedPeriod: 'No data returned from selected period',
+  accessScreen: 'Access {{screenName}}',
+  otherPages: 'Other pages that may interest you',
 };
