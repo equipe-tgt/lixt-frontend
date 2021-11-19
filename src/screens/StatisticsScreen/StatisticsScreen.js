@@ -161,7 +161,7 @@ export default function StatisticsScreen() {
 
       const { data } = await request;
       console.log(data);
-      // setdataFromServer(data);
+      setdataFromServer(data);
     } catch (error) {
       console.log({ error });
       useToast().show({
@@ -378,7 +378,10 @@ export default function StatisticsScreen() {
           </Box>
         </VStack>
 
-        {dataFromServer && renderChart()}
+        {dataFromServer &&
+          dateConfig.startDate &&
+          dateConfig.endDate &&
+          renderChart()}
 
         <StatisticsModal
           isConfigOpen={isConfigOpen}

@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { LineChart } from 'react-native-chart-kit';
-import { ScrollView } from 'native-base';
+import { ScrollView, Center, Text } from 'native-base';
 import { Dimensions } from 'react-native';
-import { getI18n } from 'react-i18next';
+import { getI18n, useTranslation } from 'react-i18next';
 
 import { UnityTimes } from '../utils/StatisticsUtils';
 
@@ -13,6 +13,8 @@ export default function LineChartWrapper({
   selectedUnityTime,
   preFormattedData,
 }) {
+  const { t } = useTranslation();
+
   const formatChartData = () => {
     const isPortuguese = getI18n().language === 'pt_BR';
 
@@ -39,7 +41,7 @@ export default function LineChartWrapper({
   // console.log(formatChartData());
   const chartData = formatChartData();
 
-  return (
+  return preFormattedData && preFormattedData?.length ? (
     <ScrollView horizontal={true}>
       <LineChart
         data={chartData}
@@ -59,6 +61,10 @@ export default function LineChartWrapper({
         bezier
       />
     </ScrollView>
+  ) : (
+    <Center>
+      <Text textAlign="center">{t('noDataFromSelectedPeriod')}</Text>
+    </Center>
   );
 }
 

@@ -245,4 +245,5 @@ export default {
   chosenStatistics: 'Estatísticas escolhidas',
   selectOne: 'Selecione um',
   selectCategory: 'Selecionar categoria',
+  noDataFromSelectedPeriod: 'Nenhum dado foi retornado do período selecionado',
 };

@@ -3,16 +3,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
-import { ScrollView } from 'native-base';
+import { ScrollView, Center, Text } from 'native-base';
 import { UnityTimes } from '../utils/StatisticsUtils';
 import moment from 'moment';
-import { getI18n } from 'react-i18next';
+import { getI18n, useTranslation } from 'react-i18next';
 
 export default function BarChartWrapper({
   monetaryNotation,
   selectedUnityTime,
   preFormattedData,
 }) {
+  const { t } = useTranslation();
+
   const formatChartData = () => {
     const labels = [];
     const datasetsItem = {
@@ -77,7 +79,7 @@ export default function BarChartWrapper({
 
   const chartData = formatChartData();
 
-  return (
+  return preFormattedData && preFormattedData?.length ? (
     <ScrollView horizontal={true}>
       <BarChart
         data={chartData}
@@ -104,6 +106,10 @@ export default function BarChartWrapper({
         }}
       />
     </ScrollView>
+  ) : (
+    <Center>
+      <Text textAlign="center">{t('noDataFromSelectedPeriod')}</Text>
+    </Center>
   );
 }
 

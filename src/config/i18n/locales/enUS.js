@@ -245,4 +245,5 @@ export default {
   chosenStatistics: 'Chosen statistics',
   selectOne: 'Select one',
   selectCategory: 'Select category',
+  noDataFromSelectedPeriod: 'No data returned from selected period',
 };
