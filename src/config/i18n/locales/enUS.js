@@ -248,4 +248,5 @@ export default {
   noDataFromSelectedPeriod: 'No data returned from selected period',
   accessScreen: 'Access {{screenName}}',
   otherPages: 'Other pages that may interest you',
+  productName: 'Product name',
 };

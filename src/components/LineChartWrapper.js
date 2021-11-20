@@ -30,6 +30,12 @@ export default function LineChartWrapper({
         datasetsItem.data.push(preData.price);
       } else {
         console.log('esse é o caso da filtragem por ');
+        labels.push(
+          moment(preData.date).format(
+            isPortuguese ? 'DD/MM/yyyy' : 'MM/DD/yyyy'
+          )
+        );
+        datasetsItem.data.push(preData.price);
       }
     }
 
@@ -48,6 +54,7 @@ export default function LineChartWrapper({
         width={Dimensions.get('window').width}
         height={450}
         verticalLabelRotation={30}
+        yAxisLabel={monetaryNotation}
         chartConfig={{
           backgroundColor: '#fff',
           backgroundGradientFrom: '#fff',

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Modal,
@@ -7,14 +7,19 @@ import {
   Select,
   Text,
   VStack,
+  ScrollView,
   Center,
   HStack,
   Spinner,
+  Icon,
+  Input,
+  List,
 } from 'native-base';
 
 import DatePicker from './DatePicker';
 import StatisticsDateInput from './StatisticsDateInput';
 import { UnityTimes, StatisticsType } from '../utils/StatisticsUtils';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function StatisticsModal({
   isConfigOpen,
@@ -41,12 +46,23 @@ export default function StatisticsModal({
   selectedCategory,
   loadingCategories,
   loading,
+  searchProducts,
+  products,
+  setSelectedProduct,
+  selectedProduct,
+  setProducts,
+  loadingProducts,
 }) {
   const resetValues = () => {
     setSelectedList(null);
     setDateConfig({ startDate: null, endDate: null });
     setCurrentParameter(null);
+    setProducts([]);
+    setSelectedProduct({ id: null, name: '' });
+    setSelectedCategory(null);
   };
+
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
 
   return (
     <Modal isOpen={isConfigOpen} onClose={() => setIsConfigOpen(false)}>
@@ -54,108 +70,199 @@ export default function StatisticsModal({
         <Modal.CloseButton />
         <Modal.Header>{translate('settings')}</Modal.Header>
         <Modal.Body>
-          {/* Seletor de tipo de estatísticas */}
-          <Text fontSize={18} bold marginBottom={2}>
-            {translate('selectAnalysisType')}
-          </Text>
-          <Select
-            onValueChange={(type) => {
-              setSelectedStatisticsType(type);
-              resetValues();
-            }}
-            selectedValue={selectedStatisticsType}
-          >
-            {Object.keys(StatisticsType).map((tipo, index) => (
-              <Select.Item
-                disabled={
-                  StatisticsType[tipo] === StatisticsType.LIST &&
-                  (!lists || lists?.length === 0)
-                }
-                value={StatisticsType[tipo]}
-                label={translate(StatisticsType[tipo])}
-                key={index}
-              />
-            ))}
-          </Select>
+          <ScrollView>
+            {/* Seletor de tipo de estatísticas */}
+            <Text fontSize={18} bold marginBottom={2}>
+              {translate('selectAnalysisType')}
+            </Text>
+            <Select
+              onValueChange={(type) => {
+                setSelectedStatisticsType(type);
+                resetValues();
+              }}
+              selectedValue={selectedStatisticsType}
+            >
+              {Object.keys(StatisticsType).map((tipo, index) => (
+                <Select.Item
+                  disabled={
+                    StatisticsType[tipo] === StatisticsType.LIST &&
+                    (!lists || lists?.length === 0)
+                  }
+                  value={StatisticsType[tipo]}
+                  label={translate(StatisticsType[tipo])}
+                  key={index}
+                />
+              ))}
+            </Select>
 
-          {/* Se o tipo de busca de estatísticas for o gastos por tempo ou gastos por lista */}
-          {(selectedStatisticsType === StatisticsType.TIME ||
-            selectedStatisticsType === StatisticsType.LIST) && (
-            <Box>
-              {/* Seletor de tipo de período de análise */}
-              <VStack>
-                <Text fontSize={18} bold mb={2} mt={4}>
-                  {translate('selectPeriodOfAnalysis')}
-                </Text>
-                <Select
-                  onValueChange={(val) => {
-                    setSelectedUnityTime(val);
-                    setDateConfig({ startDate: null, endDate: null });
-                  }}
-                  selectedValue={selectedUnityTime}
-                >
-                  {Object.keys(UnityTimes)
-                    .filter(
-                      (unityTime) =>
-                        UnityTimes[unityTime] !== UnityTimes.DEFAULT
-                    )
-                    .map((unityTime, index) => (
-                      <Select.Item
-                        value={UnityTimes[unityTime]}
-                        label={translate(unityTime)}
-                        key={index}
-                      />
-                    ))}
-                </Select>
-              </VStack>
-
-              {/* Seletor de tipo de lista - caso o tipo de estatística buscada seja o tipo lista */}
-              {selectedStatisticsType === StatisticsType.LIST && (
+            {/* Se o tipo de busca de estatísticas for o gastos por tempo ou gastos por lista */}
+            {(selectedStatisticsType === StatisticsType.TIME ||
+              selectedStatisticsType === StatisticsType.LIST) && (
+              <Box>
+                {/* Seletor de tipo de período de análise */}
                 <VStack>
                   <Text fontSize={18} bold mb={2} mt={4}>
-                    {translate('selectList')}
+                    {translate('selectPeriodOfAnalysis')}
                   </Text>
                   <Select
-                    selectedValue={selectedList}
-                    onValueChange={setSelectedList}
+                    onValueChange={(val) => {
+                      setSelectedUnityTime(val);
+                      setDateConfig({ startDate: null, endDate: null });
+                    }}
+                    selectedValue={selectedUnityTime}
                   >
-                    {lists.map((list) => (
-                      <Select.Item
-                        value={list.id}
-                        label={list.nameList}
-                        key={list.id}
-                      />
-                    ))}
+                    {Object.keys(UnityTimes)
+                      .filter(
+                        (unityTime) =>
+                          UnityTimes[unityTime] !== UnityTimes.DEFAULT
+                      )
+                      .map((unityTime, index) => (
+                        <Select.Item
+                          value={UnityTimes[unityTime]}
+                          label={translate(unityTime)}
+                          key={index}
+                        />
+                      ))}
                   </Select>
                 </VStack>
-              )}
 
-              {/* Seletor de datas */}
-              <VStack mt={2}>
-                <Text fontSize={18} bold marginBottom={2}>
-                  {translate('selectDates')}
-                </Text>
-                <StatisticsDateInput
-                  getDateInterval={renderDateInterval}
-                  dateConfig={dateConfig}
-                  setDateConfig={setDateConfig}
-                  setIsSelectorOpen={setIsSelectorOpen}
-                  translate={translate}
-                  setCurrentParameter={setCurrentParameter}
-                  selectedUnityTime={selectedUnityTime}
-                  selectedStatisticsType={selectedStatisticsType}
-                  currentParameter={currentParameter}
-                />
-              </VStack>
-            </Box>
-          )}
+                {/* Seletor de tipo de lista - caso o tipo de estatística buscada seja o tipo lista */}
+                {selectedStatisticsType === StatisticsType.LIST && (
+                  <VStack>
+                    <Text fontSize={18} bold mb={2} mt={4}>
+                      {translate('selectList')}
+                    </Text>
+                    <Select
+                      selectedValue={selectedList}
+                      onValueChange={setSelectedList}
+                    >
+                      {lists.map((list) => (
+                        <Select.Item
+                          value={list.id}
+                          label={list.nameList}
+                          key={list.id}
+                        />
+                      ))}
+                    </Select>
+                  </VStack>
+                )}
 
-          {/* Caso seja o tipo produto ou categoria */}
-          {selectedStatisticsType === StatisticsType.PRODUCT ||
-          selectedStatisticsType === StatisticsType.CATEGORY ? (
-            <Box>
-              {/* Se for do tipo categoria, mostra o seletor de categorias */}
-              {selectedStatisticsType === StatisticsType.CATEGORY && (
+                {/* Seletor de datas */}
+                <VStack mt={2}>
+                  <Text fontSize={18} bold marginBottom={2}>
+                    {translate('selectDates')}
+                  </Text>
+                  <StatisticsDateInput
+                    getDateInterval={renderDateInterval}
+                    dateConfig={dateConfig}
+                    setDateConfig={setDateConfig}
+                    setIsSelectorOpen={setIsSelectorOpen}
+                    translate={translate}
+                    setCurrentParameter={setCurrentParameter}
+                    selectedUnityTime={selectedUnityTime}
+                    selectedStatisticsType={selectedStatisticsType}
+                    currentParameter={currentParameter}
+                  />
+                </VStack>
+              </Box>
+            )}
+
+            {/* Caso seja do tipo produto */}
+            {selectedStatisticsType === StatisticsType.PRODUCT && (
+              <Box>
+                {/* Input do nome do produto */}
+                <VStack>
+                  <Text fontSize={18} bold my={4}>
+                    {translate('productName')}
+                  </Text>
+
+                  <HStack>
+                    <Input
+                      width={loadingProducts ? '90%' : '100%'}
+                      type="text"
+                      value={selectedProduct}
+                      onChangeText={searchProducts}
+                    />
+
+                    {loadingProducts && <Spinner size="sm" />}
+                  </HStack>
+
+                  {/* Produtos encontrados */}
+                  {products && products?.length > 0 ? (
+                    <List
+                      borderBottomRadius={3}
+                      borderTopColor="transparent"
+                      space="md"
+                    >
+                      <ScrollView keyboardShouldPersistTaps="always">
+                        {products?.map((product) => (
+                          <List.Item
+                            testID="products-found"
+                            py={4}
+                            key={product.id}
+                            onPress={() => {
+                              setSelectedProduct(product.name);
+                              setProducts([]);
+                            }}
+                            _pressed={{ bg: 'primary.500' }}
+                          >
+                            {product.name}
+                          </List.Item>
+                        ))}
+                      </ScrollView>
+                    </List>
+                  ) : null}
+                </VStack>
+
+                <VStack mt={2}>
+                  <Text fontSize={18} bold marginBottom={2}>
+                    {translate('selectDates')}
+                  </Text>
+                  {/* DateInput para o caso da estatística selecionada ser PRODUCT ou CATEGORY */}
+                  <StatisticsDateInput
+                    getDateInterval={renderDateInterval}
+                    dateConfig={dateConfig}
+                    setDateConfig={setDateConfig}
+                    setIsSelectorOpen={setIsSelectorOpen}
+                    translate={translate}
+                    setCurrentParameter={setCurrentParameter}
+                    selectedUnityTime={selectedUnityTime}
+                    selectedStatisticsType={selectedStatisticsType}
+                    currentParameter={currentParameter}
+                  />
+                </VStack>
+
+                <VStack>
+                  <Button
+                    onPress={() => setShowMoreFilters(!showMoreFilters)}
+                    mt={2}
+                    size="sm"
+                    variant="ghost"
+                    colorScheme="blueGray"
+                    startIcon={
+                      <Icon size="sm" as={<AntDesign name="filter" />} />
+                    }
+                  >
+                    {translate('moreFilters')}
+                  </Button>
+
+                  {showMoreFilters && (
+                    <Box>
+                      <Text>Sim, flores na janela, alguém vai casar</Text>
+                      <Text>Sim, flores na janela, alguém vai casar</Text>
+                      <Text>Sim, flores na janela, alguém vai casar</Text>
+                      <Text>Sim, flores na janela, alguém vai casar</Text>
+                      <Text>Sim, flores na janela, alguém vai casar</Text>
+                      <Text>Sim, flores na janela, alguém vai casar</Text>
+                    </Box>
+                  )}
+                </VStack>
+              </Box>
+            )}
+
+            {/* Caso seja categoria */}
+            {selectedStatisticsType === StatisticsType.CATEGORY && (
+              <Box>
                 <VStack>
                   <Text fontSize={18} bold mb={2} mt={4}>
                     {translate('selectCategory')}
@@ -180,45 +287,45 @@ export default function StatisticsModal({
                     )}
                   </HStack>
                 </VStack>
-              )}
 
-              <VStack mt={2}>
-                <Text fontSize={18} bold marginBottom={2}>
-                  {translate('selectDates')}
-                </Text>
-                {/* DateInput para o caso da estatística selecionada ser PRODUCT ou CATEGORY */}
-                <StatisticsDateInput
-                  getDateInterval={renderDateInterval}
-                  dateConfig={dateConfig}
-                  setDateConfig={setDateConfig}
-                  setIsSelectorOpen={setIsSelectorOpen}
-                  translate={translate}
-                  setCurrentParameter={setCurrentParameter}
-                  selectedUnityTime={selectedUnityTime}
-                  selectedStatisticsType={selectedStatisticsType}
-                  currentParameter={currentParameter}
-                />
-              </VStack>
-            </Box>
-          ) : null}
+                <VStack mt={2}>
+                  <Text fontSize={18} bold marginBottom={2}>
+                    {translate('selectDates')}
+                  </Text>
+                  {/* DateInput para o caso da estatística selecionada ser PRODUCT ou CATEGORY */}
+                  <StatisticsDateInput
+                    getDateInterval={renderDateInterval}
+                    dateConfig={dateConfig}
+                    setDateConfig={setDateConfig}
+                    setIsSelectorOpen={setIsSelectorOpen}
+                    translate={translate}
+                    setCurrentParameter={setCurrentParameter}
+                    selectedUnityTime={selectedUnityTime}
+                    selectedStatisticsType={selectedStatisticsType}
+                    currentParameter={currentParameter}
+                  />
+                </VStack>
+              </Box>
+            )}
 
-          {/* DatePicker, exibido caso o isSelector seja true */}
-          <Center>
-            <HStack>
-              {isSelectorOpen && (
-                <DatePicker
-                  isSelectorOpen={isSelectorOpen}
-                  setIsSelectorOpen={setIsSelectorOpen}
-                  handleDateChange={handleDateChange}
-                  currentParameter={currentParameter}
-                  setCurrentParameter={setCurrentParameter}
-                  selectedUnityTime={selectedUnityTime}
-                  dateConfig={dateConfig}
-                  translate={translate}
-                />
-              )}
-            </HStack>
-          </Center>
+            {/* DatePicker, exibido caso o isSelector seja true */}
+            <Center>
+              <HStack>
+                {isSelectorOpen && (
+                  <DatePicker
+                    isSelectorOpen={isSelectorOpen}
+                    setIsSelectorOpen={setIsSelectorOpen}
+                    handleDateChange={handleDateChange}
+                    currentParameter={currentParameter}
+                    setCurrentParameter={setCurrentParameter}
+                    selectedUnityTime={selectedUnityTime}
+                    dateConfig={dateConfig}
+                    translate={translate}
+                  />
+                )}
+              </HStack>
+            </Center>
+          </ScrollView>
         </Modal.Body>
         <Modal.Footer justifyContent="space-between">
           <Button onPress={() => setIsConfigOpen(false)} variant="link">
@@ -262,4 +369,10 @@ StatisticsModal.propTypes = {
   setSelectedCategory: PropTypes.func,
   selectedCategory: PropTypes.number,
   loadingCategories: PropTypes.bool,
+  searchProducts: PropTypes.func,
+  products: PropTypes.array,
+  selectedProduct: PropTypes.string,
+  setSelectedProduct: PropTypes.func,
+  setProducts: PropTypes.func,
+  loadingProducts: PropTypes.bool,
 };

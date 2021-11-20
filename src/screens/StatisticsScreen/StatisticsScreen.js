@@ -7,7 +7,6 @@ import {
   HStack,
   Box,
   VStack,
-  IconButton,
   Icon,
   useToast,
   View,
@@ -25,6 +24,7 @@ import LineChartWrapper from '../../components/LineChartWrapper';
 import { useTranslation } from 'react-i18next';
 import StatisticsModal from '../../components/StatisticsModal';
 import CategoryService from '../../services/CategoryService';
+import ProductService from '../../services/ProductService';
 
 import {
   UnityTimes,
@@ -49,9 +49,11 @@ export default function StatisticsScreen() {
   const [selectedList, setSelectedList] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
   const { user } = useContext(AuthContext);
   const { lists } = useContext(ListContext);
@@ -103,8 +105,7 @@ export default function StatisticsScreen() {
 
         case StatisticsType.TIME:
           periodFilterObject = {
-            startDate: moment(dateConfig.startDate).toISOString(),
-            endDate: moment(dateConfig.endDate).toISOString(),
+            ...periodFilterObject,
             unityTime: selectedUnityTime,
           };
 
@@ -117,8 +118,7 @@ export default function StatisticsScreen() {
 
         case StatisticsType.LIST:
           periodFilterObject = {
-            startDate: moment(dateConfig.startDate).toISOString(),
-            endDate: moment(dateConfig.endDate).toISOString(),
+            ...periodFilterObject,
             unityTime: selectedUnityTime,
             listId: selectedList,
           };
@@ -147,7 +147,7 @@ export default function StatisticsScreen() {
           break;
 
         case StatisticsType.PRODUCT:
-          periodFilterObject.name = 'Arroz';
+          periodFilterObject.name = selectedProduct;
           request = StatisticsService.getExpensesPer(
             getUrl(selectedStatisticsType),
             periodFilterObject,
@@ -199,7 +199,7 @@ export default function StatisticsScreen() {
     } else {
       setDateConfig({
         ...dateConfig,
-        endDate: moment(date).endOf('date'), // garante que pegará o dia definido até as 23h59min59sec
+        endDate: moment(date).endOf('month').endOf('date'), // garante que pegará o dia definido até as 23h59min59sec
       });
     }
     setIsSelectorOpen(false);
@@ -283,6 +283,26 @@ export default function StatisticsScreen() {
     return <Text>{intervalText}</Text>;
   };
 
+  const searchProducts = async (value) => {
+    if (value.length > 2) {
+      try {
+        setLoadingProducts(true);
+        const { data } = await ProductService.getProductByName(value, user);
+        console.log(data);
+        setProducts(data);
+      } catch (error) {
+        useToast().show({
+          title: t('errorServerDefault'),
+          status: 'warning',
+        });
+      } finally {
+        setLoadingProducts(false);
+      }
+    } else {
+      setProducts([]);
+    }
+  };
+
   const renderChart = () => {
     switch (selectedStatisticsType) {
       case StatisticsType.PURCHASE_LOCAL:
@@ -319,18 +339,52 @@ export default function StatisticsScreen() {
     }
   };
 
+  const getStatisticsName = () => {
+    let chosenStatisticsString = t(selectedStatisticsType);
+
+    switch (selectedStatisticsType) {
+      case StatisticsType.CATEGORY:
+        if (selectedCategory) {
+          const categoryName = categories.find(
+            (cat) => cat.id === selectedCategory
+          )?.name;
+          chosenStatisticsString += `- ${categoryName}`;
+        }
+        break;
+
+      case StatisticsType.LIST:
+        if (selectedList) {
+          const listName = lists.find(
+            (list) => list.id === selectedList
+          )?.nameList;
+
+          chosenStatisticsString += `- ${listName}`;
+        }
+        break;
+
+      case StatisticsType.PRODUCT:
+        if (selectedProduct) chosenStatisticsString += `- ${selectedProduct}`;
+        break;
+
+      default:
+        break;
+    }
+
+    return chosenStatisticsString;
+  };
+
   return (
     <SafeAreaView style={style.container}>
       <View width="90%" mx="auto">
         <VStack mb={5}>
           <Box>
-            <HStack mx="auto" alignItems="center">
+            <HStack mx="auto" alignItems="center" maxWidth="80%">
               <VStack mb={2}>
                 <Text fontSize="sm" textAlign="center">
                   {t('chosenStatistics')}
                 </Text>
-                <Text fontSize="2xl" textAlign="center">
-                  {t(selectedStatisticsType)}
+                <Text fontSize="lg" fontWeight="bold" textAlign="center">
+                  {getStatisticsName()}
                 </Text>
               </VStack>
 
@@ -408,6 +462,12 @@ export default function StatisticsScreen() {
           setSelectedCategory={setSelectedCategory}
           selectedCategory={selectedCategory}
           loadingCategories={loadingCategories}
+          searchProducts={searchProducts}
+          products={products}
+          setSelectedProduct={setSelectedProduct}
+          selectedProduct={selectedProduct}
+          setProducts={setProducts}
+          loadingProducts={loadingProducts}
         />
       </View>
     </SafeAreaView>
