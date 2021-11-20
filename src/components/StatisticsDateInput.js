@@ -14,14 +14,12 @@ import {
 
 export default function StatisticsDateInput({
   getDateInterval,
-  dateConfig,
-  selectedUnityTime,
-  selectedStatisticsType,
   setIsSelectorOpen,
   translate,
   setCurrentParameter,
-  setDateConfig,
   currentParameter,
+  statisticsSettings,
+  setStatisticsSettings,
 }) {
   // Se o usuário modificar a data inicial enquanto já houver selecionado uma data final
   // e o tipo de data for mensal ou semanal, limpa o parâmetro da data final
@@ -30,23 +28,23 @@ export default function StatisticsDateInput({
   useEffect(() => {
     if (
       currentParameter === DateParameters.START &&
-      dateConfig.endDate &&
-      (selectedUnityTime === UnityTimes.WEEKLY ||
-        selectedUnityTime === UnityTimes.MONTHLY)
+      statisticsSettings.endDate &&
+      (statisticsSettings.selectedUnityTime === UnityTimes.WEEKLY ||
+        statisticsSettings.selectedUnityTime === UnityTimes.MONTHLY)
     ) {
-      setDateConfig({
-        ...dateConfig,
+      setStatisticsSettings({
+        ...statisticsSettings,
         endDate: null,
       });
     }
-  }, [dateConfig]);
+  }, [statisticsSettings]);
 
   // Devolve qual o texto será exibido no input de datas
   // baseando-se no tipo de data selecionado
   const getSelectedDateText = (date, param = null) => {
     let formatString;
     if (date) {
-      switch (selectedUnityTime) {
+      switch (statisticsSettings.selectedUnityTime) {
         case UnityTimes.DAILY:
         case UnityTimes.DEFAULT:
           formatString =
@@ -83,10 +81,16 @@ export default function StatisticsDateInput({
   };
 
   const cleanIntervalButton = () => {
-    if (dateConfig.startDate || dateConfig.endDate) {
+    if (statisticsSettings.startDate || statisticsSettings.endDate) {
       return (
         <Button
-          onPress={() => setDateConfig({ startDate: null, endDate: null })}
+          onPress={() =>
+            setStatisticsSettings({
+              ...statisticsSettings,
+              startDate: null,
+              endDate: null,
+            })
+          }
           variant="ghost"
           colorScheme="warmGray"
           startIcon={<Icon size="sm" as={<Ionicons name="close" />} />}
@@ -98,8 +102,11 @@ export default function StatisticsDateInput({
   };
 
   const getDateInput = () => {
-    if (selectedStatisticsType !== StatisticsType.PURCHASE_LOCAL) {
-      switch (selectedUnityTime) {
+    if (
+      statisticsSettings.selectedStatisticsType !==
+      StatisticsType.PURCHASE_LOCAL
+    ) {
+      switch (statisticsSettings.selectedUnityTime) {
         // Input único de seleção de intervalo
         case UnityTimes.DAILY:
           return (
@@ -115,7 +122,7 @@ export default function StatisticsDateInput({
                   />
                 }
               >
-                {dateConfig.startDate && dateConfig.endDate
+                {statisticsSettings.startDate && statisticsSettings.endDate
                   ? getDateInterval()
                   : translate('selectInterval')}
               </Button>
@@ -143,9 +150,9 @@ export default function StatisticsDateInput({
                     setIsSelectorOpen(true);
                   }}
                 >
-                  {dateConfig.startDate
+                  {statisticsSettings.startDate
                     ? getSelectedDateText(
-                        dateConfig.startDate,
+                        statisticsSettings.startDate,
                         DateParameters.START
                       )
                     : translate('initialWeek')}
@@ -156,13 +163,13 @@ export default function StatisticsDateInput({
               </Text>
               <Box>
                 <Button
-                  isDisabled={!dateConfig.startDate}
+                  isDisabled={!statisticsSettings.startDate}
                   variant="outline"
                   startIcon={
                     <Ionicons
                       name="md-calendar-sharp"
                       size={20}
-                      color={dateConfig.startDate ? '#06b6d4' : '#333'}
+                      color={statisticsSettings.startDate ? '#06b6d4' : '#333'}
                     />
                   }
                   onPress={() => {
@@ -170,9 +177,9 @@ export default function StatisticsDateInput({
                     setIsSelectorOpen(true);
                   }}
                 >
-                  {dateConfig.endDate
+                  {statisticsSettings.endDate
                     ? getSelectedDateText(
-                        dateConfig.endDate,
+                        statisticsSettings.endDate,
                         DateParameters.END
                       )
                     : translate('finalWeek')}
@@ -203,8 +210,8 @@ export default function StatisticsDateInput({
                     setIsSelectorOpen(true);
                   }}
                 >
-                  {dateConfig.startDate
-                    ? getSelectedDateText(dateConfig.startDate)
+                  {statisticsSettings.startDate
+                    ? getSelectedDateText(statisticsSettings.startDate)
                     : translate('initialDate')}
                 </Button>
               </Box>
@@ -213,13 +220,13 @@ export default function StatisticsDateInput({
               </Text>
               <Box>
                 <Button
-                  isDisabled={!dateConfig.startDate}
+                  isDisabled={!statisticsSettings.startDate}
                   variant="outline"
                   startIcon={
                     <Ionicons
                       name="md-calendar-sharp"
                       size={20}
-                      color={dateConfig.startDate ? '#06b6d4' : '#333'}
+                      color={statisticsSettings.startDate ? '#06b6d4' : '#333'}
                     />
                   }
                   onPress={() => {
@@ -227,8 +234,8 @@ export default function StatisticsDateInput({
                     setIsSelectorOpen(true);
                   }}
                 >
-                  {dateConfig.endDate
-                    ? getSelectedDateText(dateConfig.endDate)
+                  {statisticsSettings.endDate
+                    ? getSelectedDateText(statisticsSettings.endDate)
                     : translate('finalDate')}
                 </Button>
               </Box>
@@ -248,12 +255,8 @@ export default function StatisticsDateInput({
 
 StatisticsDateInput.propTypes = {
   getDateInterval: PropTypes.func,
-  dateConfig: PropTypes.object,
-  selectedUnityTime: PropTypes.string,
-  selectedStatisticsType: PropTypes.string,
   setIsSelectorOpen: PropTypes.func,
   translate: PropTypes.func,
-  setCurrentParameter: PropTypes.func,
-  setDateConfig: PropTypes.func,
   currentParameter: PropTypes.number,
+  statisticsSettings: PropTypes.object,
 };

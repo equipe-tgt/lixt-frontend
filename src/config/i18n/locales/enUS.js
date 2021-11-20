@@ -249,4 +249,6 @@ export default {
   accessScreen: 'Access {{screenName}}',
   otherPages: 'Other pages that may interest you',
   productName: 'Product name',
+  statisticsSettings: 'Statistics settings',
+  moreFilters: 'More filters',
 };
