@@ -62,10 +62,21 @@ export default function StatisticsSettingsScreen(props) {
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (a tela de estatísticas manda para cá)
-    if (props.route?.params?.settings) {
-      // Caso a tela anterior tenha passado settings
-      setStatisticsSettings(props.route.params.settings);
-      props.route.params.settings = null;
+    if (props.route?.params) {
+      const { params } = props.route;
+
+      if (params?.settings) {
+        // Caso a tela anterior tenha passado settings
+        setStatisticsSettings(props.route.params.settings);
+        params.settings = null;
+      }
+      // Caso a tela tenha passado configurações extra de busca (categoria selecionada, id da lista, esse tipo de coisa que
+      // sai do padrão do statisticsSettings)
+      if (params?.extraParams) {
+        const extraParamsCopy = Object.assign({}, params?.extraParams);
+        checkExtraParametersFromRoute(extraParamsCopy);
+        params.extraParams = null;
+      }
     }
   });
 
@@ -75,6 +86,21 @@ export default function StatisticsSettingsScreen(props) {
     setProducts([]);
     setSelectedProduct('');
     setSelectedCategory(null);
+  };
+
+  const checkExtraParametersFromRoute = async (extraParams) => {
+    // Seleciona automaticamente a categoria da lista de categorias
+    // caso receba o param de "selectedCategory" e o mesmo
+    // raciocínio vale para o "selectedList"
+
+    if (extraParams?.selectedCategory) {
+      await getCategories();
+      setSelectedCategory(extraParams.selectedCategory);
+    }
+
+    if (extraParams?.selectedList) {
+      setSelectedList(extraParams?.selectedList);
+    }
   };
 
   const getCategories = async () => {
@@ -115,12 +141,27 @@ export default function StatisticsSettingsScreen(props) {
     try {
       const { data } = await request;
       console.log(data);
-      // Depois de buscar navega de volta para a tela de estatísticas
-      props.navigation.navigate('Statistics', {
+
+      const paramsForStatisticsScreen = {
         settings: Object.assign({}, statisticsSettings),
         dataFromServer: data,
         statisticsName: getStatisticsName(),
-      });
+      };
+
+      if (statisticsSettings.statisticType === StatisticsType.CATEGORY) {
+        paramsForStatisticsScreen.extraParams = {
+          selectedCategory,
+        };
+      }
+
+      if (statisticsSettings.statisticType === StatisticsType.LIST) {
+        paramsForStatisticsScreen.extraParams = {
+          selectedList,
+        };
+      }
+
+      // Depois de buscar navega de volta para a tela de estatísticas
+      props.navigation.navigate('Statistics', paramsForStatisticsScreen);
     } catch (error) {
       console.log({ error });
       useToast().show({
@@ -344,7 +385,10 @@ export default function StatisticsSettingsScreen(props) {
                   width={loadingProducts ? '90%' : '100%'}
                   type="text"
                   value={selectedProduct}
-                  onChangeText={searchProducts}
+                  onChangeText={(value) => {
+                    setSelectedProduct(value);
+                    searchProducts(value);
+                  }}
                 />
 
                 {loadingProducts && <Spinner size="sm" />}
@@ -535,7 +579,7 @@ export default function StatisticsSettingsScreen(props) {
           const categoryName = categories.find(
             (cat) => cat.id === selectedCategory
           )?.name;
-          chosenStatisticsString += `- ${categoryName}`;
+          chosenStatisticsString += ` - ${categoryName}`;
         }
         break;
 
@@ -545,12 +589,12 @@ export default function StatisticsSettingsScreen(props) {
             (list) => list.id === selectedList
           )?.nameList;
 
-          chosenStatisticsString += `- ${listName}`;
+          chosenStatisticsString += ` - ${listName}`;
         }
         break;
 
       case StatisticsType.PRODUCT:
-        if (selectedProduct) chosenStatisticsString += `- ${selectedProduct}`;
+        if (selectedProduct) chosenStatisticsString += ` - ${selectedProduct}`;
         break;
 
       default:

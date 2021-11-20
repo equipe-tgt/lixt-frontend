@@ -25,6 +25,8 @@ export default function StatisticsScreen(props) {
     selectedUnityTime: UnityTimes.DAILY,
     statisticType: StatisticsType.TIME,
   });
+  const [statisticsSettingsExtraParams, setStatisticsSettingsExtraParams] =
+    useState({});
 
   const [statisticsName, setStatisticsName] = useState(
     t(statisticsSettings.statisticType)
@@ -32,15 +34,26 @@ export default function StatisticsScreen(props) {
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (a tela de config de estatísticas manda para cá)
-    if (
-      props.route?.params?.settings &&
-      props.route?.params?.dataFromServer &&
-      props.route?.params?.statisticsName
-    ) {
-      // Caso a tela anterior tenha passado settings
-      setStatisticsSettings(props.route.params.settings);
-      setdataFromServer(props.route.params.dataFromServer);
-      setStatisticsName(props.route.params.statisticsName);
+    if (props.route?.params) {
+      const { params } = props.route;
+      console.log({ params });
+
+      if (
+        params?.settings &&
+        params?.dataFromServer &&
+        params?.statisticsName
+      ) {
+        // Caso a tela anterior tenha passado settings
+        setStatisticsSettings(params.settings);
+        setdataFromServer(params.dataFromServer);
+        setStatisticsName(params.statisticsName);
+      }
+
+      // Caso a tela tenha passado configurações extra de busca (categoria selecionada, id da lista, esse tipo de coisa que
+      // sai do padrão do statisticsSettings)
+      if (params?.extraParams) {
+        setStatisticsSettingsExtraParams(params?.extraParams);
+      }
     }
   });
 
@@ -115,6 +128,7 @@ export default function StatisticsScreen(props) {
                 onPress={() =>
                   props.navigation.navigate('StatisticsSettings', {
                     settings: statisticsSettings,
+                    extraParams: statisticsSettingsExtraParams,
                   })
                 }
                 startIcon={
@@ -144,6 +158,7 @@ export default function StatisticsScreen(props) {
                   onPress={() =>
                     props.navigation.navigate('StatisticsSettings', {
                       settings: statisticsSettings,
+                      extraParams: statisticsSettingsExtraParams,
                     })
                   }
                 >
