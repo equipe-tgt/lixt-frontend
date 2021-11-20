@@ -586,21 +586,23 @@ export default function StatisticsSettingsScreen(props) {
 
         {renderStatisticsSelectors()}
 
-        {/* Seletor de datas */}
-        <VStack mt={2}>
-          <Text fontSize={18} bold marginBottom={2}>
-            {t('selectDates')}
-          </Text>
-          <StatisticsDateInput
-            getDateInterval={renderDateInterval}
-            setStatisticsSettings={setStatisticsSettings}
-            statisticsSettings={statisticsSettings}
-            setIsSelectorOpen={setIsSelectorOpen}
-            translate={t}
-            setCurrentParameter={setCurrentParameter}
-            currentParameter={currentParameter}
-          />
-        </VStack>
+        {/* Seletor de datas - exibido caso não seja filtragem por local da compra */}
+        {statisticsSettings.statisticType !== StatisticsType.PURCHASE_LOCAL && (
+          <VStack mt={2}>
+            <Text fontSize={18} bold marginBottom={2}>
+              {t('selectDates')}
+            </Text>
+            <StatisticsDateInput
+              getDateInterval={renderDateInterval}
+              setStatisticsSettings={setStatisticsSettings}
+              statisticsSettings={statisticsSettings}
+              setIsSelectorOpen={setIsSelectorOpen}
+              translate={t}
+              setCurrentParameter={setCurrentParameter}
+              currentParameter={currentParameter}
+            />
+          </VStack>
+        )}
 
         <Button mt={5} isLoading={loading} onPress={getStatisticsData}>
           {t('search')}
