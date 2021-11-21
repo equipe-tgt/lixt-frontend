@@ -1,7 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import {
   Box,
   VStack,
@@ -17,11 +16,13 @@ import { screenBasicStyle as style } from '../../styles/style';
 import { AuthContext } from '../../context/AuthProvider';
 import { ListContext } from '../../context/ListProvider';
 import ListMembersService from '../../services/ListMembersService';
+import RemoveMemberModal from '../../components/RemoveMemberModal';
 
 export default function ListDetailsScreen(props) {
   const toast = useToast();
   const { user } = useContext(AuthContext);
   const { lists, setLists } = useContext(ListContext);
+  const [isRemoveMemberModalOpened, setIsRemoveMemberModalOpened] = useState(false);
 
   const { t } = useTranslation();
 
@@ -32,9 +33,9 @@ export default function ListDetailsScreen(props) {
   });
   const [loading, setLoading] = useState(false);
 
-  useFocusEffect(() => {
+  useEffect(() => {
     setList(props.route.params.list);
-  });
+  }, []);
 
   const leaveList = async () => {
     try {
@@ -69,6 +70,32 @@ export default function ListDetailsScreen(props) {
     return list.listMembers.find((listMember) => listMember.userId === user.id);
   };
 
+  const removeMember = async (idMemberList) => {
+    try {
+      await ListMembersService.deleteInvitation(idMemberList, user);
+
+      const editedMembersList = list.listMembers.filter(
+        (lm) => lm.id !== idMemberList
+      );
+      setList({
+        ...list,
+        listMembers: editedMembersList
+      });
+
+      toast.show({
+        status: 'success',
+        title: t('memberRemoved'),
+      });
+    } catch (error) {
+      toast.show({
+        status: 'warning',
+        title: t('errorServerDefault'),
+      });
+    } finally {
+      setIsRemoveMemberModalOpened(false);
+    }
+  };
+
   return list ? (
     <SafeAreaView style={style.container}>
       <VStack mt={5} width="90%" mx="auto">
@@ -90,28 +117,50 @@ export default function ListDetailsScreen(props) {
               : t('listHasNoDescription')}
           </Text>
         </Box>
-        <HStack justifyContent="space-between" width="70%" mb={3}>
-          <Box>
-            <Text fontWeight="bold">{t('products')}</Text>
-            <Text>{list?.productsOfList?.length || 0}</Text>
-          </Box>
-          <Box>
-            <Text fontWeight="bold">{t('members')}</Text>
-            {
-              list?.listMembers
-                .filter((listMember) => listMember.statusListMember === 'ACCEPT')
-                .map((listMember, index) => (
-                  <Box mt={4} key={listMember.id} testID={`list-member-${index}`}>
-                    <Text fontWeight="bold">{listMember.user.name}</Text>
-                    <Text fontSize="md">
-                      @{listMember.user.username}{' '}
-                      {listMember.user.id === user.id ? `(${t('you')})` : null}
-                    </Text>
-                  </Box>
-                ))
-            }
-          </Box>
-        </HStack>
+        <Box mb={5}>
+          <Text fontWeight="bold">{t('products')}</Text>
+          <Text>{list?.productsOfList?.length || 0}</Text>
+        </Box>
+        <Box mb={5}>
+          <Text fontWeight="bold">{t('members')}</Text>
+          {
+            list.listMembers && list.listMembers.length > 0 ? (
+              <>
+                {
+                  list?.listMembers
+                  .filter((listMember) => listMember.statusListMember === 'ACCEPT')
+                  .map((listMember, index) => (
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="space-between"
+                      mt={4}
+                      key={listMember.id}
+                      testID={`list-member-${index}`}
+                    >
+                      <Box>
+                        <Text fontWeight="bold">{listMember.user.name}</Text>
+                        <Text fontSize="md">@{listMember.user.username}{' '}</Text>
+                      </Box>
+                      {user.id === list.ownerId && (
+                        <Button
+                          isLoading={isRemoveMemberModalOpened === listMember.id}
+                          isLoadingText={t('removing')}
+                          size="sm"
+                          variant="link"
+                          testID={`remove-member-button-${index}`}
+                          onPress={() => setIsRemoveMemberModalOpened(listMember.id)}
+                        >
+                          {t('remove')}
+                        </Button>
+                      )}
+                    </Box>
+                  ))
+                }
+              </>
+            ) : <Text>{t('noMembers')}</Text>
+          }
+        </Box>
 
         {user.id === list.ownerId ? (
           <Button
@@ -137,6 +186,18 @@ export default function ListDetailsScreen(props) {
             {t('leaveList')}
           </Button>
         )}
+
+        {
+          list.ownerId === user.id ? (
+            <RemoveMemberModal
+              isOpen={!!isRemoveMemberModalOpened}
+              closeModal={(value) => {
+                if (value) removeMember(isRemoveMemberModalOpened)
+                else setIsRemoveMemberModalOpened(false);
+              }}
+            />
+          ) : null
+        }
       </VStack>
     </SafeAreaView>
   ) : (
