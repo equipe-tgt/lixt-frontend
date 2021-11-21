@@ -64,7 +64,7 @@ export default function UniqueDayPicker({
             minDate={getMinMaxDate().minDate}
             previousTitle={translate('previous')}
             nextTitle={translate('next')}
-            disabledDates={(date) => date.isAfter(moment())}
+            disabledDates={(date) => date.isAfter(moment().endOf('date'))}
             selectedDayColor="#06b6d4"
             onDateChange={handleDateChange}
             weekdays={weekdays}

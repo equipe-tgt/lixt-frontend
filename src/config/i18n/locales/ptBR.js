@@ -251,4 +251,7 @@ export default {
   productName: 'Nome do produto',
   statisticsSettings: 'Configurações das estatísticas',
   moreFilters: 'Mais filtros (opcionais)',
+  peaks: 'Picos',
+  lowestPoint: 'Menor ponto',
+  highestPoint: 'Maior ponto',
 };

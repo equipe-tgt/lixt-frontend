@@ -44,7 +44,7 @@ export default function DayRangePicker({
             previousTitle={translate('previous')}
             nextTitle={translate('next')}
             maxRangeDuration={31}
-            disabledDates={(date) => date.isAfter(moment())}
+            disabledDates={(date) => date.isAfter(moment().endOf('date'))}
             selectedDayColor="#06b6d4"
             onDateChange={(value, currentParameter) => {
               const current =

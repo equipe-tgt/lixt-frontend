@@ -2,7 +2,16 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
-import { Button, Text, HStack, Box, VStack, Icon, View } from 'native-base';
+import {
+  Button,
+  Text,
+  HStack,
+  Box,
+  VStack,
+  Icon,
+  ScrollView,
+  View,
+} from 'native-base';
 import moment from 'moment';
 
 import { screenBasicStyle as style } from '../../styles/style';
@@ -11,7 +20,9 @@ import { Ionicons } from '@expo/vector-icons';
 import BarChartWrapper from '../../components/BarChartWrapper';
 import LineChartWrapper from '../../components/LineChartWrapper';
 
-import { useTranslation } from 'react-i18next';
+import PeakCard from '../../components/PeakCard';
+
+import { useTranslation, getI18n } from 'react-i18next';
 
 import { UnityTimes, StatisticsType } from '../../utils/StatisticsUtils';
 
@@ -107,86 +118,175 @@ export default function StatisticsScreen(props) {
     }
   };
 
+  const formatDate = (data) => {
+    const isPortuguese = getI18n().language === 'pt_BR';
+
+    switch (statisticsSettings.selectedUnityTime) {
+      case UnityTimes.DAILY:
+        // O parâmetro "time" de dia vem como <dia>/<numero-mês>
+        const preFormattedDate = moment(data.time, 'DD/MM');
+        return moment(preFormattedDate).format(
+          isPortuguese ? 'DD/MMM' : 'MMM/DD'
+        );
+
+      case UnityTimes.WEEKLY:
+        const formatString = isPortuguese ? 'DD/MMM' : 'MMM/DD';
+
+        // O parâmetro "time" de semana vem como <numero-da-semana>/<ano>
+        const weekNumber = Number(data.time.slice(0, 2));
+        const yearNumber = Number(data.time.slice(3));
+
+        const startOfWeek = moment()
+          .year(yearNumber)
+          .week(weekNumber + 1)
+          .day('Monday');
+
+        const endOfWeek = moment(startOfWeek).add(6, 'days');
+
+        return `${startOfWeek.format(formatString)} - ${endOfWeek.format(
+          formatString
+        )}`;
+
+      case UnityTimes.MONTHLY:
+        // O parâmetro "time" de mês vem como <numero-mês>/<ano> e queremos como <abreviação-nome-mês>/<ano>
+        return moment(data.time, 'MM/yyyy').format('MMM/yyyy');
+
+      default:
+        return moment(data.date).format(
+          isPortuguese ? 'DD/MM/yyyy' : 'MM/DD/yyyy'
+        );
+    }
+  };
+  const renderPeaksAndTotal = () => {
+    if (
+      statisticsSettings.statisticType !== StatisticsType.PURCHASE_LOCAL &&
+      dataFromServer.length > 0
+    ) {
+      const ascOrderedData = dataFromServer.sort((a, b) => a.price > b.price);
+
+      const totalAmount = dataFromServer.reduce((acc, currentData) => {
+        return (acc += currentData.price);
+      }, 0);
+
+      return (
+        <VStack>
+          <Text
+            textAlign="center"
+            textTransform="uppercase"
+            style={{ letterSpacing: 4 }}
+          >
+            {t('total')}
+          </Text>
+          <Text textAlign="center">{`${t('currency')} ${totalAmount}`}</Text>
+
+          <HStack justifyContent="space-between" my={2}>
+            <PeakCard
+              label={t('lowestPoint')}
+              date={formatDate(ascOrderedData[0])}
+              price={`${t('currency')} ${ascOrderedData[0].price}`}
+              isUp={false}
+            />
+            <PeakCard
+              label={t('highestPoint')}
+              date={formatDate(ascOrderedData[ascOrderedData.length - 1])}
+              price={`${t('currency')} ${
+                ascOrderedData[ascOrderedData.length - 1].price
+              }`}
+              isUp={true}
+            />
+          </HStack>
+        </VStack>
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={style.container}>
-      <View width="90%" mx="auto">
-        <VStack mb={5}>
-          <Box>
-            <HStack mx="auto" alignItems="center" maxWidth="80%">
-              <VStack mb={2}>
-                <Text fontSize="sm" textAlign="center">
-                  {t('chosenStatistics')}
-                </Text>
-                <Text fontSize="lg" fontWeight="bold" textAlign="center">
-                  {statisticsName}
-                </Text>
-              </VStack>
+      <ScrollView>
+        <View width="90%" mx="auto">
+          <VStack mb={5}>
+            <Box>
+              <HStack mx="auto" alignItems="center" maxWidth="80%">
+                <VStack mb={2}>
+                  <Text fontSize="sm" textAlign="center">
+                    {t('chosenStatistics')}
+                  </Text>
+                  <Text fontSize="lg" fontWeight="bold" textAlign="center">
+                    {statisticsName}
+                  </Text>
+                </VStack>
 
-              <Button
-                variant="ghost"
-                onPress={() =>
-                  props.navigation.navigate('StatisticsSettings', {
-                    settings: statisticsSettings,
-                    extraParams: statisticsSettingsExtraParams,
-                  })
-                }
-                startIcon={
-                  <Icon
-                    size="sm"
-                    as={<Ionicons name="settings" />}
-                    color="light.600"
-                  />
-                }
-              />
-            </HStack>
-
-            {/*  Caso o tipo de estatísticas seja uma relacionada com datas (qualquer uma que não seja a PURCHASE_LOCAL)
-            e não houver um intervalo de datas selecionado, mostra uma mensagem indicando isso e um botão
-          */}
-            {statisticsSettings.statisticType !==
-              StatisticsType.PURCHASE_LOCAL &&
-            !statisticsSettings.startDate &&
-            !statisticsSettings.endDate ? (
-              <Box mt={3}>
-                <Text fontSize="sm" textAlign="center" mr={5}>
-                  {renderDateInterval()}
-                </Text>
                 <Button
-                  mt={2}
-                  size="sm"
+                  variant="ghost"
                   onPress={() =>
                     props.navigation.navigate('StatisticsSettings', {
                       settings: statisticsSettings,
                       extraParams: statisticsSettingsExtraParams,
                     })
                   }
-                >
-                  {t('selectOne')}
-                </Button>
-              </Box>
-            ) : null}
+                  startIcon={
+                    <Icon
+                      size="sm"
+                      as={<Ionicons name="settings" />}
+                      color="light.600"
+                    />
+                  }
+                />
+              </HStack>
 
-            {/*  Caso o tipo de estatísticas seja uma relacionada com datas (qualquer uma que não seja a PURCHASE_LOCAL)
+              {/*  Caso o tipo de estatísticas seja uma relacionada com datas (qualquer uma que não seja a PURCHASE_LOCAL)
+            e não houver um intervalo de datas selecionado, mostra uma mensagem indicando isso e um botão
+          */}
+              {statisticsSettings.statisticType !==
+                StatisticsType.PURCHASE_LOCAL &&
+              !statisticsSettings.startDate &&
+              !statisticsSettings.endDate ? (
+                <Box mt={3}>
+                  <Text fontSize="sm" textAlign="center" mr={5}>
+                    {renderDateInterval()}
+                  </Text>
+                  <Button
+                    mt={2}
+                    size="sm"
+                    onPress={() =>
+                      props.navigation.navigate('StatisticsSettings', {
+                        settings: statisticsSettings,
+                        extraParams: statisticsSettingsExtraParams,
+                      })
+                    }
+                  >
+                    {t('selectOne')}
+                  </Button>
+                </Box>
+              ) : null}
+
+              {/*  Caso o tipo de estatísticas seja uma relacionada com datas (qualquer uma que não seja a PURCHASE_LOCAL)
             e tenha o intervalo de datas
           */}
-            {statisticsSettings.statisticType !==
-              StatisticsType.PURCHASE_LOCAL &&
-            statisticsSettings.startDate &&
-            statisticsSettings.endDate ? (
-              <Box>
-                <Text fontSize="sm" textAlign="center" mr={5}>
-                  {renderDateInterval()}
-                </Text>
-              </Box>
-            ) : null}
-          </Box>
-        </VStack>
+              {statisticsSettings.statisticType !==
+                StatisticsType.PURCHASE_LOCAL &&
+              statisticsSettings.startDate &&
+              statisticsSettings.endDate ? (
+                <Box>
+                  <Text fontSize="sm" textAlign="center" mr={5}>
+                    {renderDateInterval()}
+                  </Text>
+                </Box>
+              ) : null}
+            </Box>
+          </VStack>
 
-        {dataFromServer &&
-          statisticsSettings.startDate &&
-          statisticsSettings.endDate &&
-          renderChart()}
-      </View>
+          {dataFromServer &&
+            statisticsSettings.startDate &&
+            statisticsSettings.endDate &&
+            renderChart()}
+
+          {dataFromServer &&
+            statisticsSettings.startDate &&
+            statisticsSettings.endDate &&
+            renderPeaksAndTotal()}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

@@ -37,7 +37,7 @@ import StatisticsDateInput from '../../components/StatisticsDateInput';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 
 export default function StatisticsSettingsScreen(props) {
   const { t } = useTranslation();
@@ -521,7 +521,12 @@ export default function StatisticsSettingsScreen(props) {
 
                   <HStack>
                     <Select
-                      width={loadingPurchaseLocals ? '90%' : '100%'}
+                      width={
+                        loadingPurchaseLocals ||
+                        productDetailConfig.purchaseLocal
+                          ? '90%'
+                          : '100%'
+                      }
                       isDisabled={loadingPurchaseLocals}
                       onValueChange={(val) => {
                         setProductDetailConfig({
@@ -539,6 +544,22 @@ export default function StatisticsSettingsScreen(props) {
                         />
                       ))}
                     </Select>
+                    {loadingPurchaseLocals && <Spinner size="sm" />}
+                    {!loadingPurchaseLocals &&
+                      productDetailConfig.purchaseLocal && (
+                        <Button
+                          onPress={() => {
+                            setProductDetailConfig({
+                              ...productDetailConfig,
+                              purchaseLocal: null,
+                            });
+                          }}
+                          variant="ghost"
+                          startIcon={
+                            <Ionicons name="close" size={24} color="#777" />
+                          }
+                        />
+                      )}
                   </HStack>
                 </Box>
               )}
@@ -552,6 +573,8 @@ export default function StatisticsSettingsScreen(props) {
 
   // Verifica se o botão de buscar está desabilitado
   const getIsButtonDisabled = () => {
+    // A regra geral é: data inicial e final devem estar selecionadas,
+    // outras regras podem ser adicionadas a essa dependendo do tipo de estatística selecionada
     const basicRule =
       !statisticsSettings.startDate || !statisticsSettings.endDate;
 
