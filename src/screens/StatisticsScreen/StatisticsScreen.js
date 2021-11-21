@@ -25,6 +25,7 @@ import PeakCard from '../../components/PeakCard';
 import { useTranslation, getI18n } from 'react-i18next';
 
 import { UnityTimes, StatisticsType } from '../../utils/StatisticsUtils';
+import PurchaseLocalTable from '../../components/PurchaseLocalTable';
 
 export default function StatisticsScreen(props) {
   const { t } = useTranslation();
@@ -84,8 +85,6 @@ export default function StatisticsScreen(props) {
 
   const renderChart = () => {
     switch (statisticsSettings.statisticType) {
-      case StatisticsType.PURCHASE_LOCAL:
-        return;
       case StatisticsType.TIME:
       case StatisticsType.LIST:
         return (
@@ -111,6 +110,11 @@ export default function StatisticsScreen(props) {
             preFormattedData={dataFromServer}
             selectedUnityTime={UnityTimes.MONTHLY}
           />
+        );
+
+      case StatisticsType.PURCHASE_LOCAL:
+        return (
+          <PurchaseLocalTable preFormattedData={dataFromServer} translate={t} />
         );
 
       default:
@@ -276,10 +280,16 @@ export default function StatisticsScreen(props) {
             </Box>
           </VStack>
 
-          {dataFromServer &&
+          {/* Mostra o gráfico caso tenha dados do servidor e datas configuradas (para os casos de CATEGORY, TIME, PRODUCT e LIST)
+           ou caso o tipo de estatística selecionada seja PURCHASE_LOCAL (ela não tem data pra configurar e o
+            componente sabe lidar com a ausência de dados)
+           */}
+          {(dataFromServer &&
             statisticsSettings.startDate &&
-            statisticsSettings.endDate &&
-            renderChart()}
+            statisticsSettings.endDate) ||
+            (statisticsSettings.statisticType ===
+              StatisticsType.PURCHASE_LOCAL &&
+              renderChart())}
 
           {dataFromServer &&
             statisticsSettings.startDate &&

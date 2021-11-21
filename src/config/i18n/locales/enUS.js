@@ -254,4 +254,9 @@ export default {
   peaks: 'Peaks',
   lowestPoint: 'Lowest point',
   highestPoint: 'Highest point',
+
+  noPurchaseLocalsFound: 'No purchase locals found',
+  lastPurchase: 'Last purchase',
+  purchaseAmount: 'Purchase amt.',
+  totalValue: 'Total value',
 };

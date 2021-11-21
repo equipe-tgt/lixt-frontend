@@ -254,4 +254,8 @@ export default {
   peaks: 'Picos',
   lowestPoint: 'Menor ponto',
   highestPoint: 'Maior ponto',
+  noPurchaseLocalsFound: 'Nenhum local de compra registrado',
+  lastPurchase: 'Última compra',
+  purchaseAmount: 'Qtd. compras',
+  totalValue: 'Valor total',
 };
