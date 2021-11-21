@@ -23,7 +23,20 @@ export default function LineChartWrapper({
       data: [],
     };
 
-    for (const preData of preFormattedData) {
+    let sortedData;
+
+    // Organizando array por ordem de data crescente
+    if (selectedUnityTime === UnityTimes.MONTHLY) {
+      sortedData = preFormattedData.sort(
+        (a, b) => moment(a.month, 'MM/yyyy') > moment(b.month, 'MM/yyyy')
+      );
+    } else {
+      sortedData = preFormattedData.sort(
+        (a, b) => moment(a.date) > moment(b.date)
+      );
+    }
+
+    for (const preData of sortedData) {
       if (selectedUnityTime === UnityTimes.MONTHLY) {
         const month = moment(preData.month, 'MM/yyyy').format('MMM/yyyy');
         labels.push(month);

@@ -588,6 +588,11 @@ export default function StatisticsSettingsScreen(props) {
       case StatisticsType.LIST:
         return basicRule || !selectedList;
 
+      case StatisticsType.PURCHASE_LOCAL:
+        // até agora a estatística por locais da compra não tem nenhuma regra
+        // portanto o botão de buscar não estará desabilitado
+        return false;
+
       default:
         return basicRule;
     }

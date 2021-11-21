@@ -20,12 +20,18 @@ export default function BarChartWrapper({
     const datasetsItem = {
       data: [],
     };
+    let sortedData = [];
 
     const isPortuguese = getI18n().language === 'pt_BR';
 
     switch (selectedUnityTime) {
       case UnityTimes.DAILY:
-        for (const preData of preFormattedData) {
+        // Organiza o array por ordem crescente de data
+        sortedData = preFormattedData.sort(
+          (a, b) => moment(a.time, 'DD/MM') > moment(b.time, 'DD/MM')
+        );
+
+        for (const preData of sortedData) {
           // O parâmetro "time" de dia vem como <dia>/<numero-mês>
           const date = moment(preData.time, 'DD/MM');
           labels.push(moment(date).format(isPortuguese ? 'DD/MMM' : 'MMM/DD'));
@@ -34,12 +40,14 @@ export default function BarChartWrapper({
         break;
 
       case UnityTimes.WEEKLY:
-        for (const preData of preFormattedData) {
-          const formatString = isPortuguese ? 'DD/MMM' : 'MMM/DD';
+        const formatString = isPortuguese ? 'DD/MMM' : 'MMM/DD';
 
+        // Rearranja a resposta do servidor para que as semanas que vem como <numero-da-semana>/<ano> sejam
+        // objetos de datas concretos
+        const completeDatetimeArray = preFormattedData.map((item) => {
           // O parâmetro "time" de semana vem como <numero-da-semana>/<ano>
-          const weekNumber = Number(preData.time.slice(0, 2));
-          const yearNumber = Number(preData.time.slice(3));
+          const weekNumber = Number(item.time.slice(0, 2));
+          const yearNumber = Number(item.time.slice(3));
 
           const startOfWeek = moment()
             .year(yearNumber)
@@ -52,12 +60,29 @@ export default function BarChartWrapper({
             formatString
           )} - ${endOfWeek.format(formatString)}`;
 
-          labels.push(label);
-          datasetsItem.data.push(preData.price);
-        }
+          return {
+            label,
+            startOfWeek,
+            endOfWeek,
+            price: item.price,
+          };
+        });
+        sortedData = completeDatetimeArray.sort(
+          (a, b) => moment(a.startOfWeek) > moment(b.startOfWeek)
+        );
+
+        sortedData.forEach((purchaseData) => {
+          labels.push(purchaseData.label);
+          datasetsItem.data.push(purchaseData.price);
+        });
+
         break;
 
       case UnityTimes.MONTHLY:
+        // Organiza o array por ordem crescente de data
+        sortedData = preFormattedData.sort(
+          (a, b) => moment(a.time, 'MM/yyyy') > moment(b.time, 'MM/yyyy')
+        );
         for (const preData of preFormattedData) {
           // O parâmetro "time" de mês vem como <numero-mês>/<ano> e queremos como <abreviação-nome-mês>/<ano>
           const month = moment(preData.time, 'MM/yyyy').format('MMM/yyyy');
