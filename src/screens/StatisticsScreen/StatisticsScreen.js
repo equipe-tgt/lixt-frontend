@@ -36,7 +36,6 @@ export default function StatisticsScreen(props) {
     // Verifica se alguma tela enviou props para essa (a tela de config de estatísticas manda para cá)
     if (props.route?.params) {
       const { params } = props.route;
-      console.log({ params });
 
       if (
         params?.settings &&

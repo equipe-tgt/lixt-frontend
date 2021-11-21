@@ -250,5 +250,5 @@ export default {
   otherPages: 'Other pages that may interest you',
   productName: 'Product name',
   statisticsSettings: 'Statistics settings',
-  moreFilters: 'More filters',
+  moreFilters: 'More filters (optionals)',
 };

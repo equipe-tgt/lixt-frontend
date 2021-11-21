@@ -29,7 +29,6 @@ export default function LineChartWrapper({
         labels.push(month);
         datasetsItem.data.push(preData.price);
       } else {
-        console.log('esse é o caso da filtragem por ');
         labels.push(
           moment(preData.date).format(
             isPortuguese ? 'DD/MM/yyyy' : 'MM/DD/yyyy'
@@ -44,7 +43,6 @@ export default function LineChartWrapper({
       datasets: [datasetsItem],
     };
   };
-  // console.log(formatChartData());
   const chartData = formatChartData();
 
   return preFormattedData && preFormattedData?.length ? (

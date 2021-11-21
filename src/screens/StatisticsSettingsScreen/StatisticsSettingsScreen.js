@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import {
@@ -32,6 +32,7 @@ import { ListContext } from '../../context/ListProvider';
 import StatisticsService from '../../services/StatisticsService';
 import CategoryService from '../../services/CategoryService';
 import ProductService from '../../services/ProductService';
+import PurchaseLocalService from '../../services/PurchaseLocalService';
 import StatisticsDateInput from '../../components/StatisticsDateInput';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
@@ -56,9 +57,15 @@ export default function StatisticsSettingsScreen(props) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [products, setProducts] = useState([]);
+  const [productDetailConfig, setProductDetailConfig] = useState({
+    purchaseLocal: null,
+    brand: null,
+  });
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [isSelectorOpen, setIsSelectorOpen] = useState(null);
   const [loadingProducts, setLoadingProducts] = useState(false);
+  const [loadingPurchaseLocals, setLoadingPurchaseLocals] = useState(false);
+  const [userPurchaseLocals, setUserPurchaseLocals] = useState([]);
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (a tela de estatísticas manda para cá)
@@ -80,18 +87,25 @@ export default function StatisticsSettingsScreen(props) {
     }
   });
 
+  useEffect(() => {
+    if (showMoreFilters && userPurchaseLocals.length === 0) {
+      getPurchaseLocalsByUser();
+    }
+  }, [showMoreFilters]);
+
   const resetValues = () => {
     setSelectedList(null);
     setCurrentParameter(null);
     setProducts([]);
     setSelectedProduct('');
     setSelectedCategory(null);
+    setUserPurchaseLocals([]);
   };
 
   const checkExtraParametersFromRoute = async (extraParams) => {
     // Seleciona automaticamente a categoria da lista de categorias
     // caso receba o param de "selectedCategory" e o mesmo
-    // raciocínio vale para o "selectedList"
+    // raciocínio vale para o "selectedList" e para os demais
 
     if (extraParams?.selectedCategory) {
       await getCategories();
@@ -100,6 +114,19 @@ export default function StatisticsSettingsScreen(props) {
 
     if (extraParams?.selectedList) {
       setSelectedList(extraParams?.selectedList);
+    }
+
+    if (extraParams?.selectedProduct) {
+      setSelectedProduct(extraParams?.selectedProduct);
+    }
+
+    if (extraParams?.purchaseLocal) {
+      await getPurchaseLocalsByUser();
+      setShowMoreFilters(true);
+      setProductDetailConfig({
+        ...productDetailConfig,
+        purchaseLocal: extraParams.purchaseLocal,
+      });
     }
   };
 
@@ -140,7 +167,6 @@ export default function StatisticsSettingsScreen(props) {
 
     try {
       const { data } = await request;
-      console.log(data);
 
       const paramsForStatisticsScreen = {
         settings: Object.assign({}, statisticsSettings),
@@ -160,6 +186,17 @@ export default function StatisticsSettingsScreen(props) {
         };
       }
 
+      if (statisticsSettings.statisticType === StatisticsType.PRODUCT) {
+        const extraParams = {
+          selectedProduct,
+        };
+        if (productDetailConfig.purchaseLocal) {
+          extraParams.purchaseLocal = productDetailConfig.purchaseLocal;
+        }
+
+        paramsForStatisticsScreen.extraParams = extraParams;
+      }
+
       // Depois de buscar navega de volta para a tela de estatísticas
       props.navigation.navigate('Statistics', paramsForStatisticsScreen);
     } catch (error) {
@@ -174,7 +211,10 @@ export default function StatisticsSettingsScreen(props) {
   };
 
   const getStatisticsRequest = () => {
-    let periodFilterObject;
+    let periodFilterObject = {
+      startDate: moment(statisticsSettings.startDate).toISOString(),
+      endDate: moment(statisticsSettings.endDate).toISOString(),
+    };
 
     switch (statisticsSettings.statisticType) {
       case StatisticsType.PURCHASE_LOCAL:
@@ -221,7 +261,17 @@ export default function StatisticsSettingsScreen(props) {
         );
 
       case StatisticsType.PRODUCT:
-        periodFilterObject.name = selectedProduct;
+        periodFilterObject = {
+          minDate: moment(statisticsSettings.startDate).toISOString(),
+          maxDate: moment(statisticsSettings.endDate).toISOString(),
+          name: selectedProduct,
+        };
+
+        if (productDetailConfig?.purchaseLocal) {
+          periodFilterObject.purchaseLocalId =
+            productDetailConfig.purchaseLocal;
+        }
+
         return StatisticsService.getExpensesPer(
           getUrl(statisticsSettings.statisticType),
           periodFilterObject,
@@ -251,6 +301,34 @@ export default function StatisticsSettingsScreen(props) {
       }
     } else {
       setProducts([]);
+    }
+  };
+
+  const getPurchaseLocalsByUser = async () => {
+    setLoadingPurchaseLocals(true);
+    try {
+      const { data } = await PurchaseLocalService.findByUser(user);
+      // Se for um local do MapBox (que insre vírgulas entre os trechos do endereço, pega somente o nome do lugar
+      // e cria uma substring para o restante do endereço)
+      const formattedPlaces = data.map((purchaseLocal) => {
+        if (purchaseLocal.name.includes(',')) {
+          return {
+            ...purchaseLocal,
+            name: purchaseLocal.name.slice(0, purchaseLocal.name.indexOf(',')),
+            subname: purchaseLocal.name.slice(purchaseLocal.name.indexOf(',')),
+          };
+        }
+        return purchaseLocal;
+      });
+
+      setUserPurchaseLocals(formattedPlaces);
+    } catch (error) {
+      useToast().show({
+        title: t('errorServerDefault'),
+        status: 'warning',
+      });
+    } finally {
+      setLoadingPurchaseLocals(false);
     }
   };
 
@@ -428,20 +506,40 @@ export default function StatisticsSettingsScreen(props) {
                 mt={2}
                 size="sm"
                 variant="ghost"
-                colorScheme="blueGray"
+                colorScheme="primary"
                 startIcon={<Icon size="sm" as={<AntDesign name="filter" />} />}
               >
                 {t('moreFilters')}
               </Button>
 
+              {/* Filtros abertos */}
               {showMoreFilters && (
                 <Box>
-                  <Text>Aqui vão ter filtros</Text>
-                  <Text>Aqui vão ter filtros</Text>
-                  <Text>Aqui vão ter filtros</Text>
-                  <Text>Aqui vão ter filtros</Text>
-                  <Text>Aqui vão ter filtros</Text>
-                  <Text>Aqui vão ter filtros</Text>
+                  <Text fontSize={18} bold my={4}>
+                    {t('purchaseLocal')}
+                  </Text>
+
+                  <HStack>
+                    <Select
+                      width={loadingPurchaseLocals ? '90%' : '100%'}
+                      isDisabled={loadingPurchaseLocals}
+                      onValueChange={(val) => {
+                        setProductDetailConfig({
+                          ...productDetailConfig,
+                          purchaseLocal: val,
+                        });
+                      }}
+                      selectedValue={productDetailConfig.purchaseLocal}
+                    >
+                      {userPurchaseLocals.map((purchaseLocal, index) => (
+                        <Select.Item
+                          value={purchaseLocal?.id}
+                          label={purchaseLocal?.name}
+                          key={index}
+                        />
+                      ))}
+                    </Select>
+                  </HStack>
                 </Box>
               )}
             </VStack>
@@ -449,6 +547,26 @@ export default function StatisticsSettingsScreen(props) {
         );
       default:
         break;
+    }
+  };
+
+  // Verifica se o botão de buscar está desabilitado
+  const getIsButtonDisabled = () => {
+    const basicRule =
+      !statisticsSettings.startDate || !statisticsSettings.endDate;
+
+    switch (statisticsSettings.statisticType) {
+      case StatisticsType.CATEGORY:
+        return basicRule || !selectedCategory;
+
+      case StatisticsType.PRODUCT:
+        return basicRule || !selectedProduct || !selectedProduct.length;
+
+      case StatisticsType.LIST:
+        return basicRule || !selectedList;
+
+      default:
+        return basicRule;
     }
   };
 
@@ -648,7 +766,12 @@ export default function StatisticsSettingsScreen(props) {
           </VStack>
         )}
 
-        <Button mt={5} isLoading={loading} onPress={getStatisticsData}>
+        <Button
+          mt={5}
+          isLoading={loading}
+          onPress={getStatisticsData}
+          isDisabled={getIsButtonDisabled()}
+        >
           {t('search')}
         </Button>
 
