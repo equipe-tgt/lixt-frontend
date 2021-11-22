@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import 'moment/locale/pt-br';
 import { LineChart } from 'react-native-chart-kit';
 import { ScrollView, Center, Text } from 'native-base';
 import { Dimensions } from 'react-native';
@@ -17,6 +18,11 @@ export default function LineChartWrapper({
 
   const formatChartData = () => {
     const isPortuguese = getI18n().language === 'pt_BR';
+
+    // Caso estiver em português, deixa o moment.js regionalizado pra pt-br
+    if (isPortuguese) {
+      moment.locale('pt-br');
+    }
 
     const labels = [];
     const datasetsItem = {

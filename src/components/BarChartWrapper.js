@@ -6,6 +6,7 @@ import { BarChart } from 'react-native-chart-kit';
 import { ScrollView, Center, Text } from 'native-base';
 import { UnityTimes } from '../utils/StatisticsUtils';
 import moment from 'moment';
+import 'moment/locale/pt-br';
 import { getI18n, useTranslation } from 'react-i18next';
 
 export default function BarChartWrapper({
@@ -23,6 +24,11 @@ export default function BarChartWrapper({
     let sortedData = [];
 
     const isPortuguese = getI18n().language === 'pt_BR';
+
+    // Caso estiver em português, deixa o moment.js regionalizado pra pt-br
+    if (isPortuguese) {
+      moment.locale('pt-br');
+    }
 
     switch (selectedUnityTime) {
       case UnityTimes.DAILY:
