@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import {
-  Center,
   Text,
   Accordion,
   Box,
@@ -36,16 +35,26 @@ export default function PurchaseLocalTable({ preFormattedData, translate }) {
     SortingOrders.DESC
   );
 
+  // Ao receber a prop dos dados do servidor começa a formatar e seta
+  // o formattedData
   useEffect(() => {
-    getFormattedData();
+    (async () => {
+      const firstFormatted = await getFormattedData(preFormattedData);
+      setFormattedData(firstFormatted);
+    })();
   }, [preFormattedData]);
 
+  // Ao modificar o parâmetro de listagem ou a ordenação, ordena e
+  // organiza a lista
   useEffect(() => {
-    sortList();
+    setFormattedData(sortList());
   }, [currentSortingOption, currentSortingOrder]);
 
-  const getFormattedData = () => {
-    const formattedData = preFormattedData.map((preData) => {
+  // Pega todos os itens e aqueles que tiverem subname (nome da rua, número da casa e etc por conta
+  // da API do MapBox) separa entre name e subname e aglutina num objeto com o restante dos dados
+  // método usado somente na primeira vez que passa os dados pra cá
+  const getFormattedData = async (data) => {
+    const localFormattedData = data.map((preData) => {
       const nameAndSubname = getFormattedPurchaseLocalName(
         preData.purchaseLocalName
       );
@@ -55,20 +64,25 @@ export default function PurchaseLocalTable({ preFormattedData, translate }) {
         ...nameAndSubname,
       };
     });
-    sortList(formattedData);
+    return sortList(localFormattedData);
   };
 
+  // O parâmetro list só é preenchido na primeira vez que renderiza o componente
+  // depois o valor que será usado será formattedData (que passa de um array vazio para um preenchido
+  // e ordenado no final da rendereização)
   const sortList = (list = null) => {
     const copy = list || [...formattedData];
-    copy.sort((a, b) => {
+    return copy.sort((a, b) => {
       if (currentSortingOrder === SortingOrders.ASC) {
         return a[currentSortingOption] > b[currentSortingOption];
       }
       return a[currentSortingOption] < b[currentSortingOption];
     });
-    setFormattedData(copy);
   };
 
+  // Caso o nome do local da compra tiver vírgula quer dizer que veio do MapBox
+  // e aí separa o nome do estabelecimento pelo que vem até a primeira vírgula e o restante
+  // "subname" é o endereço. Caso o nome não tiver vírgula, só retorna
   const getFormattedPurchaseLocalName = (val) => {
     if (val.includes(',')) {
       return {
@@ -100,7 +114,7 @@ export default function PurchaseLocalTable({ preFormattedData, translate }) {
     return moment(val).format(formatString);
   };
 
-  return preFormattedData.length > 0 ? (
+  return (
     <SafeAreaView>
       <HStack width="80%" alignItems="center" mb={3}>
         <HStack justifyContent="space-around">
@@ -145,6 +159,7 @@ export default function PurchaseLocalTable({ preFormattedData, translate }) {
           }
         />
       </HStack>
+
       <Accordion>
         {formattedData.map((data) => (
           <Accordion.Item key={data.name}>
@@ -197,10 +212,6 @@ export default function PurchaseLocalTable({ preFormattedData, translate }) {
         ))}
       </Accordion>
     </SafeAreaView>
-  ) : (
-    <Center>
-      <Text textAlign="center">{translate('noPurchaseLocalsFound')}</Text>
-    </Center>
   );
 }
 

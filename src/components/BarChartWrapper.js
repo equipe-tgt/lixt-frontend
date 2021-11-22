@@ -31,7 +31,7 @@ export default function BarChartWrapper({
           (a, b) => moment(a.time, 'DD/MM') > moment(b.time, 'DD/MM')
         );
 
-        for (const preData of sortedData) {
+        for (const preData of preFormattedData) {
           // O parâmetro "time" de dia vem como <dia>/<numero-mês>
           const date = moment(preData.time, 'DD/MM');
           labels.push(moment(date).format(isPortuguese ? 'DD/MMM' : 'MMM/DD'));
@@ -83,7 +83,7 @@ export default function BarChartWrapper({
         sortedData = preFormattedData.sort(
           (a, b) => moment(a.time, 'MM/yyyy') > moment(b.time, 'MM/yyyy')
         );
-        for (const preData of preFormattedData) {
+        for (const preData of sortedData) {
           // O parâmetro "time" de mês vem como <numero-mês>/<ano> e queremos como <abreviação-nome-mês>/<ano>
           const month = moment(preData.time, 'MM/yyyy').format('MMM/yyyy');
 

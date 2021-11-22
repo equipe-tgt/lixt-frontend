@@ -11,6 +11,7 @@ import {
   Icon,
   ScrollView,
   View,
+  Center,
 } from 'native-base';
 import moment from 'moment';
 
@@ -113,8 +114,12 @@ export default function StatisticsScreen(props) {
         );
 
       case StatisticsType.PURCHASE_LOCAL:
-        return (
+        return dataFromServer.length > 0 ? (
           <PurchaseLocalTable preFormattedData={dataFromServer} translate={t} />
+        ) : (
+          <Center>
+            <Text textAlign="center">{t('noPurchaseLocalsFound')}</Text>
+          </Center>
         );
 
       default:
@@ -284,16 +289,21 @@ export default function StatisticsScreen(props) {
            ou caso o tipo de estatística selecionada seja PURCHASE_LOCAL (ela não tem data pra configurar e o
             componente sabe lidar com a ausência de dados)
            */}
-          {(dataFromServer &&
+          {dataFromServer &&
             statisticsSettings.startDate &&
-            statisticsSettings.endDate) ||
-            (statisticsSettings.statisticType ===
+            statisticsSettings.endDate &&
+            statisticsSettings.statisticType !==
               StatisticsType.PURCHASE_LOCAL &&
-              renderChart())}
+            renderChart()}
+
+          {statisticsSettings.statisticType === StatisticsType.PURCHASE_LOCAL &&
+            renderChart()}
 
           {dataFromServer &&
             statisticsSettings.startDate &&
             statisticsSettings.endDate &&
+            statisticsSettings.statisticType !==
+              StatisticsType.PURCHASE_LOCAL &&
             renderPeaksAndTotal()}
         </View>
       </ScrollView>
