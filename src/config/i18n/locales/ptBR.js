@@ -255,7 +255,9 @@ export default {
   lowestPoint: 'Menor gasto',
   highestPoint: 'Maior gasto',
   noPurchaseLocalsFound: 'Nenhum local de compra registrado',
+  firstPurchase: 'Primeira compra',
   lastPurchase: 'Última compra',
   purchaseAmount: 'Qtd. compras',
   totalValue: 'Valor total',
+  averageValue: 'Valor médio',
 };

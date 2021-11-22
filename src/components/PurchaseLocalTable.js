@@ -6,11 +6,12 @@ import {
   Accordion,
   Box,
   HStack,
+  VStack,
   Pressable,
   Button,
   Icon,
 } from 'native-base';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import moment from 'moment';
 
 import { getI18n } from 'react-i18next';
@@ -26,7 +27,11 @@ const SortingOptions = {
   TOTAL_SPENT: 'totalValue',
 };
 
-export default function PurchaseLocalTable({ preFormattedData, translate }) {
+export default function PurchaseLocalTable({
+  preFormattedData,
+  translate,
+  monetaryNotation,
+}) {
   const [formattedData, setFormattedData] = useState([]);
   const [currentSortingOption, setCurrentSortingOption] = useState(
     SortingOptions.LAST_PURCHASE
@@ -167,46 +172,50 @@ export default function PurchaseLocalTable({ preFormattedData, translate }) {
               _expanded={{ backgroundColor: 'primary.200' }}
               py={5}
             >
-              <Box width="90%">
-                <Text fontSize={16} width="60%">
-                  {data.name}
-                </Text>
-                {data?.subname && (
-                  <Text width="75%" fontSize={12}>
-                    {data?.subname}
+              <HStack width="90%" alignItems="center">
+                <Entypo name="shop" size={18} color="#4b5563" />
+
+                <Box ml={3}>
+                  <Text fontSize={16} width="60%">
+                    {data.name}
                   </Text>
-                )}
-              </Box>
+                  {data?.subname && (
+                    <Text width="65%" fontSize={12}>
+                      {data?.subname}
+                    </Text>
+                  )}
+                </Box>
+              </HStack>
 
               <Accordion.Icon />
             </Accordion.Summary>
             <Accordion.Details>
-              <HStack mb={3} flexWrap="wrap">
-                <Box width="33.3%" py={2}>
-                  <Text>Valor total</Text>
-                  <Text>{data.totalValue}</Text>
+              <VStack mb={3} flexWrap="wrap">
+                <Box py={2}>
+                  <Text fontWeight="bold">{translate('totalValue')}</Text>
+                  <Text>{`${monetaryNotation} ${data.totalValue}`}</Text>
                 </Box>
 
-                <Box width="33.3%" py={2}>
-                  <Text>Valor médio</Text>
-                  <Text>{data.averageValue}</Text>
+                <Box py={2}>
+                  <Text fontWeight="bold">{translate('averageValue')}</Text>
+                  <Text>{`${monetaryNotation} ${data.averageValue}`}</Text>
                 </Box>
 
-                <Box width="33.3%" py={2}>
-                  <Text>Qtd. de compras</Text>
+                <Box py={2}>
+                  <Text fontWeight="bold">{translate('purchaseAmount')}</Text>
                   <Text>{data.purchaseAmount}</Text>
                 </Box>
 
-                <Box width="33.3%" py={2}>
-                  <Text>Primeira compra</Text>
+                <Box py={2}>
+                  <Text fontWeight="bold">{translate('firstPurchase')}</Text>
                   <Text>{formatDate(data.firstPurchase)}</Text>
                 </Box>
 
-                <Box width="33.3%" py={2}>
-                  <Text>Última compra</Text>
+                <Box py={2}>
+                  <Text fontWeight="bold">{translate('lastPurchase')}</Text>
                   <Text>{formatDate(data.lastPurchase)}</Text>
                 </Box>
-              </HStack>
+              </VStack>
             </Accordion.Details>
           </Accordion.Item>
         ))}
@@ -218,4 +227,5 @@ export default function PurchaseLocalTable({ preFormattedData, translate }) {
 PurchaseLocalTable.propTypes = {
   preFormattedData: PropTypes.array,
   translate: PropTypes.func,
+  monetaryNotation: PropTypes.string,
 };

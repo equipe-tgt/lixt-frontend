@@ -115,7 +115,11 @@ export default function StatisticsScreen(props) {
 
       case StatisticsType.PURCHASE_LOCAL:
         return dataFromServer.length > 0 ? (
-          <PurchaseLocalTable preFormattedData={dataFromServer} translate={t} />
+          <PurchaseLocalTable
+            preFormattedData={dataFromServer}
+            translate={t}
+            monetaryNotation={t('currency')}
+          />
         ) : (
           <Center>
             <Text textAlign="center">{t('noPurchaseLocalsFound')}</Text>

@@ -256,7 +256,9 @@ export default {
   highestPoint: 'Highest point',
 
   noPurchaseLocalsFound: 'No purchase locals found',
+  firstPurchase: 'First purchase',
   lastPurchase: 'Last purchase',
   purchaseAmount: 'Purchase amt.',
   totalValue: 'Total value',
+  averageValue: 'Average value',
 };
