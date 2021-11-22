@@ -10,6 +10,7 @@ import {
   Menu,
   Pressable,
   HStack,
+  Button,
 } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import LixtCartList from '../../components/LixtCartList';
@@ -350,6 +351,15 @@ export default function CartScreen(props) {
                 <Text ml={2}> {t('history')} </Text>
               </HStack>
             </Menu.Item>
+            <Menu.Item
+              onPress={() => {
+                props.navigation.navigate('Statistics');
+              }}
+            >
+              <HStack alignItems="center">
+                <Text ml={2}> {t('statistics')} </Text>
+              </HStack>
+            </Menu.Item>
           </Menu>
         </HStack>
         <ScrollView
@@ -414,6 +424,22 @@ export default function CartScreen(props) {
     <SafeAreaView style={style.container}>
       <Center w="90%" mx="auto" my="50%">
         <Text textAlign="center">{t('noListsCreateANewOne')}</Text>
+
+        <Text mt={4} textAlign="center">
+          {t('otherPages')}
+        </Text>
+        <Button
+          onPress={() => props.navigation.navigate('Statistics')}
+          variant="ghost"
+        >
+          {t('accessScreen', { screenName: t('statistics') })}
+        </Button>
+        <Button
+          onPress={() => props.navigation.navigate('History')}
+          variant="ghost"
+        >
+          {t('accessScreen', { screenName: t('history') })}
+        </Button>
       </Center>
     </SafeAreaView>
   );

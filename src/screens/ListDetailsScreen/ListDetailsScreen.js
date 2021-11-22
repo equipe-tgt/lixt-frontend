@@ -22,7 +22,8 @@ export default function ListDetailsScreen(props) {
   const toast = useToast();
   const { user } = useContext(AuthContext);
   const { lists, setLists } = useContext(ListContext);
-  const [isRemoveMemberModalOpened, setIsRemoveMemberModalOpened] = useState(false);
+  const [isRemoveMemberModalOpened, setIsRemoveMemberModalOpened] =
+    useState(false);
 
   const { t } = useTranslation();
 
@@ -79,7 +80,7 @@ export default function ListDetailsScreen(props) {
       );
       setList({
         ...list,
-        listMembers: editedMembersList
+        listMembers: editedMembersList,
       });
 
       toast.show({
@@ -123,43 +124,45 @@ export default function ListDetailsScreen(props) {
         </Box>
         <Box mb={5}>
           <Text fontWeight="bold">{t('members')}</Text>
-          {
-            list.listMembers && list.listMembers.length > 0 ? (
-              <>
-                {
-                  list?.listMembers
-                  .filter((listMember) => listMember.statusListMember === 'ACCEPT')
-                  .map((listMember, index) => (
-                    <Box
-                      display="flex"
-                      flexDirection="row"
-                      justifyContent="space-between"
-                      mt={4}
-                      key={listMember.id}
-                      testID={`list-member-${index}`}
-                    >
-                      <Box>
-                        <Text fontWeight="bold">{listMember.user.name}</Text>
-                        <Text fontSize="md">@{listMember.user.username}{' '}</Text>
-                      </Box>
-                      {user.id === list.ownerId && (
-                        <Button
-                          isLoading={isRemoveMemberModalOpened === listMember.id}
-                          isLoadingText={t('removing')}
-                          size="sm"
-                          variant="link"
-                          testID={`remove-member-button-${index}`}
-                          onPress={() => setIsRemoveMemberModalOpened(listMember.id)}
-                        >
-                          {t('remove')}
-                        </Button>
-                      )}
+          {list.listMembers && list.listMembers.length > 0 ? (
+            <>
+              {list?.listMembers
+                .filter(
+                  (listMember) => listMember.statusListMember === 'ACCEPT'
+                )
+                .map((listMember, index) => (
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="space-between"
+                    mt={4}
+                    key={listMember.id}
+                    testID={`list-member-${index}`}
+                  >
+                    <Box>
+                      <Text fontWeight="bold">{listMember.user.name}</Text>
+                      <Text fontSize="md">@{listMember.user.username} </Text>
                     </Box>
-                  ))
-                }
-              </>
-            ) : <Text>{t('noMembers')}</Text>
-          }
+                    {user.id === list.ownerId && (
+                      <Button
+                        isLoading={isRemoveMemberModalOpened === listMember.id}
+                        isLoadingText={t('removing')}
+                        size="sm"
+                        variant="link"
+                        testID={`remove-member-button-${index}`}
+                        onPress={() =>
+                          setIsRemoveMemberModalOpened(listMember.id)
+                        }
+                      >
+                        {t('remove')}
+                      </Button>
+                    )}
+                  </Box>
+                ))}
+            </>
+          ) : (
+            <Text>{t('noMembers')}</Text>
+          )}
         </Box>
 
         {user.id === list.ownerId ? (
@@ -187,17 +190,15 @@ export default function ListDetailsScreen(props) {
           </Button>
         )}
 
-        {
-          list.ownerId === user.id ? (
-            <RemoveMemberModal
-              isOpen={!!isRemoveMemberModalOpened}
-              closeModal={(value) => {
-                if (value) removeMember(isRemoveMemberModalOpened)
-                else setIsRemoveMemberModalOpened(false);
-              }}
-            />
-          ) : null
-        }
+        {list.ownerId === user.id ? (
+          <RemoveMemberModal
+            isOpen={!!isRemoveMemberModalOpened}
+            closeModal={(value) => {
+              if (value) removeMember(isRemoveMemberModalOpened);
+              else setIsRemoveMemberModalOpened(false);
+            }}
+          />
+        ) : null}
       </VStack>
     </SafeAreaView>
   ) : (

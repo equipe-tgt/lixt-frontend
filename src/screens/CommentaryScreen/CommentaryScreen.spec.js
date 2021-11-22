@@ -62,7 +62,7 @@ describe('CommentaryScreen component', () => {
         Promise.resolve({
           data: {
             globalCommentsChronOrder: true,
-            olderCommentsFirst: true
+            olderCommentsFirst: true,
           },
         })
       );
@@ -179,14 +179,16 @@ describe('CommentaryScreen component', () => {
     });
 
     it('should not change order to date', async () => {
-      jest
-        .spyOn(AuthService, 'putUserPreferences')
-        .mockClear();
+      jest.spyOn(AuthService, 'putUserPreferences').mockClear();
 
-      const settingsButton = await waitFor(() => getByTestId('settings-button'));
+      const settingsButton = await waitFor(() =>
+        getByTestId('settings-button')
+      );
       await waitFor(() => fireEvent.press(settingsButton));
 
-      const orderByDateButton = await waitFor(() => getByTestId('order-by-date-button'));
+      const orderByDateButton = await waitFor(() =>
+        getByTestId('order-by-date-button')
+      );
       await waitFor(() => {
         fireEvent.press(orderByDateButton);
       });
@@ -195,17 +197,21 @@ describe('CommentaryScreen component', () => {
       expect(AuthService.putUserPreferences).not.toHaveBeenCalled();
     });
 
-    it("should change order to user", async () => {
+    it('should change order to user', async () => {
       jest
         .spyOn(AuthService, 'putUserPreferences')
         .mockReturnValue(Promise.resolve());
 
-      const settingsButton = await waitFor(() => getByTestId('settings-button'));
+      const settingsButton = await waitFor(() =>
+        getByTestId('settings-button')
+      );
       await waitFor(() => {
         fireEvent.press(settingsButton);
       });
 
-      const orderByUserButton = await waitFor(() => getByTestId('order-by-user-button'));
+      const orderByUserButton = await waitFor(() =>
+        getByTestId('order-by-user-button')
+      );
       expect(orderByUserButton.props.isDisabled).toBe(false);
 
       await waitFor(() => {
@@ -216,26 +222,30 @@ describe('CommentaryScreen component', () => {
     });
 
     it('should add a new comentary', async () => {
-      jest
-        .spyOn(CommentaryService, 'addCommentary')
-        .mockReturnValue(Promise.resolve({
+      jest.spyOn(CommentaryService, 'addCommentary').mockReturnValue(
+        Promise.resolve({
           data: {
             id: 9,
             userId: 1,
             productId: 1,
-            content: "Novo comentário",
+            content: 'Novo comentário',
             user: user2,
             date: new Date(2021, 2, 11),
-            isPublic: false
-          }
-        }));
+            isPublic: false,
+          },
+        })
+      );
 
-      const commentaryTextArea = await waitFor(() => getByTestId('commentary-text-area'));
+      const commentaryTextArea = await waitFor(() =>
+        getByTestId('commentary-text-area')
+      );
       await waitFor(() => {
-        fireEvent.changeText(commentaryTextArea, "Novo comentário")
+        fireEvent.changeText(commentaryTextArea, 'Novo comentário');
       });
 
-      const addCommentaryButton = await waitFor(() => getByTestId('add-commentary-button'));
+      const addCommentaryButton = await waitFor(() =>
+        getByTestId('add-commentary-button')
+      );
       await waitFor(() => fireEvent.press(addCommentaryButton));
 
       const toast = await waitFor(() => getByText('addCommentarySuccess'));
@@ -243,32 +253,40 @@ describe('CommentaryScreen component', () => {
     });
 
     it('should add a new private global comentary', async () => {
-      jest
-        .spyOn(CommentaryService, 'addGlobalCommentary')
-        .mockReturnValue(Promise.resolve({
+      jest.spyOn(CommentaryService, 'addGlobalCommentary').mockReturnValue(
+        Promise.resolve({
           data: {
             id: 9,
             userId: 1,
             productId: 1,
-            content: "Novo comentário",
+            content: 'Novo comentário',
             user: user2,
             date: new Date(2021, 2, 11),
-            isPublic: true
-          }
-        }));
+            isPublic: true,
+          },
+        })
+      );
 
-      const commentaryTextArea = await waitFor(() => getByTestId('commentary-text-area'));
+      const commentaryTextArea = await waitFor(() =>
+        getByTestId('commentary-text-area')
+      );
       await waitFor(() => {
-        fireEvent.changeText(commentaryTextArea, "Novo comentário")
+        fireEvent.changeText(commentaryTextArea, 'Novo comentário');
       });
 
-      const changeGlobalCheckbox = await waitFor(() => getAllByTestId('change-commentary-type-checkbox')[0]);
+      const changeGlobalCheckbox = await waitFor(
+        () => getAllByTestId('change-commentary-type-checkbox')[0]
+      );
       await waitFor(() => fireEvent.press(changeGlobalCheckbox));
 
-      const addCommentaryButton = await waitFor(() => getByTestId('add-commentary-button'));
+      const addCommentaryButton = await waitFor(() =>
+        getByTestId('add-commentary-button')
+      );
       await waitFor(() => fireEvent.press(addCommentaryButton));
 
-      const toast = await waitFor(() => getByText('addGlobalCommentarySuccess'));
+      const toast = await waitFor(() =>
+        getByText('addGlobalCommentarySuccess')
+      );
       expect(toast).toBeDefined();
     });
   });
@@ -282,8 +300,8 @@ describe('CommentaryScreen component', () => {
         params: {
           product: {
             productId: 1,
-            id: 1
-          }
+            id: 1,
+          },
         },
       };
 
@@ -291,16 +309,16 @@ describe('CommentaryScreen component', () => {
         id: 1,
         name: 'Fulano',
         username: 'fulanodetal',
-        email: "fulanodetal@gmail.com",
+        email: 'fulanodetal@gmail.com',
         globalCommentsChronOrder: true,
       };
 
       user2 = {
         id: 2,
-        name: "Ciclano",
-        username: "ciclanodetal",
-        email: "ciclanodetal@gmail.com",
-        globalCommentsChronOrder: false
+        name: 'Ciclano',
+        username: 'ciclanodetal',
+        email: 'ciclanodetal@gmail.com',
+        globalCommentsChronOrder: false,
       };
 
       const navContext = {
@@ -309,82 +327,94 @@ describe('CommentaryScreen component', () => {
         addListener: jest.fn(() => jest.fn()),
       };
 
-      jest
-        .spyOn(AuthService, 'getUserData')
-        .mockReturnValue(Promise.resolve({
+      jest.spyOn(AuthService, 'getUserData').mockReturnValue(
+        Promise.resolve({
           data: {
             globalCommentsChronOrder: false,
-            olderCommentsFirst: true
-          }
-        }));
+            olderCommentsFirst: true,
+          },
+        })
+      );
       jest
         .spyOn(ProductOfListService, 'getProductOfListComments')
-        .mockReturnValue(Promise.resolve({
-          data: {
-            commentsDto: [{
-              id: 1,
-              userId: 1,
-              productOfListId: 1,
-              content: "Primeiro comentário",
-              user: user,
-              date: new Date(2021, 1, 16)
-            }, {
-              id: 2,
-              userId: 2,
-              productOfListId: 1,
-              content: "Segundo comentário",
-              user: user2,
-              date: new Date(2021, 2, 21)
-            }, {
-              id: 3,
-              userId: 1,
-              productOfListId: 1,
-              content: "Terceiro comentário",
-              user: user,
-              date: new Date(2021, 1, 10)
-            }, {
-              id: 4,
-              userId: 2,
-              productOfListId: 1,
-              content: "Quarto comentário",
-              user: user,
-              date: new Date(2021, 5, 10)
-            }],
-            globalCommentsDto: [{
-              id: 5,
-              userId: 1,
-              productId: 1,
-              content: "Primeiro comentário global",
-              user: user,
-              date: new Date(2021, 3, 6),
-              isPublic: true
-            }, {
-              id: 6,
-              userId: 2,
-              productId: 1,
-              content: "Segundo comentário global",
-              user: user2,
-              date: new Date(2021, 2, 2),
-              isPublic: true
-            }, {
-              id: 7,
-              userId: 2,
-              productId: 1,
-              content: "Terceiro comentário global",
-              user: user2,
-              date: new Date(2021, 5, 10),
-              isPublic: false
-            }, {
-              id: 8,
-              userId: 1,
-              productId: 1,
-              content: "Quarto comentário global",
-              user: user2,
-              date: new Date(2021, 2, 10),
-              isPublic: false
-            }]
-          }
-        }));
+        .mockReturnValue(
+          Promise.resolve({
+            data: {
+              commentsDto: [
+                {
+                  id: 1,
+                  userId: 1,
+                  productOfListId: 1,
+                  content: 'Primeiro comentário',
+                  user: user,
+                  date: new Date(2021, 1, 16),
+                },
+                {
+                  id: 2,
+                  userId: 2,
+                  productOfListId: 1,
+                  content: 'Segundo comentário',
+                  user: user2,
+                  date: new Date(2021, 2, 21),
+                },
+                {
+                  id: 3,
+                  userId: 1,
+                  productOfListId: 1,
+                  content: 'Terceiro comentário',
+                  user: user,
+                  date: new Date(2021, 1, 10),
+                },
+                {
+                  id: 4,
+                  userId: 2,
+                  productOfListId: 1,
+                  content: 'Quarto comentário',
+                  user: user,
+                  date: new Date(2021, 5, 10),
+                },
+              ],
+              globalCommentsDto: [
+                {
+                  id: 5,
+                  userId: 1,
+                  productId: 1,
+                  content: 'Primeiro comentário global',
+                  user: user,
+                  date: new Date(2021, 3, 6),
+                  isPublic: true,
+                },
+                {
+                  id: 6,
+                  userId: 2,
+                  productId: 1,
+                  content: 'Segundo comentário global',
+                  user: user2,
+                  date: new Date(2021, 2, 2),
+                  isPublic: true,
+                },
+                {
+                  id: 7,
+                  userId: 2,
+                  productId: 1,
+                  content: 'Terceiro comentário global',
+                  user: user2,
+                  date: new Date(2021, 5, 10),
+                  isPublic: false,
+                },
+                {
+                  id: 8,
+                  userId: 1,
+                  productId: 1,
+                  content: 'Quarto comentário global',
+                  user: user2,
+                  date: new Date(2021, 2, 10),
+                  isPublic: false,
+                },
+              ],
+            },
+          })
+        );
       jest
         .spyOn(AsyncStorage, 'getItem')
         .mockReturnValue(Promise.resolve('pt_BR'));
@@ -420,12 +450,16 @@ describe('CommentaryScreen component', () => {
         .spyOn(AuthService, 'putUserPreferences')
         .mockReturnValue(Promise.resolve());
 
-      const settingsButton = await waitFor(() => getByTestId('settings-button'));
+      const settingsButton = await waitFor(() =>
+        getByTestId('settings-button')
+      );
       await waitFor(() => {
         fireEvent.press(settingsButton);
       });
 
-      const orderByUserButton = await waitFor(() => getByTestId('order-by-user-button'));
+      const orderByUserButton = await waitFor(() =>
+        getByTestId('order-by-user-button')
+      );
       await waitFor(() => {
         fireEvent.press(orderByUserButton);
       });
@@ -434,16 +468,23 @@ describe('CommentaryScreen component', () => {
       expect(AuthService.putUserPreferences).toHaveBeenCalled();
     });
 
-    it("should change order to date", async () => {
-      const putUserPreferencesSpy = jest.spyOn(AuthService, 'putUserPreferences');
+    it('should change order to date', async () => {
+      const putUserPreferencesSpy = jest.spyOn(
+        AuthService,
+        'putUserPreferences'
+      );
       putUserPreferencesSpy.mockClear();
 
-      const settingsButton = await waitFor(() => getByTestId('settings-button'));
+      const settingsButton = await waitFor(() =>
+        getByTestId('settings-button')
+      );
       await waitFor(() => {
         fireEvent.press(settingsButton);
       });
 
-      const orderByDateButton = await waitFor(() => getByTestId('order-by-date-button'));
+      const orderByDateButton = await waitFor(() =>
+        getByTestId('order-by-date-button')
+      );
       expect(orderByDateButton.props.isDisabled).toBe(false);
 
       await waitFor(() => fireEvent.press(orderByDateButton));
@@ -458,7 +499,7 @@ describe('CommentaryScreen component', () => {
         params: {
           product: {
             productId: 1,
-            id: 1
+            id: 1,
           },
         },
       };
@@ -489,7 +530,7 @@ describe('CommentaryScreen component', () => {
         Promise.resolve({
           data: {
             globalCommentsChronOrder: true,
-            olderCommentsFirst: false
+            olderCommentsFirst: false,
           },
         })
       );
@@ -605,7 +646,10 @@ describe('CommentaryScreen component', () => {
     });
 
     it('should not change order to asc', async () => {
-      const putUserPreferencesSpy = jest.spyOn(AuthService, 'putUserPreferences');
+      const putUserPreferencesSpy = jest.spyOn(
+        AuthService,
+        'putUserPreferences'
+      );
       putUserPreferencesSpy.mockClear();
 
       const sortButton = await waitFor(() => getByTestId('sort-button'));
@@ -613,7 +657,9 @@ describe('CommentaryScreen component', () => {
         fireEvent.press(sortButton);
       });
 
-      const orderByAscButton = await waitFor(() => getByTestId('order-by-asc-button'));
+      const orderByAscButton = await waitFor(() =>
+        getByTestId('order-by-asc-button')
+      );
       await waitFor(() => {
         fireEvent.press(orderByAscButton);
       });
@@ -622,8 +668,11 @@ describe('CommentaryScreen component', () => {
       expect(putUserPreferencesSpy).not.toHaveBeenCalled();
     });
 
-    it("should change order to user", async () => {
-      const putUserPreferencesSpy = jest.spyOn(AuthService, 'putUserPreferences');
+    it('should change order to user', async () => {
+      const putUserPreferencesSpy = jest.spyOn(
+        AuthService,
+        'putUserPreferences'
+      );
       putUserPreferencesSpy.mockClear();
 
       const sortButton = await waitFor(() => getByTestId('sort-button'));
@@ -631,7 +680,9 @@ describe('CommentaryScreen component', () => {
         fireEvent.press(sortButton);
       });
 
-      const orderByDescButton = await waitFor(() => getByTestId('order-by-desc-button'));
+      const orderByDescButton = await waitFor(() =>
+        getByTestId('order-by-desc-button')
+      );
       expect(orderByDescButton.props.isDisabled).toBe(false);
 
       await waitFor(() => {
@@ -651,8 +702,8 @@ describe('CommentaryScreen component', () => {
         params: {
           product: {
             productId: 1,
-            id: 1
-          }
+            id: 1,
+          },
         },
       };
 
@@ -660,16 +711,16 @@ describe('CommentaryScreen component', () => {
         id: 1,
         name: 'Fulano',
         username: 'fulanodetal',
-        email: "fulanodetal@gmail.com",
+        email: 'fulanodetal@gmail.com',
         globalCommentsChronOrder: true,
       };
 
       user2 = {
         id: 2,
-        name: "Ciclano",
-        username: "ciclanodetal",
-        email: "ciclanodetal@gmail.com",
-        globalCommentsChronOrder: false
+        name: 'Ciclano',
+        username: 'ciclanodetal',
+        email: 'ciclanodetal@gmail.com',
+        globalCommentsChronOrder: false,
       };
 
       const navContext = {
@@ -678,82 +729,94 @@ describe('CommentaryScreen component', () => {
         addListener: jest.fn(() => jest.fn()),
       };
 
-      jest
-        .spyOn(AuthService, 'getUserData')
-        .mockReturnValue(Promise.resolve({
+      jest.spyOn(AuthService, 'getUserData').mockReturnValue(
+        Promise.resolve({
           data: {
             globalCommentsChronOrder: false,
-            olderCommentsFirst: true
-          }
-        }));
+            olderCommentsFirst: true,
+          },
+        })
+      );
       jest
         .spyOn(ProductOfListService, 'getProductOfListComments')
-        .mockReturnValue(Promise.resolve({
-          data: {
-            commentsDto: [{
-              id: 1,
-              userId: 1,
-              productOfListId: 1,
-              content: "Primeiro comentário",
-              user: user,
-              date: new Date(2021, 1, 16)
-            }, {
-              id: 2,
-              userId: 2,
-              productOfListId: 1,
-              content: "Segundo comentário",
-              user: user2,
-              date: new Date(2021, 2, 21)
-            }, {
-              id: 3,
-              userId: 1,
-              productOfListId: 1,
-              content: "Terceiro comentário",
-              user: user,
-              date: new Date(2021, 1, 10)
-            }, {
-              id: 4,
-              userId: 2,
-              productOfListId: 1,
-              content: "Quarto comentário",
-              user: user,
-              date: new Date(2021, 5, 10)
-            }],
-            globalCommentsDto: [{
-              id: 5,
-              userId: 1,
-              productId: 1,
-              content: "Primeiro comentário global",
-              user: user,
-              date: new Date(2021, 3, 6),
-              isPublic: true
-            }, {
-              id: 6,
-              userId: 2,
-              productId: 1,
-              content: "Segundo comentário global",
-              user: user2,
-              date: new Date(2021, 2, 2),
-              isPublic: true
-            }, {
-              id: 7,
-              userId: 2,
-              productId: 1,
-              content: "Terceiro comentário global",
-              user: user2,
-              date: new Date(2021, 5, 10),
-              isPublic: false
-            }, {
-              id: 8,
-              userId: 1,
-              productId: 1,
-              content: "Quarto comentário global",
-              user: user2,
-              date: new Date(2021, 2, 10),
-              isPublic: false
-            }]
-          }
-        }));
+        .mockReturnValue(
+          Promise.resolve({
+            data: {
+              commentsDto: [
+                {
+                  id: 1,
+                  userId: 1,
+                  productOfListId: 1,
+                  content: 'Primeiro comentário',
+                  user: user,
+                  date: new Date(2021, 1, 16),
+                },
+                {
+                  id: 2,
+                  userId: 2,
+                  productOfListId: 1,
+                  content: 'Segundo comentário',
+                  user: user2,
+                  date: new Date(2021, 2, 21),
+                },
+                {
+                  id: 3,
+                  userId: 1,
+                  productOfListId: 1,
+                  content: 'Terceiro comentário',
+                  user: user,
+                  date: new Date(2021, 1, 10),
+                },
+                {
+                  id: 4,
+                  userId: 2,
+                  productOfListId: 1,
+                  content: 'Quarto comentário',
+                  user: user,
+                  date: new Date(2021, 5, 10),
+                },
+              ],
+              globalCommentsDto: [
+                {
+                  id: 5,
+                  userId: 1,
+                  productId: 1,
+                  content: 'Primeiro comentário global',
+                  user: user,
+                  date: new Date(2021, 3, 6),
+                  isPublic: true,
+                },
+                {
+                  id: 6,
+                  userId: 2,
+                  productId: 1,
+                  content: 'Segundo comentário global',
+                  user: user2,
+                  date: new Date(2021, 2, 2),
+                  isPublic: true,
+                },
+                {
+                  id: 7,
+                  userId: 2,
+                  productId: 1,
+                  content: 'Terceiro comentário global',
+                  user: user2,
+                  date: new Date(2021, 5, 10),
+                  isPublic: false,
+                },
+                {
+                  id: 8,
+                  userId: 1,
+                  productId: 1,
+                  content: 'Quarto comentário global',
+                  user: user2,
+                  date: new Date(2021, 2, 10),
+                  isPublic: false,
+                },
+              ],
+            },
+          })
+        );
       jest
         .spyOn(AsyncStorage, 'getItem')
         .mockReturnValue(Promise.resolve('pt_BR'));
@@ -786,7 +849,10 @@ describe('CommentaryScreen component', () => {
     });
 
     it('should not change order to desc', async () => {
-      const putUserPreferencesSpy = jest.spyOn(AuthService, 'putUserPreferences');
+      const putUserPreferencesSpy = jest.spyOn(
+        AuthService,
+        'putUserPreferences'
+      );
       putUserPreferencesSpy.mockClear();
 
       const sortButton = await waitFor(() => getByTestId('sort-button'));
@@ -794,7 +860,9 @@ describe('CommentaryScreen component', () => {
         fireEvent.press(sortButton);
       });
 
-      const orderByDescButton = await waitFor(() => getByTestId('order-by-desc-button'));
+      const orderByDescButton = await waitFor(() =>
+        getByTestId('order-by-desc-button')
+      );
       await waitFor(() => {
         fireEvent.press(orderByDescButton);
       });
@@ -803,8 +871,11 @@ describe('CommentaryScreen component', () => {
       expect(putUserPreferencesSpy).not.toHaveBeenCalled();
     });
 
-    it("should change order to asc", async () => {
-      const putUserPreferencesSpy = jest.spyOn(AuthService, 'putUserPreferences');
+    it('should change order to asc', async () => {
+      const putUserPreferencesSpy = jest.spyOn(
+        AuthService,
+        'putUserPreferences'
+      );
       putUserPreferencesSpy.mockClear();
 
       const sortButton = await waitFor(() => getByTestId('sort-button'));
@@ -812,7 +883,9 @@ describe('CommentaryScreen component', () => {
         fireEvent.press(sortButton);
       });
 
-      const orderByAscButton = await waitFor(() => getByTestId('order-by-asc-button'));
+      const orderByAscButton = await waitFor(() =>
+        getByTestId('order-by-asc-button')
+      );
       expect(orderByAscButton.props.isDisabled).toBe(false);
 
       await waitFor(() => {
@@ -823,25 +896,29 @@ describe('CommentaryScreen component', () => {
     });
 
     it('should add a new comentary', async () => {
-      jest
-        .spyOn(CommentaryService, 'addCommentary')
-        .mockReturnValue(Promise.resolve({
+      jest.spyOn(CommentaryService, 'addCommentary').mockReturnValue(
+        Promise.resolve({
           data: {
             id: 9,
             userId: 1,
             productId: 1,
-            content: "Novo comentário",
+            content: 'Novo comentário',
             user: user2,
             date: new Date(2021, 2, 11),
-            isPublic: false
-          }
-        }));
-      const commentaryTextArea = await waitFor(() => getByTestId('commentary-text-area'));
+            isPublic: false,
+          },
+        })
+      );
+      const commentaryTextArea = await waitFor(() =>
+        getByTestId('commentary-text-area')
+      );
       await waitFor(() => {
-        fireEvent.changeText(commentaryTextArea, "Novo comentário")
+        fireEvent.changeText(commentaryTextArea, 'Novo comentário');
       });
 
-      const addCommentaryButton = await waitFor(() => getByTestId('add-commentary-button'));
+      const addCommentaryButton = await waitFor(() =>
+        getByTestId('add-commentary-button')
+      );
       await waitFor(() => fireEvent.press(addCommentaryButton));
 
       const toast = await waitFor(() => getByText('addCommentarySuccess'));
@@ -850,14 +927,18 @@ describe('CommentaryScreen component', () => {
 
     it('should not add a new comentary if server returns an error', async () => {
       const addCommentarySpy = jest.spyOn(CommentaryService, 'addCommentary');
-      addCommentarySpy.mockReturnValue(Promise.reject(new Error("Error")));
+      addCommentarySpy.mockReturnValue(Promise.reject(new Error('Error')));
 
-      const commentaryTextArea = await waitFor(() => getByTestId('commentary-text-area'));
+      const commentaryTextArea = await waitFor(() =>
+        getByTestId('commentary-text-area')
+      );
       await waitFor(() => {
-        fireEvent.changeText(commentaryTextArea, "Novo comentário")
+        fireEvent.changeText(commentaryTextArea, 'Novo comentário');
       });
 
-      const addCommentaryButton = await waitFor(() => getByTestId('add-commentary-button'));
+      const addCommentaryButton = await waitFor(() =>
+        getByTestId('add-commentary-button')
+      );
       await waitFor(() => fireEvent.press(addCommentaryButton));
 
       const toast = await waitFor(() => getByText('addCommentaryFail'));
@@ -868,12 +949,16 @@ describe('CommentaryScreen component', () => {
       const addCommentarySpy = jest.spyOn(CommentaryService, 'addCommentary');
       addCommentarySpy.mockClear();
 
-      const commentaryTextArea = await waitFor(() => getByTestId('commentary-text-area'));
+      const commentaryTextArea = await waitFor(() =>
+        getByTestId('commentary-text-area')
+      );
       await waitFor(() => {
-        fireEvent.changeText(commentaryTextArea, " ")
+        fireEvent.changeText(commentaryTextArea, ' ');
       });
 
-      const addCommentaryButton = await waitFor(() => getByTestId('add-commentary-button'));
+      const addCommentaryButton = await waitFor(() =>
+        getByTestId('add-commentary-button')
+      );
       await waitFor(() => fireEvent.press(addCommentaryButton));
 
       expect(addCommentarySpy).not.toHaveBeenCalled();
@@ -884,13 +969,17 @@ describe('CommentaryScreen component', () => {
         .spyOn(CommentaryService, 'removeCommentary')
         .mockReturnValue(Promise.resolve());
 
-      const commentaryToBeRemoved = await waitFor(() => getByTestId('remove-commentary-1'));
+      const commentaryToBeRemoved = await waitFor(() =>
+        getByTestId('remove-commentary-1')
+      );
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
       const modal = await waitFor(() => getByTestId('remove-commentary-modal'));
       expect(modal.props.accessibilityValue).toBe('visible');
 
-      const confirmRemovalButton = await waitFor(() => getByTestId('button-confirm-removal'));
+      const confirmRemovalButton = await waitFor(() =>
+        getByTestId('button-confirm-removal')
+      );
       await waitFor(() => fireEvent.press(confirmRemovalButton));
 
       const toast = await waitFor(() => getByText('removeCommentarySuccess'));
@@ -898,14 +987,16 @@ describe('CommentaryScreen component', () => {
     });
 
     it('should not delete a commentary if clicking on cancel', async () => {
-      jest
-        .spyOn(CommentaryService, 'removeCommentary')
-        .mockClear();
+      jest.spyOn(CommentaryService, 'removeCommentary').mockClear();
 
-      const commentaryToBeRemoved = await waitFor(() => getByTestId('remove-commentary-1'));
+      const commentaryToBeRemoved = await waitFor(() =>
+        getByTestId('remove-commentary-1')
+      );
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
-      const closeModalButton = await waitFor(() => getByTestId('close-remove-commentary-modal-button'));
+      const closeModalButton = await waitFor(() =>
+        getByTestId('close-remove-commentary-modal-button')
+      );
       await waitFor(() => fireEvent.press(closeModalButton));
 
       expect(CommentaryService.removeCommentary).not.toHaveBeenCalled();
@@ -914,12 +1005,16 @@ describe('CommentaryScreen component', () => {
     it('should not delete a commentary if server returns an error', async () => {
       jest
         .spyOn(CommentaryService, 'removeCommentary')
-        .mockReturnValue(Promise.reject(new Error('Error')))
+        .mockReturnValue(Promise.reject(new Error('Error')));
 
-      const commentaryToBeRemoved = await waitFor(() => getByTestId('remove-commentary-1'));
+      const commentaryToBeRemoved = await waitFor(() =>
+        getByTestId('remove-commentary-1')
+      );
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
-      const confirmRemovalButton = await waitFor(() => getByTestId('button-confirm-removal'));
+      const confirmRemovalButton = await waitFor(() =>
+        getByTestId('button-confirm-removal')
+      );
       await waitFor(() => fireEvent.press(confirmRemovalButton));
 
       const toast = await waitFor(() => getByText('removeCommentaryFail'));
@@ -927,80 +1022,102 @@ describe('CommentaryScreen component', () => {
     });
 
     it('should add a new private global comentary', async () => {
-      jest
-        .spyOn(CommentaryService, 'addGlobalCommentary')
-        .mockReturnValue(Promise.resolve({
+      jest.spyOn(CommentaryService, 'addGlobalCommentary').mockReturnValue(
+        Promise.resolve({
           data: {
             id: 9,
             userId: 1,
             productId: 1,
-            content: "Novo comentário",
+            content: 'Novo comentário',
             user: user2,
             date: new Date(2021, 2, 11),
-            isPublic: true
-          }
-        }));
-      const commentaryTextArea = await waitFor(() => getByTestId('commentary-text-area'));
+            isPublic: true,
+          },
+        })
+      );
+      const commentaryTextArea = await waitFor(() =>
+        getByTestId('commentary-text-area')
+      );
       await waitFor(() => {
-        fireEvent.changeText(commentaryTextArea, "Novo comentário")
+        fireEvent.changeText(commentaryTextArea, 'Novo comentário');
       });
 
-      const changeGlobalCheckbox = await waitFor(() => getAllByTestId('change-commentary-type-checkbox')[0]);
+      const changeGlobalCheckbox = await waitFor(
+        () => getAllByTestId('change-commentary-type-checkbox')[0]
+      );
       await waitFor(() => fireEvent.press(changeGlobalCheckbox));
 
-      const addCommentaryButton = await waitFor(() => getByTestId('add-commentary-button'));
+      const addCommentaryButton = await waitFor(() =>
+        getByTestId('add-commentary-button')
+      );
       await waitFor(() => fireEvent.press(addCommentaryButton));
 
-      const toast = await waitFor(() => getByText('addGlobalCommentarySuccess'));
+      const toast = await waitFor(() =>
+        getByText('addGlobalCommentarySuccess')
+      );
       expect(toast).toBeDefined();
     });
 
     it('should add a new public global comentary', async () => {
-      jest
-        .spyOn(CommentaryService, 'addGlobalCommentary')
-        .mockReturnValue(Promise.resolve({
+      jest.spyOn(CommentaryService, 'addGlobalCommentary').mockReturnValue(
+        Promise.resolve({
           data: {
             id: 9,
             userId: 1,
             productId: 1,
-            content: "Novo comentário",
+            content: 'Novo comentário',
             user: user2,
             date: new Date(2021, 2, 11),
-            isPublic: false
-          }
-        }));
-      const commentaryTextArea = await waitFor(() => getByTestId('commentary-text-area'));
+            isPublic: false,
+          },
+        })
+      );
+      const commentaryTextArea = await waitFor(() =>
+        getByTestId('commentary-text-area')
+      );
       await waitFor(() => {
-        fireEvent.changeText(commentaryTextArea, "Novo comentário")
+        fireEvent.changeText(commentaryTextArea, 'Novo comentário');
       });
 
-      const changeGlobalCheckbox = await waitFor(() => getAllByTestId('change-commentary-type-checkbox')[0]);
+      const changeGlobalCheckbox = await waitFor(
+        () => getAllByTestId('change-commentary-type-checkbox')[0]
+      );
       await waitFor(() => fireEvent.press(changeGlobalCheckbox));
 
-      const changeVisibilityCheckbox = await waitFor(() => getAllByTestId('change-commentary-visibility-checkbox')[0]);
+      const changeVisibilityCheckbox = await waitFor(
+        () => getAllByTestId('change-commentary-visibility-checkbox')[0]
+      );
       await waitFor(() => fireEvent.press(changeVisibilityCheckbox));
 
-      const addCommentaryButton = await waitFor(() => getByTestId('add-commentary-button'));
+      const addCommentaryButton = await waitFor(() =>
+        getByTestId('add-commentary-button')
+      );
       await waitFor(() => fireEvent.press(addCommentaryButton));
 
-      const toast = await waitFor(() => getByText('addGlobalCommentarySuccess'));
+      const toast = await waitFor(() =>
+        getByText('addGlobalCommentarySuccess')
+      );
       expect(toast).toBeDefined();
     });
 
     it('should not add a new global comentary if it is empty', async () => {
-      jest
-        .spyOn(CommentaryService, 'addGlobalCommentary')
-        .mockClear();
+      jest.spyOn(CommentaryService, 'addGlobalCommentary').mockClear();
 
-      const commentaryTextArea = await waitFor(() => getByTestId('commentary-text-area'));
+      const commentaryTextArea = await waitFor(() =>
+        getByTestId('commentary-text-area')
+      );
       await waitFor(() => {
-        fireEvent.changeText(commentaryTextArea, " ")
+        fireEvent.changeText(commentaryTextArea, ' ');
       });
 
-      const changeGlobalCheckbox = await waitFor(() => getAllByTestId('change-commentary-type-checkbox')[0]);
+      const changeGlobalCheckbox = await waitFor(
+        () => getAllByTestId('change-commentary-type-checkbox')[0]
+      );
       await waitFor(() => fireEvent.press(changeGlobalCheckbox));
 
-      const addCommentaryButton = await waitFor(() => getByTestId('add-commentary-button'));
+      const addCommentaryButton = await waitFor(() =>
+        getByTestId('add-commentary-button')
+      );
       await waitFor(() => fireEvent.press(addCommentaryButton));
 
       expect(CommentaryService.addCommentary).not.toHaveBeenCalled();
@@ -1009,17 +1126,23 @@ describe('CommentaryScreen component', () => {
     it('should not add a new global comentary if server returns an error', async () => {
       jest
         .spyOn(CommentaryService, 'addGlobalCommentary')
-        .mockReturnValue(Promise.reject(new Error("Error")));
+        .mockReturnValue(Promise.reject(new Error('Error')));
 
-      const commentaryTextArea = await waitFor(() => getByTestId('commentary-text-area'));
+      const commentaryTextArea = await waitFor(() =>
+        getByTestId('commentary-text-area')
+      );
       await waitFor(() => {
-        fireEvent.changeText(commentaryTextArea, "Novo comentário")
+        fireEvent.changeText(commentaryTextArea, 'Novo comentário');
       });
 
-      const changeGlobalCheckbox = await waitFor(() => getAllByTestId('change-commentary-type-checkbox')[0]);
+      const changeGlobalCheckbox = await waitFor(
+        () => getAllByTestId('change-commentary-type-checkbox')[0]
+      );
       await waitFor(() => fireEvent.press(changeGlobalCheckbox));
 
-      const addCommentaryButton = await waitFor(() => getByTestId('add-commentary-button'));
+      const addCommentaryButton = await waitFor(() =>
+        getByTestId('add-commentary-button')
+      );
       await waitFor(() => fireEvent.press(addCommentaryButton));
 
       const toast = await waitFor(() => getByText('addGlobalCommentaryFail'));
@@ -1031,28 +1154,36 @@ describe('CommentaryScreen component', () => {
         .spyOn(CommentaryService, 'removeGlobalCommentary')
         .mockReturnValue(Promise.resolve());
 
-      const commentaryToBeRemoved = await waitFor(() => getByTestId('remove-global-commentary-5'));
+      const commentaryToBeRemoved = await waitFor(() =>
+        getByTestId('remove-global-commentary-5')
+      );
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
       const modal = await waitFor(() => getByTestId('remove-commentary-modal'));
       expect(modal.props.accessibilityValue).toBe('visible');
 
-      const confirmRemovalButton = await waitFor(() => getByTestId('button-confirm-removal'));
+      const confirmRemovalButton = await waitFor(() =>
+        getByTestId('button-confirm-removal')
+      );
       await waitFor(() => fireEvent.press(confirmRemovalButton));
 
-      const toast = await waitFor(() => getByText('removeGlobalCommentarySuccess'));
+      const toast = await waitFor(() =>
+        getByText('removeGlobalCommentarySuccess')
+      );
       expect(toast).toBeDefined();
     });
 
     it('should not delete a global commentary if clicking on cancel', async () => {
-      jest
-        .spyOn(CommentaryService, 'removeGlobalCommentary')
-        .mockClear();
+      jest.spyOn(CommentaryService, 'removeGlobalCommentary').mockClear();
 
-      const commentaryToBeRemoved = await waitFor(() => getByTestId('remove-global-commentary-5'));
+      const commentaryToBeRemoved = await waitFor(() =>
+        getByTestId('remove-global-commentary-5')
+      );
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
-      const closeModalButton = await waitFor(() => getByTestId('close-remove-commentary-modal-button'));
+      const closeModalButton = await waitFor(() =>
+        getByTestId('close-remove-commentary-modal-button')
+      );
       await waitFor(() => fireEvent.press(closeModalButton));
 
       expect(CommentaryService.removeGlobalCommentary).not.toHaveBeenCalled();
@@ -1061,15 +1192,21 @@ describe('CommentaryScreen component', () => {
     it('should not delete a global commentary if server returns an error', async () => {
       jest
         .spyOn(CommentaryService, 'removeGlobalCommentary')
-        .mockReturnValue(Promise.reject(new Error('Error')))
+        .mockReturnValue(Promise.reject(new Error('Error')));
 
-      const commentaryToBeRemoved = await waitFor(() => getByTestId('remove-global-commentary-5'));
+      const commentaryToBeRemoved = await waitFor(() =>
+        getByTestId('remove-global-commentary-5')
+      );
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
-      const confirmRemovalButton = await waitFor(() => getByTestId('button-confirm-removal'));
+      const confirmRemovalButton = await waitFor(() =>
+        getByTestId('button-confirm-removal')
+      );
       await waitFor(() => fireEvent.press(confirmRemovalButton));
 
-      const toast = await waitFor(() => getByText('removeGlobalCommentaryFail'));
+      const toast = await waitFor(() =>
+        getByText('removeGlobalCommentaryFail')
+      );
       expect(toast).toBeDefined();
     });
   });
@@ -1083,8 +1220,8 @@ describe('CommentaryScreen component', () => {
         params: {
           product: {
             productId: 1,
-            id: 1
-          }
+            id: 1,
+          },
         },
       };
 
@@ -1092,16 +1229,16 @@ describe('CommentaryScreen component', () => {
         id: 1,
         name: 'Fulano',
         username: 'fulanodetal',
-        email: "fulanodetal@gmail.com",
+        email: 'fulanodetal@gmail.com',
         globalCommentsChronOrder: true,
       };
 
       user2 = {
         id: 2,
-        name: "Ciclano",
-        username: "ciclanodetal",
-        email: "ciclanodetal@gmail.com",
-        globalCommentsChronOrder: false
+        name: 'Ciclano',
+        username: 'ciclanodetal',
+        email: 'ciclanodetal@gmail.com',
+        globalCommentsChronOrder: false,
       };
 
       const navContext = {
@@ -1110,9 +1247,7 @@ describe('CommentaryScreen component', () => {
         addListener: jest.fn(() => jest.fn()),
       };
 
-      jest
-        .spyOn(AuthService, 'getUserData')
-        .mockReturnValue(Promise.reject());
+      jest.spyOn(AuthService, 'getUserData').mockReturnValue(Promise.reject());
       jest
         .spyOn(ProductOfListService, 'getProductOfListComments')
         .mockReturnValue(Promise.reject());
@@ -1144,7 +1279,9 @@ describe('CommentaryScreen component', () => {
     });
 
     it('should show toast', async () => {
-      const toast = await waitFor(() => getByText('Não foi possível buscar os comentários'));
+      const toast = await waitFor(() =>
+        getByText('Não foi possível buscar os comentários')
+      );
       expect(toast).toBeDefined();
     });
   });

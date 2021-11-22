@@ -56,14 +56,12 @@ describe('ListScreen component', () => {
     };
   });
 
-  describe("when fetching lists", () => {
+  describe('when fetching lists', () => {
     it('should show a toast if server returns an error', async () => {
       lists = [];
 
       getListsSpy = jest.spyOn(ListService, 'getLists');
-      getListsSpy.mockReturnValue(
-        Promise.reject("Error")
-      );
+      getListsSpy.mockReturnValue(Promise.reject('Error'));
 
       renderResults = render(
         <AuthContext.Provider
@@ -125,15 +123,14 @@ describe('ListScreen component', () => {
         },
       ];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
-          Promise.resolve({
-            data: lists
-          })
-        );
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
+        Promise.resolve({
+          data: lists,
+        })
+      );
 
-      jest.spyOn(AsyncStorage, "getItem")
+      jest
+        .spyOn(AsyncStorage, 'getItem')
         .mockReturnValueOnce(Promise.resolve(2));
 
       renderResults = render(
@@ -167,9 +164,11 @@ describe('ListScreen component', () => {
 
       getByTestId = renderResults.getByTestId;
 
-      const selectCurrentList = await waitFor(() => getByTestId('select-current-list'));
+      const selectCurrentList = await waitFor(() =>
+        getByTestId('select-current-list')
+      );
 
-      expect(selectCurrentList.props.value).toBe("Lista II");
+      expect(selectCurrentList.props.value).toBe('Lista II');
     });
   });
 
@@ -279,9 +278,7 @@ describe('ListScreen component', () => {
     it('should add to the current array of lists', async () => {
       lists = [];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
           data: [],
         })
@@ -352,15 +349,14 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
-          Promise.resolve({
-            data: [...fabricatedLists],
-          })
-        );
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists],
+        })
+      );
 
-      jest.spyOn(AsyncStorage, "getItem")
+      jest
+        .spyOn(AsyncStorage, 'getItem')
         .mockReturnValueOnce(Promise.resolve(1));
 
       const routeNewListAdded = {
@@ -379,7 +375,7 @@ describe('ListScreen component', () => {
             value={{
               lists,
               setLists: (value) => {
-                lists = [...value]
+                lists = [...value];
               },
             }}
           >
@@ -401,10 +397,14 @@ describe('ListScreen component', () => {
       const options = await waitFor(() => getByTestId('list-options'));
       fireEvent.press(options);
 
-      const listDetailsMenuItem = await waitFor(() => getByTestId('list-details-menu-item'));
+      const listDetailsMenuItem = await waitFor(() =>
+        getByTestId('list-details-menu-item')
+      );
       fireEvent.press(listDetailsMenuItem);
 
-      expect(navigation.navigate).toBeCalledWith('ListDetails', { list: fabricatedLists[0] });
+      expect(navigation.navigate).toBeCalledWith('ListDetails', {
+        list: fabricatedLists[0],
+      });
     });
   });
 
@@ -422,13 +422,11 @@ describe('ListScreen component', () => {
         },
       ];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
-          Promise.resolve({
-            data: [...fabricatedLists],
-          })
-        );
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists],
+        })
+      );
 
       const routeNewListAdded = {
         params: {},
@@ -472,7 +470,9 @@ describe('ListScreen component', () => {
       const options = await waitFor(() => getByTestId('list-options'));
       fireEvent.press(options);
 
-      const editListMenuItem = await waitFor(() => getByTestId('edit-list-menu-item'));
+      const editListMenuItem = await waitFor(() =>
+        getByTestId('edit-list-menu-item')
+      );
       fireEvent.press(editListMenuItem);
 
       expect(navigation.navigate).toBeCalledWith('EditList', { listId: 1 });
@@ -493,13 +493,11 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
-          Promise.resolve({
-            data: [...fabricatedLists],
-          })
-        );
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists],
+        })
+      );
 
       const routeNewListAdded = {
         params: {},
@@ -543,10 +541,14 @@ describe('ListScreen component', () => {
       const options = await waitFor(() => getByTestId('list-options'));
       fireEvent.press(options);
 
-      const inviteMenuItem = await waitFor(() => getByTestId('invite-menu-item'));
+      const inviteMenuItem = await waitFor(() =>
+        getByTestId('invite-menu-item')
+      );
       fireEvent.press(inviteMenuItem);
 
-      expect(navigation.navigate).toBeCalledWith('Invite', { list: fabricatedLists[0] });
+      expect(navigation.navigate).toBeCalledWith('Invite', {
+        list: fabricatedLists[0],
+      });
     });
   });
 
@@ -566,11 +568,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -900,11 +900,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -955,8 +953,8 @@ describe('ListScreen component', () => {
       expect(textProductItem).toBeDefined();
     });
 
-    it("should not store list if AsyncStorage returns an error", async () => {
-      const getItemSpy = jest.spyOn(AsyncStorage, "getItem");
+    it('should not store list if AsyncStorage returns an error', async () => {
+      const getItemSpy = jest.spyOn(AsyncStorage, 'getItem');
 
       const fabricatedLists = [
         {
@@ -1010,17 +1008,15 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
-          Promise.resolve({
-            data: [...fabricatedLists]
-          })
-        );
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
+        Promise.resolve({
+          data: [...fabricatedLists],
+        })
+      );
 
       jest
         .spyOn(AsyncStorage, 'setItem')
-        .mockReturnValueOnce(Promise.reject("Error"));
+        .mockReturnValueOnce(Promise.reject('Error'));
 
       renderResults = render(
         <AuthContext.Provider
@@ -1093,13 +1089,13 @@ describe('ListScreen component', () => {
           </ListContext.Provider>
         </AuthContext.Provider>
       );
-      
+
       const listSelectAfterRerender = await waitFor(() =>
         getByTestId('select-current-list')
       );
-      
+
       expect(listSelectAfterRerender.props.value).toBe('Lista I');
-      
+
       getItemSpy.mockClear();
     });
   });
@@ -1128,11 +1124,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -1200,11 +1194,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -1229,8 +1221,8 @@ describe('ListScreen component', () => {
         .mockImplementation((productName) =>
           Promise.resolve({
             data: products.filter((p) => p.name.includes(productName)),
-        })
-      );
+          })
+        );
 
       renderResults = render(
         <AuthContext.Provider
@@ -1293,15 +1285,15 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
-      const getProductByNameSpy = jest.spyOn(ProductService, 'getProductByName').mockClear();
+      const getProductByNameSpy = jest
+        .spyOn(ProductService, 'getProductByName')
+        .mockClear();
 
       const products = [
         {
@@ -1324,8 +1316,8 @@ describe('ListScreen component', () => {
         .mockImplementation((productName) =>
           Promise.resolve({
             data: products.filter((p) => p.name.includes(productName)),
-        })
-      );
+          })
+        );
 
       renderResults = render(
         <AuthContext.Provider
@@ -1384,17 +1376,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
-      jest
-        .spyOn(ProductService, 'getProductByName')
-        .mockReturnValue(
+      jest.spyOn(ProductService, 'getProductByName').mockReturnValue(
         Promise.resolve({
           data: [],
         })
@@ -1448,7 +1436,7 @@ describe('ListScreen component', () => {
       fireEvent.press(addNewProductOption);
 
       expect(navigation.navigate).toHaveBeenCalledWith('NewProduct', {
-        productName: 'Arroz'
+        productName: 'Arroz',
       });
     });
 
@@ -1467,11 +1455,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -1550,11 +1536,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -1617,17 +1601,13 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
-      jest
-        .spyOn(ProductOfListService, 'createProductOfList')
-        .mockReturnValue(
+      jest.spyOn(ProductOfListService, 'createProductOfList').mockReturnValue(
         Promise.resolve({
           id: 1,
           productId: 1,
@@ -1717,17 +1697,13 @@ describe('ListScreen component', () => {
         },
       };
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
-      jest
-        .spyOn(ProductOfListService, 'createProductOfList')
-        .mockReturnValue(
+      jest.spyOn(ProductOfListService, 'createProductOfList').mockReturnValue(
         Promise.resolve({
           id: 1,
           productId: 1,
@@ -1817,11 +1793,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -1850,8 +1824,8 @@ describe('ListScreen component', () => {
         .mockImplementation((productName) =>
           Promise.resolve({
             data: products.filter((p) => p.name.includes(productName)),
-        })
-      );
+          })
+        );
 
       renderResults = render(
         <AuthContext.Provider
@@ -1951,11 +1925,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -2062,11 +2034,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -2166,11 +2136,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -2257,11 +2225,9 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-      jest
-        .spyOn(ListService, 'getLists')
-        .mockReturnValue(
+      jest.spyOn(ListService, 'getLists').mockReturnValue(
         Promise.resolve({
-          data: [...fabricatedLists]
+          data: [...fabricatedLists],
         })
       );
 
@@ -2426,12 +2392,11 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-
       const refreshRoute = {
         params: {
-          refresh: true
-        }
-      }
+          refresh: true,
+        },
+      };
 
       renderResults = render(
         <AuthContext.Provider
@@ -2485,8 +2450,7 @@ describe('ListScreen component', () => {
 
       lists = [...fabricatedLists];
 
-
-      const refreshRoute = {}
+      const refreshRoute = {};
 
       renderResults = render(
         <AuthContext.Provider

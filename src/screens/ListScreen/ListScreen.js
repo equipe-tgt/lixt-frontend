@@ -125,21 +125,20 @@ export default function ListScreen(props) {
         // variável da lista selecionada
         if (data && data.length > 0) {
           setLists([...data]);
-          AsyncStorage.getItem('lastSelectedList')
-            .then(lastSelectedList => {
-              if (lastSelectedList) {
-                setSelectedList(
-                  data.find((list) => list.id === Number(lastSelectedList))
-                );
-              } else {
-                setSelectedList(data[0]);
-              }
-            });
+          AsyncStorage.getItem('lastSelectedList').then((lastSelectedList) => {
+            if (lastSelectedList) {
+              setSelectedList(
+                data.find((list) => list.id === Number(lastSelectedList))
+              );
+            } else {
+              setSelectedList(data[0]);
+            }
+          });
         } else {
           setLists([]);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         toast.show({
           title: 'Não foi possível buscar suas listas',
           status: 'warning',
@@ -256,7 +255,9 @@ export default function ListScreen(props) {
 
       // Se o atributo 'productsOfList' já existe só insere o produto
       // caso não, cria um array com o produto já inserido dentro
-      objCopy.productsOfList = objCopy.productsOfList ? [...objCopy.productsOfList, data] : objCopy.productsOfList = [data];
+      objCopy.productsOfList = objCopy.productsOfList
+        ? [...objCopy.productsOfList, data]
+        : (objCopy.productsOfList = [data]);
 
       setSelectedList(objCopy);
       editOriginalLists(objCopy);
@@ -390,20 +391,18 @@ export default function ListScreen(props) {
               );
             }}
           >
-            {
-              selectedList && selectedList.ownerId === user.id ? (
-                <Menu.Item
-                  testID="edit-list-menu-item"
-                  onPress={() => {
-                    props.navigation.navigate('EditList', {
-                      listId: selectedList.id,
-                    });
-                  }}
-                >
-                  {t('editList')}
-                </Menu.Item>
-              ) : null
-            }
+            {selectedList && selectedList.ownerId === user.id ? (
+              <Menu.Item
+                testID="edit-list-menu-item"
+                onPress={() => {
+                  props.navigation.navigate('EditList', {
+                    listId: selectedList.id,
+                  });
+                }}
+              >
+                {t('editList')}
+              </Menu.Item>
+            ) : null}
             <Menu.Item
               testID="list-details-menu-item"
               onPress={() => {

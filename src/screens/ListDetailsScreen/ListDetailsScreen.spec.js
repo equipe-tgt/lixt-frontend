@@ -133,7 +133,7 @@ describe('ListDetailsScreen component', () => {
               id: 1,
               name: 'Fulano',
               username: 'fulanodetal',
-            }
+            },
           },
         ],
         productOfList: [],
@@ -186,7 +186,7 @@ describe('ListDetailsScreen component', () => {
                         id: 1,
                         name: 'Fulano',
                         username: 'fulanodetal',
-                      }
+                      },
                     },
                   ],
                   productOfList: [],

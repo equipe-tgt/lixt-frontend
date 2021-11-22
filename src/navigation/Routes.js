@@ -52,6 +52,7 @@ export default function Routes() {
         setUser(null);
       }
     } catch (error) {
+      console.log({ error });
       // Se for um erro de servidor
       if (error?.response?.status) {
         useToast().show({

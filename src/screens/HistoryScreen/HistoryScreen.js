@@ -31,9 +31,11 @@ export default function HistoryScreen(props) {
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useFocusEffect(useCallback(() => {
-    fetchPurchases();
-  }, []));
+  useFocusEffect(
+    useCallback(() => {
+      fetchPurchases();
+    }, [])
+  );
 
   const getFormattedPurchaseDate = (date) => {
     return format(moment(date).toDate(), 'P', {
@@ -58,7 +60,7 @@ export default function HistoryScreen(props) {
           data.sort(
             (a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate)
           );
-  
+
           setPurchases(data);
         }
       })

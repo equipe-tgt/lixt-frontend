@@ -56,8 +56,7 @@ export default function ListStack() {
         name="EditList"
         options={{ title: t('editList'), headerStyle: stackHeaderStyle }}
         component={EditListScreen}
-      >
-      </Stack.Screen>
+      ></Stack.Screen>
       <Stack.Screen
         name="Invite"
         options={{ title: t('sendInvitation'), headerStyle: stackHeaderStyle }}
@@ -72,7 +71,7 @@ export default function ListStack() {
         name="Commentaries"
         options={({ route }) => ({
           title: `${t('commentaries')} - ${route.params.product.name}`,
-          headerStyle: stackHeaderStyle
+          headerStyle: stackHeaderStyle,
         })}
         component={CommentaryScreen}
       ></Stack.Screen>
