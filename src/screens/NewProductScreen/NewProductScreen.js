@@ -51,6 +51,7 @@ export default function NewProductScreen(props) {
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
     initialValues: {
       name: props.route.params?.productName || '',
+      brand: '',
       categoryId: '',
       measureType: 'un',
       measureValue: '',
@@ -109,7 +110,7 @@ export default function NewProductScreen(props) {
 
     const product = {
       categoryId: values.categoryId,
-      name: values.name,
+      name: values.brand ? `${values.name} ${values.brand}` : values.name,
       userId: barcode ? null : user.id,
       measureType: getMeasureValueByLabel(values.measureType),
       barcode,
@@ -167,6 +168,19 @@ export default function NewProductScreen(props) {
           disabled={loading}
           isInvalid={!!errors.name}
         />
+
+        {
+          !barcode ? (
+            <LixtInput
+              labelName="brand"
+              value={values.brand}
+              onChangeText={handleChange('brand')}
+              onBlur={handleBlur('brand')}
+              inputTestID="new-product-brand"
+              disabled={loading}
+            />
+          ) : null
+        }
 
         <FormControl my={3}>
           <FormControl.Label>{t('measureType')}</FormControl.Label>
