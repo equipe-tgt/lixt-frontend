@@ -51,9 +51,7 @@ export default function CartScreen(props) {
     if (props.route.params) {
       // Caso a tela peça para fazer refresh atualiza as listas
       if (props.route.params.refresh) {
-        if (selectedList?.id !== 'view-all') {
-          refreshIndividualList();
-        }
+        if (selectedList?.id !== 'view-all') refreshIndividualList();
         props.route.params.refresh = null;
       }
     }
@@ -68,9 +66,7 @@ export default function CartScreen(props) {
       if (selectedList && selectedList?.id === 'view-all') {
         setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
       } else {
-        const idToFind = selectedList?.id;
-
-        setSelectedList(lists.find((l) => Number(l.id) === Number(idToFind)));
+        setSelectedList(lists.find((l) => Number(l.id) === Number(selectedList?.id)));
       }
     } else {
       refreshLists();

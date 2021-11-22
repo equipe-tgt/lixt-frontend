@@ -126,6 +126,9 @@ export default {
   leaveList: 'Sair da lista',
   owner: 'Proprietário',
   members: 'Membros',
+  noMembers: 'Não há membros nesta lista',
+  removeMember: 'Remover membro',
+  confirmRemoveMember: 'Você tem certeza que deseja remover esse membro?',
   products: 'Produtos',
   guest: 'Convidado',
   you: 'Você',
@@ -206,6 +209,7 @@ export default {
   barcodeRegisteredOn:
     'O código "{{barcode}}" já foi cadastrado no produto "{{product}}"',
   wisthToAddToList: 'Deseja adicioná-lo à lista atual?',
+  brand: 'Marca',
 
   turnOnDeviceLocation: 'Ative a localização do dispositivo',
   requestForLocationPermission:

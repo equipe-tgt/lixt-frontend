@@ -323,6 +323,34 @@ describe('CartScreen component', () => {
                 },
                 amountComment: 0,
               },
+              {
+                id: 12,
+                productId: 3,
+                listId: 1,
+                assignedUserId: null,
+                userWhoMarkedId: 1,
+                name: 'Tomate',
+                isMarked: true,
+                plannedAmount: 10,
+                markedAmount: 2,
+                price: 5,
+                measureValue: null,
+                measureType: 'UNITY',
+                product: {
+                  id: 3,
+                  name: 'Tomate',
+                  userId: null,
+                  categoryId: 1,
+                  barcode: null,
+                  measureValue: null,
+                  measureType: 'UNITY',
+                  category: {
+                    id: 1,
+                    name: 'Alimentação',
+                  },
+                },
+                amountComment: 0,
+              },
             ],
             listMembers: [
               {
@@ -346,7 +374,34 @@ describe('CartScreen component', () => {
             ownerId: 1,
             owner: 'Fulano',
             description: '',
-            productsOfList: [],
+            productsOfList: [{
+              id: 13,
+              productId: 3,
+              listId: 2,
+              assignedUserId: null,
+              userWhoMarkedId: 1,
+              name: 'Tomate',
+              isMarked: true,
+              plannedAmount: 10,
+              markedAmount: 2,
+              price: 5,
+              measureValue: null,
+              measureType: 'UNITY',
+              product: {
+                id: 3,
+                name: 'Tomate',
+                userId: null,
+                categoryId: 1,
+                barcode: null,
+                measureValue: null,
+                measureType: 'UNITY',
+                category: {
+                  id: 1,
+                  name: 'Alimentação',
+                },
+              },
+              amountComment: 0,
+            }],
             listMembers: [],
           },
         ];
@@ -402,7 +457,7 @@ describe('CartScreen component', () => {
 
         const finalPrice = totalPriceText.props.children[2];
 
-        expect(finalPrice).toBe(10);
+        expect(finalPrice).toBe(30);
       });
 
       it('should be able to check an item', async () => {
@@ -482,7 +537,7 @@ describe('CartScreen component', () => {
           (id, value, user) => id
         );
 
-        const inputAmount = await waitFor(() => getByTestId('amount-input'));
+        const inputAmount = await waitFor(() => getByTestId('amount-input-Feijão'));
 
         await waitFor(() => fireEvent(inputAmount, 'change', 2));
 
@@ -505,6 +560,29 @@ describe('CartScreen component', () => {
         expect(ListService.getLists).toHaveBeenCalled();
       });
 
+      it('should not be able to refresh individual lists if server returns an error', async () => {
+        ListService.getListById = jest.fn((id, user) => id);
+        const getListByIdSpy = jest.spyOn(ListService, 'getListById');
+
+        // eslint-disable-next-line prefer-promise-reject-errors
+        getListByIdSpy.mockReturnValue(Promise.reject(new Error('Error')));
+
+        const selectVisualizationMode = await waitFor(() =>
+          getByTestId('select-visualization-mode')
+        );
+
+        fireEvent(selectVisualizationMode, 'valueChange', lists[0].id);
+
+        const refreshControl = await waitFor(
+          () => getByTestId('cart-refresh-control').props.refreshControl
+        );
+
+        await waitFor(() => fireEvent(refreshControl, 'refresh'));
+
+        const toast = await waitFor(() => getByText('errorServerDefault'));
+        expect(toast).toBeDefined();
+      });
+
       it('should show an error if the server response for the refreshing is an error', async () => {
         ListService.getLists = jest.fn((user) => {
           return {
@@ -524,7 +602,6 @@ describe('CartScreen component', () => {
         await waitFor(() => fireEvent(refreshControl, 'refresh'));
 
         const toast = await waitFor(() => getByText('errorServerDefault'));
-
         expect(toast).toBeDefined();
       });
 

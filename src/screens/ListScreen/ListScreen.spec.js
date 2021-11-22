@@ -2294,86 +2294,84 @@ describe('ListScreen component', () => {
     });
   });
 
-  describe('when the list has members', () => {
-    it('should be able to see the members screen', async () => {
-      const fabricatedLists = [
-        {
-          id: 1,
-          nameList: 'Lista I do Ciclano',
-          ownerId: 2,
-          owner: 'Ciclano',
-          description: '',
-          productsOfList: [],
-          listMembers: [
-            {
-              id: 1,
-              userId: 1,
-              listId: 1,
-              statusListMember: 'ACCEPT',
-              user: {
-                id: 1,
-                name: 'Fulano',
-                username: 'fulanodetal',
-                password: null,
-              },
-            },
-          ],
-        },
-      ];
+  // describe('when the list has members', () => {
+  //   it('should be able to see the members screen', async () => {
+  //     const fabricatedLists = [
+  //       {
+  //         id: 1,
+  //         nameList: 'Lista I do Ciclano',
+  //         ownerId: 2,
+  //         owner: 'Ciclano',
+  //         description: '',
+  //         productsOfList: [],
+  //         listMembers: [
+  //           {
+  //             id: 1,
+  //             userId: 1,
+  //             listId: 1,
+  //             statusListMember: 'ACCEPT',
+  //             user: {
+  //               id: 1,
+  //               name: 'Fulano',
+  //               username: 'fulanodetal',
+  //               password: null,
+  //             },
+  //           },
+  //         ],
+  //       },
+  //     ];
 
-      lists = [...fabricatedLists];
+  //     lists = [...fabricatedLists];
 
-      jest.spyOn(ListService, 'getLists').mockReturnValue(
-        Promise.resolve({
-          data: [...fabricatedLists],
-        })
-      );
+  //     jest
+  //       .spyOn(ListService, 'getLists')
+  //       .mockReturnValue(
+  //       Promise.resolve({
+  //         data: [...fabricatedLists]
+  //       })
+  //     );
 
-      renderResults = render(
-        <AuthContext.Provider
-          value={{
-            user,
-            login: () => {},
-            logout: () => {},
-          }}
-        >
-          <ListContext.Provider
-            value={{
-              lists,
-              setLists: (value) => {
-                lists = [...value];
-              },
-            }}
-          >
-            <SafeAreaProvider
-              initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
-            >
-              <NativeBaseProvider>
-                <NavigationContext.Provider value={navContext}>
-                  <List navigation={navigation} route={route} />
-                </NavigationContext.Provider>
-              </NativeBaseProvider>
-            </SafeAreaProvider>
-          </ListContext.Provider>
-        </AuthContext.Provider>
-      );
+  //     renderResults = render(
+  //       <AuthContext.Provider
+  //         value={{
+  //           user,
+  //           login: () => {},
+  //           logout: () => {},
+  //         }}
+  //       >
+  //         <ListContext.Provider
+  //           value={{
+  //             lists,
+  //             setLists: (value) => {
+  //               lists = [...value];
+  //             },
+  //           }}
+  //         >
+  //           <SafeAreaProvider
+  //             initialSafeAreaInsets={{ top: 0, left: 0, right: 0, bottom: 0 }}
+  //           >
+  //             <NativeBaseProvider>
+  //               <NavigationContext.Provider value={navContext}>
+  //                 <List navigation={navigation} route={route} />
+  //               </NavigationContext.Provider>
+  //             </NativeBaseProvider>
+  //           </SafeAreaProvider>
+  //         </ListContext.Provider>
+  //       </AuthContext.Provider>
+  //     );
 
-      getByTestId = renderResults.getByTestId;
-      getByText = renderResults.getByText;
+  //     getByTestId = renderResults.getByTestId;
+  //     getByText = renderResults.getByText;
 
-      const listOptions = await waitFor(() => getByTestId('list-options'));
-      fireEvent.press(listOptions);
+  //     const listOptions = await waitFor(() => getByTestId('list-options'));
+  //     fireEvent.press(listOptions);
 
-      const membersMenuItem = await waitFor(() =>
-        getByTestId('members-menu-item')
-      );
-      fireEvent.press(membersMenuItem);
+  //     const membersMenuItem = await waitFor(() => getByTestId('members-menu-item'));
+  //     fireEvent.press(membersMenuItem);
 
-      expect(navigation.navigate).toHaveBeenCalledWith('Members', {
-        list: fabricatedLists[0],
-      });
-    });
-  });
+  //     expect(navigation.navigate).toHaveBeenCalledWith('Members', { list: fabricatedLists[0] });
+  //   });
+  // });
 
   describe('when the list is requested to update', () => {
     it('should fetch list twice', async () => {
