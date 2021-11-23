@@ -66,7 +66,9 @@ export default function CartScreen(props) {
       if (selectedList && selectedList?.id === 'view-all') {
         setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
       } else {
-        setSelectedList(lists.find((l) => Number(l.id) === Number(selectedList?.id)));
+        setSelectedList(
+          lists.find((l) => Number(l.id) === Number(selectedList?.id))
+        );
       }
     } else {
       refreshLists();

@@ -82,6 +82,7 @@ export default {
   productAlreadyOnList: 'The product is already on the list',
   itemWasRemoved: 'Item was removed',
   couldntRemoveItem: "It wasn't possible to remove the item",
+  brandInput: 'Brand(optional)',
 
   edit: 'Edit',
   price: 'Price',

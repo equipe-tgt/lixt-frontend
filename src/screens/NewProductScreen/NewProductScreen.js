@@ -167,18 +167,14 @@ export default function NewProductScreen(props) {
           isInvalid={!!errors.name}
         />
 
-        {
-          !barcode ? (
-            <LixtInput
-              labelName="brand"
-              value={values.brand}
-              onChangeText={handleChange('brand')}
-              onBlur={handleBlur('brand')}
-              inputTestID="new-product-brand"
-              disabled={loading}
-            />
-          ) : null
-        }
+        <LixtInput
+          labelName="brandInput"
+          value={values.brand}
+          onChangeText={handleChange('brand')}
+          onBlur={handleBlur('brand')}
+          inputTestID="new-product-brand"
+          disabled={loading}
+        />
 
         <FormControl my={3}>
           <FormControl.Label>{t('measureType')}</FormControl.Label>

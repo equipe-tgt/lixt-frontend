@@ -374,34 +374,36 @@ describe('CartScreen component', () => {
             ownerId: 1,
             owner: 'Fulano',
             description: '',
-            productsOfList: [{
-              id: 13,
-              productId: 3,
-              listId: 2,
-              assignedUserId: null,
-              userWhoMarkedId: 1,
-              name: 'Tomate',
-              isMarked: true,
-              plannedAmount: 10,
-              markedAmount: 2,
-              price: 5,
-              measureValue: null,
-              measureType: 'UNITY',
-              product: {
-                id: 3,
+            productsOfList: [
+              {
+                id: 13,
+                productId: 3,
+                listId: 2,
+                assignedUserId: null,
+                userWhoMarkedId: 1,
                 name: 'Tomate',
-                userId: null,
-                categoryId: 1,
-                barcode: null,
+                isMarked: true,
+                plannedAmount: 10,
+                markedAmount: 2,
+                price: 5,
                 measureValue: null,
                 measureType: 'UNITY',
-                category: {
-                  id: 1,
-                  name: 'Alimentação',
+                product: {
+                  id: 3,
+                  name: 'Tomate',
+                  userId: null,
+                  categoryId: 1,
+                  barcode: null,
+                  measureValue: null,
+                  measureType: 'UNITY',
+                  category: {
+                    id: 1,
+                    name: 'Alimentação',
+                  },
                 },
+                amountComment: 0,
               },
-              amountComment: 0,
-            }],
+            ],
             listMembers: [],
           },
         ];
@@ -537,7 +539,9 @@ describe('CartScreen component', () => {
           (id, value, user) => id
         );
 
-        const inputAmount = await waitFor(() => getByTestId('amount-input-Feijão'));
+        const inputAmount = await waitFor(() =>
+          getByTestId('amount-input-Feijão')
+        );
 
         await waitFor(() => fireEvent(inputAmount, 'change', 2));
 
