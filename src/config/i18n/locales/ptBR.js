@@ -81,6 +81,7 @@ export default {
   productAlreadyOnList: 'O produto já está na lista',
   itemWasRemoved: 'Item foi removido',
   couldntRemoveItem: 'Não foi possível remover o item',
+  brandInput: 'Marca (opcional)',
 
   edit: 'Editar',
   price: 'Preço',
