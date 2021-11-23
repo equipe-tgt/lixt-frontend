@@ -128,6 +128,14 @@ export default function StatisticsSettingsScreen(props) {
         purchaseLocal: extraParams.purchaseLocal,
       });
     }
+
+    if (extraParams?.brand) {
+      setShowMoreFilters(true);
+      setProductDetailConfig({
+        ...productDetailConfig,
+        brand: extraParams.brand,
+      });
+    }
   };
 
   const getCategories = async () => {
@@ -192,6 +200,9 @@ export default function StatisticsSettingsScreen(props) {
         };
         if (productDetailConfig.purchaseLocal) {
           extraParams.purchaseLocal = productDetailConfig.purchaseLocal;
+        }
+        if (productDetailConfig.brand) {
+          extraParams.brand = productDetailConfig.brand;
         }
 
         paramsForStatisticsScreen.extraParams = extraParams;
@@ -270,6 +281,10 @@ export default function StatisticsSettingsScreen(props) {
         if (productDetailConfig?.purchaseLocal) {
           periodFilterObject.purchaseLocalId =
             productDetailConfig.purchaseLocal;
+        }
+
+        if (productDetailConfig?.brand) {
+          periodFilterObject.brand = productDetailConfig.brand;
         }
 
         return StatisticsService.getExpensesPer(
@@ -515,52 +530,72 @@ export default function StatisticsSettingsScreen(props) {
               {/* Filtros abertos */}
               {showMoreFilters && (
                 <Box>
-                  <Text fontSize={18} bold my={4}>
-                    {t('purchaseLocal')}
-                  </Text>
+                  <Box>
+                    <Text fontSize={18} bold my={4}>
+                      {t('purchaseLocal')}
+                    </Text>
 
-                  <HStack>
-                    <Select
-                      width={
-                        loadingPurchaseLocals ||
-                        productDetailConfig.purchaseLocal
-                          ? '90%'
-                          : '100%'
-                      }
-                      isDisabled={loadingPurchaseLocals}
-                      onValueChange={(val) => {
+                    <HStack>
+                      <Select
+                        width={
+                          loadingPurchaseLocals ||
+                          productDetailConfig.purchaseLocal
+                            ? '90%'
+                            : '100%'
+                        }
+                        isDisabled={loadingPurchaseLocals}
+                        onValueChange={(val) => {
+                          setProductDetailConfig({
+                            ...productDetailConfig,
+                            purchaseLocal: val,
+                          });
+                        }}
+                        selectedValue={productDetailConfig.purchaseLocal}
+                      >
+                        {userPurchaseLocals.map((purchaseLocal, index) => (
+                          <Select.Item
+                            value={purchaseLocal?.id}
+                            label={purchaseLocal?.name}
+                            key={index}
+                          />
+                        ))}
+                      </Select>
+                      {loadingPurchaseLocals && <Spinner size="sm" />}
+                      {!loadingPurchaseLocals &&
+                        productDetailConfig.purchaseLocal && (
+                          <Button
+                            onPress={() => {
+                              setProductDetailConfig({
+                                ...productDetailConfig,
+                                purchaseLocal: null,
+                              });
+                            }}
+                            variant="ghost"
+                            startIcon={
+                              <Ionicons name="close" size={24} color="#777" />
+                            }
+                          />
+                        )}
+                    </HStack>
+                  </Box>
+                    <Text fontSize={18} bold my={4}>
+                      Marca do produto
+                    </Text>
+
+                    <Input
+                      width={'100%'}
+                      type="text"
+                      value={productDetailConfig.brand}
+                      onChangeText={(value) => {
                         setProductDetailConfig({
                           ...productDetailConfig,
-                          purchaseLocal: val,
+                          brand: value,
                         });
                       }}
-                      selectedValue={productDetailConfig.purchaseLocal}
-                    >
-                      {userPurchaseLocals.map((purchaseLocal, index) => (
-                        <Select.Item
-                          value={purchaseLocal?.id}
-                          label={purchaseLocal?.name}
-                          key={index}
-                        />
-                      ))}
-                    </Select>
-                    {loadingPurchaseLocals && <Spinner size="sm" />}
-                    {!loadingPurchaseLocals &&
-                      productDetailConfig.purchaseLocal && (
-                        <Button
-                          onPress={() => {
-                            setProductDetailConfig({
-                              ...productDetailConfig,
-                              purchaseLocal: null,
-                            });
-                          }}
-                          variant="ghost"
-                          startIcon={
-                            <Ionicons name="close" size={24} color="#777" />
-                          }
-                        />
-                      )}
-                  </HStack>
+                    />
+                  <Box>
+
+                  </Box>
                 </Box>
               )}
             </VStack>
