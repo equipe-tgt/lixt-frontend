@@ -4,10 +4,12 @@ import PropTypes from 'prop-types';
 
 import { Modal } from 'native-base';
 import moment from 'moment';
+import 'moment/locale/pt-br';
 
 import MonthSelectorCalendar from 'react-native-month-selector';
 
 import { DateParameters } from '../utils/StatisticsUtils';
+import { getI18n } from 'react-i18next';
 
 export default function MonthPicker({
   handleDateChange,
@@ -41,6 +43,8 @@ export default function MonthPicker({
     }
   };
 
+  const language = getI18n().language === 'pt_BR' ? 'pt-br' : 'en';
+
   // Se a busca for do tipo mensal, renderiza o datePicker de seleção de mês
   return (
     <Modal
@@ -59,6 +63,7 @@ export default function MonthPicker({
           <MonthSelectorCalendar
             prevText={translate('previous')}
             nextText={translate('next')}
+            localeLanguage={language}
             selectedBackgroundColor="#06b6d4"
             minDate={getMinMaxDate().minDate}
             maxDate={getMinMaxDate().maxDate}
