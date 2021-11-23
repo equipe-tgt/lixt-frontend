@@ -196,14 +196,14 @@ export default function StatisticsScreen(props) {
             <PeakCard
               label={t('lowestPoint')}
               date={formatDate(ascOrderedData[0])}
-              price={`${t('currency')} ${ascOrderedData[0].price}`}
+              price={`${t('currency')} ${ascOrderedData[0].price || 0}`}
               isUp={false}
             />
             <PeakCard
               label={t('highestPoint')}
               date={formatDate(ascOrderedData[ascOrderedData.length - 1])}
               price={`${t('currency')} ${
-                ascOrderedData[ascOrderedData.length - 1].price
+                ascOrderedData[ascOrderedData.length - 1].price || 0
               }`}
               isUp={true}
             />
