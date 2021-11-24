@@ -61,7 +61,6 @@ export default function ListDetailsScreen(props) {
 
       props.navigation.navigate('Lists');
     } catch (error) {
-      console.log({ error })
       toast.show({
         status: 'warning',
         title: t('errorServerDefault'),
