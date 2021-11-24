@@ -13,7 +13,7 @@ export const DateParameters = {
 export const StatisticsType = {
   TIME: 'timeStatistics',
   LIST: 'listStatistics',
-  PRODUCT: 'productStatistics',
+  PRODUCT: 'productBrandStatistics',
   CATEGORY: 'categoryStatistics',
   PURCHASE_LOCAL: 'purchaseLocalStatistics',
 };

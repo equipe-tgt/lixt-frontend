@@ -15,6 +15,7 @@ import {
   Icon,
   List,
   Input,
+  Switch
 } from 'native-base';
 import DatePicker from '../../components/DatePicker';
 import { useFocusEffect } from '@react-navigation/native';
@@ -66,6 +67,7 @@ export default function StatisticsSettingsScreen(props) {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [loadingPurchaseLocals, setLoadingPurchaseLocals] = useState(false);
   const [userPurchaseLocals, setUserPurchaseLocals] = useState([]);
+  const [isSearchByProduct, setIsSearchByProduct] = useState(true)
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (a tela de estatísticas manda para cá)
@@ -128,6 +130,13 @@ export default function StatisticsSettingsScreen(props) {
         purchaseLocal: extraParams.purchaseLocal,
       });
     }
+
+    if (extraParams?.brand) {
+      setProductDetailConfig({
+        ...productDetailConfig,
+        brand: extraParams.brand,
+      });
+    }
   };
 
   const getCategories = async () => {
@@ -187,11 +196,15 @@ export default function StatisticsSettingsScreen(props) {
       }
 
       if (statisticsSettings.statisticType === StatisticsType.PRODUCT) {
-        const extraParams = {
-          selectedProduct,
-        };
+        const extraParams = {};
+        if (selectedProduct) {
+          extraParams.selectedProduct = selectedProduct;
+        }
         if (productDetailConfig.purchaseLocal) {
           extraParams.purchaseLocal = productDetailConfig.purchaseLocal;
+        }
+        if (productDetailConfig.brand) {
+          extraParams.brand = productDetailConfig.brand;
         }
 
         paramsForStatisticsScreen.extraParams = extraParams;
@@ -264,12 +277,23 @@ export default function StatisticsSettingsScreen(props) {
         periodFilterObject = {
           minDate: moment(statisticsSettings.startDate).toISOString(),
           maxDate: moment(statisticsSettings.endDate).toISOString(),
-          name: selectedProduct,
         };
+
+        if (selectedProduct) {
+          periodFilterObject.name = selectedProduct
+        }
 
         if (productDetailConfig?.purchaseLocal) {
           periodFilterObject.purchaseLocalId =
-            productDetailConfig.purchaseLocal;
+            Number(productDetailConfig.purchaseLocal);
+        }
+
+        if (productDetailConfig?.brand) {
+          periodFilterObject.brand = productDetailConfig.brand;
+        }
+
+        if (productDetailConfig?.brand) {
+          periodFilterObject.brand = productDetailConfig.brand;
         }
 
         return StatisticsService.getExpensesPer(
@@ -452,52 +476,97 @@ export default function StatisticsSettingsScreen(props) {
       case StatisticsType.PRODUCT:
         return (
           <Box>
-            {/* Input do nome do produto */}
-            <VStack>
-              <Text fontSize={18} bold my={4}>
-                {t('productName')}
-              </Text>
+            <Box display="flex" alignItems="center" flexDirection="row" mt={4} mb={3}>
+              <Text mr={2}>{t('brand')}</Text>
+              <Switch
+                isChecked={isSearchByProduct}
+                onToggle={() => setIsSearchByProduct(!isSearchByProduct)}
+                onTrackColor="dark.50"
+                offTrackColor="dark.50"
+                onThumbColor="dark.200"
+                offThumbColor="dark.200"
+              />
+              <Text ml={2}>{t('product')}</Text>
+            </Box>
 
-              <HStack>
-                <Input
-                  width={loadingProducts ? '90%' : '100%'}
-                  type="text"
-                  value={selectedProduct}
-                  onChangeText={(value) => {
-                    setSelectedProduct(value);
-                    searchProducts(value);
-                  }}
-                />
+            {
+              isSearchByProduct ? (
+                <VStack>
+                  <Text fontSize={18} bold my={4}>
+                    {t('productName')}
+                  </Text>
 
-                {loadingProducts && <Spinner size="sm" />}
-              </HStack>
+                  <HStack>
+                    <Input
+                      width={loadingProducts ? '90%' : '100%'}
+                      type="text"
+                      value={selectedProduct}
+                      onChangeText={(value) => {
+                        if (productDetailConfig.brand) {
+                          setProductDetailConfig({
+                            ...productDetailConfig,
+                            brand: null
+                          });
+                        }
+                        setSelectedProduct(value);
+                        searchProducts(value);
+                      }}
+                    />
 
-              {/* Produtos encontrados */}
-              {products && products?.length > 0 ? (
-                <List
-                  borderBottomRadius={3}
-                  borderTopColor="transparent"
-                  space="md"
-                >
-                  <ScrollView keyboardShouldPersistTaps="always">
-                    {products?.map((product) => (
-                      <List.Item
-                        testID="products-found"
-                        py={4}
-                        key={product.id}
-                        onPress={() => {
-                          setSelectedProduct(product.name);
-                          setProducts([]);
-                        }}
-                        _pressed={{ bg: 'primary.500' }}
-                      >
-                        {product.name}
-                      </List.Item>
-                    ))}
-                  </ScrollView>
-                </List>
-              ) : null}
-            </VStack>
+                    {loadingProducts && <Spinner size="sm" />}
+                  </HStack>
+
+                  {products && products?.length > 0 ? (
+                    <List
+                      borderBottomRadius={3}
+                      borderTopColor="transparent"
+                      space="md"
+                    >
+                      <ScrollView keyboardShouldPersistTaps="always">
+                        {products?.map((product) => (
+                          <List.Item
+                            testID="products-found"
+                            py={4}
+                            key={product.id}
+                            onPress={() => {
+                              setSelectedProduct(product.name);
+                              setProducts([]);
+                            }}
+                            _pressed={{ bg: 'primary.500' }}
+                          >
+                            {product.name}
+                          </List.Item>
+                        ))}
+                      </ScrollView>
+                    </List>
+                  ) : null}
+                </VStack>
+              ) : (
+                <VStack>
+                  <Text fontSize={18} bold my={4}>
+                    {t('brandName')}
+                  </Text>
+
+                  <HStack>
+                    <Input
+                      width="100%"
+                      type="text"
+                      value={productDetailConfig.brand || ""}
+                      onChangeText={(value) => {
+                        if (selectedProduct) {
+                          setSelectedProduct('')
+                        }
+                        setProductDetailConfig({
+                          ...productDetailConfig,
+                          brand: value,
+                        });
+                      }}
+                    />
+                  </HStack>
+                </VStack>
+              )
+            }
+
 
             {/* Mostrar mais filtros */}
             <VStack>
@@ -515,52 +584,55 @@ export default function StatisticsSettingsScreen(props) {
               {/* Filtros abertos */}
               {showMoreFilters && (
                 <Box>
-                  <Text fontSize={18} bold my={4}>
-                    {t('purchaseLocal')}
-                  </Text>
+                  <Box>
+                    <Text fontSize={18} bold my={4}>
+                      {t('purchaseLocal')}
+                    </Text>
 
-                  <HStack>
-                    <Select
-                      width={
-                        loadingPurchaseLocals ||
-                        productDetailConfig.purchaseLocal
-                          ? '90%'
-                          : '100%'
-                      }
-                      isDisabled={loadingPurchaseLocals}
-                      onValueChange={(val) => {
-                        setProductDetailConfig({
-                          ...productDetailConfig,
-                          purchaseLocal: val,
-                        });
-                      }}
-                      selectedValue={productDetailConfig.purchaseLocal}
-                    >
-                      {userPurchaseLocals.map((purchaseLocal, index) => (
-                        <Select.Item
-                          value={purchaseLocal?.id}
-                          label={purchaseLocal?.name}
-                          key={index}
-                        />
-                      ))}
-                    </Select>
-                    {loadingPurchaseLocals && <Spinner size="sm" />}
-                    {!loadingPurchaseLocals &&
-                      productDetailConfig.purchaseLocal && (
-                        <Button
-                          onPress={() => {
-                            setProductDetailConfig({
-                              ...productDetailConfig,
-                              purchaseLocal: null,
-                            });
-                          }}
-                          variant="ghost"
-                          startIcon={
-                            <Ionicons name="close" size={24} color="#777" />
-                          }
-                        />
-                      )}
-                  </HStack>
+                    <HStack>
+                      <Select
+                        width={
+                          loadingPurchaseLocals ||
+                          productDetailConfig.purchaseLocal
+                            ? '90%'
+                            : '100%'
+                        }
+                        isDisabled={loadingPurchaseLocals}
+                        onValueChange={(val) => {
+                          setProductDetailConfig({
+                            ...productDetailConfig,
+                            purchaseLocal: val,
+                          });
+                        }}
+                        selectedValue={productDetailConfig.purchaseLocal}
+                      >
+                        <Select.Item label="" value=""></Select.Item>
+                        {userPurchaseLocals.map((purchaseLocal) => (
+                          <Select.Item
+                            value={String(purchaseLocal?.id)}
+                            label={purchaseLocal?.name}
+                            key={purchaseLocal?.id}
+                          />
+                        ))}
+                      </Select>
+                      {loadingPurchaseLocals && <Spinner size="sm" />}
+                      {!loadingPurchaseLocals &&
+                        productDetailConfig.purchaseLocal && (
+                          <Button
+                            onPress={() => {
+                              setProductDetailConfig({
+                                ...productDetailConfig,
+                                purchaseLocal: "",
+                              });
+                            }}
+                            variant="ghost"
+                            startIcon={
+                              <Ionicons name="close" size={24} color="#777" />
+                            }
+                          />
+                        )}
+                    </HStack>
+                  </Box>
                 </Box>
               )}
             </VStack>
@@ -583,7 +655,9 @@ export default function StatisticsSettingsScreen(props) {
         return basicRule || !selectedCategory;
 
       case StatisticsType.PRODUCT:
-        return basicRule || !selectedProduct || !selectedProduct.length;
+        return basicRule ||
+          (isSearchByProduct && (!selectedProduct || !selectedProduct.length)) ||
+          (!isSearchByProduct && (!productDetailConfig.brand || !productDetailConfig.brand?.length));
 
       case StatisticsType.LIST:
         return basicRule || !selectedList;
