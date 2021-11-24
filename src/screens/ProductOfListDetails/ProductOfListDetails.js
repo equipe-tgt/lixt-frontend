@@ -111,7 +111,7 @@ export default function ProductOfListDetails(props) {
 
     // Se você for o dono da lista e ela possuir membros, checa pra ver se o item atual
     // está sendo atribuído a alguém
-    if (currentList.ownerId === user.id && currentList.listMembers.length > 0) {
+    if (currentList.ownerId === user.id && currentList.listMembers && currentList.listMembers.length > 0) {
       productOfListEdited.assignedUserId = userBeingAssignedTo?.userId
         ? userBeingAssignedTo.userId
         : null;
