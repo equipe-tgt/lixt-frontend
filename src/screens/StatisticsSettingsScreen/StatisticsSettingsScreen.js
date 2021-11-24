@@ -15,6 +15,7 @@ import {
   Icon,
   List,
   Input,
+  Switch
 } from 'native-base';
 import DatePicker from '../../components/DatePicker';
 import { useFocusEffect } from '@react-navigation/native';
@@ -66,6 +67,7 @@ export default function StatisticsSettingsScreen(props) {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [loadingPurchaseLocals, setLoadingPurchaseLocals] = useState(false);
   const [userPurchaseLocals, setUserPurchaseLocals] = useState([]);
+  const [isSearchByProduct, setIsSearchByProduct] = useState(true)
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (a tela de estatísticas manda para cá)
@@ -130,7 +132,6 @@ export default function StatisticsSettingsScreen(props) {
     }
 
     if (extraParams?.brand) {
-      setShowMoreFilters(true);
       setProductDetailConfig({
         ...productDetailConfig,
         brand: extraParams.brand,
@@ -195,9 +196,10 @@ export default function StatisticsSettingsScreen(props) {
       }
 
       if (statisticsSettings.statisticType === StatisticsType.PRODUCT) {
-        const extraParams = {
-          selectedProduct,
-        };
+        const extraParams = {};
+        if (selectedProduct) {
+          extraParams.selectedProduct = selectedProduct;
+        }
         if (productDetailConfig.purchaseLocal) {
           extraParams.purchaseLocal = productDetailConfig.purchaseLocal;
         }
@@ -275,12 +277,19 @@ export default function StatisticsSettingsScreen(props) {
         periodFilterObject = {
           minDate: moment(statisticsSettings.startDate).toISOString(),
           maxDate: moment(statisticsSettings.endDate).toISOString(),
-          name: selectedProduct,
         };
+
+        if (selectedProduct) {
+          periodFilterObject.name = selectedProduct
+        }
 
         if (productDetailConfig?.purchaseLocal) {
           periodFilterObject.purchaseLocalId =
-            productDetailConfig.purchaseLocal;
+            Number(productDetailConfig.purchaseLocal);
+        }
+
+        if (productDetailConfig?.brand) {
+          periodFilterObject.brand = productDetailConfig.brand;
         }
 
         if (productDetailConfig?.brand) {
@@ -467,52 +476,97 @@ export default function StatisticsSettingsScreen(props) {
       case StatisticsType.PRODUCT:
         return (
           <Box>
-            {/* Input do nome do produto */}
-            <VStack>
-              <Text fontSize={18} bold my={4}>
-                {t('productName')}
-              </Text>
+            <Box display="flex" alignItems="center" flexDirection="row" mt={4} mb={3}>
+              <Text mr={2}>{t('brand')}</Text>
+              <Switch
+                isChecked={isSearchByProduct}
+                onToggle={() => setIsSearchByProduct(!isSearchByProduct)}
+                onTrackColor="dark.50"
+                offTrackColor="dark.50"
+                onThumbColor="dark.200"
+                offThumbColor="dark.200"
+              />
+              <Text ml={2}>{t('product')}</Text>
+            </Box>
 
-              <HStack>
-                <Input
-                  width={loadingProducts ? '90%' : '100%'}
-                  type="text"
-                  value={selectedProduct}
-                  onChangeText={(value) => {
-                    setSelectedProduct(value);
-                    searchProducts(value);
-                  }}
-                />
+            {
+              isSearchByProduct ? (
+                <VStack>
+                  <Text fontSize={18} bold my={4}>
+                    {t('productName')}
+                  </Text>
 
-                {loadingProducts && <Spinner size="sm" />}
-              </HStack>
+                  <HStack>
+                    <Input
+                      width={loadingProducts ? '90%' : '100%'}
+                      type="text"
+                      value={selectedProduct}
+                      onChangeText={(value) => {
+                        if (productDetailConfig.brand) {
+                          setProductDetailConfig({
+                            ...productDetailConfig,
+                            brand: null
+                          });
+                        }
+                        setSelectedProduct(value);
+                        searchProducts(value);
+                      }}
+                    />
 
-              {/* Produtos encontrados */}
-              {products && products?.length > 0 ? (
-                <List
-                  borderBottomRadius={3}
-                  borderTopColor="transparent"
-                  space="md"
-                >
-                  <ScrollView keyboardShouldPersistTaps="always">
-                    {products?.map((product) => (
-                      <List.Item
-                        testID="products-found"
-                        py={4}
-                        key={product.id}
-                        onPress={() => {
-                          setSelectedProduct(product.name);
-                          setProducts([]);
-                        }}
-                        _pressed={{ bg: 'primary.500' }}
-                      >
-                        {product.name}
-                      </List.Item>
-                    ))}
-                  </ScrollView>
-                </List>
-              ) : null}
-            </VStack>
+                    {loadingProducts && <Spinner size="sm" />}
+                  </HStack>
+
+                  {products && products?.length > 0 ? (
+                    <List
+                      borderBottomRadius={3}
+                      borderTopColor="transparent"
+                      space="md"
+                    >
+                      <ScrollView keyboardShouldPersistTaps="always">
+                        {products?.map((product) => (
+                          <List.Item
+                            testID="products-found"
+                            py={4}
+                            key={product.id}
+                            onPress={() => {
+                              setSelectedProduct(product.name);
+                              setProducts([]);
+                            }}
+                            _pressed={{ bg: 'primary.500' }}
+                          >
+                            {product.name}
+                          </List.Item>
+                        ))}
+                      </ScrollView>
+                    </List>
+                  ) : null}
+                </VStack>
+              ) : (
+                <VStack>
+                  <Text fontSize={18} bold my={4}>
+                    {t('brandName')}
+                  </Text>
+
+                  <HStack>
+                    <Input
+                      width="100%"
+                      type="text"
+                      value={productDetailConfig.brand || ""}
+                      onChangeText={(value) => {
+                        if (selectedProduct) {
+                          setSelectedProduct('')
+                        }
+                        setProductDetailConfig({
+                          ...productDetailConfig,
+                          brand: value,
+                        });
+                      }}
+                    />
+                  </HStack>
+                </VStack>
+              )
+            }
+
 
             {/* Mostrar mais filtros */}
             <VStack>
@@ -552,11 +606,12 @@ export default function StatisticsSettingsScreen(props) {
                         }}
                         selectedValue={productDetailConfig.purchaseLocal}
                       >
-                        {userPurchaseLocals.map((purchaseLocal, index) => (
+                        <Select.Item label="" value=""></Select.Item>
+                        {userPurchaseLocals.map((purchaseLocal) => (
                           <Select.Item
-                            value={purchaseLocal?.id}
+                            value={String(purchaseLocal?.id)}
                             label={purchaseLocal?.name}
-                            key={index}
+                            key={purchaseLocal?.id}
                           />
                         ))}
                       </Select>
@@ -567,7 +622,7 @@ export default function StatisticsSettingsScreen(props) {
                             onPress={() => {
                               setProductDetailConfig({
                                 ...productDetailConfig,
-                                purchaseLocal: null,
+                                purchaseLocal: "",
                               });
                             }}
                             variant="ghost"
@@ -577,24 +632,6 @@ export default function StatisticsSettingsScreen(props) {
                           />
                         )}
                     </HStack>
-                  </Box>
-                    <Text fontSize={18} bold my={4}>
-                      Marca do produto
-                    </Text>
-
-                    <Input
-                      width={'100%'}
-                      type="text"
-                      value={productDetailConfig.brand}
-                      onChangeText={(value) => {
-                        setProductDetailConfig({
-                          ...productDetailConfig,
-                          brand: value,
-                        });
-                      }}
-                    />
-                  <Box>
-
                   </Box>
                 </Box>
               )}
@@ -618,7 +655,9 @@ export default function StatisticsSettingsScreen(props) {
         return basicRule || !selectedCategory;
 
       case StatisticsType.PRODUCT:
-        return basicRule || !selectedProduct || !selectedProduct.length;
+        return basicRule ||
+          (isSearchByProduct && (!selectedProduct || !selectedProduct.length)) ||
+          (!isSearchByProduct && (!productDetailConfig.brand || !productDetailConfig.brand?.length));
 
       case StatisticsType.LIST:
         return basicRule || !selectedList;
