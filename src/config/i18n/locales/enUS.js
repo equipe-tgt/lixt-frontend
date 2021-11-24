@@ -132,6 +132,8 @@ export default {
   noMembers: 'There are no members in this list',
   removeMember: 'Remove member',
   confirmRemoveMember: 'Are you sure you want to remove this member',
+  leaveList: 'Leave list',
+  confirmLeaveList: 'Are you sure you want to leave this list?',
   products: 'Products',
   guest: 'Guest',
   you: 'You',

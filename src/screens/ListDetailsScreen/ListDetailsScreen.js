@@ -17,12 +17,15 @@ import { AuthContext } from '../../context/AuthProvider';
 import { ListContext } from '../../context/ListProvider';
 import ListMembersService from '../../services/ListMembersService';
 import RemoveMemberModal from '../../components/RemoveMemberModal';
+import LeaveListModal from '../../components/LeaveListModal';
 
 export default function ListDetailsScreen(props) {
   const toast = useToast();
   const { user } = useContext(AuthContext);
   const { lists, setLists } = useContext(ListContext);
   const [isRemoveMemberModalOpened, setIsRemoveMemberModalOpened] =
+    useState(false);
+  const [isLeaveListModalOpened, setIsLeaveListModalOpened] =
     useState(false);
 
   const { t } = useTranslation();
@@ -43,8 +46,8 @@ export default function ListDetailsScreen(props) {
       setLoading(true);
 
       // Pega o id do convite atual e faz a deleção do convite
-      const { userId } = getCurrentInvitation();
-      await ListMembersService.deleteInvitation(userId, user);
+      const { id: inviteId } = getCurrentInvitation();
+      await ListMembersService.deleteInvitation(inviteId, user);
 
       // Após se desvincular da lista, filtra as listas do usuário de forma
       // que a lista da qual ele se desvinculou não apareça mais
@@ -181,7 +184,7 @@ export default function ListDetailsScreen(props) {
           <Button
             isLoading={loading}
             isLoadingText="Saindo"
-            onPress={leaveList}
+            onPress={() => setIsLeaveListModalOpened(true)}
             testID="leave-list"
             mt={5}
             variant="outline"
@@ -196,6 +199,15 @@ export default function ListDetailsScreen(props) {
             closeModal={(value) => {
               if (value) removeMember(isRemoveMemberModalOpened);
               else setIsRemoveMemberModalOpened(false);
+            }}
+          />
+        ) : null}
+        {list.ownerId !== user.id ? (
+          <LeaveListModal
+            isOpen={!!isLeaveListModalOpened}
+            closeModal={(value) => {
+              if (value) leaveList()
+              else setIsLeaveListModalOpened(false)
             }}
           />
         ) : null}

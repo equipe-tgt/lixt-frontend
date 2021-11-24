@@ -130,6 +130,8 @@ export default {
   noMembers: 'Não há membros nesta lista',
   removeMember: 'Remover membro',
   confirmRemoveMember: 'Você tem certeza que deseja remover esse membro?',
+  leaveList: 'Sair da lista',
+  confirmLeaveList: 'Você tem certeza que deseja sair desta lista?',
   products: 'Produtos',
   guest: 'Convidado',
   you: 'Você',
