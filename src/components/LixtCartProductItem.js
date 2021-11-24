@@ -222,7 +222,7 @@ const LixtCartProductItem = ({
             });
           }}
         >
-          <Text strikeThrough={isChecked} fontWeight="bold">
+          <Text maxWidth="90%" strikeThrough={isChecked} fontWeight="bold">
             {product.name}
           </Text>
 
