@@ -53,7 +53,7 @@ export default function LineChartWrapper({
             isPortuguese ? 'DD/MM/yyyy' : 'MM/DD/yyyy'
           )
         );
-        datasetsItem.data.push(preData.price);
+        datasetsItem.data.push(preData.price || 0);
       }
     }
 

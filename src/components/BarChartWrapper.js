@@ -94,7 +94,7 @@ export default function BarChartWrapper({
           const month = moment(preData.time, 'MM/yyyy').format('MMM/yyyy');
 
           labels.push(month);
-          datasetsItem.data.push(preData.price);
+          datasetsItem.data.push(preData.price || 0);
         }
         break;
 
