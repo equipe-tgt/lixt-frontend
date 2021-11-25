@@ -1,4 +1,8 @@
 import { getI18n } from 'react-i18next';
+import 'intl';
+import 'intl/locale-data/jsonp/en';
+import 'intl/locale-data/jsonp/en-US';
+import 'intl/locale-data/jsonp/pt-BR';
 
 export const convertDecimalBasedOnLanguage = (number) => {
   if (number !== 0 && !number) return;
