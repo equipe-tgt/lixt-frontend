@@ -93,18 +93,18 @@ export default function ProductOfListDetails(props) {
     if (values.price) {
       const language = getI18n().language
       if (language === "pt_BR") {
-        const dollarFormat = values.price.replaceAll('.', ',').replace(/,(\d\d)$/, '.$1')
-        productOfListEdited.price =
-          typeof values.price === 'number'
-            ? values.price
-            : parseFloat(dollarFormat.replace(/[^0-9\.]+/g, ""))
+        if (typeof values.price === "number") {
+          productOfListEdited.price = values.price;
+        } else {
+          const dollarFormat = values.price.replaceAll('.', ',').replace(/,(\d\d)$/, '.$1')
+          productOfListEdited.price = parseFloat(dollarFormat.replace(/[^0-9\.]+/g, ""))
+        }
       } else if (language === "en_US") {
         productOfListEdited.price =
           typeof values.price === 'number'
             ? values.price
             : parseFloat(values.price.replace(/[^0-9\.]+/g, ""))
       }
-      console.log("productOfListEdited.price", productOfListEdited.price)
     }
 
     productOfListEdited.plannedAmount =
