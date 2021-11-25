@@ -4,6 +4,7 @@ import { getMeasureType } from '../utils/measureTypes';
 import { Pressable, Box, Menu, Text } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { convertDecimalBasedOnLanguage } from '../utils/convertion';
 
 const LixtProductItem = ({
   product,
@@ -24,32 +25,32 @@ const LixtProductItem = ({
         {product.measureType === 'UNITY' ? (
           <Box>
             <Text>
-              {markedAndPlannedDiffer && `${t('planned')}: `}
+              {markedAndPlannedDiffer ? `${t('planned')}: ` : null}
               {product.plannedAmount} {getMeasureType(product.measureType)}
             </Text>
-            {markedAndPlannedDiffer && (
+            {markedAndPlannedDiffer ? (
               <Text>
                 {`${t('marked')}: `}
                 {product.markedAmount} {getMeasureType(product.measureType)}
               </Text>
-            )}
+            ) : null}
           </Box>
         ) : (
           <Box>
             <Text>
-              {markedAndPlannedDiffer && `${t('planned')}: `}
+              {markedAndPlannedDiffer ? `${t('planned')}: ` : null}
               {`${product.plannedAmount || 0} x ${
                 product.measureValue || 0
               } ${getMeasureType(product.measureType)}`}
             </Text>
-            {markedAndPlannedDiffer && (
+            {markedAndPlannedDiffer ? (
               <Text>
                 {`${t('marked')}: `}
                 {`${product.markedAmount || 0} x ${
                   product.measureValue || 0
                 } ${getMeasureType(product.measureType)}`}
               </Text>
-            )}
+            ) : null}
           </Box>
         )}
       </Box>
@@ -77,10 +78,8 @@ const LixtProductItem = ({
 
           <Text mt={1}>
             {product.price
-              ? `${t('currency')} ${
-                  (product.price * (product.markedAmount || product.plannedAmount)).toFixed(2)
-                }`
-              : `${t('currency')} 0,00`}
+              ? convertDecimalBasedOnLanguage((product.price * (product.markedAmount || product.plannedAmount)))
+              : convertDecimalBasedOnLanguage('0,00')}
           </Text>
         </Box>
 

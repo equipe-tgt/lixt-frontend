@@ -93,7 +93,7 @@ export default function MembersListScreen(props) {
             </Box>
 
             {/* Se o usuário for o dono da lista mostra o botão para remover um usuário */}
-            {isUserTheOwner && (
+            {isUserTheOwner ? (
               <Button
                 mr={3}
                 isLoading={idMemberLoading === lm.id}
@@ -106,7 +106,7 @@ export default function MembersListScreen(props) {
               >
                 {t('remove')}
               </Button>
-            )}
+            ) : null}
           </HStack>
         ))}
       </ScrollView>

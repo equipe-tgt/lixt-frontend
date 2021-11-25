@@ -12,6 +12,7 @@ import { Box, Text, HStack, Accordion, ScrollView } from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
 
 import { useTranslation, getI18n } from 'react-i18next';
+import { convertDecimalBasedOnLanguage } from '../../utils/convertion';
 
 export default function PurchaseDetailScreen(props) {
   const { t } = useTranslation();
@@ -55,8 +56,7 @@ export default function PurchaseDetailScreen(props) {
         {/* Dados gerais da compra */}
         <Box mt={5} alignItems="center">
           <Text testID="purchase-price-text" bold fontSize={42}>
-            {t('currency')}
-            {purchase.purchasePrice}
+            {convertDecimalBasedOnLanguage(purchase.purchasePrice)}
           </Text>
 
           <HStack alignItems="center">
@@ -106,7 +106,7 @@ export default function PurchaseDetailScreen(props) {
         <Text bold ml={5}>
           {t('purchaseLists')}
         </Text>
-        {purchase.purchaseLists.length > 0 && (
+        {purchase.purchaseLists.length > 0 ? (
           <Accordion
             testID="purchase-lists-details"
             width="95%"
@@ -125,9 +125,7 @@ export default function PurchaseDetailScreen(props) {
                         {purchaseList.nameList}
                       </Text>
                       <Text>
-                        {`${t('currency')} ${
-                          purchaseList.partialPurchasePrice || 0
-                        } `}
+                        {convertDecimalBasedOnLanguage(purchaseList.partialPurchasePrice || 0)}
                       </Text>
                     </Box>
                     <Accordion.Icon />
@@ -139,9 +137,7 @@ export default function PurchaseDetailScreen(props) {
                         <Text color="gray.500">{`${t('purchasedAmount')}: ${
                           item.amount
                         }`}</Text>
-                        <Text color="gray.500">{`${t('price')}: ${t(
-                          'currency'
-                        )} ${item.price || 0}`}</Text>
+                        <Text color="gray.500">{convertDecimalBasedOnLanguage(item.price || 0)}</Text>
                       </Box>
                     ))}
                   </Accordion.Details>
@@ -149,7 +145,7 @@ export default function PurchaseDetailScreen(props) {
               );
             })}
           </Accordion>
-        )}
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );

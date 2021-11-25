@@ -148,7 +148,7 @@ export default function ListDetailsScreen(props) {
                         <Text fontWeight="bold">{listMember.user.name}</Text>
                         <Text fontSize="md">@{listMember.user.username} </Text>
                       </Box>
-                      {user.id === list.ownerId && (
+                      {user.id === list.ownerId ? (
                         <Button
                           isLoading={isRemoveMemberModalOpened === listMember.id}
                           isLoadingText={t('removing')}
@@ -161,7 +161,7 @@ export default function ListDetailsScreen(props) {
                         >
                           {t('remove')}
                         </Button>
-                      )}
+                      ) : null}
                     </Box>
                   ))}
               </>

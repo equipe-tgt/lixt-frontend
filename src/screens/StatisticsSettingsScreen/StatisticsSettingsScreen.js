@@ -467,7 +467,7 @@ export default function StatisticsSettingsScreen(props) {
                     />
                   ))}
                 </Select>
-                {loadingCategories && <Spinner color="primary.400" size="sm" />}
+                {loadingCategories ? <Spinner color="primary.400" size="sm" /> : null}
               </HStack>
             </VStack>
           </Box>
@@ -513,7 +513,7 @@ export default function StatisticsSettingsScreen(props) {
                       }}
                     />
 
-                    {loadingProducts && <Spinner size="sm" />}
+                    {loadingProducts ? <Spinner size="sm" /> : null}
                   </HStack>
 
                   {products && products?.length > 0 ? (
@@ -582,7 +582,7 @@ export default function StatisticsSettingsScreen(props) {
               </Button>
 
               {/* Filtros abertos */}
-              {showMoreFilters && (
+              {showMoreFilters ? (
                 <Box>
                   <Box>
                     <Text fontSize={18} bold my={4}>
@@ -615,7 +615,7 @@ export default function StatisticsSettingsScreen(props) {
                           />
                         ))}
                       </Select>
-                      {loadingPurchaseLocals && <Spinner size="sm" />}
+                      {loadingPurchaseLocals ? <Spinner size="sm" /> : null}
                       {!loadingPurchaseLocals &&
                         productDetailConfig.purchaseLocal ? (
                           <Button
@@ -634,7 +634,7 @@ export default function StatisticsSettingsScreen(props) {
                     </HStack>
                   </Box>
                 </Box>
-              )}
+              ) : null}
             </VStack>
           </Box>
         );
@@ -851,7 +851,7 @@ export default function StatisticsSettingsScreen(props) {
         {renderStatisticsSelectors()}
 
         {/* Seletor de datas - exibido caso não seja filtragem por local da compra */}
-        {statisticsSettings.statisticType !== StatisticsType.PURCHASE_LOCAL && (
+        {statisticsSettings.statisticType !== StatisticsType.PURCHASE_LOCAL ? (
           <VStack mt={2}>
             <Text fontSize={18} bold marginBottom={2}>
               {t('selectDates')}
@@ -866,7 +866,7 @@ export default function StatisticsSettingsScreen(props) {
               currentParameter={currentParameter}
             />
           </VStack>
-        )}
+        ) : null}
 
         <Button
           mt={5}
@@ -879,7 +879,7 @@ export default function StatisticsSettingsScreen(props) {
 
         {/* DatePicker */}
         <Center>
-          {isSelectorOpen && (
+          {isSelectorOpen ? (
             <DatePicker
               isSelectorOpen={isSelectorOpen}
               setIsSelectorOpen={setIsSelectorOpen}
@@ -893,7 +893,7 @@ export default function StatisticsSettingsScreen(props) {
               }}
               translate={t}
             />
-          )}
+          ) : null}
         </Center>
       </ScrollView>
     </SafeAreaView>

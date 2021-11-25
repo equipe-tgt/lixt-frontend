@@ -22,6 +22,7 @@ import { AuthContext } from '../../context/AuthProvider';
 import PurchaseService from '../../services/PurchaseService';
 import { useTranslation, getI18n } from 'react-i18next';
 import { useCallback } from 'react';
+import { convertDecimalBasedOnLanguage } from '../../utils/convertion';
 
 export default function HistoryScreen(props) {
   const { user } = useContext(AuthContext);
@@ -109,8 +110,7 @@ export default function HistoryScreen(props) {
               {getFormattedPurchaseDate(item.purchaseDate)}
             </Text>
             <Heading size="lg">
-              {t('currency')}
-              {item.purchasePrice}
+              {convertDecimalBasedOnLanguage(item.purchasePrice)}
             </Heading>
             <HStack mt={1} alignItems="center">
               <Entypo name="shop" size={18} color="#4b5563" />

@@ -270,9 +270,9 @@ export default function ProductOfListDetails(props) {
                   />
                 ))}
               </LixtSelect>
-              {product.isMarked && (
+              {product.isMarked ? (
                 <Text fontSize="sm">{t('alreadyChecked')}</Text>
-              )}
+              ) : null}
             </Box>
           ) : null}
 

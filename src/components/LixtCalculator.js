@@ -3,6 +3,7 @@ import { Box, Text, HStack, Button } from 'native-base';
 import PropTypes from 'prop-types';
 import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 import { useTranslation } from 'react-i18next';
+import { convertDecimalBasedOnLanguage } from '../utils/convertion'
 
 export default function LixtCalculator({
   items,
@@ -60,7 +61,7 @@ export default function LixtCalculator({
             Total
           </Text>
           <Text testID="total-price-text" fontSize="lg" ml={2}>
-            {t('currency')} {totalPrice.toFixed(2)}
+            {convertDecimalBasedOnLanguage(totalPrice)}
           </Text>
         </Box>
         <Button

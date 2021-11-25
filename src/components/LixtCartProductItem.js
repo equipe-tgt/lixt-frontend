@@ -10,6 +10,7 @@ import { ListContext } from '../context/ListProvider';
 import NumberStepperInput from './NumberStepperInput';
 import ProductOfListService from '../services/ProductOfListService';
 import { useTranslation } from 'react-i18next';
+import { convertDecimalBasedOnLanguage } from '../utils/convertion';
 
 const LixtCartProductItem = ({
   product,
@@ -135,10 +136,10 @@ const LixtCartProductItem = ({
         {product.measureType === 'UNITY' ? (
           <Box>
             <Text>
-              {isChecked && `${t('planned')}: `}
+              {isChecked ? `${t('planned')}: ` : null}
               {product.plannedAmount} {getMeasureType(product.measureType)}
             </Text>
-            {isChecked && (
+            {isChecked ? (
               <Box>
                 <NumberStepperInput
                   labelName="marked"
@@ -155,17 +156,17 @@ const LixtCartProductItem = ({
                   step={1}
                 />
               </Box>
-            )}
+            ) : null}
           </Box>
         ) : (
           <Box>
             <Text>
-              {isChecked && `${t('planned')}: `}
+              {isChecked ? `${t('planned')}: ` : null}
               {`${product.plannedAmount || 0} x ${
                 product.measureValue || 0
               } ${getMeasureType(product.measureType)}`}
             </Text>
-            {isChecked && (
+            {isChecked ? (
               <HStack alignItems="center" width={200}>
                 <NumberStepperInput
                   labelName="marked"
@@ -186,7 +187,7 @@ const LixtCartProductItem = ({
                   {getMeasureType(product.measureType)}
                 </Text>
               </HStack>
-            )}
+            ) : null}
           </Box>
         )}
       </Box>
@@ -228,11 +229,8 @@ const LixtCartProductItem = ({
 
           <Text>
             {product.price
-              ? `${t('currency')} ${
-                  product.price *
-                  (product.markedAmount || product.plannedAmount)
-                }`
-              : `${t('currency')} 0,00`}
+              ? convertDecimalBasedOnLanguage(product.price * (product.markedAmount || product.plannedAmount))
+              : `${convertDecimalBasedOnLanguage('0,00')}`}
           </Text>
 
           <Amounts />
