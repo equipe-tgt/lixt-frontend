@@ -39,7 +39,7 @@ export default function SendInvitationScreen(props) {
       const list = props.route.params.list;
       const foundList = lists.find((l) => l.id === list.id);
       if (foundList) {
-        setSelectedList();
+        setSelectedList(foundList);
         props.route.params.list = null;
       }
     }

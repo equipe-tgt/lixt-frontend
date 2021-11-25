@@ -444,7 +444,7 @@ export default function ListScreen(props) {
 
             {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista,
           se ele for convidado mostra a opção de deixar a lista */}
-            {selectedList && selectedList.ownerId === user.id ? (
+            {/* {selectedList && selectedList.ownerId === user.id ? (
               <Box>
                 <Menu.Item
                   testID="invite-menu-item"
@@ -471,7 +471,7 @@ export default function ListScreen(props) {
                   {t('leaveList')}
                 </Menu.Item>
               </Box>
-            )}
+            )} */}
           </Menu>
         ) : null}
       </HStack>
