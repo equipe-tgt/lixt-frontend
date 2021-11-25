@@ -444,9 +444,9 @@ export default function ListScreen(props) {
 
             {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista,
           se ele for convidado mostra a opção de deixar a lista */}
-            {/* {selectedList && selectedList.ownerId === user.id ? (
+            {selectedList && selectedList.ownerId === user.id ? (
               <Box>
-                <Menu.Item
+                {/* <Menu.Item
                   testID="invite-menu-item"
                   onPress={() => {
                     props.navigation.navigate('Invite', {
@@ -455,7 +455,7 @@ export default function ListScreen(props) {
                   }}
                 >
                   {t('sendInvitation')}
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item
                   testID="delete-option"
                   onPress={() => {
@@ -466,12 +466,13 @@ export default function ListScreen(props) {
                 </Menu.Item>
               </Box>
             ) : (
-              <Box>
-                <Menu.Item testID="leave-list-option" onPress={leaveList}>
-                  {t('leaveList')}
-                </Menu.Item>
-              </Box>
-            )} */}
+              // <Box>
+              //   <Menu.Item testID="leave-list-option" onPress={leaveList}>
+              //     {t('leaveList')}
+              //   </Menu.Item>
+              // </Box>
+              null
+            )}
           </Menu>
         ) : null}
       </HStack>

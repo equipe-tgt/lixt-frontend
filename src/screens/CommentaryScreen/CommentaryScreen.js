@@ -21,8 +21,8 @@ import {
   useToast,
   Checkbox,
   InfoIcon,
-  Tooltip,
   Menu,
+  Popover
 } from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
 import { AntDesign, Ionicons, FontAwesome } from '@expo/vector-icons';
@@ -476,19 +476,27 @@ export default function CommentaryScreen(props) {
                           {t('you')}
                         </Text>
                         {!c.isPublic ? (
-                          <Tooltip
-                            label={t('globalPrivateCommentary')}
+                          <Popover
                             placement="right"
+                            trigger={(triggerProps) => {
+                              return (
+                                <Pressable {...triggerProps}>
+                                  <Icon
+                                    as={<AntDesign name="lock" />}
+                                    size="5"
+                                    mt="0.5"
+                                    color="muted.500"
+                                  />
+                                </Pressable>
+                              )
+                            }}
                           >
-                            <Box>
-                              <Icon
-                                as={<AntDesign name="lock" />}
-                                size="5"
-                                mt="0.5"
-                                color="muted.500"
-                              />
-                            </Box>
-                          </Tooltip>
+                            <Popover.Content backgroundColor="gray.700" p={1} w="180">
+                              <Box>
+                                <Text color="gray.300">{t('globalPrivateCommentary')}</Text>
+                              </Box>
+                            </Popover.Content>
+                          </Popover>
                         ) : null}
                         <Box ml={2}>
                           <Ionicons
@@ -674,9 +682,22 @@ export default function CommentaryScreen(props) {
               <Text ml={1}>{t('isPublic')}</Text>
             </Checkbox>
             <Box ml={4}>
-              <Tooltip label={t('isPublicTooltip')} placement="right">
-                <InfoIcon size="6" color="muted.500" />
-              </Tooltip>
+              <Popover
+                placement="top"
+                trigger={(triggerProps) => {
+                  return (
+                    <Pressable {...triggerProps}>
+                      <InfoIcon size="4" color="muted.500" />
+                    </Pressable>
+                  )
+                }}
+              >
+                <Popover.Content backgroundColor="gray.700" p={1} w="180">
+                  <Box>
+                    <Text color="gray.300">{t('isPublicTooltip')}</Text>
+                  </Box>
+                </Popover.Content>
+              </Popover>
             </Box>
           </Box>
         ) : null}
