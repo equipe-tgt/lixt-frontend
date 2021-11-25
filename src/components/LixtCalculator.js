@@ -3,7 +3,7 @@ import { Box, Text, HStack, Button } from 'native-base';
 import PropTypes from 'prop-types';
 import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 import { useTranslation } from 'react-i18next';
-import { convertDecimalBasedOnLanguage } from '../utils/convertion'
+import { convertDecimalBasedOnLanguage } from '../utils/convertion';
 
 export default function LixtCalculator({
   items,
@@ -70,7 +70,9 @@ export default function LixtCalculator({
             finishPurchase(checkedItems, totalPrice);
           }}
           isLoading={loadingPurchase}
-          isDisabled={items.length === 0}
+          isDisabled={
+            items.length === 0 || !checkedItems || checkedItems?.length === 0
+          }
           variant="outline"
         >
           {t('savePurchase')}
