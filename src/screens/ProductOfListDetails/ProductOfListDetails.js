@@ -49,7 +49,7 @@ export default function ProductOfListDetails(props) {
   }, [product]);
 
   // Instanciando formik para controlar as validações do formulário
-  const { handleChange, handleSubmit, values, errors } = useFormik({
+  const { handleChange, handleSubmit, values, errors, setValues } = useFormik({
     initialValues: {
       price: product.price || '',
       plannedAmount: product.plannedAmount ? String(product.plannedAmount) : '',
@@ -65,6 +65,16 @@ export default function ProductOfListDetails(props) {
       editProductOfList();
     },
   });
+
+  useEffect(() => {
+    if (typeof values.price === 'number' && getI18n().language === 'pt_BR') {
+      const formattedValue = new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(values.price).replace(/^R\$\s{0,1}/, "")
+      setValues({
+        ...values,
+        price: formattedValue
+      })
+    }
+  }, [])
 
   const editProductOfList = async () => {
     setLoading(true);
