@@ -96,7 +96,7 @@ export default function ProductOfListDetails(props) {
         if (typeof values.price === "number") {
           productOfListEdited.price = values.price;
         } else {
-          const dollarFormat = values.price.replaceAll('.', ',').replace(/,(\d\d)$/, '.$1')
+          const dollarFormat = values.price.replace(/\./g, ',').replace(/,(\d\d)$/, '.$1')
           productOfListEdited.price = parseFloat(dollarFormat.replace(/[^0-9\.]+/g, ""))
         }
       } else if (language === "en_US") {
