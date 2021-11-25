@@ -1,12 +1,16 @@
 import { getI18n } from 'react-i18next';
 
 export const convertDecimalBasedOnLanguage = (number) => {
-  if (!number) return;
+  if (number !== 0 && !number) return;
   if (typeof number === "string") {
     if (isNaN(Number(number))) {
       if (number.includes(',')) {
         number = Number(number.replace(',', '.'))
+      } else {
+        return;
       }
+    } else {
+      number = Number(number)
     }
   }
   if (typeof number !== "number") {
