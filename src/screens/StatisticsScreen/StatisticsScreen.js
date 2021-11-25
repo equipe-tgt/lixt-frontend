@@ -197,7 +197,6 @@ export default function StatisticsScreen(props) {
               label={t('lowestPoint')}
               date={formatDate(ascOrderedData[0])}
               price={convertDecimalBasedOnLanguage(ascOrderedData[0].price || 0)}
-              price={convertDecimalBasedOnLanguage(ascOrderedData[0].price || 0)}
               isUp={false}
             />
             <PeakCard

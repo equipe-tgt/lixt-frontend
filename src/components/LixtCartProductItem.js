@@ -214,7 +214,7 @@ const LixtCartProductItem = ({
         />
       </Box>
 
-      <Box>
+      <Box width="90%">
         <Pressable
           onPress={() => {
             navigate('ProductOfListDetails', {
@@ -223,14 +223,14 @@ const LixtCartProductItem = ({
             });
           }}
         >
-          <Text maxWidth="90%" strikeThrough={isChecked} fontWeight="bold">
+          <Text strikeThrough={isChecked} fontWeight="bold">
             {product.name}
           </Text>
 
           <Text>
             {product.price
               ? convertDecimalBasedOnLanguage(product.price * (product.markedAmount || product.plannedAmount))
-              : `${convertDecimalBasedOnLanguage('0,00')}`}
+              : convertDecimalBasedOnLanguage('0,00')}
           </Text>
 
           <Amounts />
