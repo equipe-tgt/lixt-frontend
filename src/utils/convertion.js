@@ -21,9 +21,9 @@ export const convertDecimalBasedOnLanguage = (number) => {
   const language = getI18n().language;
 
   if (language === "pt_BR") {
-    return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(number.toFixed(2))
+    return new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(number)
   } else if (language === "en_US") {
-    return new Intl.NumberFormat("en-US", { style: 'currency', currency: 'USD' }).format(number.toFixed(2))
+    return new Intl.NumberFormat("en-US", { style: 'currency', currency: 'USD' }).format(number)
   }
   return number;
 }
