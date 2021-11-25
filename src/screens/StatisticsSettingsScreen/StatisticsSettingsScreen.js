@@ -265,7 +265,7 @@ export default function StatisticsSettingsScreen(props) {
 
         periodFilterObject.category = categories.find(
           (cat) => cat.id === selectedCategory
-        )?.name;
+        )?.name || '';
 
         return StatisticsService.getExpensesPer(
           getUrl(statisticsSettings.statisticType),
@@ -798,8 +798,10 @@ export default function StatisticsSettingsScreen(props) {
         if (selectedCategory) {
           const categoryName = categories.find(
             (cat) => cat.id === selectedCategory
-          )?.name;
-          chosenStatisticsString += ` - ${categoryName}`;
+          )?.name || '';
+          if (categoryName) {
+            chosenStatisticsString += ` - ${categoryName}`;
+          }
         }
         break;
 
@@ -807,9 +809,10 @@ export default function StatisticsSettingsScreen(props) {
         if (selectedList) {
           const listName = lists.find(
             (list) => list.id === selectedList
-          )?.nameList;
-
-          chosenStatisticsString += ` - ${listName}`;
+          )?.nameList || '';
+          if (listName) {
+            chosenStatisticsString += ` - ${listName}`;
+          }
         }
         break;
 

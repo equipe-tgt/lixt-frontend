@@ -54,15 +54,21 @@ export const UpdatePasswordSchema = (t) =>
       .required(t('requiredField')),
   });
 
-export const ProductOfListSchema = Yup.object().shape({
-  price: Yup.string().matches(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/),
-  plannedAmount: Yup.string().matches(
-    /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/
-  ),
-  measureValue: Yup.string().matches(
-    /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/
-  ),
-});
+export const ProductOfListSchema = (language) => 
+  Yup.object().shape({
+    price: Yup.string().matches(
+      language === "en_US" ?
+        /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.)\d+)?$/ :
+        language === "pt_BR" ? 
+        /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:(,)\d+)?$/ :
+        /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.)\d+)?$/),
+    plannedAmount: Yup.string().matches(
+      /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/
+    ),
+    measureValue: Yup.string().matches(
+      /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:(\.|,)\d+)?$/
+    ),
+  });
 
 export const ProductSchema = (t) =>
   Yup.object().shape({

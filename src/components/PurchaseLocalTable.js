@@ -176,7 +176,7 @@ export default function PurchaseLocalTable({
               <HStack width="90%" alignItems="center">
                 <Entypo name="shop" size={18} color="#4b5563" />
 
-                <Box ml={3}>
+                <Box ml={3} width="80%">
                   <Text fontSize={16} width="60%">
                     {data.name}
                   </Text>

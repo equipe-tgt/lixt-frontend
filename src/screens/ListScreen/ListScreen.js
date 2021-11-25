@@ -103,7 +103,9 @@ export default function ListScreen(props) {
   useEffect(() => {
     if (selectedList) {
       const updatedList = lists.find((l) => l.id === selectedList?.id);
-      setSelectedList(updatedList);
+      if (updatedList) {
+        setSelectedList(updatedList);
+      }
     }
   }, [JSON.stringify(lists)]);
 
@@ -130,9 +132,7 @@ export default function ListScreen(props) {
             if (lastSelectedList) {
               const isLastSelectedListExists = data.find(list => list.id === Number(lastSelectedList))
               if (isLastSelectedListExists) {
-                setSelectedList(
-                  data.find((list) => list.id === Number(lastSelectedList))
-                );
+                setSelectedList(isLastSelectedListExists);
               } else {
                 setSelectedList(data[0]);
               }
@@ -183,10 +183,13 @@ export default function ListScreen(props) {
 
   const leaveList = async () => {
     try {
+      const invitation = selectedList.listMembers.find((lm) => lm.userId === user.id);
+      let id = 0
+
       // Pega o id do convite atual e faz a deleção do convite
-      const { id } = selectedList.listMembers.find(
-        (lm) => lm.userId === user.id
-      );
+      if (invitation) {
+        id = invitation.id
+      }
       await ListMembersService.deleteInvitation(id, user);
 
       // Após se desvincular da lista, filtra as listas do usuário de forma
@@ -362,8 +365,11 @@ export default function ListScreen(props) {
           selectedValue={selectedList?.id}
           width="70%"
           onValueChange={(listId) => {
-            setSelectedList(lists.find((list) => list.id === Number(listId)));
-            storeListId(listId);
+            const foundList = lists.find((list) => list.id === Number(listId))
+            if (foundList) {
+              setSelectedList(foundList);
+              storeListId(listId);
+            }
           }}
           isDisabled={lists?.length === 0}
           accessibilityValue={{
@@ -440,7 +446,7 @@ export default function ListScreen(props) {
           se ele for convidado mostra a opção de deixar a lista */}
             {selectedList && selectedList.ownerId === user.id ? (
               <Box>
-                <Menu.Item
+                {/* <Menu.Item
                   testID="invite-menu-item"
                   onPress={() => {
                     props.navigation.navigate('Invite', {
@@ -449,7 +455,7 @@ export default function ListScreen(props) {
                   }}
                 >
                   {t('sendInvitation')}
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item
                   testID="delete-option"
                   onPress={() => {
@@ -460,11 +466,12 @@ export default function ListScreen(props) {
                 </Menu.Item>
               </Box>
             ) : (
-              <Box>
-                <Menu.Item testID="leave-list-option" onPress={leaveList}>
-                  {t('leaveList')}
-                </Menu.Item>
-              </Box>
+              // <Box>
+              //   <Menu.Item testID="leave-list-option" onPress={leaveList}>
+              //     {t('leaveList')}
+              //   </Menu.Item>
+              // </Box>
+              null
             )}
           </Menu>
         ) : null}
