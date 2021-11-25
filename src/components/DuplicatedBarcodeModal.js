@@ -25,7 +25,9 @@ export default function DuplicatedBarcodeModal(props) {
       isOpen={props.showModal}
       onClose={() => props.closeModal()}
       size="lg"
-      accessibilityValue={props.showModal ? 'visible' : 'hidden'}
+      accessibilityValue={{
+        text: props.showModal ? 'visible' : 'hidden'
+      }}
     >
       <Modal.Content maxWidth="85%">
         <Modal.CloseButton />

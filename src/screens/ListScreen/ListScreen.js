@@ -366,7 +366,9 @@ export default function ListScreen(props) {
             storeListId(listId);
           }}
           isDisabled={lists?.length === 0}
-          accessibilityValue={selectedList?.nameList}
+          accessibilityValue={{
+            text: selectedList?.nameList
+          }}
         >
           {lists?.map((list) => (
             <Select.Item key={list.id} value={list.id} label={list.nameList} />
@@ -598,7 +600,7 @@ export default function ListScreen(props) {
         </Center>
       )}
 
-      {isListRemoveModalOpen && (
+      {isListRemoveModalOpen ? (
         <ListRemoveModal
           isOpen={isListRemoveModalOpen}
           closeModal={(val) => {
@@ -606,7 +608,7 @@ export default function ListScreen(props) {
             setIsListRemoveModalOpen(false);
           }}
         />
-      )}
+      ) : null}
     </SafeAreaView>
   ) : (
     <Center style={style.container}>

@@ -123,7 +123,7 @@ export default function LixtCartList({
                     );
                   } else {
                     return (
-                      p.id && (
+                      p.id ? (
                         <LixtCartProductItem
                           key={p.id}
                           product={p}
@@ -131,7 +131,7 @@ export default function LixtCartList({
                           refreshList={refreshList}
                           getUserById={getUserById}
                         />
-                      )
+                      ) : null
                     );
                   }
                 })}

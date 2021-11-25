@@ -315,14 +315,14 @@ export default function CartScreen(props) {
               value="view-all"
               label={t('seeAllItems')}
             />
-            {lists?.length &&
+            {lists?.length ?
               lists?.map((list) => (
                 <Select.Item
                   key={list.id}
                   value={list.id}
                   label={list.nameList}
                 />
-              ))}
+              )) : null}
           </Select>
 
           <Menu
@@ -390,15 +390,15 @@ export default function CartScreen(props) {
               }
             />
           ) : (
-            !refreshing && (
+            !refreshing ? (
               <Center width="90%" mx="auto" my="50%">
                 <Text textAlign="center">{t('noProductsFound')}</Text>
               </Center>
-            )
+            ) : null
           )}
         </ScrollView>
 
-        {selectedList && selectedList?.productsOfList?.length > 0 && (
+        {selectedList && selectedList?.productsOfList?.length > 0 ? (
           <LixtCalculator
             isGeneralView={selectedList?.id === 'view-all'}
             loadingPurchase={loadingPurchase}
@@ -409,7 +409,7 @@ export default function CartScreen(props) {
               setShowModal(true);
             }}
           />
-        )}
+        ) : null}
 
         <PurchaseLocalModal
           showModal={showModal}

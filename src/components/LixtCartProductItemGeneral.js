@@ -14,6 +14,7 @@ import { AuthContext } from '../context/AuthProvider';
 import { CheckedItemsContext } from '../context/CheckedItemsProvider';
 import ProductOfListService from '../services/ProductOfListService';
 import { useTranslation } from 'react-i18next';
+import { convertDecimalBasedOnLanguage } from '../utils/convertion';
 
 const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
   const { t } = useTranslation();
@@ -171,8 +172,9 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
 
             <Text>
               {quantities.price
-                ? `${t('currency')} ${quantities.price.toFixed(2)}`
-                : `${t('currency')} 0,00`}
+                ? convertDecimalBasedOnLanguage(quantities.price)
+                : convertDecimalBasedOnLanguage('0,00')
+              }
             </Text>
           </Box>
 

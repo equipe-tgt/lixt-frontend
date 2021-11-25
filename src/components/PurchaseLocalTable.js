@@ -15,6 +15,7 @@ import { AntDesign, Entypo } from '@expo/vector-icons';
 import moment from 'moment';
 
 import { getI18n } from 'react-i18next';
+import { convertDecimalBasedOnLanguage } from '../utils/convertion';
 
 const SortingOrders = {
   ASC: 0,
@@ -179,11 +180,11 @@ export default function PurchaseLocalTable({
                   <Text fontSize={16} width="60%">
                     {data.name}
                   </Text>
-                  {data?.subname && (
+                  {data?.subname ? (
                     <Text width="65%" fontSize={12}>
                       {data?.subname}
                     </Text>
-                  )}
+                  ) : null}
                 </Box>
               </HStack>
 
@@ -193,12 +194,12 @@ export default function PurchaseLocalTable({
               <VStack mb={3} flexWrap="wrap">
                 <Box py={2}>
                   <Text fontWeight="bold">{translate('totalValue')}</Text>
-                  <Text>{`${monetaryNotation} ${data.totalValue}`}</Text>
+                  <Text>{convertDecimalBasedOnLanguage(data.totalValue)}</Text>
                 </Box>
 
                 <Box py={2}>
                   <Text fontWeight="bold">{translate('averageValue')}</Text>
-                  <Text>{`${monetaryNotation} ${data.averageValue}`}</Text>
+                  <Text>{convertDecimalBasedOnLanguage(data.averageValue)}</Text>
                 </Box>
 
                 <Box py={2}>

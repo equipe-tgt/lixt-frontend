@@ -9,7 +9,9 @@ export default function AddProductFromBarcodeModal(props) {
   return (
     <Modal
       testID="add-product-from-barcode-modal"
-      accessibilityValue={props.showModal ? 'visible' : 'hidden'}
+      accessibilityValue={{
+        text: props.showModal ? 'visible' : 'hidden',
+      }}
       isOpen={props.showModal}
       onClose={() => props.closeModal()}
       size="lg"

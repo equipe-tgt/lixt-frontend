@@ -27,6 +27,7 @@ import { useTranslation, getI18n } from 'react-i18next';
 
 import { UnityTimes, StatisticsType } from '../../utils/StatisticsUtils';
 import PurchaseLocalTable from '../../components/PurchaseLocalTable';
+import { convertDecimalBasedOnLanguage } from '../../utils/convertion';
 
 export default function StatisticsScreen(props) {
   const { t } = useTranslation();
@@ -126,8 +127,7 @@ export default function StatisticsScreen(props) {
           </Center>
         );
 
-      default:
-        break;
+      default: return null;
     }
   };
 
@@ -190,21 +190,19 @@ export default function StatisticsScreen(props) {
           >
             {t('total')}
           </Text>
-          <Text textAlign="center">{`${t('currency')} ${totalAmount}`}</Text>
+          <Text textAlign="center">{convertDecimalBasedOnLanguage(totalAmount)}</Text>
 
           <HStack justifyContent="space-between" my={2}>
             <PeakCard
               label={t('lowestPoint')}
               date={formatDate(ascOrderedData[0])}
-              price={`${t('currency')} ${ascOrderedData[0].price || 0}`}
+              price={convertDecimalBasedOnLanguage(ascOrderedData[0].price || 0)}
               isUp={false}
             />
             <PeakCard
               label={t('highestPoint')}
               date={formatDate(ascOrderedData[ascOrderedData.length - 1])}
-              price={`${t('currency')} ${
-                ascOrderedData[ascOrderedData.length - 1].price || 0
-              }`}
+              price={convertDecimalBasedOnLanguage(ascOrderedData[ascOrderedData.length - 1].price || 0)}
               isUp={true}
             />
           </HStack>
