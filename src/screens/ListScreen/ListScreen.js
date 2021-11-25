@@ -367,7 +367,7 @@ export default function ListScreen(props) {
           onValueChange={(listId) => {
             const foundList = lists.find((list) => list.id === Number(listId))
             if (foundList) {
-              setSelectedList(lists.find((list) => list.id === Number(listId)));
+              setSelectedList(foundList);
               storeListId(listId);
             }
           }}
