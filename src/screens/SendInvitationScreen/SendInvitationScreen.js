@@ -104,7 +104,7 @@ export default function SendInvitationScreen(props) {
           <LixtSelect
             labelName="selectList"
             isDisabled={loading || isDisabled}
-            selectedValue={selectedList.id}
+            selectedValue={selectedList?.id}
             onValueChange={(listId) => {
               const foundList = lists.find((list) => list.id === Number(listId));
               if (foundList) {
