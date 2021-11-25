@@ -69,6 +69,7 @@ export default function ListScreen(props) {
           const newList = Object.assign({}, props.route.params.newList);
           setLists([...lists, newList]);
           setSelectedList(newList);
+          storeListId(newList.id)
           props.route.params.newList = null;
         }
 
@@ -127,9 +128,14 @@ export default function ListScreen(props) {
           setLists([...data]);
           AsyncStorage.getItem('lastSelectedList').then((lastSelectedList) => {
             if (lastSelectedList) {
-              setSelectedList(
-                data.find((list) => list.id === Number(lastSelectedList))
-              );
+              const isLastSelectedListExists = data.find(list => list.id === Number(lastSelectedList))
+              if (isLastSelectedListExists) {
+                setSelectedList(
+                  data.find((list) => list.id === Number(lastSelectedList))
+                );
+              } else {
+                setSelectedList(data[0]);
+              }
             } else {
               setSelectedList(data[0]);
             }
@@ -157,8 +163,9 @@ export default function ListScreen(props) {
       await ListService.deleteList(listIdToDelete, user);
 
       // Filtra as listas depois de uma deleção ocorrer
-      setLists(lists.filter((list) => list.id !== listIdToDelete));
-      setSelectedList(lists[0]);
+      const filteredLists = lists.filter((list) => list.id !== listIdToDelete)
+      setLists(filteredLists);
+      setSelectedList(filteredLists[0]);
 
       setConfirmRemoval(false);
 
@@ -236,7 +243,7 @@ export default function ListScreen(props) {
       listId: list.id,
       productId: id,
       isMarked: false,
-      name,
+      name: name.trim(),
       measureType,
       measureValue,
       product: value,
@@ -539,7 +546,7 @@ export default function ListScreen(props) {
                     setProductName('');
                   }}
                 >
-                  {`${t('add')} "${productName}"`}
+                  {`${t('add')} "${productName.trim()}"`}
                 </List.Item>
               </List>
             ) : null}

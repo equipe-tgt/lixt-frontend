@@ -16,6 +16,7 @@ import {
   Text,
   HStack,
   Box,
+  ScrollView,
 } from 'native-base';
 
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -154,146 +155,148 @@ export default function NewProductScreen(props) {
 
   return (
     <SafeAreaView style={style.container}>
-      <Center width="90%" mx="auto">
-        <LixtInput
-          labelName="name"
-          value={values.name}
-          error={errors.name}
-          onChangeText={handleChange('name')}
-          onBlur={handleBlur('name')}
-          inputTestID="new-product-name"
-          errorTestID="error-new-product-name"
-          disabled={loading}
-          isInvalid={!!errors.name}
-        />
+      <ScrollView>
+        <Center width="90%" mx="auto">
+          <LixtInput
+            labelName="name"
+            value={values.name}
+            error={errors.name}
+            onChangeText={handleChange('name')}
+            onBlur={handleBlur('name')}
+            inputTestID="new-product-name"
+            errorTestID="error-new-product-name"
+            disabled={loading}
+            isInvalid={!!errors.name}
+          />
 
-        <LixtInput
-          labelName="brandInput"
-          value={values.brand}
-          onChangeText={handleChange('brand')}
-          onBlur={handleBlur('brand')}
-          inputTestID="new-product-brand"
-          disabled={loading}
-        />
+          <LixtInput
+            labelName="brandInput"
+            value={values.brand}
+            onChangeText={handleChange('brand')}
+            onBlur={handleBlur('brand')}
+            inputTestID="new-product-brand"
+            disabled={loading}
+          />
 
-        <FormControl my={3}>
-          <FormControl.Label>{t('measureType')}</FormControl.Label>
-          <Radio.Group
-            value={values.measureType}
-            onChange={handleChange('measureType')}
-            flexDirection="row"
-            justifyContent="space-around"
-          >
-            {Object.keys(MeasureTypes).map((measure) => {
-              return (
-                <Radio
-                  key={MeasureTypes[measure].value}
-                  accessibilityLabel={MeasureTypes[measure].label}
-                  value={MeasureTypes[measure].label}
-                  my={1}
+          <FormControl my={3}>
+            <FormControl.Label>{t('measureType')}</FormControl.Label>
+            <Radio.Group
+              value={values.measureType}
+              onChange={handleChange('measureType')}
+              flexDirection="row"
+              justifyContent="space-around"
+            >
+              {Object.keys(MeasureTypes).map((measure) => {
+                return (
+                  <Radio
+                    key={MeasureTypes[measure].value}
+                    accessibilityLabel={MeasureTypes[measure].label}
+                    value={MeasureTypes[measure].label}
+                    my={1}
+                  >
+                    {MeasureTypes[measure].label}
+                  </Radio>
+                );
+              })}
+            </Radio.Group>
+          </FormControl>
+
+          <FormControl>
+            <FormControl.Label>{t('category')}</FormControl.Label>
+            <Select
+              error={errors.categoryId}
+              selectedValue={values.categoryId}
+              onValueChange={handleChange('categoryId')}
+              testID="category-select"
+            >
+              {categories.map((c) => (
+                <Select.Item key={c.id} value={String(c.id)} label={c.name} />
+              ))}
+            </Select>
+            <View style={{ height: 20 }}>
+              <Text color="rose.600" fontSize="sm" testID="error-category-select">
+                {errors.categoryId}
+              </Text>
+            </View>
+          </FormControl>
+
+          {!barcode ? (
+            <Button
+              testID="button-new-barcode"
+              paddingX={18}
+              paddingY={3}
+              variant="outline"
+              colorScheme="dark"
+              startIcon={
+                <MaterialCommunityIcons
+                  name="barcode-scan"
+                  size={34}
+                  color="#292524"
+                />
+              }
+              onPress={() => {
+                props.navigation.navigate('BarcodeReader', {
+                  origin: 'NewProduct',
+                });
+              }}
+            >
+              <Text color="#292524">
+                {t('addBarcode')}: {t('optional')}
+              </Text>
+            </Button>
+          ) : (
+            <HStack justifyContent="space-between" w="100%" alignItems="center">
+              <Box>
+                <Text textAlign="left">{t('readValue')}</Text>
+                <Text textAlign="left">{barcode}</Text>
+              </Box>
+
+              <HStack justifyContent="space-between" alignItems="center">
+                <Button
+                  variant="link"
+                  testID="read-again-button"
+                  onPress={() => {
+                    props.navigation.navigate('BarcodeReader', {
+                      origin: 'NewProduct',
+                    });
+                  }}
                 >
-                  {MeasureTypes[measure].label}
-                </Radio>
-              );
-            })}
-          </Radio.Group>
-        </FormControl>
-
-        <FormControl>
-          <FormControl.Label>{t('category')}</FormControl.Label>
-          <Select
-            error={errors.categoryId}
-            selectedValue={values.categoryId}
-            onValueChange={handleChange('categoryId')}
-            testID="category-select"
-          >
-            {categories.map((c) => (
-              <Select.Item key={c.id} value={String(c.id)} label={c.name} />
-            ))}
-          </Select>
-          <View style={{ height: 20 }}>
-            <Text color="rose.600" fontSize="sm" testID="error-category-select">
-              {errors.categoryId}
-            </Text>
-          </View>
-        </FormControl>
-
-        {!barcode ? (
-          <Button
-            testID="button-new-barcode"
-            paddingX={18}
-            paddingY={3}
-            variant="outline"
-            colorScheme="dark"
-            startIcon={
-              <MaterialCommunityIcons
-                name="barcode-scan"
-                size={34}
-                color="#292524"
-              />
-            }
-            onPress={() => {
-              props.navigation.navigate('BarcodeReader', {
-                origin: 'NewProduct',
-              });
-            }}
-          >
-            <Text color="#292524">
-              {t('addBarcode')}: {t('optional')}
-            </Text>
-          </Button>
-        ) : (
-          <HStack justifyContent="space-between" w="100%" alignItems="center">
-            <Box>
-              <Text textAlign="left">{t('readValue')}</Text>
-              <Text textAlign="left">{barcode}</Text>
-            </Box>
-
-            <HStack justifyContent="space-between" alignItems="center">
-              <Button
-                variant="link"
-                testID="read-again-button"
-                onPress={() => {
-                  props.navigation.navigate('BarcodeReader', {
-                    origin: 'NewProduct',
-                  });
-                }}
-              >
-                {t('readAgain')}
-              </Button>
-              <Button
-                testID="clean-barcode-button"
-                onPress={() => {
-                  setBarcode(null);
-                }}
-                variant="link"
-                startIcon={<Ionicons name="close" size={24} color="#777" />}
-              />
+                  {t('readAgain')}
+                </Button>
+                <Button
+                  testID="clean-barcode-button"
+                  onPress={() => {
+                    setBarcode(null);
+                  }}
+                  variant="link"
+                  startIcon={<Ionicons name="close" size={24} color="#777" />}
+                />
+              </HStack>
             </HStack>
-          </HStack>
-        )}
+          )}
 
-        <Button
-          paddingX={20}
-          paddingY={4}
-          isLoading={loading}
-          isLoadingText={t('creating')}
-          marginTop={5}
-          onPress={handleSubmit}
-          testID="create-product-button"
-        >
-          {t('add')}
-        </Button>
-      </Center>
-      <DuplicatedBarcodeModal
-        showModal={duplicatedModalData.isOpen}
-        product={duplicatedModalData.duplicatedProduct}
-        barcode={barcode}
-        navigate={props.navigation.navigate}
-        closeModal={() => {
-          setDuplicatedModalData({ isOpen: false, duplicatedProduct: null });
-        }}
-      />
+          <Button
+            paddingX={20}
+            paddingY={4}
+            isLoading={loading}
+            isLoadingText={t('creating')}
+            marginTop={5}
+            onPress={handleSubmit}
+            testID="create-product-button"
+          >
+            {t('add')}
+          </Button>
+          <DuplicatedBarcodeModal
+            showModal={duplicatedModalData.isOpen}
+            product={duplicatedModalData.duplicatedProduct}
+            barcode={barcode}
+            navigate={props.navigation.navigate}
+            closeModal={() => {
+              setDuplicatedModalData({ isOpen: false, duplicatedProduct: null });
+            }}
+          />
+        </Center>
+      </ScrollView>
     </SafeAreaView>
   );
 }

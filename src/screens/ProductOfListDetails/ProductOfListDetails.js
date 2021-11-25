@@ -157,135 +157,137 @@ export default function ProductOfListDetails(props) {
 
   return (
     <SafeAreaView style={style.container}>
-      <ScrollView w="90%" mx="auto">
-        <Heading>
-          {`${t('editing')} ${props.route.params.product.name}`}
-        </Heading>
-        <Button
-          px={0}
-          mr="auto"
-          variant="ghost"
-          testID="commentaries-button"
-          startIcon={
-            <Ionicons name="chatbox-outline" size={35} color="#06b6d4" />
-          }
-          onPress={() => {
-            props.navigation.navigate('Commentaries', { product });
-          }}
-        >
-          {t('comment')}
-        </Button>
-
-        <LixtMoneyInput
-          labelName="price"
-          keyboardType="numeric"
-          value={values.price}
-          onChangeText={handleChange('price')}
-          hasHelperText
-          error={errors.price}
-        />
-
-        <FormControl my={3}>
-          <FormControl.Label>{t('measureType')}</FormControl.Label>
-          <Radio.Group
-            value={values.measureType}
-            onChange={handleChange('measureType')}
-            flexDirection="row"
-            justifyContent="space-around"
+      <ScrollView>
+        <Box w="90%" mx="auto">
+          <Heading>
+            {`${t('editing')} ${props.route.params.product.name}`}
+          </Heading>
+          <Button
+            px={0}
+            mr="auto"
+            variant="ghost"
+            testID="commentaries-button"
+            startIcon={
+              <Ionicons name="chatbox-outline" size={35} color="#06b6d4" />
+            }
+            onPress={() => {
+              props.navigation.navigate('Commentaries', { product });
+            }}
           >
-            {Object.keys(MeasureTypes).map((measure) => {
-              return (
-                <Radio
-                  key={MeasureTypes[measure].value}
-                  accessibilityLabel={MeasureTypes[measure].label}
-                  value={MeasureTypes[measure].label}
-                  my={1}
-                >
-                  {MeasureTypes[measure].label}
-                </Radio>
-              );
-            })}
-          </Radio.Group>
-        </FormControl>
+            {t('comment')}
+          </Button>
 
-        {/* Se a unidade de medida do produto não for do tipo "unidade" questiona o valor de mensura,
-        Ex.: Produto: Arroz, unidade de medida: KG, valor da mensura: 5 = Arroz 5KG
-        */}
-        {values.measureType !== 'un' ? (
+          <LixtMoneyInput
+            labelName="price"
+            keyboardType="numeric"
+            value={values.price}
+            onChangeText={handleChange('price')}
+            hasHelperText
+            error={errors.price}
+          />
+
+          <FormControl my={3}>
+            <FormControl.Label>{t('measureType')}</FormControl.Label>
+            <Radio.Group
+              value={values.measureType}
+              onChange={handleChange('measureType')}
+              flexDirection="row"
+              justifyContent="space-around"
+            >
+              {Object.keys(MeasureTypes).map((measure) => {
+                return (
+                  <Radio
+                    key={MeasureTypes[measure].value}
+                    accessibilityLabel={MeasureTypes[measure].label}
+                    value={MeasureTypes[measure].label}
+                    my={1}
+                  >
+                    {MeasureTypes[measure].label}
+                  </Radio>
+                );
+              })}
+            </Radio.Group>
+          </FormControl>
+
+          {/* Se a unidade de medida do produto não for do tipo "unidade" questiona o valor de mensura,
+          Ex.: Produto: Arroz, unidade de medida: KG, valor da mensura: 5 = Arroz 5KG
+          */}
+          {values.measureType !== 'un' ? (
+            <Box marginY={3}>
+              <LixtNumberInput
+                labelName={t('measureValue')}
+                onChangeText={handleChange('measureValue')}
+                keyboardType="numeric"
+                value={values.measureValue}
+                hasHelperText
+                error={errors.measureType}
+              />
+            </Box>
+          ) : null}
+
           <Box marginY={3}>
             <LixtNumberInput
-              labelName={t('measureValue')}
-              onChangeText={handleChange('measureValue')}
+              labelName={t('plannedAmount')}
+              onChangeText={handleChange('plannedAmount')}
               keyboardType="numeric"
-              value={values.measureValue}
-              hasHelperText
-              error={errors.measureType}
+              value={values.plannedAmount}
             />
           </Box>
-        ) : null}
 
-        <Box marginY={3}>
-          <LixtNumberInput
-            labelName={t('plannedAmount')}
-            onChangeText={handleChange('plannedAmount')}
-            keyboardType="numeric"
-            value={values.plannedAmount}
-          />
+          {/* Se o usuário logado for o dono da lista e a lista possuir membros
+          dá a opção para o usuário atribuir o item à alguém */}
+          {currentList.ownerId === user.id &&
+          currentList?.listMembers?.length > 0 &&
+          currentList?.listMembers?.some(
+            (lm) => lm.statusListMember === 'ACCEPT'
+          ) ? (
+            <Box my={3}>
+              <LixtSelect
+                labelName="assignTo"
+                isDisabled={loading || product.isMarked}
+                selectedValue={userBeingAssignedTo?.userId || null}
+                onValueChange={(listMemberUserId) => {
+                  if (listMemberUserId) {
+                    setUserBeingAssignedTo(
+                      listMembers.find(
+                        (lm) => lm.userId === Number(listMemberUserId)
+                      )
+                    );
+                  } else {
+                    setUserBeingAssignedTo({ id: null });
+                  }
+                }}
+                selectTestID="select-list-member"
+              >
+                {/* Item padrão - "Ninguém em específico" */}
+                <Select.Item key={null} value={null} label={t('noOne')} />
+
+                {listMembers.map((listMember) => (
+                  <Select.Item
+                    key={listMember.userId}
+                    value={listMember.userId}
+                    label={listMember.user.name}
+                  />
+                ))}
+              </LixtSelect>
+              {product.isMarked && (
+                <Text fontSize="sm">{t('alreadyChecked')}</Text>
+              )}
+            </Box>
+          ) : null}
+
+          <Button
+            isLoading={loading}
+            isLoadingText={t('editing')}
+            onPress={handleSubmit}
+            marginTop={5}
+            paddingX={20}
+            paddingY={4}
+            testID="button-finish-editing-item"
+          >
+            {t('finish')}
+          </Button>
         </Box>
-
-        {/* Se o usuário logado for o dono da lista e a lista possuir membros
-        dá a opção para o usuário atribuir o item à alguém */}
-        {currentList.ownerId === user.id &&
-        currentList?.listMembers?.length > 0 &&
-        currentList?.listMembers?.some(
-          (lm) => lm.statusListMember === 'ACCEPT'
-        ) ? (
-          <Box my={3}>
-            <LixtSelect
-              labelName="assignTo"
-              isDisabled={loading || product.isMarked}
-              selectedValue={userBeingAssignedTo?.userId || null}
-              onValueChange={(listMemberUserId) => {
-                if (listMemberUserId) {
-                  setUserBeingAssignedTo(
-                    listMembers.find(
-                      (lm) => lm.userId === Number(listMemberUserId)
-                    )
-                  );
-                } else {
-                  setUserBeingAssignedTo({ id: null });
-                }
-              }}
-              selectTestID="select-list-member"
-            >
-              {/* Item padrão - "Ninguém em específico" */}
-              <Select.Item key={null} value={null} label={t('noOne')} />
-
-              {listMembers.map((listMember) => (
-                <Select.Item
-                  key={listMember.userId}
-                  value={listMember.userId}
-                  label={listMember.user.name}
-                />
-              ))}
-            </LixtSelect>
-            {product.isMarked && (
-              <Text fontSize="sm">{t('alreadyChecked')}</Text>
-            )}
-          </Box>
-        ) : null}
-
-        <Button
-          isLoading={loading}
-          isLoadingText={t('editing')}
-          onPress={handleSubmit}
-          marginTop={5}
-          paddingX={20}
-          paddingY={4}
-          testID="button-finish-editing-item"
-        >
-          {t('finish')}
-        </Button>
       </ScrollView>
     </SafeAreaView>
   );

@@ -641,7 +641,9 @@ export default function CommentaryScreen(props) {
         w="95%"
         my={3}
         mx="auto"
+        display="flex"
         flexDirection="column"
+        alignItems="flex-start"
         space={3}
         style={{ backgroundColor: '#fff' }}
       >
@@ -658,7 +660,7 @@ export default function CommentaryScreen(props) {
           <Text ml={1}>{t('isGlobalCommentary')}</Text>
         </Checkbox>
         {commentaryInformation.isGlobal ? (
-          <Box display="flex" flexDirection="row" alignItems="center">
+          <Box display="flex" flexDirection="row" alignItems="center" mt={2}>
             <Checkbox
               testID="change-commentary-visibility-checkbox"
               isChecked={commentaryInformation.isGlobalPublic}
@@ -668,14 +670,12 @@ export default function CommentaryScreen(props) {
                   isGlobalPublic: value,
                 })
               }
-              mt={2}
-              mr={2}
             >
               <Text ml={1}>{t('isPublic')}</Text>
             </Checkbox>
-            <Box ml={1}>
+            <Box ml={4}>
               <Tooltip label={t('isPublicTooltip')} placement="right">
-                <InfoIcon size="5" mt="0.5" color="muted.500" />
+                <InfoIcon size="6" color="muted.500" />
               </Tooltip>
             </Box>
           </Box>

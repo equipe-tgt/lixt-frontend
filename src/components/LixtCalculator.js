@@ -60,7 +60,7 @@ export default function LixtCalculator({
             Total
           </Text>
           <Text testID="total-price-text" fontSize="lg" ml={2}>
-            {t('currency')} {totalPrice}
+            {t('currency')} {totalPrice.toFixed(2)}
           </Text>
         </Box>
         <Button

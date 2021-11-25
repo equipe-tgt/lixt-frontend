@@ -10,6 +10,7 @@ import {
   Center,
   Spinner,
   useToast,
+  ScrollView,
 } from 'native-base';
 import { useTranslation } from 'react-i18next';
 import { screenBasicStyle as style } from '../../styles/style';
@@ -102,116 +103,118 @@ export default function ListDetailsScreen(props) {
 
   return list ? (
     <SafeAreaView style={style.container}>
-      <VStack mt={5} width="90%" mx="auto">
-        <Box mb={5}>
-          <Text fontSize="lg" fontWeight="bold">
-            {list.nameList}
-          </Text>
-          <Text>
-            {user.id === list.ownerId
-              ? t('youAreTheListOwner')
-              : `${list.owner} ${t('isTheListOwner')}`}
-          </Text>
-        </Box>
-        <Box mb={5}>
-          <Text fontWeight="bold">{t('description')}</Text>
-          <Text>
-            {list.description.length
-              ? list.description
-              : t('listHasNoDescription')}
-          </Text>
-        </Box>
-        <Box mb={5}>
-          <Text fontWeight="bold">{t('products')}</Text>
-          <Text>{list?.productsOfList?.length || 0}</Text>
-        </Box>
-        <Box mb={5}>
-          <Text fontWeight="bold">{t('members')}</Text>
-          {list.listMembers && list.listMembers.length > 0 ? (
-            <>
-              {list?.listMembers
-                .filter(
-                  (listMember) => listMember.statusListMember === 'ACCEPT'
-                )
-                .map((listMember, index) => (
-                  <Box
-                    display="flex"
-                    flexDirection="row"
-                    justifyContent="space-between"
-                    mt={4}
-                    key={listMember.id}
-                    testID={`list-member-${index}`}
-                  >
-                    <Box>
-                      <Text fontWeight="bold">{listMember.user.name}</Text>
-                      <Text fontSize="md">@{listMember.user.username} </Text>
+      <ScrollView>
+        <VStack mt={5} width="90%" mx="auto">
+          <Box mb={5}>
+            <Text fontSize="lg" fontWeight="bold">
+              {list.nameList}
+            </Text>
+            <Text>
+              {user.id === list.ownerId
+                ? t('youAreTheListOwner')
+                : `${list.owner} ${t('isTheListOwner')}`}
+            </Text>
+          </Box>
+          <Box mb={5}>
+            <Text fontWeight="bold">{t('description')}</Text>
+            <Text>
+              {list.description.length
+                ? list.description
+                : t('listHasNoDescription')}
+            </Text>
+          </Box>
+          <Box mb={5}>
+            <Text fontWeight="bold">{t('products')}</Text>
+            <Text>{list?.productsOfList?.length || 0}</Text>
+          </Box>
+          <Box mb={5}>
+            <Text fontWeight="bold">{t('members')}</Text>
+            {list.listMembers && list.listMembers.length > 0 ? (
+              <>
+                {list?.listMembers
+                  .filter(
+                    (listMember) => listMember.statusListMember === 'ACCEPT'
+                  )
+                  .map((listMember, index) => (
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="space-between"
+                      mt={4}
+                      key={listMember.id}
+                      testID={`list-member-${index}`}
+                    >
+                      <Box>
+                        <Text fontWeight="bold">{listMember.user.name}</Text>
+                        <Text fontSize="md">@{listMember.user.username} </Text>
+                      </Box>
+                      {user.id === list.ownerId && (
+                        <Button
+                          isLoading={isRemoveMemberModalOpened === listMember.id}
+                          isLoadingText={t('removing')}
+                          size="sm"
+                          variant="link"
+                          testID={`remove-member-button-${index}`}
+                          onPress={() =>
+                            setIsRemoveMemberModalOpened(listMember.id)
+                          }
+                        >
+                          {t('remove')}
+                        </Button>
+                      )}
                     </Box>
-                    {user.id === list.ownerId && (
-                      <Button
-                        isLoading={isRemoveMemberModalOpened === listMember.id}
-                        isLoadingText={t('removing')}
-                        size="sm"
-                        variant="link"
-                        testID={`remove-member-button-${index}`}
-                        onPress={() =>
-                          setIsRemoveMemberModalOpened(listMember.id)
-                        }
-                      >
-                        {t('remove')}
-                      </Button>
-                    )}
-                  </Box>
-                ))}
-            </>
+                  ))}
+              </>
+            ) : (
+              <Text>{t('noMembers')}</Text>
+            )}
+          </Box>
+
+          {user.id === list.ownerId ? (
+            <Button
+              testID="invite-button"
+              onPress={() => {
+                props.navigation.navigate('Invite', {
+                  list,
+                });
+              }}
+              mt={5}
+            >
+              {t('sendInvitation')}
+            </Button>
           ) : (
-            <Text>{t('noMembers')}</Text>
+            <Button
+              isLoading={loading}
+              isLoadingText="Saindo"
+              onPress={() => setIsLeaveListModalOpened(true)}
+              testID="leave-list"
+              mt={5}
+              variant="outline"
+            >
+              {t('leaveList')}
+            </Button>
           )}
-        </Box>
 
-        {user.id === list.ownerId ? (
-          <Button
-            testID="invite-button"
-            onPress={() => {
-              props.navigation.navigate('Invite', {
-                list,
-              });
-            }}
-            mt={5}
-          >
-            {t('sendInvitation')}
-          </Button>
-        ) : (
-          <Button
-            isLoading={loading}
-            isLoadingText="Saindo"
-            onPress={() => setIsLeaveListModalOpened(true)}
-            testID="leave-list"
-            mt={5}
-            variant="outline"
-          >
-            {t('leaveList')}
-          </Button>
-        )}
-
-        {list.ownerId === user.id ? (
-          <RemoveMemberModal
-            isOpen={!!isRemoveMemberModalOpened}
-            closeModal={(value) => {
-              if (value) removeMember(isRemoveMemberModalOpened);
-              else setIsRemoveMemberModalOpened(false);
-            }}
-          />
-        ) : null}
-        {list.ownerId !== user.id ? (
-          <LeaveListModal
-            isOpen={!!isLeaveListModalOpened}
-            closeModal={(value) => {
-              if (value) leaveList()
-              else setIsLeaveListModalOpened(false)
-            }}
-          />
-        ) : null}
-      </VStack>
+          {list.ownerId === user.id ? (
+            <RemoveMemberModal
+              isOpen={!!isRemoveMemberModalOpened}
+              closeModal={(value) => {
+                if (value) removeMember(isRemoveMemberModalOpened);
+                else setIsRemoveMemberModalOpened(false);
+              }}
+            />
+          ) : null}
+          {list.ownerId !== user.id ? (
+            <LeaveListModal
+              isOpen={!!isLeaveListModalOpened}
+              closeModal={(value) => {
+                if (value) leaveList()
+                else setIsLeaveListModalOpened(false)
+              }}
+            />
+          ) : null}
+        </VStack>
+      </ScrollView>
     </SafeAreaView>
   ) : (
     <SafeAreaView>

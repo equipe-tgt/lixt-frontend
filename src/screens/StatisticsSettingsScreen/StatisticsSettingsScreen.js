@@ -617,7 +617,7 @@ export default function StatisticsSettingsScreen(props) {
                       </Select>
                       {loadingPurchaseLocals && <Spinner size="sm" />}
                       {!loadingPurchaseLocals &&
-                        productDetailConfig.purchaseLocal && (
+                        productDetailConfig.purchaseLocal ? (
                           <Button
                             onPress={() => {
                               setProductDetailConfig({
@@ -630,7 +630,7 @@ export default function StatisticsSettingsScreen(props) {
                               <Ionicons name="close" size={24} color="#777" />
                             }
                           />
-                        )}
+                        ): null}
                     </HStack>
                   </Box>
                 </Box>

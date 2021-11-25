@@ -171,7 +171,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
 
             <Text>
               {quantities.price
-                ? `${t('currency')} ${quantities.price}`
+                ? `${t('currency')} ${quantities.price.toFixed(2)}`
                 : `${t('currency')} 0,00`}
             </Text>
           </Box>

@@ -60,9 +60,6 @@ const LixtProductItem = ({
     <Pressable
       key={product.id}
       my={3}
-      flexDirection="row"
-      justifyContent="space-between"
-      alignItems="center"
       onPress={() => {
         navigate('ProductOfListDetails', {
           product,
@@ -70,63 +67,70 @@ const LixtProductItem = ({
         });
       }}
     >
-      <Box>
+      <Box w="100%">
         <Text fontWeight="bold">{product.name}</Text>
-
-        <Amounts />
-
-        <Text mt={1}>
-          {product.price
-            ? `${t('currency')} ${
-                product.price * (product.markedAmount || product.plannedAmount)
-              }`
-            : `${t('currency')} 0,00`}
-        </Text>
       </Box>
 
-      {product.amountComment ? (
-        <Pressable
-          accessibilityLabel={t('commentaries')}
-          onPress={() => {
-            navigate('Commentaries', { product });
-          }}
-          p={2}
-          flexDirection="row"
-          justifyContent="space-around"
-        >
-          <Text mr={2}>{product.amountComment}</Text>
-          <Ionicons name="chatbox-outline" size={24} color="#27272a" />
-        </Pressable>
-      ) : null}
+      <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+        <Box>
+          <Amounts />
 
-      <Menu
-        trigger={(triggerProps) => {
-          return (
+          <Text mt={1}>
+            {product.price
+              ? `${t('currency')} ${
+                  (product.price * (product.markedAmount || product.plannedAmount)).toFixed(2)
+                }`
+              : `${t('currency')} 0,00`}
+          </Text>
+        </Box>
+
+        <Box>
+          {product.amountComment ? (
             <Pressable
-              testID="product-item-context-menu"
-              p={3}
-              {...triggerProps}
+              accessibilityLabel={t('commentaries')}
+              onPress={() => {
+                navigate('Commentaries', { product });
+              }}
+              p={2}
+              flexDirection="row"
+              justifyContent="space-around"
             >
-              <Ionicons size={18} color="#27272a" name="ellipsis-vertical" />
+              <Text mr={2}>{product.amountComment}</Text>
+              <Ionicons name="chatbox-outline" size={24} color="#27272a" />
             </Pressable>
-          );
-        }}
-      >
-        <Menu.Item
-          onPress={() => {
-            navigate('Commentaries', { product, idSelectedList });
+          ) : null}
+        </Box>
+
+        <Menu
+          trigger={(triggerProps) => {
+            return (
+              <Pressable
+                testID="product-item-context-menu"
+                p={3}
+                {...triggerProps}
+              >
+                <Ionicons size={18} color="#27272a" name="ellipsis-vertical" />
+              </Pressable>
+            );
           }}
         >
-          {t('comment')}
-        </Menu.Item>
-        <Menu.Item
-          onPress={() => {
-            deleteFromList(product.id);
-          }}
-        >
-          {t('remove')}
-        </Menu.Item>
-      </Menu>
+          <Menu.Item
+            onPress={() => {
+              navigate('Commentaries', { product, idSelectedList });
+            }}
+          >
+            {t('comment')}
+          </Menu.Item>
+          <Menu.Item
+            onPress={() => {
+              deleteFromList(product.id);
+            }}
+          >
+            {t('remove')}
+          </Menu.Item>
+        </Menu>
+      </Box>
+
     </Pressable>
   );
 };
