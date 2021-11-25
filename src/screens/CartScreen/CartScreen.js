@@ -66,9 +66,10 @@ export default function CartScreen(props) {
       if (selectedList && selectedList?.id === 'view-all') {
         setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
       } else {
-        setSelectedList(
-          lists.find((l) => Number(l.id) === Number(selectedList?.id))
-        );
+        const listFound = lists.find((l) => Number(l.id) === Number(selectedList?.id))
+        if (listFound) {
+          setSelectedList(listFound);
+        }
       }
     } else {
       refreshLists();
@@ -79,7 +80,10 @@ export default function CartScreen(props) {
     if (listId === 'view-all') {
       setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
     } else {
-      setSelectedList(lists.find((list) => list.id === Number(listId)));
+      const listFound = lists.find((list) => list.id === Number(listId))
+      if (listFound) {
+        setSelectedList(listFound);
+      }
     }
   };
 
@@ -192,7 +196,7 @@ export default function CartScreen(props) {
 
     return {
       id: id,
-      name: list.nameList,
+      name: list ? list.nameList : '',
     };
   };
 

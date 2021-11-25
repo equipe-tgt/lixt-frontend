@@ -29,5 +29,8 @@ export function getUrl(value) {
   const key = Object.keys(StatistcsTypeUrl).find(
     (key) => StatisticsType[key] === value
   );
-  return StatistcsTypeUrl[key];
+  if (key) {
+    return StatistcsTypeUrl[key];
+  }
+  return null
 }

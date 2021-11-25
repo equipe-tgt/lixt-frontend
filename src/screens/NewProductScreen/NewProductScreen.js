@@ -123,7 +123,7 @@ export default function NewProductScreen(props) {
         const category = {
           id: product.categoryId,
           name: categories.find((c) => c.id === Number(product.categoryId))
-            .name,
+            ?.name || '',
         };
 
         props.navigation.navigate('Lists', {

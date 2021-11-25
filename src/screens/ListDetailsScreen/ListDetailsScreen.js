@@ -72,7 +72,11 @@ export default function ListDetailsScreen(props) {
   };
 
   const getCurrentInvitation = () => {
-    return list.listMembers.find((listMember) => listMember.userId === user.id);
+    const invitation = list.listMembers.find((listMember) => listMember.userId === user.id);
+    if (invitation) {
+      return invitation
+    }
+    return {}
   };
 
   const removeMember = async (idMemberList) => {

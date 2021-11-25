@@ -37,8 +37,11 @@ export default function SendInvitationScreen(props) {
     if (props.route.params?.list) {
       // Caso a tela de listas tenha enviado uma lista seleciona ela automaticamente
       const list = props.route.params.list;
-      setSelectedList(lists.find((l) => l.id === list.id));
-      props.route.params.list = null;
+      const foundList = lists.find((l) => l.id === list.id);
+      if (foundList) {
+        setSelectedList();
+        props.route.params.list = null;
+      }
     }
   });
 
@@ -103,7 +106,10 @@ export default function SendInvitationScreen(props) {
             isDisabled={loading || isDisabled}
             selectedValue={selectedList.id}
             onValueChange={(listId) => {
-              setSelectedList(lists.find((list) => list.id === Number(listId)));
+              const foundList = lists.find((list) => list.id === Number(listId));
+              if (foundList) {
+                setSelectedList(foundList);
+              }
             }}
             selectTestID="select-list"
           >
