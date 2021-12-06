@@ -11,6 +11,7 @@ const LixtInput = ({
   onBlur,
   inputTestID,
   errorTestID,
+  helperText,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -24,6 +25,9 @@ const LixtInput = ({
         testID={inputTestID}
         {...props}
       ></Input>
+      {helperText && !error ? (
+        <FormControl.HelperText>{t(helperText)}</FormControl.HelperText>
+      ) : null}
       <View style={{ height: 20 }}>
         <Text
           color="rose.600"
@@ -42,6 +46,7 @@ export default LixtInput;
 
 LixtInput.propTypes = {
   labelName: PropTypes.string,
+  helperText: PropTypes.string,
   error: PropTypes.string,
   onChangeText: PropTypes.func,
   onBlur: PropTypes.func,

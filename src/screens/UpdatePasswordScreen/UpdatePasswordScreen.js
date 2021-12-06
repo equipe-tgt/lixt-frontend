@@ -20,6 +20,9 @@ import { useFormik } from 'formik';
 import { UpdatePasswordSchema } from '../../validationSchemas';
 import LixtInput from '../../components/LixtInput';
 
+import { BarPasswordStrengthDisplay } from 'react-native-password-strength-meter';
+import { getLevels } from '../../utils/passwordUtils';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -52,6 +55,8 @@ export default function UpdatePasswordScreen(props) {
     onSubmit: () => updatePassword(),
   });
 
+  const passwordLevels = getLevels(t);
+
   const updatePassword = () => {
     setLoading(true);
 
@@ -76,10 +81,11 @@ export default function UpdatePasswordScreen(props) {
         style={styles.container}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} flex={1}>
-          <Center mx="auto" my="auto" width="90%" flex={1}>
-            <Box marginBottom="16px" width="282px">
+          <Center mx="auto" my="auto" width="90%">
+            <Box marginBottom="16px" width="100%">
               <LixtInput
                 labelName="password"
+                helperText={t('minLength', { min: 8 })}
                 error={errors.password}
                 onBlur={handleBlur('password')}
                 onChangeText={handleChange('password')}
@@ -89,8 +95,20 @@ export default function UpdatePasswordScreen(props) {
                 secureTextEntry
               />
             </Box>
+            {values?.password?.length > 0 && (
+              <BarPasswordStrengthDisplay
+                password={values.password}
+                minLength={1}
+                levels={passwordLevels}
+                wrapperStyle={{
+                  marginTop: errors.password ? 10 : -10,
+                  marginBottom: 20,
+                }}
+                labelStyle={{ marginTop: 2, color: '#2233' }}
+              />
+            )}
 
-            <Box marginBottom="16px" width="282px">
+            <Box marginBottom="16px" width="100%">
               <LixtInput
                 labelName="confirmPassword"
                 error={errors.confirmPassword}
