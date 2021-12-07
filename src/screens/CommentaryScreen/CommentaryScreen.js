@@ -22,7 +22,7 @@ import {
   Checkbox,
   InfoIcon,
   Menu,
-  Popover
+  Popover,
 } from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
 import { AntDesign, Ionicons, FontAwesome } from '@expo/vector-icons';
@@ -488,12 +488,18 @@ export default function CommentaryScreen(props) {
                                     color="muted.500"
                                   />
                                 </Pressable>
-                              )
+                              );
                             }}
                           >
-                            <Popover.Content backgroundColor="gray.700" p={1} w="180">
+                            <Popover.Content
+                              backgroundColor="gray.700"
+                              p={1}
+                              w="180"
+                            >
                               <Box>
-                                <Text color="gray.300">{t('globalPrivateCommentary')}</Text>
+                                <Text color="gray.300">
+                                  {t('globalPrivateCommentary')}
+                                </Text>
                               </Box>
                             </Popover.Content>
                           </Popover>
@@ -689,7 +695,7 @@ export default function CommentaryScreen(props) {
                     <Pressable {...triggerProps}>
                       <InfoIcon size="4" color="muted.500" />
                     </Pressable>
-                  )
+                  );
                 }}
               >
                 <Popover.Content backgroundColor="gray.700" p={1} w="180">

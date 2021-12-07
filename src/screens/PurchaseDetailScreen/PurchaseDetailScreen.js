@@ -125,7 +125,9 @@ export default function PurchaseDetailScreen(props) {
                         {purchaseList.nameList}
                       </Text>
                       <Text>
-                        {convertDecimalBasedOnLanguage(purchaseList.partialPurchasePrice || 0)}
+                        {convertDecimalBasedOnLanguage(
+                          purchaseList.partialPurchasePrice || 0
+                        )}
                       </Text>
                     </Box>
                     <Accordion.Icon />
@@ -137,7 +139,9 @@ export default function PurchaseDetailScreen(props) {
                         <Text color="gray.500">{`${t('purchasedAmount')}: ${
                           item.amount
                         }`}</Text>
-                        <Text color="gray.500">{convertDecimalBasedOnLanguage(item.price || 0)}</Text>
+                        <Text color="gray.500">
+                          {convertDecimalBasedOnLanguage(item.price || 0)}
+                        </Text>
                       </Box>
                     ))}
                   </Accordion.Details>

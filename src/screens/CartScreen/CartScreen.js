@@ -45,6 +45,7 @@ export default function CartScreen(props) {
     []
   );
   const [totalPriceFromCalculator, setTotalPriceFromCalculator] = useState(0);
+  // const [savedPurchaseLocationName, setSavedPurchaseLocationName] = useState("");
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (até agora a de edição do item manda)
@@ -66,7 +67,9 @@ export default function CartScreen(props) {
       if (selectedList && selectedList?.id === 'view-all') {
         setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
       } else {
-        const listFound = lists.find((l) => Number(l.id) === Number(selectedList?.id))
+        const listFound = lists.find(
+          (l) => Number(l.id) === Number(selectedList?.id)
+        );
         if (listFound) {
           setSelectedList(listFound);
         }
@@ -80,7 +83,7 @@ export default function CartScreen(props) {
     if (listId === 'view-all') {
       setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
     } else {
-      const listFound = lists.find((list) => list.id === Number(listId))
+      const listFound = lists.find((list) => list.id === Number(listId));
       if (listFound) {
         setSelectedList(listFound);
       }
@@ -275,15 +278,33 @@ export default function CartScreen(props) {
     };
   };
 
-  const savePurchase = async (purchaseLocalId) => {
+  const savePurchase = async (purchaseLocal) => {
     setLoadingPurchase(true);
-    const purchaseObject = getPurchaseObject(purchaseLocalId);
+    const purchaseObject = getPurchaseObject(purchaseLocal?.id);
 
     let title;
     let status;
 
     try {
-      await PurchaseService.createNewPurchase(purchaseObject, user);
+      let { data } = await PurchaseService.createNewPurchase(
+        purchaseObject,
+        user
+      );
+
+      // O nome do local é atribuído ao objeto de resposta para que ele
+      // seja passado para a tela de detalhe da compra de forma completa
+      // Isto porque no objeto de resposta original da requisição só é retornado
+      // o id do local da compra e nós precisamos do nome do local
+      data = {
+        ...data,
+        purchaseLocal: {
+          name: purchaseLocal.name,
+        },
+      };
+
+      // Redireciona para a tela de detalhes da compra recém-realizada
+      props.navigation.navigate('PurchaseDetail', { purchase: data });
+
       title = t('purchaseSaved');
       status = 'success';
     } catch (error) {
@@ -319,14 +340,15 @@ export default function CartScreen(props) {
               value="view-all"
               label={t('seeAllItems')}
             />
-            {lists?.length ?
-              lists?.map((list) => (
-                <Select.Item
-                  key={list.id}
-                  value={list.id}
-                  label={list.nameList}
-                />
-              )) : null}
+            {lists?.length
+              ? lists?.map((list) => (
+                  <Select.Item
+                    key={list.id}
+                    value={list.id}
+                    label={list.nameList}
+                  />
+                ))
+              : null}
           </Select>
 
           <Menu
@@ -393,13 +415,11 @@ export default function CartScreen(props) {
                   : refreshIndividualList
               }
             />
-          ) : (
-            !refreshing ? (
-              <Center width="90%" mx="auto" my="50%">
-                <Text textAlign="center">{t('noProductsFound')}</Text>
-              </Center>
-            ) : null
-          )}
+          ) : !refreshing ? (
+            <Center width="90%" mx="auto" my="50%">
+              <Text textAlign="center">{t('noProductsFound')}</Text>
+            </Center>
+          ) : null}
         </ScrollView>
 
         {selectedList && selectedList?.productsOfList?.length > 0 ? (
@@ -420,7 +440,7 @@ export default function CartScreen(props) {
           closeModal={(value) => {
             setShowModal(false);
             if (value) {
-              savePurchase(value.id);
+              savePurchase(value);
             }
           }}
         />

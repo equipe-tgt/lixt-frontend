@@ -14,7 +14,7 @@ export default function RemoveMemberModal(props) {
         props.closeModal(false);
       }}
       accessibilityValue={{
-        text: props.isOpen ? 'visible' : 'hidden'
+        text: props.isOpen ? 'visible' : 'hidden',
       }}
     >
       <Modal.Content>

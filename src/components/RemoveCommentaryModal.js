@@ -10,7 +10,7 @@ export default function RemoveCommentaryModal(props) {
     <Modal
       testID="remove-commentary-modal"
       accessibilityValue={{
-        text: props.isOpen ? 'visible' : 'hidden'
+        text: props.isOpen ? 'visible' : 'hidden',
       }}
       isOpen={props.isOpen}
       onClose={() => {

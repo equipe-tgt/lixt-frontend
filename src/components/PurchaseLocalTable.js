@@ -199,7 +199,9 @@ export default function PurchaseLocalTable({
 
                 <Box py={2}>
                   <Text fontWeight="bold">{translate('averageValue')}</Text>
-                  <Text>{convertDecimalBasedOnLanguage(data.averageValue)}</Text>
+                  <Text>
+                    {convertDecimalBasedOnLanguage(data.averageValue)}
+                  </Text>
                 </Box>
 
                 <Box py={2}>

@@ -32,5 +32,5 @@ export function getUrl(value) {
   if (key) {
     return StatistcsTypeUrl[key];
   }
-  return null
+  return null;
 }

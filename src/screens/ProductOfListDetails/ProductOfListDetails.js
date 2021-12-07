@@ -68,13 +68,18 @@ export default function ProductOfListDetails(props) {
 
   useEffect(() => {
     if (typeof values.price === 'number' && getI18n().language === 'pt_BR') {
-      const formattedValue = new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL' }).format(values.price).replace(/^R\$\s{0,1}/, "")
+      const formattedValue = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      })
+        .format(values.price)
+        .replace(/^R\$\s{0,1}/, '');
       setValues({
         ...values,
-        price: formattedValue
-      })
+        price: formattedValue,
+      });
     }
-  }, [])
+  }, []);
 
   const editProductOfList = async () => {
     setLoading(true);
@@ -101,19 +106,23 @@ export default function ProductOfListDetails(props) {
     const productOfListEdited = Object.assign({}, props.route.params.product);
 
     if (values.price) {
-      const language = getI18n().language
-      if (language === "pt_BR") {
-        if (typeof values.price === "number") {
+      const language = getI18n().language;
+      if (language === 'pt_BR') {
+        if (typeof values.price === 'number') {
           productOfListEdited.price = values.price;
         } else {
-          const dollarFormat = values.price.replace(/\./g, ',').replace(/,(\d\d)$/, '.$1')
-          productOfListEdited.price = parseFloat(dollarFormat.replace(/[^0-9\.]+/g, ""))
+          const dollarFormat = values.price
+            .replace(/\./g, ',')
+            .replace(/,(\d\d)$/, '.$1');
+          productOfListEdited.price = parseFloat(
+            dollarFormat.replace(/[^0-9\.]+/g, '')
+          );
         }
-      } else if (language === "en_US") {
+      } else if (language === 'en_US') {
         productOfListEdited.price =
           typeof values.price === 'number'
             ? values.price
-            : parseFloat(values.price.replace(/[^0-9\.]+/g, ""))
+            : parseFloat(values.price.replace(/[^0-9\.]+/g, ''));
       }
     }
 
@@ -131,7 +140,11 @@ export default function ProductOfListDetails(props) {
 
     // Se você for o dono da lista e ela possuir membros, checa pra ver se o item atual
     // está sendo atribuído a alguém
-    if (currentList.ownerId === user.id && currentList.listMembers && currentList.listMembers.length > 0) {
+    if (
+      currentList.ownerId === user.id &&
+      currentList.listMembers &&
+      currentList.listMembers.length > 0
+    ) {
       productOfListEdited.assignedUserId = userBeingAssignedTo?.userId
         ? userBeingAssignedTo.userId
         : null;
@@ -144,7 +157,7 @@ export default function ProductOfListDetails(props) {
       const list = lists.find((l) => l.id === product.listId);
       if (list) {
         setCurrentList(list);
-  
+
         // Verifica se há membros ligados a essa lista, se houver, filtra os que aceitaram participar da lista
         if (
           list?.listMembers?.length > 0 &&
@@ -153,18 +166,18 @@ export default function ProductOfListDetails(props) {
           const usersThatAcceptedInvite = list.listMembers.filter(
             (lm) => lm.statusListMember === 'ACCEPT'
           );
-  
+
           // Inclui o dono da lista na lista de membros para que seja possível atribuir
           // um item para si próprio também
           const owner = { userId: list.ownerId, user: { name: list.owner } };
           const allUsers = [...usersThatAcceptedInvite, owner];
-  
+
           setListMembers(allUsers);
-  
+
           // Se já houver um usuário atribuído para o item atual busca quem é
           // a partir do id
           if (product?.assignedUserId) {
-            const member = getMemberById(product.assignedUserId, allUsers)
+            const member = getMemberById(product.assignedUserId, allUsers);
             if (member) {
               setUserBeingAssignedTo(member);
             } else {
@@ -273,11 +286,13 @@ export default function ProductOfListDetails(props) {
                 selectedValue={userBeingAssignedTo?.userId || null}
                 onValueChange={(listMemberUserId) => {
                   if (listMemberUserId) {
-                    const member = listMembers.find((lm) => lm.userId === Number(listMemberUserId))
+                    const member = listMembers.find(
+                      (lm) => lm.userId === Number(listMemberUserId)
+                    );
                     if (member) {
                       setUserBeingAssignedTo(member);
                     } else {
-                      setUserBeingAssignedTo({ id: null });  
+                      setUserBeingAssignedTo({ id: null });
                     }
                   } else {
                     setUserBeingAssignedTo({ id: null });

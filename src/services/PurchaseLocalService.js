@@ -17,6 +17,14 @@ const PurchaseLocalService = {
     });
   },
 
+  findById: (user, id) => {
+    return BaseService.get(`/purchaseLocal/${id}`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
+
   findByUser: (user) => {
     return BaseService.get('/purchaseLocal/by-user', {
       headers: {

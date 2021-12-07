@@ -127,7 +127,8 @@ export default function StatisticsScreen(props) {
           </Center>
         );
 
-      default: return null;
+      default:
+        return null;
     }
   };
 
@@ -190,19 +191,25 @@ export default function StatisticsScreen(props) {
           >
             {t('total')}
           </Text>
-          <Text textAlign="center">{convertDecimalBasedOnLanguage(totalAmount)}</Text>
+          <Text textAlign="center">
+            {convertDecimalBasedOnLanguage(totalAmount)}
+          </Text>
 
           <HStack justifyContent="space-between" my={2}>
             <PeakCard
               label={t('lowestPoint')}
               date={formatDate(ascOrderedData[0])}
-              price={convertDecimalBasedOnLanguage(ascOrderedData[0].price || 0)}
+              price={convertDecimalBasedOnLanguage(
+                ascOrderedData[0].price || 0
+              )}
               isUp={false}
             />
             <PeakCard
               label={t('highestPoint')}
               date={formatDate(ascOrderedData[ascOrderedData.length - 1])}
-              price={convertDecimalBasedOnLanguage(ascOrderedData[ascOrderedData.length - 1].price || 0)}
+              price={convertDecimalBasedOnLanguage(
+                ascOrderedData[ascOrderedData.length - 1].price || 0
+              )}
               isUp={true}
             />
           </HStack>

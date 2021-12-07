@@ -173,8 +173,7 @@ const LixtCartProductItemGeneral = ({ wrappedProduct }) => {
             <Text>
               {quantities.price
                 ? convertDecimalBasedOnLanguage(quantities.price)
-                : convertDecimalBasedOnLanguage('0,00')
-              }
+                : convertDecimalBasedOnLanguage('0,00')}
             </Text>
           </Box>
 

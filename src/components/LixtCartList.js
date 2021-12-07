@@ -122,17 +122,15 @@ export default function LixtCartList({
                       />
                     );
                   } else {
-                    return (
-                      p.id ? (
-                        <LixtCartProductItem
-                          key={p.id}
-                          product={p}
-                          navigate={navigate}
-                          refreshList={refreshList}
-                          getUserById={getUserById}
-                        />
-                      ) : null
-                    );
+                    return p.id ? (
+                      <LixtCartProductItem
+                        key={p.id}
+                        product={p}
+                        navigate={navigate}
+                        refreshList={refreshList}
+                        getUserById={getUserById}
+                      />
+                    ) : null;
                   }
                 })}
               </Box>

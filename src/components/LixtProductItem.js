@@ -72,13 +72,21 @@ const LixtProductItem = ({
         <Text fontWeight="bold">{product.name}</Text>
       </Box>
 
-      <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="space-between"
+        alignItems="center"
+      >
         <Box>
           <Amounts />
 
           <Text mt={1}>
             {product.price
-              ? convertDecimalBasedOnLanguage((product.price * (product.markedAmount || product.plannedAmount)))
+              ? convertDecimalBasedOnLanguage(
+                  product.price *
+                    (product.markedAmount || product.plannedAmount)
+                )
               : convertDecimalBasedOnLanguage('0,00')}
           </Text>
         </Box>
@@ -129,7 +137,6 @@ const LixtProductItem = ({
           </Menu.Item>
         </Menu>
       </Box>
-
     </Pressable>
   );
 };
