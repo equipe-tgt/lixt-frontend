@@ -62,6 +62,7 @@
     "react-native-input-spinner": "^1.7.11",
     "react-native-masked-text": "^1.13.0",
     "react-native-month-selector": "^1.4.0",
+    "react-native-password-strength-meter": "0.0.5",
     "react-native-reanimated": "^2.1.0",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "^3.0.0",

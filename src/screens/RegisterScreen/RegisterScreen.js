@@ -14,6 +14,8 @@ import {
 import { Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
+import { BarPasswordStrengthDisplay } from 'react-native-password-strength-meter';
+import { getLevels } from '../../utils/passwordUtils';
 
 import UserService from '../../services/UserService';
 // Validação do formulário
@@ -25,6 +27,8 @@ export default function RegisterScreen({ navigation }) {
   const toast = useToast();
 
   const { t } = useTranslation();
+
+  const levels = getLevels(t);
 
   // Instanciando formik para controlar as validações do formulário
   const { handleChange, handleSubmit, handleBlur, values, errors } = useFormik({
@@ -144,6 +148,18 @@ export default function RegisterScreen({ navigation }) {
             disabled={loading}
             isInvalid={!!errors.name}
             secureTextEntry
+            helperText={t('minLength', { min: 8 })}
+          />
+
+          <BarPasswordStrengthDisplay
+            password={values.password}
+            minLength={1}
+            levels={levels}
+            wrapperStyle={{
+              marginTop: errors.password ? 10 : -10,
+              marginBottom: 20,
+            }}
+            labelStyle={{ marginTop: 2, color: '#2233' }}
           />
 
           <LixtInput
