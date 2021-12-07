@@ -69,7 +69,7 @@ export default function ListScreen(props) {
           const newList = Object.assign({}, props.route.params.newList);
           setLists([...lists, newList]);
           setSelectedList(newList);
-          storeListId(newList.id)
+          storeListId(newList.id);
           props.route.params.newList = null;
         }
 
@@ -130,7 +130,9 @@ export default function ListScreen(props) {
           setLists([...data]);
           AsyncStorage.getItem('lastSelectedList').then((lastSelectedList) => {
             if (lastSelectedList) {
-              const isLastSelectedListExists = data.find(list => list.id === Number(lastSelectedList))
+              const isLastSelectedListExists = data.find(
+                (list) => list.id === Number(lastSelectedList)
+              );
               if (isLastSelectedListExists) {
                 setSelectedList(isLastSelectedListExists);
               } else {
@@ -163,7 +165,7 @@ export default function ListScreen(props) {
       await ListService.deleteList(listIdToDelete, user);
 
       // Filtra as listas depois de uma deleção ocorrer
-      const filteredLists = lists.filter((list) => list.id !== listIdToDelete)
+      const filteredLists = lists.filter((list) => list.id !== listIdToDelete);
       setLists(filteredLists);
       setSelectedList(filteredLists[0]);
 
@@ -183,12 +185,14 @@ export default function ListScreen(props) {
 
   const leaveList = async () => {
     try {
-      const invitation = selectedList.listMembers.find((lm) => lm.userId === user.id);
-      let id = 0
+      const invitation = selectedList.listMembers.find(
+        (lm) => lm.userId === user.id
+      );
+      let id = 0;
 
       // Pega o id do convite atual e faz a deleção do convite
       if (invitation) {
-        id = invitation.id
+        id = invitation.id;
       }
       await ListMembersService.deleteInvitation(id, user);
 
@@ -365,7 +369,7 @@ export default function ListScreen(props) {
           selectedValue={selectedList?.id}
           width="70%"
           onValueChange={(listId) => {
-            const foundList = lists.find((list) => list.id === Number(listId))
+            const foundList = lists.find((list) => list.id === Number(listId));
             if (foundList) {
               setSelectedList(foundList);
               storeListId(listId);
@@ -373,7 +377,7 @@ export default function ListScreen(props) {
           }}
           isDisabled={lists?.length === 0}
           accessibilityValue={{
-            text: selectedList?.nameList
+            text: selectedList?.nameList,
           }}
         >
           {lists?.map((list) => (
@@ -465,14 +469,12 @@ export default function ListScreen(props) {
                   <Text color="red.500">{t('deleteList')}</Text>
                 </Menu.Item>
               </Box>
-            ) : (
-              // <Box>
-              //   <Menu.Item testID="leave-list-option" onPress={leaveList}>
-              //     {t('leaveList')}
-              //   </Menu.Item>
-              // </Box>
-              null
-            )}
+            ) : // <Box>
+            //   <Menu.Item testID="leave-list-option" onPress={leaveList}>
+            //     {t('leaveList')}
+            //   </Menu.Item>
+            // </Box>
+            null}
           </Menu>
         ) : null}
       </HStack>

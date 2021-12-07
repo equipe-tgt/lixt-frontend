@@ -6,7 +6,7 @@ import axios from 'axios';
 
 // eslint-disable-next-line no-undef
 const BASE_URL = __DEV__
-  ? 'http://192.168.1.192:8080'
+  ? 'https://lixt.loca.lt'
   : 'https://lixt-ws.z01.azurefd.net';
 
 // Para testar o endereço do backe-end em produção mas com o app em desenvolvimento descomente essa linha e

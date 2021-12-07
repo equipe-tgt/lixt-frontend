@@ -26,8 +26,7 @@ export default function ListDetailsScreen(props) {
   const { lists, setLists } = useContext(ListContext);
   const [isRemoveMemberModalOpened, setIsRemoveMemberModalOpened] =
     useState(false);
-  const [isLeaveListModalOpened, setIsLeaveListModalOpened] =
-    useState(false);
+  const [isLeaveListModalOpened, setIsLeaveListModalOpened] = useState(false);
 
   const { t } = useTranslation();
 
@@ -72,11 +71,13 @@ export default function ListDetailsScreen(props) {
   };
 
   const getCurrentInvitation = () => {
-    const invitation = list.listMembers.find((listMember) => listMember.userId === user.id);
+    const invitation = list.listMembers.find(
+      (listMember) => listMember.userId === user.id
+    );
     if (invitation) {
-      return invitation
+      return invitation;
     }
-    return {}
+    return {};
   };
 
   const removeMember = async (idMemberList) => {
@@ -154,7 +155,9 @@ export default function ListDetailsScreen(props) {
                       </Box>
                       {user.id === list.ownerId ? (
                         <Button
-                          isLoading={isRemoveMemberModalOpened === listMember.id}
+                          isLoading={
+                            isRemoveMemberModalOpened === listMember.id
+                          }
                           isLoadingText={t('removing')}
                           size="sm"
                           variant="link"
@@ -212,8 +215,8 @@ export default function ListDetailsScreen(props) {
             <LeaveListModal
               isOpen={!!isLeaveListModalOpened}
               closeModal={(value) => {
-                if (value) leaveList()
-                else setIsLeaveListModalOpened(false)
+                if (value) leaveList();
+                else setIsLeaveListModalOpened(false);
               }}
             />
           ) : null}

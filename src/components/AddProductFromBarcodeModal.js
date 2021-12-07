@@ -23,7 +23,7 @@ export default function AddProductFromBarcodeModal(props) {
           <Text>{t('addNewBarcode', { barcode: props.barcode })}</Text>
           <Button
             onPress={() => {
-              props.closeModal()
+              props.closeModal();
               props.navigate('NewProduct', { barcode: props.barcode });
             }}
             mt={5}

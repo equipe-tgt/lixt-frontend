@@ -106,7 +106,9 @@ export default function SendInvitationScreen(props) {
             isDisabled={loading || isDisabled}
             selectedValue={selectedList?.id}
             onValueChange={(listId) => {
-              const foundList = lists.find((list) => list.id === Number(listId));
+              const foundList = lists.find(
+                (list) => list.id === Number(listId)
+              );
               if (foundList) {
                 setSelectedList(foundList);
               }

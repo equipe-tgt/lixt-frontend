@@ -229,7 +229,10 @@ const LixtCartProductItem = ({
 
           <Text>
             {product.price
-              ? convertDecimalBasedOnLanguage(product.price * (product.markedAmount || product.plannedAmount))
+              ? convertDecimalBasedOnLanguage(
+                  product.price *
+                    (product.markedAmount || product.plannedAmount)
+                )
               : convertDecimalBasedOnLanguage('0,00')}
           </Text>
 

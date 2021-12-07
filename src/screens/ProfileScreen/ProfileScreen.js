@@ -1,7 +1,15 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { Text, VStack, Box, Heading, Pressable, Link, ScrollView } from 'native-base';
+import {
+  Text,
+  VStack,
+  Box,
+  Heading,
+  Pressable,
+  Link,
+  ScrollView,
+} from 'native-base';
 import { screenBasicStyle as style } from '../../styles/style';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';

@@ -52,7 +52,7 @@ export default function PurchaseLocalModal(props) {
   // Ao abrir o modal pega as coordenadas do usuário
   useEffect(() => {
     if (props.showModal) {
-      resetForm()
+      resetForm();
       getCoordinates();
     }
   }, [props.showModal]);
@@ -91,7 +91,7 @@ export default function PurchaseLocalModal(props) {
           ...coordinates,
         },
         user
-      )
+      );
       props.closeModal(data);
       title = t('successfullySaved');
       status = 'success';
@@ -101,7 +101,7 @@ export default function PurchaseLocalModal(props) {
         status: 'warning',
       });
     } finally {
-      resetForm()
+      resetForm();
       toast.show({
         title,
         status,
@@ -166,7 +166,7 @@ export default function PurchaseLocalModal(props) {
       testID="modal-purchase"
       isOpen={props.showModal}
       onClose={() => {
-        resetForm()
+        resetForm();
         props.closeModal();
       }}
     >

@@ -15,7 +15,7 @@ import {
   Icon,
   List,
   Input,
-  Switch
+  Switch,
 } from 'native-base';
 import DatePicker from '../../components/DatePicker';
 import { useFocusEffect } from '@react-navigation/native';
@@ -67,7 +67,7 @@ export default function StatisticsSettingsScreen(props) {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [loadingPurchaseLocals, setLoadingPurchaseLocals] = useState(false);
   const [userPurchaseLocals, setUserPurchaseLocals] = useState([]);
-  const [isSearchByProduct, setIsSearchByProduct] = useState(true)
+  const [isSearchByProduct, setIsSearchByProduct] = useState(true);
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (a tela de estatísticas manda para cá)
@@ -263,9 +263,8 @@ export default function StatisticsSettingsScreen(props) {
           maxDate: moment(statisticsSettings.endDate).toISOString(),
         };
 
-        periodFilterObject.category = categories.find(
-          (cat) => cat.id === selectedCategory
-        )?.name || '';
+        periodFilterObject.category =
+          categories.find((cat) => cat.id === selectedCategory)?.name || '';
 
         return StatisticsService.getExpensesPer(
           getUrl(statisticsSettings.statisticType),
@@ -280,12 +279,13 @@ export default function StatisticsSettingsScreen(props) {
         };
 
         if (selectedProduct) {
-          periodFilterObject.name = selectedProduct
+          periodFilterObject.name = selectedProduct;
         }
 
         if (productDetailConfig?.purchaseLocal) {
-          periodFilterObject.purchaseLocalId =
-            Number(productDetailConfig.purchaseLocal);
+          periodFilterObject.purchaseLocalId = Number(
+            productDetailConfig.purchaseLocal
+          );
         }
 
         if (productDetailConfig?.brand) {
@@ -467,7 +467,9 @@ export default function StatisticsSettingsScreen(props) {
                     />
                   ))}
                 </Select>
-                {loadingCategories ? <Spinner color="primary.400" size="sm" /> : null}
+                {loadingCategories ? (
+                  <Spinner color="primary.400" size="sm" />
+                ) : null}
               </HStack>
             </VStack>
           </Box>
@@ -476,7 +478,13 @@ export default function StatisticsSettingsScreen(props) {
       case StatisticsType.PRODUCT:
         return (
           <Box>
-            <Box display="flex" alignItems="center" flexDirection="row" mt={4} mb={3}>
+            <Box
+              display="flex"
+              alignItems="center"
+              flexDirection="row"
+              mt={4}
+              mb={3}
+            >
               <Text mr={2}>{t('brand')}</Text>
               <Switch
                 isChecked={isSearchByProduct}
@@ -489,84 +497,81 @@ export default function StatisticsSettingsScreen(props) {
               <Text ml={2}>{t('product')}</Text>
             </Box>
 
-            {
-              isSearchByProduct ? (
-                <VStack>
-                  <Text fontSize={18} bold my={4}>
-                    {t('productName')}
-                  </Text>
+            {isSearchByProduct ? (
+              <VStack>
+                <Text fontSize={18} bold my={4}>
+                  {t('productName')}
+                </Text>
 
-                  <HStack>
-                    <Input
-                      width={loadingProducts ? '90%' : '100%'}
-                      type="text"
-                      value={selectedProduct}
-                      onChangeText={(value) => {
-                        if (productDetailConfig.brand) {
-                          setProductDetailConfig({
-                            ...productDetailConfig,
-                            brand: null
-                          });
-                        }
-                        setSelectedProduct(value);
-                        searchProducts(value);
-                      }}
-                    />
-
-                    {loadingProducts ? <Spinner size="sm" /> : null}
-                  </HStack>
-
-                  {products && products?.length > 0 ? (
-                    <List
-                      borderBottomRadius={3}
-                      borderTopColor="transparent"
-                      space="md"
-                    >
-                      <ScrollView keyboardShouldPersistTaps="always">
-                        {products?.map((product) => (
-                          <List.Item
-                            testID="products-found"
-                            py={4}
-                            key={product.id}
-                            onPress={() => {
-                              setSelectedProduct(product.name);
-                              setProducts([]);
-                            }}
-                            _pressed={{ bg: 'primary.500' }}
-                          >
-                            {product.name}
-                          </List.Item>
-                        ))}
-                      </ScrollView>
-                    </List>
-                  ) : null}
-                </VStack>
-              ) : (
-                <VStack>
-                  <Text fontSize={18} bold my={4}>
-                    {t('brandName')}
-                  </Text>
-
-                  <HStack>
-                    <Input
-                      width="100%"
-                      type="text"
-                      value={productDetailConfig.brand || ""}
-                      onChangeText={(value) => {
-                        if (selectedProduct) {
-                          setSelectedProduct('')
-                        }
+                <HStack>
+                  <Input
+                    width={loadingProducts ? '90%' : '100%'}
+                    type="text"
+                    value={selectedProduct}
+                    onChangeText={(value) => {
+                      if (productDetailConfig.brand) {
                         setProductDetailConfig({
                           ...productDetailConfig,
-                          brand: value,
+                          brand: null,
                         });
-                      }}
-                    />
-                  </HStack>
-                </VStack>
-              )
-            }
+                      }
+                      setSelectedProduct(value);
+                      searchProducts(value);
+                    }}
+                  />
 
+                  {loadingProducts ? <Spinner size="sm" /> : null}
+                </HStack>
+
+                {products && products?.length > 0 ? (
+                  <List
+                    borderBottomRadius={3}
+                    borderTopColor="transparent"
+                    space="md"
+                  >
+                    <ScrollView keyboardShouldPersistTaps="always">
+                      {products?.map((product) => (
+                        <List.Item
+                          testID="products-found"
+                          py={4}
+                          key={product.id}
+                          onPress={() => {
+                            setSelectedProduct(product.name);
+                            setProducts([]);
+                          }}
+                          _pressed={{ bg: 'primary.500' }}
+                        >
+                          {product.name}
+                        </List.Item>
+                      ))}
+                    </ScrollView>
+                  </List>
+                ) : null}
+              </VStack>
+            ) : (
+              <VStack>
+                <Text fontSize={18} bold my={4}>
+                  {t('brandName')}
+                </Text>
+
+                <HStack>
+                  <Input
+                    width="100%"
+                    type="text"
+                    value={productDetailConfig.brand || ''}
+                    onChangeText={(value) => {
+                      if (selectedProduct) {
+                        setSelectedProduct('');
+                      }
+                      setProductDetailConfig({
+                        ...productDetailConfig,
+                        brand: value,
+                      });
+                    }}
+                  />
+                </HStack>
+              </VStack>
+            )}
 
             {/* Mostrar mais filtros */}
             <VStack>
@@ -617,20 +622,20 @@ export default function StatisticsSettingsScreen(props) {
                       </Select>
                       {loadingPurchaseLocals ? <Spinner size="sm" /> : null}
                       {!loadingPurchaseLocals &&
-                        productDetailConfig.purchaseLocal ? (
-                          <Button
-                            onPress={() => {
-                              setProductDetailConfig({
-                                ...productDetailConfig,
-                                purchaseLocal: "",
-                              });
-                            }}
-                            variant="ghost"
-                            startIcon={
-                              <Ionicons name="close" size={24} color="#777" />
-                            }
-                          />
-                        ): null}
+                      productDetailConfig.purchaseLocal ? (
+                        <Button
+                          onPress={() => {
+                            setProductDetailConfig({
+                              ...productDetailConfig,
+                              purchaseLocal: '',
+                            });
+                          }}
+                          variant="ghost"
+                          startIcon={
+                            <Ionicons name="close" size={24} color="#777" />
+                          }
+                        />
+                      ) : null}
                     </HStack>
                   </Box>
                 </Box>
@@ -655,9 +660,13 @@ export default function StatisticsSettingsScreen(props) {
         return basicRule || !selectedCategory;
 
       case StatisticsType.PRODUCT:
-        return basicRule ||
-          (isSearchByProduct && (!selectedProduct || !selectedProduct.length)) ||
-          (!isSearchByProduct && (!productDetailConfig.brand || !productDetailConfig.brand?.length));
+        return (
+          basicRule ||
+          (isSearchByProduct &&
+            (!selectedProduct || !selectedProduct.length)) ||
+          (!isSearchByProduct &&
+            (!productDetailConfig.brand || !productDetailConfig.brand?.length))
+        );
 
       case StatisticsType.LIST:
         return basicRule || !selectedList;
@@ -796,9 +805,8 @@ export default function StatisticsSettingsScreen(props) {
     switch (statisticsSettings.statisticType) {
       case StatisticsType.CATEGORY:
         if (selectedCategory) {
-          const categoryName = categories.find(
-            (cat) => cat.id === selectedCategory
-          )?.name || '';
+          const categoryName =
+            categories.find((cat) => cat.id === selectedCategory)?.name || '';
           if (categoryName) {
             chosenStatisticsString += ` - ${categoryName}`;
           }
@@ -807,9 +815,8 @@ export default function StatisticsSettingsScreen(props) {
 
       case StatisticsType.LIST:
         if (selectedList) {
-          const listName = lists.find(
-            (list) => list.id === selectedList
-          )?.nameList || '';
+          const listName =
+            lists.find((list) => list.id === selectedList)?.nameList || '';
           if (listName) {
             chosenStatisticsString += ` - ${listName}`;
           }

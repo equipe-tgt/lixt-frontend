@@ -122,8 +122,9 @@ export default function NewProductScreen(props) {
 
         const category = {
           id: product.categoryId,
-          name: categories.find((c) => c.id === Number(product.categoryId))
-            ?.name || '',
+          name:
+            categories.find((c) => c.id === Number(product.categoryId))?.name ||
+            '',
         };
 
         props.navigation.navigate('Lists', {
@@ -214,7 +215,11 @@ export default function NewProductScreen(props) {
               ))}
             </Select>
             <View style={{ height: 20 }}>
-              <Text color="rose.600" fontSize="sm" testID="error-category-select">
+              <Text
+                color="rose.600"
+                fontSize="sm"
+                testID="error-category-select"
+              >
                 {errors.categoryId}
               </Text>
             </View>
@@ -292,7 +297,10 @@ export default function NewProductScreen(props) {
             barcode={barcode}
             navigate={props.navigation.navigate}
             closeModal={() => {
-              setDuplicatedModalData({ isOpen: false, duplicatedProduct: null });
+              setDuplicatedModalData({
+                isOpen: false,
+                duplicatedProduct: null,
+              });
             }}
           />
         </Center>
