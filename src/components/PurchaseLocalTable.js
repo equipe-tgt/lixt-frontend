@@ -7,7 +7,6 @@ import {
   Box,
   HStack,
   VStack,
-  Pressable,
   Button,
   Icon,
 } from 'native-base';
@@ -16,6 +15,7 @@ import moment from 'moment';
 
 import { getI18n } from 'react-i18next';
 import { convertDecimalBasedOnLanguage } from '../utils/convertion';
+import ButtonGroupSelector from './ButtonGroupSelector';
 
 const SortingOrders = {
   ASC: 0,
@@ -101,10 +101,6 @@ export default function PurchaseLocalTable({
     };
   };
 
-  const isOptionSelected = (option) => {
-    return SortingOptions[option] === currentSortingOption;
-  };
-
   const changeCurrentOrder = () => {
     if (currentSortingOrder === SortingOrders.ASC) {
       setCurrentSortingOrder(SortingOrders.DESC);
@@ -122,28 +118,13 @@ export default function PurchaseLocalTable({
 
   return (
     <SafeAreaView>
-      <HStack width="80%" alignItems="center" mb={3}>
-        <HStack justifyContent="space-around">
-          {Object.keys(SortingOptions).map((option, index) => (
-            <Pressable
-              backgroundColor={isOptionSelected(option) ? '#22d3ee' : '#fff'}
-              borderRadius={isOptionSelected(option) ? 4 : 0}
-              py={4}
-              px={3}
-              key={index}
-              onPress={() => {
-                setCurrentSortingOption(SortingOptions[option]);
-              }}
-            >
-              <Text
-                fontSize={12}
-                color={isOptionSelected(option) ? '#fff' : '#333'}
-              >
-                {translate(SortingOptions[option])}
-              </Text>
-            </Pressable>
-          ))}
-        </HStack>
+      <HStack width="90%" alignItems="center" mb={3}>
+        <ButtonGroupSelector
+          options={Object.values(SortingOptions)}
+          translate={translate}
+          selectedOption={currentSortingOption}
+          onSelectOption={setCurrentSortingOption}
+        />
 
         <Button
           ml={5}
