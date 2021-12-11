@@ -18,6 +18,13 @@ export const StatisticsType = {
   PURCHASE_LOCAL: 'purchaseLocalStatistics',
 };
 
+export const StatisticsPeriods = {
+  LAST_MONTH: 'lastMonth',
+  LAST_FIFTEEN_DAYS: 'lastFifteenDays',
+  LAST_WEEK: 'lastWeek',
+  CUSTOMIZED: 'others',
+};
+
 const StatistcsTypeUrl = {
   TIME: 'time',
   LIST: 'time',

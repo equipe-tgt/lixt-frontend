@@ -18,11 +18,13 @@ import {
   Switch,
 } from 'native-base';
 import DatePicker from '../../components/DatePicker';
+import ButtonGroupSelector from '../../components/ButtonGroupSelector';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   UnityTimes,
   StatisticsType,
   DateParameters,
+  StatisticsPeriods,
   getUrl,
 } from '../../utils/StatisticsUtils';
 
@@ -44,12 +46,14 @@ export default function StatisticsSettingsScreen(props) {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
   const { lists } = useContext(ListContext);
-  const [statisticsSettings, setStatisticsSettings] = useState({
-    startDate: null,
-    endDate: null,
-    selectedUnityTime: UnityTimes.DAILY,
-    statisticType: StatisticsType.TIME,
-  });
+  const [statisticsSettings, setStatisticsSettings] = useState(
+    props.route.params?.settings || {
+      startDate: null,
+      endDate: null,
+      selectedUnityTime: UnityTimes.DAILY,
+      statisticType: StatisticsType.TIME,
+    }
+  );
   const [currentParameter, setCurrentParameter] = useState(null);
   const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
@@ -68,6 +72,10 @@ export default function StatisticsSettingsScreen(props) {
   const [loadingPurchaseLocals, setLoadingPurchaseLocals] = useState(false);
   const [userPurchaseLocals, setUserPurchaseLocals] = useState([]);
   const [isSearchByProduct, setIsSearchByProduct] = useState(true);
+  const [periodSelected, setPeriodSelected] = useState(
+    props.route.params?.extraParams?.periodSelected ||
+      StatisticsPeriods.LAST_MONTH
+  );
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (a tela de estatísticas manda para cá)
@@ -75,8 +83,7 @@ export default function StatisticsSettingsScreen(props) {
       const { params } = props.route;
 
       if (params?.settings) {
-        // Caso a tela anterior tenha passado settings
-        setStatisticsSettings(props.route.params.settings);
+        // Caso a tela anterior tenha passado settings o setStatisticsSettings já vai aplicá-lo basta limpar depois
         params.settings = null;
       }
       // Caso a tela tenha passado configurações extra de busca (categoria selecionada, id da lista, esse tipo de coisa que
@@ -84,16 +91,26 @@ export default function StatisticsSettingsScreen(props) {
       if (params?.extraParams) {
         const extraParamsCopy = Object.assign({}, params?.extraParams);
         checkExtraParametersFromRoute(extraParamsCopy);
+        getDefaultDateInterval();
+
         params.extraParams = null;
       }
     }
   });
 
   useEffect(() => {
+    getDefaultDateInterval();
+  }, []);
+
+  useEffect(() => {
     if (showMoreFilters && userPurchaseLocals.length === 0) {
       getPurchaseLocalsByUser();
     }
   }, [showMoreFilters]);
+
+  useEffect(() => {
+    getDefaultDateInterval();
+  }, [periodSelected]);
 
   const resetValues = () => {
     setSelectedList(null);
@@ -183,32 +200,36 @@ export default function StatisticsSettingsScreen(props) {
         statisticsName: getStatisticsName(),
       };
 
-      if (statisticsSettings.statisticType === StatisticsType.CATEGORY) {
-        paramsForStatisticsScreen.extraParams = {
-          selectedCategory,
-        };
+      const extraParams = {
+        periodSelected,
+      };
+
+      switch (statisticsSettings.statisticType) {
+        case StatisticsType.CATEGORY:
+          extraParams.selectedCategory = selectedCategory;
+          break;
+
+        case StatisticsType.LIST:
+          extraParams.selectedList = selectedList;
+          break;
+
+        case StatisticsType.PRODUCT:
+          if (selectedProduct) {
+            extraParams.selectedProduct = selectedProduct;
+          }
+          if (productDetailConfig.purchaseLocal) {
+            extraParams.purchaseLocal = productDetailConfig.purchaseLocal;
+          }
+          if (productDetailConfig.brand) {
+            extraParams.brand = productDetailConfig.brand;
+          }
+          break;
+
+        default:
+          break;
       }
 
-      if (statisticsSettings.statisticType === StatisticsType.LIST) {
-        paramsForStatisticsScreen.extraParams = {
-          selectedList,
-        };
-      }
-
-      if (statisticsSettings.statisticType === StatisticsType.PRODUCT) {
-        const extraParams = {};
-        if (selectedProduct) {
-          extraParams.selectedProduct = selectedProduct;
-        }
-        if (productDetailConfig.purchaseLocal) {
-          extraParams.purchaseLocal = productDetailConfig.purchaseLocal;
-        }
-        if (productDetailConfig.brand) {
-          extraParams.brand = productDetailConfig.brand;
-        }
-
-        paramsForStatisticsScreen.extraParams = extraParams;
-      }
+      paramsForStatisticsScreen.extraParams = extraParams;
 
       // Depois de buscar navega de volta para a tela de estatísticas
       props.navigation.navigate('Statistics', paramsForStatisticsScreen);
@@ -362,7 +383,7 @@ export default function StatisticsSettingsScreen(props) {
   const renderStatisticsSelectors = () => {
     switch (statisticsSettings.statisticType) {
       case StatisticsType.TIME:
-        return (
+        return periodSelected === StatisticsPeriods.CUSTOMIZED ? (
           <Box>
             <VStack>
               <Text fontSize={18} bold mb={2} mt={4}>
@@ -393,38 +414,43 @@ export default function StatisticsSettingsScreen(props) {
               </Select>
             </VStack>
           </Box>
-        );
+        ) : null;
 
       case StatisticsType.LIST:
         return (
           <Box>
             <VStack>
-              <Text fontSize={18} bold mb={2} mt={4}>
-                {t('selectPeriodOfAnalysis')}
-              </Text>
-              <Select
-                onValueChange={(val) => {
-                  setStatisticsSettings({
-                    ...statisticsSettings,
-                    selectedUnityTime: val,
-                    startDate: null,
-                    endDate: null,
-                  });
-                }}
-                selectedValue={statisticsSettings.selectedUnityTime}
-              >
-                {Object.keys(UnityTimes)
-                  .filter(
-                    (unityTime) => UnityTimes[unityTime] !== UnityTimes.DEFAULT
-                  )
-                  .map((unityTime, index) => (
-                    <Select.Item
-                      value={UnityTimes[unityTime]}
-                      label={t(unityTime)}
-                      key={index}
-                    />
-                  ))}
-              </Select>
+              {periodSelected === StatisticsPeriods.CUSTOMIZED ? (
+                <Box>
+                  <Text fontSize={18} bold mb={2} mt={4}>
+                    {t('selectPeriodOfAnalysis')}
+                  </Text>
+                  <Select
+                    onValueChange={(val) => {
+                      setStatisticsSettings({
+                        ...statisticsSettings,
+                        selectedUnityTime: val,
+                        startDate: null,
+                        endDate: null,
+                      });
+                    }}
+                    selectedValue={statisticsSettings.selectedUnityTime}
+                  >
+                    {Object.keys(UnityTimes)
+                      .filter(
+                        (unityTime) =>
+                          UnityTimes[unityTime] !== UnityTimes.DEFAULT
+                      )
+                      .map((unityTime, index) => (
+                        <Select.Item
+                          value={UnityTimes[unityTime]}
+                          label={t(unityTime)}
+                          key={index}
+                        />
+                      ))}
+                  </Select>
+                </Box>
+              ) : null}
 
               <Text fontSize={18} bold mb={2} mt={4}>
                 {t('selectList')}
@@ -656,6 +682,9 @@ export default function StatisticsSettingsScreen(props) {
       !statisticsSettings.startDate || !statisticsSettings.endDate;
 
     switch (statisticsSettings.statisticType) {
+      case StatisticsType.TIME:
+        return basicRule;
+
       case StatisticsType.CATEGORY:
         return basicRule || !selectedCategory;
 
@@ -691,10 +720,15 @@ export default function StatisticsSettingsScreen(props) {
     // Objeto do settings com as modificações
     const modifiedSettingsObject = {
       ...statisticsSettings,
-      startDate: null,
-      endDate: null,
       statisticType: type,
     };
+
+    // Se o tipo de período pré-selecionável selecionado for CUSTOMIZED
+    // deixa nula a data inicial e final
+    if (periodSelected === StatisticsPeriods.CUSTOMIZED) {
+      modifiedSettingsObject.startDate = null;
+      modifiedSettingsObject.endDate = null;
+    }
 
     // Quando o tipo de estatística selecionada for CATEGORY ou PRODUCT modifica programaticamente
     // o selectedUnityTime para DEFAULT, pois esses tipos de análises não usam DAILY, WEEKLY nem MONTHLY e
@@ -834,6 +868,58 @@ export default function StatisticsSettingsScreen(props) {
     return chosenStatisticsString;
   };
 
+  const getDefaultDateInterval = () => {
+    let startDate, endDate;
+    switch (periodSelected) {
+      case StatisticsPeriods.LAST_MONTH:
+        startDate = moment()
+          .startOf('month')
+          .subtract(1, 'month')
+          .startOf('date');
+        endDate = moment().endOf('month').subtract(1, 'month').endOf('date');
+        break;
+
+      case StatisticsPeriods.LAST_FIFTEEN_DAYS:
+        startDate = moment().startOf('date').subtract(15, 'days');
+        endDate = moment().endOf('date');
+        break;
+
+      case StatisticsPeriods.LAST_WEEK:
+        startDate = moment()
+          .startOf('date')
+          .startOf('week')
+          .subtract(1, 'week');
+        endDate = moment().endOf('date').endOf('week').subtract(1, 'week');
+        break;
+
+      default:
+        break;
+    }
+
+    if (periodSelected !== StatisticsPeriods.CUSTOMIZED) {
+      const { statisticType } = statisticsSettings;
+
+      /**
+       * Caso o tipo de estatística for TIME ou LIST a unityTime que será usada será a DAILY
+       * agora caso o tipo seja CATEGORY ou PRODUCT a unityTime será DEFAULT
+       * o tipo de estatística PURCHASE_LOCAL não interage de nenhuma forma com esse método e por
+       * isso ele não é levado em consideração
+       */
+      const selectedUnityTime =
+        statisticType === StatisticsType.TIME ||
+        statisticType === StatisticsType.LIST
+          ? UnityTimes.DAILY
+          : UnityTimes.DEFAULT;
+
+      setStatisticsSettings({
+        ...statisticsSettings,
+        startDate,
+        endDate,
+        selectedUnityTime,
+      });
+    }
+  };
+
   return (
     <SafeAreaView style={style.container}>
       <ScrollView width="90%" mx="auto">
@@ -858,14 +944,33 @@ export default function StatisticsSettingsScreen(props) {
           ))}
         </Select>
 
+        {/* Caso a estatística não seja do tipo local da compra, mostra um
+        seletor de períodos pré-selecionados */}
+        {statisticsSettings.statisticType !== StatisticsType.PURCHASE_LOCAL && (
+          <VStack>
+            <Box mt={3}>
+              <HStack>
+                <ButtonGroupSelector
+                  options={Object.values(StatisticsPeriods)}
+                  translate={t}
+                  onSelectOption={setPeriodSelected}
+                  selectedOption={periodSelected}
+                />
+              </HStack>
+            </Box>
+          </VStack>
+        )}
+
         {renderStatisticsSelectors()}
 
-        {/* Seletor de datas - exibido caso não seja filtragem por local da compra */}
-        {statisticsSettings.statisticType !== StatisticsType.PURCHASE_LOCAL ? (
+        {periodSelected === StatisticsPeriods.CUSTOMIZED &&
+        statisticsSettings.statisticType !== StatisticsType.PURCHASE_LOCAL ? (
           <VStack mt={2}>
             <Text fontSize={18} bold marginBottom={2}>
               {t('selectDates')}
             </Text>
+
+            {/* Seletor de datas - exibido caso não seja filtragem por local da compra */}
             <StatisticsDateInput
               getDateInterval={renderDateInterval}
               setStatisticsSettings={setStatisticsSettings}

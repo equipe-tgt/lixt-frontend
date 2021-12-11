@@ -282,4 +282,7 @@ export default {
   purchaseAmount: 'Purchase amt.',
   totalValue: 'Total value',
   averageValue: 'Average value',
+  lastMonth: 'Last month',
+  lastFifteenDays: 'Last 15 days',
+  lastWeek: 'Last week',
 };

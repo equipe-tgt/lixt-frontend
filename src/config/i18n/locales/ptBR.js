@@ -281,4 +281,7 @@ export default {
   purchaseAmount: 'Qtd. compras',
   totalValue: 'Valor total',
   averageValue: 'Valor médio',
+  lastMonth: 'Último mês',
+  lastFifteenDays: 'Últimos 15 dias',
+  lastWeek: 'Última semana',
 };
