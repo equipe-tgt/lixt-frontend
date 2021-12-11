@@ -202,6 +202,7 @@ export default {
 
   purchaseSaved: 'Purchase saved!',
 
+  barcode: 'Barcode',
   barcodeReader: 'Barcode reader',
   requestForCameraPermission: 'Requesting for camera permission',
   noAccessToCamera: 'No access to camera',

@@ -201,6 +201,7 @@ export default {
 
   purchaseSaved: 'Compra salva!',
 
+  barcode: 'Código de barras',
   barcodeReader: 'Leitor de código de barras',
   requestForCameraPermission: 'Requisitando permissão para câmera',
   noAccessToCamera: 'Sem acesso à câmera',

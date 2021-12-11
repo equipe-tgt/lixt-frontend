@@ -252,7 +252,7 @@ export default function NewProductScreen(props) {
           ) : (
             <HStack justifyContent="space-between" w="100%" alignItems="center">
               <Box>
-                <Text textAlign="left">{t('readValue')}</Text>
+                <Text textAlign="left">{t('barcode')}</Text>
                 <Text textAlign="left">{barcode}</Text>
               </Box>
 

@@ -53,6 +53,7 @@ export default function ListScreen(props) {
   const [loadingScreen, setLoadingScreen] = useState(true);
   const [isListRemoveModalOpen, setIsListRemoveModalOpen] = useState(false);
   const [confirmRemoval, setConfirmRemoval] = useState(false);
+  const [fetchingForProducts, setFetchingForProducts] = useState(false);
 
   useEffect(() => {
     fetchLists();
@@ -216,14 +217,37 @@ export default function ListScreen(props) {
 
   const searchProducts = async (value) => {
     if (value.length > 2) {
+      const numberPattern = /^[0-9]*$/;
+      let request;
+
+      // Se o tamanho da string for 13 e for apenas números quer dizer que a pessoa inseriu um código de barras
+      // por extenso, logo a request deve ser para a pesquisa de códigos de barra
+      if (value.length === 13 && value.match(numberPattern)) {
+        request = ProductService.getProductByBarcode(value, user);
+      }
+      // do contrário, busca por nome
+      else {
+        request = ProductService.getProductByName(value, user);
+      }
+
       try {
-        const { data } = await ProductService.getProductByName(value, user);
+        setFetchingForProducts(true);
+        let { data } = await request;
+
+        // Se a resposta da request não for um array (caso seja um código de barras a resposta é um objeto)
+        // transforma em um
+        if (!Array.isArray(data)) {
+          data = data ? [data] : [];
+        }
+
         setProductsFound(data);
       } catch (error) {
         toast.show({
           title: t('errorServerDefault'),
           status: 'warning',
         });
+      } finally {
+        setFetchingForProducts(false);
       }
     } else {
       setProductsFound([]);
@@ -349,6 +373,30 @@ export default function ListScreen(props) {
     }
   };
 
+  const goToNewProductPage = (value) => {
+    const numberPattern = /^[0-9]*$/;
+
+    // Objeto passado para a tela de novo produto contendo
+    // informações que pré-preencherão campos do form de novo produto
+    let routeParamsObject;
+
+    // Se for um código de barras, envia para a tela de novo produto
+    // com o código de barras nos params do route
+    if (value?.length === 13 && value.match(numberPattern)) {
+      routeParamsObject = {
+        barcode: value,
+      };
+    }
+    // Caso for nome, envia como productName
+    else {
+      routeParamsObject = {
+        productName: value,
+      };
+    }
+
+    props.navigation.navigate('NewProduct', routeParamsObject);
+  };
+
   return !loadingScreen ? (
     <SafeAreaView style={style.container}>
       {/* Header com o select de listas e opções da lista */}
@@ -433,33 +481,10 @@ export default function ListScreen(props) {
               {t('listInfo')}
             </Menu.Item>
 
-            {/* {selectedList?.id && selectedList?.listMembers?.length > 0 ? (
-              <Menu.Item
-                testID="members-menu-item"
-                onPress={() => {
-                  props.navigation.navigate('Members', {
-                    list: selectedList,
-                  });
-                }}
-              >
-                {t('members')}
-              </Menu.Item>
-            ) : null} */}
-
             {/* Só mostra a opção de deletar lista ou convidar se ele for o dono da lista,
           se ele for convidado mostra a opção de deixar a lista */}
             {selectedList && selectedList.ownerId === user.id ? (
               <Box>
-                {/* <Menu.Item
-                  testID="invite-menu-item"
-                  onPress={() => {
-                    props.navigation.navigate('Invite', {
-                      list: selectedList,
-                    });
-                  }}
-                >
-                  {t('sendInvitation')}
-                </Menu.Item> */}
                 <Menu.Item
                   testID="delete-option"
                   onPress={() => {
@@ -469,12 +494,7 @@ export default function ListScreen(props) {
                   <Text color="red.500">{t('deleteList')}</Text>
                 </Menu.Item>
               </Box>
-            ) : // <Box>
-            //   <Menu.Item testID="leave-list-option" onPress={leaveList}>
-            //     {t('leaveList')}
-            //   </Menu.Item>
-            // </Box>
-            null}
+            ) : null}
           </Menu>
         ) : null}
       </HStack>
@@ -503,18 +523,21 @@ export default function ListScreen(props) {
                   searchProducts(value);
                 }}
                 InputRightElement={
-                  <Pressable
-                    testID="barcode-reader-search"
-                    mr={5}
-                    onPress={() => props.navigation.navigate('BarcodeReader')}
-                    accessibilityLabel={t('barcodeReader')}
-                  >
-                    <MaterialCommunityIcons
-                      name="barcode-scan"
-                      size={34}
-                      color="#6b7280"
-                    />
-                  </Pressable>
+                  <HStack alignItems="center">
+                    {fetchingForProducts && <Spinner size="sm" mr={3} />}
+                    <Pressable
+                      testID="barcode-reader-search"
+                      mr={5}
+                      onPress={() => props.navigation.navigate('BarcodeReader')}
+                      accessibilityLabel={t('barcodeReader')}
+                    >
+                      <MaterialCommunityIcons
+                        name="barcode-scan"
+                        size={34}
+                        color="#6b7280"
+                      />
+                    </Pressable>
+                  </HStack>
                 }
               />
             </FormControl>
@@ -551,9 +574,7 @@ export default function ListScreen(props) {
                   testID="option-add-new-product"
                   _pressed={{ bg: 'primary.500' }}
                   onPress={() => {
-                    props.navigation.navigate('NewProduct', {
-                      productName: productName,
-                    });
+                    goToNewProductPage(productName);
                     setProductName('');
                   }}
                 >

@@ -10,7 +10,6 @@ const UserService = {
     });
   },
   resetPassword: (email) => {
-    console.log('lang', getI18n().language);
     return BaseService.post(`/auth/forget-password`, email, {
       headers: {
         'Content-Type': 'text/plain',
