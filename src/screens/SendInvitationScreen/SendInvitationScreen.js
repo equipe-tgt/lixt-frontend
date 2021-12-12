@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native';
 import { Center, Button, Select, useToast, Box } from 'native-base';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import InviteToThePlatformModal from '../../components/InviteToThePlatformModal';
 
 import { screenBasicStyle as style } from '../../styles/style';
 
@@ -32,6 +33,8 @@ export default function SendInvitationScreen(props) {
     lists.length === 0 || lists.every((l) => l.ownerId !== user.id)
   );
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa
     if (props.route.params?.list) {
@@ -56,7 +59,7 @@ export default function SendInvitationScreen(props) {
       if (values.username === user.username) {
         toast.show({
           status: 'warning',
-          title: 'Você não pode se convidar para a lista',
+          title: t('invitationToYourself'),
         });
         return;
       }
@@ -73,16 +76,19 @@ export default function SendInvitationScreen(props) {
 
     ListMembersService.sendInvite(values.username, selectedList.id, user)
       .then(() => {
-        title = `Convite enviado para ${values.username}`;
+        title = t('invitationSent', {
+          username: values.username,
+        });
         status = 'success';
       })
       .catch((error) => {
         if (error?.response?.status === 409) {
           status = 'info';
-          title = `Um convite já foi enviado para "${values.username}"`;
+          title = t('repeatedInvitation', { username: values.username });
         } else if (error?.response?.status === 404) {
-          status = 'info';
-          title = `Usuário "${values.username}" não existe`;
+          setIsModalOpen(true);
+          // status = 'info';
+          // title = `Usuário "${values.username}" não existe`;
         } else {
           status = 'warning';
           title = t('errorServerDefault');
@@ -143,7 +149,6 @@ export default function SendInvitationScreen(props) {
           paddingX={20}
           paddingY={4}
           isLoading={loading}
-          isLoadingText="Enviando"
           onPress={handleSubmit}
           isDisabled={isDisabled}
           testID="send-invitation-button"
@@ -151,6 +156,13 @@ export default function SendInvitationScreen(props) {
           {t('sendInvitation')}
         </Button>
       </Center>
+      {isModalOpen && (
+        <InviteToThePlatformModal
+          closeModal={() => setIsModalOpen(false)}
+          usernameOrEmail={values.username}
+          isOpen={isModalOpen}
+        />
+      )}
     </SafeAreaView>
   );
 }

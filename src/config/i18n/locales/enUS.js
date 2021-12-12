@@ -134,6 +134,11 @@ export default {
   youRejected: 'You rejected this invitation',
   noInvitationsFound: 'No invitations were found',
   youLeft: 'You left the list',
+  invitationSent: 'An invitation was sent to {{username}}',
+  repeatedInvitation: 'An invitation was already sent to {{username}}',
+  invitationToYourself: "You can't send an invitation to yourself",
+  userNotOnPlatform:
+    'The user you have invited is not registered on the platform. What about inviting them to join?',
 
   isTheListOwner: 'is the list owner',
   youAreTheListOwner: 'you are the list owner',
