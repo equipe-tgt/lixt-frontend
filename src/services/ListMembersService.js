@@ -1,4 +1,5 @@
 import BaseService from './BaseService';
+import { getI18n } from 'react-i18next';
 
 export const INVITATION_TYPES = {
   SENT: 'sent',
@@ -42,6 +43,17 @@ const ListMembersService = {
     return BaseService.delete(`/membersList/${idInvitation}`, {
       headers: {
         Authorization: `Bearer ${user.token}`,
+      },
+    });
+  },
+  inviteToThePlatform: (email, user) => {
+    return BaseService.post('/membersList/invite-join-platform', email, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+        'Content-Type': 'text/plain',
+      },
+      params: {
+        language: getI18n()?.language === 'pt_BR' ? 'pt-br' : 'en-us',
       },
     });
   },

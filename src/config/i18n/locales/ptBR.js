@@ -132,6 +132,15 @@ export default {
   youRejected: 'Você rejeitou este convite',
   noInvitationsFound: 'Nenhum convite foi encontrado',
   youLeft: 'Você saiu da lista',
+  invitationSent: 'Convite enviado para {{username}}',
+  repeatedInvitation: 'Um convite já foi enviado para {{username}}',
+  invitationToYourself: 'Você não pode se convidar para a lista',
+  inviteToThePlatform: 'Convide usuário para o aplicativo',
+  userNotOnPlatform:
+    'O usuário que você convidou não está cadastrado na plataforma. Que tal convidá-lo a participar?',
+  userAlreadyOnPlatform: 'O usuário convidado já está na plataforma',
+  weSentAnInviteToThem: 'O convidamos para a sua lista ;)',
+  sentEmail: 'Email enviado!',
 
   isTheListOwner: 'é o proprietário da lista',
   youAreTheListOwner: 'você é o proprietário da lista',

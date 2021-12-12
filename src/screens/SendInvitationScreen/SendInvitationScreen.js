@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native';
 import { Center, Button, Select, useToast, Box } from 'native-base';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import InviteToThePlatformModal from '../../components/InviteToThePlatformModal';
 
 import { screenBasicStyle as style } from '../../styles/style';
 
@@ -32,6 +33,8 @@ export default function SendInvitationScreen(props) {
     lists.length === 0 || lists.every((l) => l.ownerId !== user.id)
   );
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa
     if (props.route.params?.list) {
@@ -56,7 +59,7 @@ export default function SendInvitationScreen(props) {
       if (values.username === user.username) {
         toast.show({
           status: 'warning',
-          title: 'Você não pode se convidar para a lista',
+          title: t('invitationToYourself'),
         });
         return;
       }
@@ -65,34 +68,54 @@ export default function SendInvitationScreen(props) {
     },
   });
 
-  const sendInvitation = () => {
+  const sendInvitation = (
+    config = { triedToInviteOutsider: false, newValue: null }
+  ) => {
     setLoading(true);
 
     let status;
     let title;
+    let description;
 
-    ListMembersService.sendInvite(values.username, selectedList.id, user)
+    // Lida com o caso do usuário tentar convidar alguém externo, e ao abrir o modal de convite para usuários externos,
+    // convidou alguém que já está na plataforma
+    const recipient = config.triedToInviteOutsider
+      ? config.newValue
+      : values.username;
+
+    ListMembersService.sendInvite(recipient, selectedList.id, user)
       .then(() => {
-        title = `Convite enviado para ${values.username}`;
+        title = config.triedToInviteOutsider
+          ? t('userAlreadyOnPlatform')
+          : t('invitationSent', {
+              username: recipient,
+            });
+
+        if (config.triedToInviteOutsider)
+          description = t('weSentAnInviteToThem');
+
         status = 'success';
       })
       .catch((error) => {
         if (error?.response?.status === 409) {
           status = 'info';
-          title = `Um convite já foi enviado para "${values.username}"`;
+          title = t('repeatedInvitation', { username: values.username });
         } else if (error?.response?.status === 404) {
-          status = 'info';
-          title = `Usuário "${values.username}" não existe`;
+          setIsModalOpen(true);
         } else {
           status = 'warning';
           title = t('errorServerDefault');
         }
       })
       .finally(() => {
-        toast.show({
+        const toastConfig = {
           status,
           title,
-        });
+        };
+
+        if (description) toastConfig.description = description;
+
+        toast.show(toastConfig);
         setLoading(false);
       });
   };
@@ -143,7 +166,6 @@ export default function SendInvitationScreen(props) {
           paddingX={20}
           paddingY={4}
           isLoading={loading}
-          isLoadingText="Enviando"
           onPress={handleSubmit}
           isDisabled={isDisabled}
           testID="send-invitation-button"
@@ -151,6 +173,18 @@ export default function SendInvitationScreen(props) {
           {t('sendInvitation')}
         </Button>
       </Center>
+      {isModalOpen && (
+        <InviteToThePlatformModal
+          closeModal={() => setIsModalOpen(false)}
+          usernameOrEmail={values.username}
+          isOpen={isModalOpen}
+          sendToRegisteredUser={(value) => {
+            // Caso o usuário tenha aberto o modal de convite para usuário externo
+            // mas tenha convidado alguém que já está na plataforma, define triedToInviteOutsider como true
+            sendInvitation({ triedToInviteOutsider: true, newValue: value });
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

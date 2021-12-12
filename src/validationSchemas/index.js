@@ -89,6 +89,14 @@ export const InviteSchema = (t) =>
       .required(t('requiredField')),
   });
 
+export const InviteToThePlatformSchema = (t) =>
+  Yup.object().shape({
+    email: Yup.string()
+      .email(t('invalidEmail'))
+      .max(120, t('fieldMaxChars', { max: 120 }))
+      .required(t('requiredField')),
+  });
+
 export const PurchaseLocal = (t) =>
   Yup.object().shape({
     name: Yup.string()
