@@ -50,6 +50,7 @@ const ListMembersService = {
     return BaseService.post('/membersList/invite-join-platform', email, {
       headers: {
         Authorization: `Bearer ${user.token}`,
+        'Content-Type': 'text/plain',
       },
       params: {
         language: getI18n()?.language === 'pt_BR' ? 'pt-br' : 'en-us',

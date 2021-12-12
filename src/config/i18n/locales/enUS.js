@@ -137,8 +137,12 @@ export default {
   invitationSent: 'An invitation was sent to {{username}}',
   repeatedInvitation: 'An invitation was already sent to {{username}}',
   invitationToYourself: "You can't send an invitation to yourself",
+  inviteToThePlatform: 'Invite user to the platform',
   userNotOnPlatform:
     'The user you have invited is not registered on the platform. What about inviting them to join?',
+  userAlreadyOnPlatform: 'The invited user is already on platform',
+  weSentAnInviteToThem: 'We sent them an invitation to your list ;)',
+  sentEmail: 'The invite was sent to their email!',
 
   isTheListOwner: 'is the list owner',
   youAreTheListOwner: 'you are the list owner',

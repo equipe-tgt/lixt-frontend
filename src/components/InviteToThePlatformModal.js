@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Text, Modal, useToast } from 'native-base';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,8 @@ export default function InviteToThePlatformModal(props) {
   const { t } = useTranslation();
   const { user } = useContext(AuthContext);
   const toast = useToast();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const getEmail = () => {
     const emailRegex = /^\S+@\S+\.\S+$/;
@@ -43,8 +45,32 @@ export default function InviteToThePlatformModal(props) {
     },
   });
 
-  const sendInvitation = () => {
-    console.log('hey kitty girl');
+  const sendInvitation = async () => {
+    setIsLoading(true);
+    try {
+      await ListMembersService.inviteToThePlatform(values.email, user);
+      props.closeModal();
+      toast.show({
+        title: t('sentEmail'),
+        status: 'success',
+      });
+    } catch (error) {
+      // Caso o usuáraio tente convidar pra participar da plataforma um email que já está na
+      // plataforma o encaminha de volta pra tela de SenvInivtationScreen pra ser convidado
+      // normalmente para a lista
+      if (error?.response?.status === 409) {
+        props.closeModal();
+        props.sendToRegisteredUser(values.email);
+      } else {
+        props.closeModal();
+        toast.show({
+          title: t('errorServerDefault'),
+          status: 'warning',
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -56,22 +82,25 @@ export default function InviteToThePlatformModal(props) {
     >
       <Modal.Content>
         <Modal.CloseButton />
-        <Modal.Header fontSize="lg" fontWeight="bold">
-          {t('inviteToThePlatform')}
+        <Modal.Header>
+          <Text fontSize="lg" fontWeight="bold">
+            {t('inviteToThePlatform')}
+          </Text>
         </Modal.Header>
-        <Modal.Body my={2}>
+        <Modal.Body mt={2}>
           <Text mb={3}>{t('userNotOnPlatform')}</Text>
           <LixtInput
-            labelName="email"
+            labelName="E-mail"
             value={values.email}
             error={errors.email}
             onChangeText={handleChange('email')}
             onBlur={handleBlur('email')}
+            autoCapitalize="none"
           />
         </Modal.Body>
         <Modal.Footer width="95%">
-          <Button onPress={handleSubmit} flex={1}>
-            {t('invite')}
+          <Button isLoading={isLoading} onPress={handleSubmit} flex={1}>
+            {t('sendInvitation')}
           </Button>
         </Modal.Footer>
       </Modal.Content>
@@ -83,4 +112,5 @@ InviteToThePlatformModal.propTypes = {
   isOpen: PropTypes.bool,
   closeModal: PropTypes.func,
   usernameOrEmail: PropTypes.string,
+  sendToRegisteredUser: PropTypes.func,
 };
