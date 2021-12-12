@@ -35,7 +35,7 @@ import AuthService from '../../services/AuthService';
 import RemoveCommentaryModal from '../../components/RemoveCommentaryModal';
 
 export default function CommentaryScreen(props) {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const { t } = useTranslation();
   const toast = useToast();
 
@@ -61,7 +61,12 @@ export default function CommentaryScreen(props) {
   const [commentaryToBeRemoved, setCommentaryToBeRemoved] = useState(null);
 
   useEffect(() => {
-    getUserData();
+    const { preferences } = user;
+
+    setCommentariesOrder({
+      type: preferences.globalCommentsChronOrder === false ? 'user' : 'date',
+      order: preferences.olderCommentsFirst ? 'asc' : 'desc',
+    });
   }, []);
 
   useEffect(() => {
@@ -74,23 +79,6 @@ export default function CommentaryScreen(props) {
       getCurrentLanguage();
     }
   }, [commentariesOrder, loadingScreen]);
-
-  const getUserData = () => {
-    AuthService.getUserData()
-      .then(({ data }) => {
-        const { globalCommentsChronOrder, olderCommentsFirst } = data;
-        setCommentariesOrder({
-          type: globalCommentsChronOrder === false ? 'user' : 'date',
-          order: olderCommentsFirst === true ? 'desc' : 'asc',
-        });
-      })
-      .catch(() => {
-        setCommentariesOrder({
-          type: 'date',
-          order: 'asc',
-        });
-      });
-  };
 
   const getCommentaries = () => {
     ProductOfListService.getProductOfListComments(product.id, user)
@@ -105,9 +93,9 @@ export default function CommentaryScreen(props) {
           orderByDate(isAscOrder, globalCommentsArray, commentsArray);
         else orderByUserAndDate(isAscOrder, globalCommentsArray, commentsArray);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.show({
-          title: 'Não foi possível buscar os comentários',
+          title: t('couldntFetchCommentaries'),
           status: 'warning',
         });
       })
@@ -229,8 +217,17 @@ export default function CommentaryScreen(props) {
     try {
       await AuthService.putUserPreferences({
         ...user,
-        globalCommentsChronOrder: type === 'date' ? true : false,
-        olderCommentsFirst: order === 'desc' ? true : false,
+        globalCommentsChronOrder: type === 'date',
+        olderCommentsFirst: order === 'asc',
+      });
+
+      // Modifica também o objeto local
+      setUser({
+        ...user,
+        preferences: {
+          globalCommentsChronOrder: type === 'date',
+          olderCommentsFirst: order === 'asc',
+        },
       });
       setCommentariesOrder({
         type,
@@ -662,6 +659,7 @@ export default function CommentaryScreen(props) {
         style={{ backgroundColor: '#fff' }}
       >
         <Checkbox
+          accessibilityLabel={t('isGlobalCommentary')}
           testID="change-commentary-type-checkbox"
           isChecked={commentaryInformation.isGlobal}
           onChange={(value) =>
@@ -676,6 +674,7 @@ export default function CommentaryScreen(props) {
         {commentaryInformation.isGlobal ? (
           <Box display="flex" flexDirection="row" alignItems="center" mt={2}>
             <Checkbox
+              accessibilityLabel={t('isPublic')}
               testID="change-commentary-visibility-checkbox"
               isChecked={commentaryInformation.isGlobalPublic}
               onChange={(value) =>

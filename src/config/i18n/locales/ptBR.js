@@ -184,6 +184,7 @@ export default {
   removeCommentaryModalOk: 'Remover',
   confirmRemoveCommentary:
     'Você tem certeza que deseja remover esse comentário?',
+  couldntFetchCommentaries: 'Não foi possível buscar os comentários',
   seeAllItems: 'Ver todos os itens',
 
   buy: 'Comprar',
