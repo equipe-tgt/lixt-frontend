@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import {
@@ -12,11 +12,15 @@ import {
   ScrollView,
   View,
   Center,
+  useToast,
+  Spinner,
 } from 'native-base';
 import moment from 'moment';
 
 import { screenBasicStyle as style } from '../../styles/style';
 import { useFocusEffect } from '@react-navigation/native';
+import { AuthContext } from '../../context/AuthProvider';
+
 import { Ionicons } from '@expo/vector-icons';
 import BarChartWrapper from '../../components/BarChartWrapper';
 import LineChartWrapper from '../../components/LineChartWrapper';
@@ -28,14 +32,19 @@ import { useTranslation, getI18n } from 'react-i18next';
 import { UnityTimes, StatisticsType } from '../../utils/StatisticsUtils';
 import PurchaseLocalTable from '../../components/PurchaseLocalTable';
 import { convertDecimalBasedOnLanguage } from '../../utils/convertion';
+import StatisticsService from '../../services/StatisticsService';
 
 export default function StatisticsScreen(props) {
   const { t } = useTranslation();
+  const toast = useToast();
+  const { user } = useContext(AuthContext);
 
   const [dataFromServer, setdataFromServer] = useState(null);
+
+  // Deixa definido já de padrão os gastos totais do último mês
   const [statisticsSettings, setStatisticsSettings] = useState({
-    startDate: null,
-    endDate: null,
+    startDate: moment().startOf('month').subtract(1, 'month').startOf('date'),
+    endDate: moment().endOf('month').subtract(1, 'month').endOf('date'),
     selectedUnityTime: UnityTimes.DAILY,
     statisticType: StatisticsType.TIME,
   });
@@ -45,6 +54,7 @@ export default function StatisticsScreen(props) {
   const [statisticsName, setStatisticsName] = useState(
     t(statisticsSettings.statisticType)
   );
+  const [loading, setLoading] = useState(true);
 
   useFocusEffect(() => {
     // Verifica se alguma tela enviou props para essa (a tela de config de estatísticas manda para cá)
@@ -69,6 +79,40 @@ export default function StatisticsScreen(props) {
       }
     }
   });
+
+  useEffect(() => {
+    getDefaultStatisticsData();
+  }, []);
+
+  const getDefaultStatisticsData = async () => {
+    setLoading(true);
+    try {
+      const filterObject = {
+        unityTime: statisticsSettings.selectedUnityTime,
+        startDate: statisticsSettings.startDate,
+        endDate: statisticsSettings.endDate,
+      };
+
+      const { data } = await StatisticsService.getExpensesPer(
+        'time',
+        filterObject,
+        user
+      );
+
+      setdataFromServer(data);
+      setStatisticsName(t('timeStatistics'));
+
+      // Depois de buscar navega de volta para a tela de estatísticas
+    } catch (error) {
+      console.log({ error });
+      toast().show({
+        title: t('errorServerDefault'),
+        status: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const renderDateInterval = () => {
     let intervalText;
@@ -293,6 +337,8 @@ export default function StatisticsScreen(props) {
               ) : null}
             </Box>
           </VStack>
+
+          {loading && <Spinner />}
 
           {/* Mostra o gráfico caso tenha dados do servidor e datas configuradas (para os casos de CATEGORY, TIME, PRODUCT e LIST)
            ou caso o tipo de estatística selecionada seja PURCHASE_LOCAL (ela não tem data pra configurar e o
