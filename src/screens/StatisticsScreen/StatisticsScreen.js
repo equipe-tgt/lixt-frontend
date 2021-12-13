@@ -104,7 +104,6 @@ export default function StatisticsScreen(props) {
 
       // Depois de buscar navega de volta para a tela de estatísticas
     } catch (error) {
-      console.log({ error });
       toast().show({
         title: t('errorServerDefault'),
         status: 'error',
