@@ -19,7 +19,13 @@ export const AuthProvider = ({ children }) => {
     // Chama o serviço de usuário para pegar os detalhes do usuário que acabou de logar
     const responseUser = await UserService.getUser(accessToken);
 
-    const { id, email, name } = responseUser.data;
+    const { id, email, name, globalCommentsChronOrder, olderCommentsFirst } =
+      responseUser.data;
+
+    const preferences = {
+      globalCommentsChronOrder,
+      olderCommentsFirst,
+    };
 
     // Armazena o usuário no contexto da aplicação, que poderá ser acessado de qualquer página
     setUser({
@@ -28,6 +34,7 @@ export const AuthProvider = ({ children }) => {
       email,
       name,
       token: accessToken,
+      preferences,
     });
 
     // Adiciona os tokens (o token atual e o token de renovação após expirar o primeiro) no AsyncStorage

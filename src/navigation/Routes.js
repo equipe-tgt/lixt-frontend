@@ -39,7 +39,19 @@ export default function Routes() {
           JSON.stringify({ refreshToken, accessToken: data.access_token })
         );
 
-        const { id, email, name, username } = userResponse.data;
+        const {
+          id,
+          email,
+          name,
+          username,
+          globalCommentsChronOrder,
+          olderCommentsFirst,
+        } = userResponse.data;
+
+        const preferences = {
+          globalCommentsChronOrder,
+          olderCommentsFirst,
+        };
 
         setUser({
           id,
@@ -47,6 +59,7 @@ export default function Routes() {
           email,
           name,
           token: data.access_token,
+          preferences,
         });
       } else {
         setUser(null);

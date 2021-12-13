@@ -186,6 +186,7 @@ export default {
   removeCommentaryModal: 'Remove commentary?',
   removeCommentaryModalOk: 'Remove',
   confirmRemoveCommentary: 'Are you sure you want to delete this commentary?',
+  couldntFetchCommentaries: "It wasn't possible to fetch the commentaries",
   seeAllItems: 'All items',
 
   buy: 'Buy',
