@@ -162,7 +162,6 @@ export default function StatisticsSettingsScreen(props) {
       const { data } = await CategoryService.getCategories(user);
       setCategories(data);
     } catch (error) {
-      console.log({ error });
       useToast().show({
         title: t('errorServerDefault'),
         status: 'error',
@@ -234,7 +233,6 @@ export default function StatisticsSettingsScreen(props) {
       // Depois de buscar navega de volta para a tela de estatísticas
       props.navigation.navigate('Statistics', paramsForStatisticsScreen);
     } catch (error) {
-      console.log({ error });
       useToast().show({
         title: t('errorServerDefault'),
         status: 'error',
