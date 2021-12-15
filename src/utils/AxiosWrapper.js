@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import BaseService from '../services/BaseService';
 import axios from 'axios';
 import PropTypes from 'prop-types';
@@ -8,12 +8,13 @@ import AuthService from '../services/AuthService';
 
 const WithAxios = ({ children }) => {
   const { setUser, user } = useContext(AuthContext);
+  const [authInterceptor, setAuthInterceptor] = useState(null)
 
   useMemo(() => {
     // A cada resposta que o service pegar verifica:
     // se a resposta deu sucesso só prossegue
     // caso a resposta dê erro e o erro for 401, renova o token e tenta de novo
-    BaseService.interceptors.response.use(
+    const axiosInterceptor = BaseService.interceptors.response.use(
       (response) => response,
       (err) => {
         return new Promise(async (resolve, reject) => {
@@ -71,7 +72,14 @@ const WithAxios = ({ children }) => {
         });
       }
     );
-  }, [setUser]);
+    setAuthInterceptor(axiosInterceptor);
+  }, [user, setUser]);
+
+  useEffect(() => {
+    return () => {
+      BaseService.interceptors.response.eject(authInterceptor);
+    }
+  }, [authInterceptor])
 
   return children;
 };
