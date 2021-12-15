@@ -975,7 +975,7 @@ describe('CommentaryScreen component', () => {
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
       const modal = await waitFor(() => getByTestId('remove-commentary-modal'));
-      expect(modal.props.accessibilityValue).toBe('visible');
+      expect(modal.props.accessibilityValue).toStrictEqual({ text: 'visible' });
 
       const confirmRemovalButton = await waitFor(() =>
         getByTestId('button-confirm-removal')
@@ -1160,7 +1160,7 @@ describe('CommentaryScreen component', () => {
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
       const modal = await waitFor(() => getByTestId('remove-commentary-modal'));
-      expect(modal.props.accessibilityValue).toBe('visible');
+      expect(modal.props.accessibilityValue).toStrictEqual({ text: 'visible' });
 
       const confirmRemovalButton = await waitFor(() =>
         getByTestId('button-confirm-removal')

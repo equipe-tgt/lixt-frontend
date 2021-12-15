@@ -79,6 +79,10 @@ export default function InviteToThePlatformModal(props) {
       onClose={props.closeModal}
       justifyContent="center"
       alignItems="center"
+      testID="invite-to-platform-modal"
+      accessibilityValue={{
+        text: props.isOpen ? 'visible' : 'hidden',
+      }}
     >
       <Modal.Content>
         <Modal.CloseButton />
@@ -96,10 +100,16 @@ export default function InviteToThePlatformModal(props) {
             onChangeText={handleChange('email')}
             onBlur={handleBlur('email')}
             autoCapitalize="none"
+            testID="invite-to-platform-email-input"
           />
         </Modal.Body>
         <Modal.Footer width="95%">
-          <Button isLoading={isLoading} onPress={handleSubmit} flex={1}>
+          <Button
+            isLoading={isLoading}
+            onPress={handleSubmit}
+            flex={1}
+            testID="button-confirm-send-invitation"
+          >
             {t('sendInvitation')}
           </Button>
         </Modal.Footer>
