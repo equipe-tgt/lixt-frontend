@@ -18,7 +18,7 @@ export default function RemoveMemberModal(props) {
       }}
     >
       <Modal.Content>
-        <Modal.CloseButton />
+        <Modal.CloseButton testID="close-remove-member-modal-button" />
         <Modal.Header fontSize="lg" fontWeight="bold">
           {t('removeMember')}
         </Modal.Header>

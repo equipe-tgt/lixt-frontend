@@ -52,8 +52,10 @@ export default function CartScreen(props) {
     if (props.route.params) {
       // Caso a tela peça para fazer refresh atualiza as listas
       if (props.route.params.refresh) {
-        if (selectedList?.id !== 'view-all') refreshIndividualList();
-        props.route.params.refresh = null;
+        if (selectedList?.id !== 'view-all') {
+          refreshIndividualList();
+          props.route.params.refresh = null;
+        }
       }
     }
   });
@@ -67,12 +69,8 @@ export default function CartScreen(props) {
       if (selectedList && selectedList?.id === 'view-all') {
         setSelectedList({ id: 'view-all', productsOfList: unifyAllProducts() });
       } else {
-        const listFound = lists.find(
-          (l) => Number(l.id) === Number(selectedList?.id)
-        );
-        if (listFound) {
-          setSelectedList(listFound);
-        }
+        const listFound = lists.find((l) => Number(l.id) === Number(selectedList?.id));
+        if (listFound) setSelectedList(listFound);
       }
     } else {
       refreshLists();
@@ -113,8 +111,11 @@ export default function CartScreen(props) {
 
   const refreshLists = async () => {
     setRefreshing(true);
+    // console.log('refreshLists')
     try {
+      // console.log(('AAAAA'))
       const { data } = await ListService.getLists(user);
+      // console.log('BBBBB', { data })
       setLists(data);
     } catch (error) {
       toast.show({
@@ -380,6 +381,7 @@ export default function CartScreen(props) {
               </HStack>
             </Menu.Item>
             <Menu.Item
+              testID="statistics-item-menu"
               onPress={() => {
                 props.navigation.navigate('Statistics');
               }}
@@ -455,12 +457,14 @@ export default function CartScreen(props) {
           {t('otherPages')}
         </Text>
         <Button
+          testID="no-lists-statistics-button"
           onPress={() => props.navigation.navigate('Statistics')}
           variant="ghost"
         >
           {t('accessScreen', { screenName: t('statistics') })}
         </Button>
         <Button
+          testID="no-lists-history-button"
           onPress={() => props.navigation.navigate('History')}
           variant="ghost"
         >

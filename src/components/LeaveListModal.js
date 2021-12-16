@@ -18,7 +18,7 @@ export default function LeaveListModal(props) {
       }}
     >
       <Modal.Content>
-        <Modal.CloseButton />
+        <Modal.CloseButton testID="close-leave-list-modal-button" />
         <Modal.Header fontSize="lg" fontWeight="bold">
           {t('leaveList')}
         </Modal.Header>

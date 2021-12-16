@@ -65,7 +65,7 @@ export default function CommentaryScreen(props) {
 
     setCommentariesOrder({
       type: preferences.globalCommentsChronOrder === false ? 'user' : 'date',
-      order: preferences.olderCommentsFirst ? 'asc' : 'desc',
+      order: preferences.olderCommentsFirst === true ? 'desc' : 'asc',
     });
   }, []);
 
@@ -218,7 +218,12 @@ export default function CommentaryScreen(props) {
       await AuthService.putUserPreferences({
         ...user,
         globalCommentsChronOrder: type === 'date',
-        olderCommentsFirst: order === 'asc',
+        olderCommentsFirst: order === 'desc',
+      });
+
+      setCommentariesOrder({
+        type,
+        order,
       });
 
       // Modifica também o objeto local
@@ -226,12 +231,8 @@ export default function CommentaryScreen(props) {
         ...user,
         preferences: {
           globalCommentsChronOrder: type === 'date',
-          olderCommentsFirst: order === 'asc',
+          olderCommentsFirst: order === 'desc',
         },
-      });
-      setCommentariesOrder({
-        type,
-        order,
       });
     } catch (e) {
     } finally {

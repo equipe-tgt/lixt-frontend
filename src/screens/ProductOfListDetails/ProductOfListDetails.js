@@ -222,6 +222,7 @@ export default function ProductOfListDetails(props) {
             onChangeText={handleChange('price')}
             hasHelperText
             error={errors.price}
+            testID="product-of-list-price-input"
           />
 
           <FormControl my={3}>

@@ -295,4 +295,6 @@ export default {
   lastMonth: 'Último mês',
   lastFifteenDays: 'Últimos 15 dias',
   lastWeek: 'Última semana',
+
+  leaving: 'Saindo',
 };

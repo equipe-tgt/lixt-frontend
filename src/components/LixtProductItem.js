@@ -129,6 +129,7 @@ const LixtProductItem = ({
             {t('comment')}
           </Menu.Item>
           <Menu.Item
+            testID="remove-product-from-list-menu"
             onPress={() => {
               deleteFromList(product.id);
             }}
