@@ -1240,8 +1240,6 @@ describe('CartScreen component', () => {
 
     const getListByIdSpy = jest.spyOn(ListService, 'getListById');
 
-    getListByIdSpy.mockClear();
-
     const newRoute = {
       params: {
         refresh: true,
@@ -1283,12 +1281,6 @@ describe('CartScreen component', () => {
         </ListContext.Provider>
       </AuthContext.Provider>
     );
-
-    const selectVisualizationMode = await waitFor(() =>
-      getByTestId('select-visualization-mode')
-    );
-
-    fireEvent(selectVisualizationMode, 'valueChange', lists[0].id);
 
     expect(getListByIdSpy).toHaveBeenCalledTimes(1);
 
