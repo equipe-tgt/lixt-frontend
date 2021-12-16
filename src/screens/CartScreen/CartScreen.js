@@ -111,11 +111,8 @@ export default function CartScreen(props) {
 
   const refreshLists = async () => {
     setRefreshing(true);
-    // console.log('refreshLists')
     try {
-      // console.log(('AAAAA'))
       const { data } = await ListService.getLists(user);
-      // console.log('BBBBB', { data })
       setLists(data);
     } catch (error) {
       toast.show({
