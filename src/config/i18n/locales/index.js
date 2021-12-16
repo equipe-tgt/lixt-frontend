@@ -25,7 +25,7 @@ const languageDetector = {
       return callbackLanguage(storedLanguage);
     }
 
-    return callbackLanguage('en_US');
+    return callbackLanguage('pt_BR');
   },
   init: () => {},
   cacheUserLanguage: (language) => {

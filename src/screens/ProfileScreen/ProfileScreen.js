@@ -77,6 +77,16 @@ export default function ProfileScreen(props) {
           <Box py={5}>
             <Link
               style={styles.menuItem}
+              href="https://youtu.be/FVS_pm66l20"
+              isExternal={true}
+            >
+              <Text fontSize="lg">{t('howToUse')}</Text>
+            </Link>
+          </Box>
+
+          <Box py={5}>
+            <Link
+              style={styles.menuItem}
               href="https://equipe-tgt.github.io/"
               isExternal={true}
             >

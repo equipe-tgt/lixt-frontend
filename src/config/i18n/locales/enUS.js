@@ -67,8 +67,9 @@ export default {
   backToLoginScreen: 'Back to login screen',
   okContinue: 'Ok, I wanna continue',
   userDoesntExists: "This user doesn't exists",
-  emailSuccessfullySend: 'EEmail successfully sent',
+  emailSuccessfullySend: 'Email successfully sent',
   privacyPolicy: 'Privacy policy',
+  howToUse: 'How to use the app?',
 
   passwordUpdatedSucessfully: 'Password updated successfully',
   errorServerDefault: 'An unexpected error has occurred on the server',

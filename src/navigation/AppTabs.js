@@ -20,6 +20,7 @@ export default function AppTabs() {
           elevation: 0,
         },
         headerShown: false,
+        tabBarActiveTintColor: '#22d3ee',
       }}
       initialRouteName="ListsStack"
     >

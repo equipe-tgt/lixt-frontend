@@ -69,6 +69,7 @@ export default {
   userDoesntExists: 'Este usuário não existe',
   emailSuccessfullySend: 'Email enviado com sucesso',
   privacyPolicy: 'Política de privacidade',
+  howToUse: 'Como usar o aplicativo?',
 
   passwordUpdatedSucessfully: 'Senha atualizada com sucesso!',
   errorServerDefault: 'Um erro inesperado ocorreu no servidor',
@@ -217,7 +218,8 @@ export default {
   noAccessToCamera: 'Sem acesso à câmera',
   scanYourBarcode: 'Escaneie o código de barras',
   fetchingProduct: 'Buscando produto',
-  couldntFindBarcode: 'Nenhum produto encontrado com este código de barras',
+  couldntFindBarcode:
+    'Não encontramos este código de barras nos nossos serviços',
   addNewBarcode:
     'Deseja adicionar produto de código "{{barcode}}" na plataforma?',
   addBarcode: 'Adicionar código de barras',
