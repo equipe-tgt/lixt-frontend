@@ -521,7 +521,7 @@ describe('NewProductScreen component', () => {
     it('should close the modal when clicking cancel button', async () => {
       expect(
         getByTestId('duplicated-barcode-modal').props.accessibilityValue
-      ).toBe('visible');
+      ).toStrictEqual({ text: 'visible' });
 
       const cancelDuplicatedBarcodeModalButton = getByTestId(
         'cancel-duplicated-barcode-button'
@@ -531,7 +531,7 @@ describe('NewProductScreen component', () => {
 
       expect(
         getByTestId('duplicated-barcode-modal').props.accessibilityValue
-      ).toBe('hidden');
+      ).toStrictEqual({ text: 'hidden' });
     });
   });
 });

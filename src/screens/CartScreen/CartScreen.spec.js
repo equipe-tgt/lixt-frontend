@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import '@testing-library/jest-dom';
 import React from 'React';
-import { List, NativeBaseProvider } from 'native-base';
+import { NativeBaseProvider } from 'native-base';
 import { NavigationContext } from '@react-navigation/native';
 import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -100,6 +100,110 @@ describe('CartScreen component', () => {
       );
 
       expect(noListsFoundText).toBeDefined();
+    });
+
+    it('should go to history screen when clicking the correct menu item', async () => {
+      jest.spyOn(ListService, 'getLists').mockReturnValueOnce(
+        Promise.resolve({
+          data: [],
+        })
+      );
+  
+      const { getByTestId } = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists: lists,
+              setLists: (val) => {
+                lists = [...val];
+              },
+            }}
+          >
+            <CheckedItemsProvider>
+              <SafeAreaProvider
+                initialSafeAreaInsets={{
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                }}
+              >
+                <NativeBaseProvider>
+                  <NavigationContext.Provider value={navContext}>
+                    <CartScreen navigation={navigation} route={route} />
+                  </NavigationContext.Provider>
+                </NativeBaseProvider>
+              </SafeAreaProvider>
+            </CheckedItemsProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+  
+      const historyButton = await waitFor(() =>
+        getByTestId('no-lists-history-button')
+      );
+  
+      fireEvent.press(historyButton);
+  
+      expect(navigation.navigate).toHaveBeenCalledWith('History');
+    });
+  
+    it('should go to statistics screen when clicking the correct menu item', async () => {
+      jest.spyOn(ListService, 'getLists').mockReturnValueOnce(
+        Promise.resolve({
+          data: [],
+        })
+      );
+  
+      const { getByTestId } = render(
+        <AuthContext.Provider
+          value={{
+            user,
+            login: () => {},
+            logout: () => {},
+          }}
+        >
+          <ListContext.Provider
+            value={{
+              lists: lists,
+              setLists: (val) => {
+                lists = [...val];
+              },
+            }}
+          >
+            <CheckedItemsProvider>
+              <SafeAreaProvider
+                initialSafeAreaInsets={{
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                }}
+              >
+                <NativeBaseProvider>
+                  <NavigationContext.Provider value={navContext}>
+                    <CartScreen navigation={navigation} route={route} />
+                  </NavigationContext.Provider>
+                </NativeBaseProvider>
+              </SafeAreaProvider>
+            </CheckedItemsProvider>
+          </ListContext.Provider>
+        </AuthContext.Provider>
+      );
+  
+      const statisticsButton = await waitFor(() =>
+        getByTestId('no-lists-statistics-button')
+      );
+  
+      fireEvent.press(statisticsButton);
+  
+      expect(navigation.navigate).toHaveBeenCalledWith('Statistics');
     });
   });
 
@@ -457,9 +561,9 @@ describe('CartScreen component', () => {
           return getByTestId('total-price-text');
         });
 
-        const finalPrice = totalPriceText.props.children[2];
+        const finalPrice = totalPriceText.props.children;
 
-        expect(finalPrice).toBe(30);
+        expect(finalPrice).toContain('30,00');
       });
 
       it('should be able to check an item', async () => {
@@ -551,7 +655,7 @@ describe('CartScreen component', () => {
       it('should be able to refresh the lists', async () => {
         ListService.getLists = jest.fn((user) => {
           return {
-            data: lists,
+            data: [...lists],
           };
         });
 
@@ -1043,6 +1147,76 @@ describe('CartScreen component', () => {
     fireEvent.press(historyMenuItem);
 
     expect(navigation.navigate).toHaveBeenCalledWith('History');
+  });
+
+  it('should go to statistics screen when clicking the correct menu item', async () => {
+    lists = [
+      {
+        id: 1,
+        nameList: 'Lista I',
+        ownerId: 1,
+        owner: 'Fulano',
+        description: '',
+        productsOfList: [],
+        listMembers: [],
+      },
+    ];
+
+    jest.spyOn(ListService, 'getLists').mockReturnValueOnce(
+      Promise.resolve({
+        data: [...lists],
+      })
+    );
+
+    const { getByTestId } = render(
+      <AuthContext.Provider
+        value={{
+          user,
+          login: () => {},
+          logout: () => {},
+        }}
+      >
+        <ListContext.Provider
+          value={{
+            lists: lists,
+            setLists: (val) => {
+              lists = [...val];
+            },
+          }}
+        >
+          <CheckedItemsProvider>
+            <SafeAreaProvider
+              initialSafeAreaInsets={{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+              }}
+            >
+              <NativeBaseProvider>
+                <NavigationContext.Provider value={navContext}>
+                  <CartScreen navigation={navigation} route={route} />
+                </NavigationContext.Provider>
+              </NativeBaseProvider>
+            </SafeAreaProvider>
+          </CheckedItemsProvider>
+        </ListContext.Provider>
+      </AuthContext.Provider>
+    );
+
+    const productItemContextMenu = await waitFor(() =>
+      getByTestId('product-item-context-menu')
+    );
+
+    fireEvent.press(productItemContextMenu);
+
+    const historyMenuItem = await waitFor(() =>
+      getByTestId('statistics-item-menu')
+    );
+
+    fireEvent.press(historyMenuItem);
+
+    expect(navigation.navigate).toHaveBeenCalledWith('Statistics');
   });
 
   it('should refresh lists when refresh param is passed', async () => {

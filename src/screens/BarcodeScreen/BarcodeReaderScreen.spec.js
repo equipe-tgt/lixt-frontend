@@ -218,9 +218,9 @@ describe('BarcodeReaderScreen component', () => {
           getByTestId('add-product-from-barcode-modal')
         );
 
-        expect(newProductFromBarcodeModal.props.accessibilityValue).toBe(
-          'visible'
-        );
+        expect(newProductFromBarcodeModal.props.accessibilityValue).toStrictEqual({
+          text: 'visible'
+        });
 
         const addProductFromBarcodeModalCloseButton = await waitFor(() =>
           getByTestId('add-product-from-barcode-modal-close-button')
@@ -229,9 +229,9 @@ describe('BarcodeReaderScreen component', () => {
           fireEvent.press(addProductFromBarcodeModalCloseButton)
         );
 
-        expect(newProductFromBarcodeModal.props.accessibilityValue).toBe(
-          'hidden'
-        );
+        expect(newProductFromBarcodeModal.props.accessibilityValue).toStrictEqual({
+          text: 'hidden'
+        });
       });
     });
 

@@ -95,7 +95,7 @@ describe('SendInvitationScreen component', () => {
   });
 
   describe('Select list field', () => {
-    it('should ', async () => {
+    it('should change select list value', async () => {
       const selectList = getByTestId('select-list');
 
       await waitFor(() => {
@@ -130,7 +130,7 @@ describe('SendInvitationScreen component', () => {
   describe('when form is properly filled', () => {
     it(
       'should show error when trying to send an invite to a user who already' +
-        ' receives an invite',
+        ' received an invite',
       async () => {
         const registerSpy = jest.spyOn(ListMembersService, 'sendInvite');
         registerSpy.mockReturnValue(
@@ -149,14 +149,12 @@ describe('SendInvitationScreen component', () => {
         });
         await waitFor(() => fireEvent.press(sendInvitationButton));
 
-        const toast = getByText(
-          'Um convite já foi enviado para "ciclanodetal"'
-        );
+        const toast = getByText('repeatedInvitation');
         expect(toast).toBeDefined();
       }
     );
 
-    it('should show error when trying to send an invite to an inexistent user', async () => {
+    it('should successfully send an email to non registered user', async () => {
       const registerSpy = jest.spyOn(ListMembersService, 'sendInvite');
       registerSpy.mockReturnValue(
         Promise.reject({
@@ -174,8 +172,78 @@ describe('SendInvitationScreen component', () => {
       });
       await waitFor(() => fireEvent.press(sendInvitationButton));
 
-      const toast = getByText('Usuário "ciclanodetal" não existe');
+      expect(
+        getByTestId('invite-to-platform-modal').props.accessibilityValue
+      ).toStrictEqual({ text: 'visible' });
+
+      jest.spyOn(ListMembersService, 'inviteToThePlatform').mockReturnValue(Promise.resolve());
+
+      await waitFor(() => {
+        fireEvent.changeText(
+          getByTestId('invite-to-platform-email-input'),
+          'ciclano@tal.com'
+        );
+      });
+
+      const confirmSendInvitation = await waitFor(() =>
+        getByTestId('button-confirm-send-invitation')
+      );
+
+      await waitFor(() => fireEvent.press(confirmSendInvitation));
+
+      const toast = getByText('sentEmail');
       expect(toast).toBeDefined();
+    });
+
+    it('should not send email if user is registered and invite to the platform modal was called', async () => {
+      const registerSpy = jest.spyOn(ListMembersService, 'sendInvite');
+      registerSpy.mockReturnValueOnce(
+        Promise.reject({
+          response: {
+            status: 404,
+          },
+        })
+      );
+
+      await waitFor(() => {
+        fireEvent.changeText(
+          getByTestId('invitation-username-or-email'),
+          'ciclanodetal'
+        );
+      });
+      await waitFor(() => fireEvent.press(sendInvitationButton));
+
+      expect(
+        getByTestId('invite-to-platform-modal').props.accessibilityValue
+      ).toStrictEqual({ text: 'visible' });
+
+      jest.spyOn(ListMembersService, 'inviteToThePlatform').mockReturnValue(Promise.reject({
+        response: {
+          status: 409
+        }
+      }));
+
+      registerSpy.mockReturnValueOnce(
+        Promise.resolve()
+      );
+
+      await waitFor(() => {
+        fireEvent.changeText(
+          getByTestId('invite-to-platform-email-input'),
+          'ciclano@tal.com'
+        );
+      });
+
+      const confirmSendInvitation = await waitFor(() =>
+        getByTestId('button-confirm-send-invitation')
+      );
+
+      await waitFor(() => fireEvent.press(confirmSendInvitation));
+
+      const toastTitle = getByText('userAlreadyOnPlatform');
+      expect(toastTitle).toBeDefined();
+      const toastDescription = getByText('weSentAnInviteToThem')
+      expect(toastDescription).toBeDefined();
     });
 
     it('should show error when when server returns default error', async () => {
@@ -212,7 +280,7 @@ describe('SendInvitationScreen component', () => {
       });
       await waitFor(() => fireEvent.press(sendInvitationButton));
 
-      const toast = getByText('Convite enviado para ciclanodetal');
+      const toast = getByText('invitationSent');
       expect(toast).toBeDefined();
     });
 
@@ -225,7 +293,7 @@ describe('SendInvitationScreen component', () => {
       });
       await waitFor(() => fireEvent.press(sendInvitationButton));
 
-      const toast = getByText('Você não pode se convidar para a lista');
+      const toast = getByText('invitationToYourself');
       expect(toast).toBeDefined();
     });
   });

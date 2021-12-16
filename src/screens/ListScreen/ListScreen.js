@@ -184,37 +184,6 @@ export default function ListScreen(props) {
     }
   };
 
-  const leaveList = async () => {
-    try {
-      const invitation = selectedList.listMembers.find(
-        (lm) => lm.userId === user.id
-      );
-      let id = 0;
-
-      // Pega o id do convite atual e faz a deleção do convite
-      if (invitation) {
-        id = invitation.id;
-      }
-      await ListMembersService.deleteInvitation(id, user);
-
-      // Após se desvincular da lista, filtra as listas do usuário de forma
-      // que a lista da qual ele se desvinculou não apareça mais
-      const editedLists = lists.filter((l) => l.id !== selectedList.id);
-      setLists([...editedLists]);
-      setSelectedList(lists[0]);
-
-      toast.show({
-        status: 'success',
-        title: t('youLeft'),
-      });
-    } catch (error) {
-      toast.show({
-        status: 'warning',
-        title: t('errorServerDefault'),
-      });
-    }
-  };
-
   const searchProducts = async (value) => {
     if (value.length > 2) {
       const numberPattern = /^[0-9]*$/;
@@ -550,9 +519,9 @@ export default function ListScreen(props) {
                 space="md"
               >
                 <ScrollView keyboardShouldPersistTaps="always">
-                  {productsFound.map((product) => (
+                  {productsFound.map((product, index) => (
                     <List.Item
-                      testID="products-found"
+                      testID={`products-found-${index}`}
                       py={4}
                       key={product.id}
                       onPress={() => {

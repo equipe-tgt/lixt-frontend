@@ -41,7 +41,10 @@ describe('CommentaryScreen component', () => {
         name: 'Fulano',
         username: 'fulanodetal',
         email: 'fulanodetal@gmail.com',
-        globalCommentsChronOrder: true,
+        preferences: {
+          globalCommentsChronOrder: true,
+          olderCommentsFirst: true
+        }
       };
 
       user2 = {
@@ -49,7 +52,6 @@ describe('CommentaryScreen component', () => {
         name: 'Ciclano',
         username: 'ciclanodetal',
         email: 'ciclanodetal@gmail.com',
-        globalCommentsChronOrder: false,
       };
 
       const navContext = {
@@ -58,14 +60,6 @@ describe('CommentaryScreen component', () => {
         addListener: jest.fn(() => jest.fn()),
       };
 
-      jest.spyOn(AuthService, 'getUserData').mockReturnValue(
-        Promise.resolve({
-          data: {
-            globalCommentsChronOrder: true,
-            olderCommentsFirst: true,
-          },
-        })
-      );
       jest
         .spyOn(ProductOfListService, 'getProductOfListComments')
         .mockReturnValue(
@@ -310,7 +304,10 @@ describe('CommentaryScreen component', () => {
         name: 'Fulano',
         username: 'fulanodetal',
         email: 'fulanodetal@gmail.com',
-        globalCommentsChronOrder: true,
+        preferences: {
+          globalCommentsChronOrder: false,
+          olderCommentsFirst: true
+        }
       };
 
       user2 = {
@@ -318,7 +315,6 @@ describe('CommentaryScreen component', () => {
         name: 'Ciclano',
         username: 'ciclanodetal',
         email: 'ciclanodetal@gmail.com',
-        globalCommentsChronOrder: false,
       };
 
       const navContext = {
@@ -327,14 +323,6 @@ describe('CommentaryScreen component', () => {
         addListener: jest.fn(() => jest.fn()),
       };
 
-      jest.spyOn(AuthService, 'getUserData').mockReturnValue(
-        Promise.resolve({
-          data: {
-            globalCommentsChronOrder: false,
-            olderCommentsFirst: true,
-          },
-        })
-      );
       jest
         .spyOn(ProductOfListService, 'getProductOfListComments')
         .mockReturnValue(
@@ -509,7 +497,10 @@ describe('CommentaryScreen component', () => {
         name: 'Fulano',
         username: 'fulanodetal',
         email: 'fulanodetal@gmail.com',
-        globalCommentsChronOrder: true,
+        preferences: {
+          globalCommentsChronOrder: true,
+          olderCommentsFirst: false
+        }
       };
 
       user2 = {
@@ -517,7 +508,6 @@ describe('CommentaryScreen component', () => {
         name: 'Ciclano',
         username: 'ciclanodetal',
         email: 'ciclanodetal@gmail.com',
-        globalCommentsChronOrder: false,
       };
 
       const navContext = {
@@ -526,14 +516,6 @@ describe('CommentaryScreen component', () => {
         addListener: jest.fn(() => jest.fn()),
       };
 
-      jest.spyOn(AuthService, 'getUserData').mockReturnValue(
-        Promise.resolve({
-          data: {
-            globalCommentsChronOrder: true,
-            olderCommentsFirst: false,
-          },
-        })
-      );
       jest
         .spyOn(ProductOfListService, 'getProductOfListComments')
         .mockReturnValue(
@@ -712,7 +694,10 @@ describe('CommentaryScreen component', () => {
         name: 'Fulano',
         username: 'fulanodetal',
         email: 'fulanodetal@gmail.com',
-        globalCommentsChronOrder: true,
+        preferences: {
+          globalCommentsChronOrder: false,
+          olderCommentsFirst: true,
+        }
       };
 
       user2 = {
@@ -720,7 +705,6 @@ describe('CommentaryScreen component', () => {
         name: 'Ciclano',
         username: 'ciclanodetal',
         email: 'ciclanodetal@gmail.com',
-        globalCommentsChronOrder: false,
       };
 
       const navContext = {
@@ -729,14 +713,6 @@ describe('CommentaryScreen component', () => {
         addListener: jest.fn(() => jest.fn()),
       };
 
-      jest.spyOn(AuthService, 'getUserData').mockReturnValue(
-        Promise.resolve({
-          data: {
-            globalCommentsChronOrder: false,
-            olderCommentsFirst: true,
-          },
-        })
-      );
       jest
         .spyOn(ProductOfListService, 'getProductOfListComments')
         .mockReturnValue(
@@ -975,7 +951,7 @@ describe('CommentaryScreen component', () => {
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
       const modal = await waitFor(() => getByTestId('remove-commentary-modal'));
-      expect(modal.props.accessibilityValue).toBe('visible');
+      expect(modal.props.accessibilityValue).toStrictEqual({ text: 'visible' });
 
       const confirmRemovalButton = await waitFor(() =>
         getByTestId('button-confirm-removal')
@@ -1160,7 +1136,7 @@ describe('CommentaryScreen component', () => {
       await waitFor(() => fireEvent.press(commentaryToBeRemoved));
 
       const modal = await waitFor(() => getByTestId('remove-commentary-modal'));
-      expect(modal.props.accessibilityValue).toBe('visible');
+      expect(modal.props.accessibilityValue).toStrictEqual({ text: 'visible' });
 
       const confirmRemovalButton = await waitFor(() =>
         getByTestId('button-confirm-removal')
@@ -1230,7 +1206,10 @@ describe('CommentaryScreen component', () => {
         name: 'Fulano',
         username: 'fulanodetal',
         email: 'fulanodetal@gmail.com',
-        globalCommentsChronOrder: true,
+        preferences: {
+          globalCommentsChronOrder: null,
+          olderCommentsFirst: null
+        }
       };
 
       user2 = {
@@ -1238,7 +1217,6 @@ describe('CommentaryScreen component', () => {
         name: 'Ciclano',
         username: 'ciclanodetal',
         email: 'ciclanodetal@gmail.com',
-        globalCommentsChronOrder: false,
       };
 
       const navContext = {
@@ -1247,7 +1225,6 @@ describe('CommentaryScreen component', () => {
         addListener: jest.fn(() => jest.fn()),
       };
 
-      jest.spyOn(AuthService, 'getUserData').mockReturnValue(Promise.reject());
       jest
         .spyOn(ProductOfListService, 'getProductOfListComments')
         .mockReturnValue(Promise.reject());
@@ -1278,9 +1255,9 @@ describe('CommentaryScreen component', () => {
       getByText = renderResults.getByText;
     });
 
-    it('should show toast', async () => {
+    it('should show toast warning user it was not possible to fetch commentaries', async () => {
       const toast = await waitFor(() =>
-        getByText('Não foi possível buscar os comentários')
+        getByText('couldntFetchCommentaries')
       );
       expect(toast).toBeDefined();
     });

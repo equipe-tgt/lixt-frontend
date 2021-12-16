@@ -70,9 +70,7 @@ export default function CartScreen(props) {
         const listFound = lists.find(
           (l) => Number(l.id) === Number(selectedList?.id)
         );
-        if (listFound) {
-          setSelectedList(listFound);
-        }
+        if (listFound) setSelectedList(listFound);
       }
     } else {
       refreshLists();
@@ -380,6 +378,7 @@ export default function CartScreen(props) {
               </HStack>
             </Menu.Item>
             <Menu.Item
+              testID="statistics-item-menu"
               onPress={() => {
                 props.navigation.navigate('Statistics');
               }}
@@ -455,12 +454,14 @@ export default function CartScreen(props) {
           {t('otherPages')}
         </Text>
         <Button
+          testID="no-lists-statistics-button"
           onPress={() => props.navigation.navigate('Statistics')}
           variant="ghost"
         >
           {t('accessScreen', { screenName: t('statistics') })}
         </Button>
         <Button
+          testID="no-lists-history-button"
           onPress={() => props.navigation.navigate('History')}
           variant="ghost"
         >

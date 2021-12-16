@@ -192,7 +192,7 @@ export default function ListDetailsScreen(props) {
           ) : (
             <Button
               isLoading={loading}
-              isLoadingText="Saindo"
+              isLoadingText={t('leaving')}
               onPress={() => setIsLeaveListModalOpened(true)}
               testID="leave-list"
               mt={5}
